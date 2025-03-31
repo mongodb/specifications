@@ -10,6 +10,12 @@ createEntities:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
+      uriOptions:
+        timeoutMS: 50
+  - client:
+      id: "client1"
+      observeEvents:
+        - commandStartedEvent
   - database:
       id: "db"
       client: "client0"
@@ -43,14 +49,20 @@ initialData:
           'keyAltNames': ['altname', 'another_altname']}]
 tests:
   - description: "timeoutMS applied to listCollections to get collection schema"
-    failPoint:
-      configureFailPoint: failCommand
-      mode: {times: 1}
-      data:
-        failCommands: ["listCollections"]
-        blockConnection: true
-        blockTimeMS: 60
     operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: "client1"
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 1
+            data:
+              failCommands:
+                - listCollections
+              blockConnection: true
+              blockTimeMS: 60
       - name: insertOne
         arguments:
           document: &doc0 {_id: 1, encrypted_string: "string0", random: "abc"}
@@ -70,14 +82,21 @@ tests:
                 maxTimeMS: {$$type: ["int", "long"]}
               commandName: listCollections
   - description: "remaining timeoutMS applied to find to get keyvault data"
-    failPoint:
-      configureFailPoint: failCommand
-      mode: {times: 2}
-      data:
-        failCommands: ["listCollections", "find"]
-        blockConnection: true
-        blockTimeMS: 30
     operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: "client1"
+          failPoint:
+            configureFailPoint: failCommand
+            mode:
+              times: 2
+            data:
+              failCommands:
+                - listCollections
+                - find
+              blockConnection: true
+              blockTimeMS: 30
       - name: insertOne
         arguments:
           document: *doc0

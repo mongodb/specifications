@@ -48,6 +48,7 @@ tests:
     clientOptions:
       autoEncryptOpts:
         kmsProviders:
+          # special case in test runner
           awsTemporaryNoSessionToken: {}
     operations:
       - name: insertOne

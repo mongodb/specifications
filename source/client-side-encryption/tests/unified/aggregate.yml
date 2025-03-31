@@ -135,7 +135,7 @@ tests:
   - description: "Database aggregate should fail"
     operations:
       - name: aggregate
-        object: "coll"
+        object: "db"
         arguments:
           pipeline:
             - $currentOp: {allUsers: false, idleConnections: false, localOps: true}

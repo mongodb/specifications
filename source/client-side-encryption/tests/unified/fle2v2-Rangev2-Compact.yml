@@ -13,6 +13,7 @@ createEntities:
                 'subType': '00'}}}
       observeEvents:
         - commandStartedEvent
+        - commandSucceededEvent
   - database:
       id: "db"
       client: "client0"
@@ -47,7 +48,7 @@ tests:
           document: {_id: 0, encryptedInt: {$numberInt: "0"}}
         object: "coll"
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
           command:
             compactStructuredEncryptionData: &collection_name "default"
@@ -61,6 +62,10 @@ tests:
                 filter:
                   name: *collection_name
               commandName: listCollections
+          - commandSucceededEvent:
+              commandName: listCollections
+              reply:
+                ok: 1
           - commandStartedEvent:
               command:
                 find: datakeys
@@ -69,6 +74,10 @@ tests:
                 $db: keyvault
                 readConcern: {level: "majority"}
               commandName: find
+          - commandSucceededEvent:
+              commandName: find
+              reply:
+                ok: 1
           - commandStartedEvent:
               command:
                 insert: *collection_name
@@ -84,6 +93,10 @@ tests:
                       ecocCollection: "enxcol_.default.ecoc"
                       <<: *encrypted_fields
               commandName: insert
+          - commandSucceededEvent:
+              commandName: insert
+              reply:
+                ok: 1
           - commandStartedEvent:
               command:
                 compactStructuredEncryptionData: *collection_name
@@ -92,6 +105,8 @@ tests:
                         "subType": "00"}}, "anchorPaddingToken": {"$binary": {"base64": "QxKJD2If48p0l8NAXf2Kr0aleMd/dATSjBK6hTpNMyc=",
                         "subType": "00"}}}
                 encryptionInformation: *encryptionInformation
+              commandName: compactStructuredEncryptionData
+          - commandSucceededEvent:
               commandName: compactStructuredEncryptionData
               reply:
                 ok: 1

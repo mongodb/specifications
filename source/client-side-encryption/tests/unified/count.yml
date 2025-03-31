@@ -48,7 +48,7 @@ initialData:
 tests:
   - description: "Count with deterministic encryption"
     operations:
-      - name: count
+      - name: countDocuments
         arguments:
           filter: {encrypted_string: "string0"}
         object: "coll"
@@ -74,13 +74,22 @@ tests:
               commandName: find
           - commandStartedEvent:
               command:
-                count: *collection_name
-                query: {encrypted_string: {$eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
-                        'subType': '06'}}}}
-              commandName: count
+                aggregate: default
+                cursor: {}
+                pipeline:
+                  - $match:
+                      encrypted_string: {$eq: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==',
+                        'subType': '06'}}}
+                  - $group:
+                      _id:
+                        $const: 1
+                      n:
+                        $sum:
+                          $const: 1
+              commandName: aggregate
   - description: "Count fails when filtering on a random encrypted field"
     operations:
-      - name: count
+      - name: countDocuments
         arguments:
           filter: {random: "abc"}
         object: "coll"

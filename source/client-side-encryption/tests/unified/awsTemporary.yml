@@ -18,6 +18,21 @@ createEntities:
       id: "coll"
       database: "db"
       collectionName: default
+  - client:
+      id: "client1"
+      autoEncryptOpts:
+        kmsProviders:
+          awsTemporaryNoSessionToken: {}
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: "db1"
+      client: "client1"
+      databaseName: default
+  - collection:
+      id: "coll1"
+      database: "db1"
+      collectionName: default
 initialData:
   - databaseName: default
     collectionName: default
@@ -85,6 +100,6 @@ tests:
       - name: insertOne
         arguments:
           document: *doc0
-        object: "coll"
+        object: "coll1"
         expectError:
           errorContains: "security token"

@@ -14,6 +14,9 @@ createEntities:
                 'subType': '00'}}}
       observeEvents:
         - commandStartedEvent
+        - commandSucceededEvent
+  - client:
+      id: "client1"
   - database:
       id: "db"
       client: "client0"
@@ -21,6 +24,14 @@ createEntities:
   - collection:
       id: "coll"
       database: "db"
+      collectionName: default
+  - database:
+      id: "db1"
+      client: "client1"
+      databaseName: default
+  - collection:
+      id: "coll1"
+      database: "db1"
       collectionName: default
 initialData:
   - databaseName: default
@@ -47,13 +58,11 @@ tests:
   - description: "Compact works"
     operations:
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
           command:
             compactStructuredEncryptionData: &collection_name "default"
           commandName: compactStructuredEncryptionData
-        expectResult:
-          ok: 1
     expectEvents:
       - client: "client0"
         events:
@@ -63,6 +72,10 @@ tests:
                 filter:
                   name: *collection_name
               commandName: listCollections
+          - commandSucceededEvent:
+              commandName: listCollections
+              reply:
+                ok: 1
           - commandStartedEvent:
               command:
                 find: datakeys
@@ -72,6 +85,10 @@ tests:
                 $db: keyvault
                 readConcern: {level: "majority"}
               commandName: find
+          - commandSucceededEvent:
+              commandName: find
+              reply:
+                ok: 1
           - commandStartedEvent:
               command:
                 compactStructuredEncryptionData: *collection_name
@@ -79,10 +96,14 @@ tests:
                       "subType": "00"}}, "encryptedUnindexed": {"$binary": {"base64": "SWO8WEoZ2r2Kx/muQKb7+COizy85nIIUFiHh4K9kcvA=",
                       "subType": "00"}}}
               commandName: compactStructuredEncryptionData
+          - commandSucceededEvent:
+              commandName: compactStructuredEncryptionData
+              reply:
+                ok: 1
   - description: "Compact errors on an unencrypted client"
     operations:
       - name: runCommand
-        object: "coll"
+        object: "db1"
         arguments:
           command:
             compactStructuredEncryptionData: *collection_name

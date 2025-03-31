@@ -49,7 +49,7 @@ tests:
   - description: "Explain a find with deterministic encryption"
     operations:
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
           command:
             explain:

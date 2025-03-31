@@ -18,6 +18,10 @@ createEntities:
       id: "coll"
       database: "db"
       collectionName: unencrypted
+initialData:
+  - databaseName: default
+    collectionName: unencrypted
+    documents: []
 tests:
   - description: "Insert on an unencrypted collection"
     operations:

@@ -98,8 +98,11 @@ tests:
               command:
                 update: *collection_name
                 updates:
-                  - {"q": {"encryptedIndexed": {"$eq": {"$binary": {"base64": "DIkAAAAFZAAgAAAAAPtVteJQAlgb2YMa/+7YWH00sbQPyt7L6Rb8OwBdMmL2BXMAIAAAAAAd44hgVKnEnTFlwNVC14oyc9OZOTspeymusqkRQj57nAVsACAAAAAAaZ9s3G+4znfxStxeOZwcZy1OhzjMGc5hjmdMN+b/w6kSY20AAAAAAAAAAAAA",
-                            "subType": "06"}}}}, "u": {"$set": {"foo": "bar"}}}
+                  - q: {"encryptedIndexed": {"$eq": {"$binary": {"base64": "DIkAAAAFZAAgAAAAAPtVteJQAlgb2YMa/+7YWH00sbQPyt7L6Rb8OwBdMmL2BXMAIAAAAAAd44hgVKnEnTFlwNVC14oyc9OZOTspeymusqkRQj57nAVsACAAAAAAaZ9s3G+4znfxStxeOZwcZy1OhzjMGc5hjmdMN+b/w6kSY20AAAAAAAAAAAAA",
+                            "subType": "06"}}}}
+                    u: {"$set": {"foo": "bar"}}
+                    multi: false
+                    upsert: false
                 ordered: true
                 encryptionInformation:
                   type: 1
@@ -173,9 +176,11 @@ tests:
               command:
                 update: *collection_name
                 updates:
-                  - {"q": {"encryptedIndexed": {"$eq": {"$binary": {"base64": "DIkAAAAFZAAgAAAAAPtVteJQAlgb2YMa/+7YWH00sbQPyt7L6Rb8OwBdMmL2BXMAIAAAAAAd44hgVKnEnTFlwNVC14oyc9OZOTspeymusqkRQj57nAVsACAAAAAAaZ9s3G+4znfxStxeOZwcZy1OhzjMGc5hjmdMN+b/w6kSY20AAAAAAAAAAAAA",
-                            "subType": "06"}}}}, "u": {"$set": {"encryptedIndexed": {
-                          "$$type": "binData"}}}}
+                  - q: {"encryptedIndexed": {"$eq": {"$binary": {"base64": "DIkAAAAFZAAgAAAAAPtVteJQAlgb2YMa/+7YWH00sbQPyt7L6Rb8OwBdMmL2BXMAIAAAAAAd44hgVKnEnTFlwNVC14oyc9OZOTspeymusqkRQj57nAVsACAAAAAAaZ9s3G+4znfxStxeOZwcZy1OhzjMGc5hjmdMN+b/w6kSY20AAAAAAAAAAAAA",
+                            "subType": "06"}}}}
+                    u: {"$set": {"encryptedIndexed": {"$$type": "binData"}}}
+                    multi: false
+                    upsert: false
                 ordered: true
                 encryptionInformation:
                   type: 1

@@ -31,11 +31,11 @@ tests:
     operations:
       # Do an initial drop to remove collections that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
         expectError:

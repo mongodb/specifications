@@ -40,29 +40,29 @@ tests:
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
           validator:
             unencrypted_string: "foo"
       - name: assertCollectionExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: &database_name "default"
-          collection: "encryptedCollection"
+          databaseName: &database_name "default"
+          collectionName: "encryptedCollection"
   - description: "create with a validator on an encrypted field is an error"
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
           validator:
@@ -73,16 +73,17 @@ tests:
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
+          commandName: collMod
           command:
             collMod: "encryptedCollection"
             validator:
@@ -91,16 +92,17 @@ tests:
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
+          commandName: collMod
           command:
             collMod: "encryptedCollection"
             validator:
@@ -112,16 +114,17 @@ tests:
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
+          commandName: collMod
           command:
             createIndexes: "encryptedCollection"
             indexes:
@@ -130,26 +133,27 @@ tests:
                 partialFilterExpression:
                   unencrypted_string: "foo"
       - name: assertIndexExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: *database_name
-          collection: "encryptedCollection"
-          index: name
+          databaseName: *database_name
+          collectionName: "encryptedCollection"
+          indexName: name
   - description: "createIndexes with a partialFilterExpression on an encrypted field
       is an error"
     operations:
     # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: createCollection
-        object: "coll"
+        object: "db"
         arguments:
           collection: "encryptedCollection"
       - name: runCommand
-        object: "coll"
+        object: "db"
         arguments:
+          commandName: createIndexes
           command:
             createIndexes: "encryptedCollection"
             indexes:
