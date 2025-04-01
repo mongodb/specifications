@@ -5,6 +5,7 @@
     {
       "minServerVersion": "4.4",
       "topologies": [
+        "single",
         "replicaset",
         "sharded"
       ]
@@ -21,7 +22,8 @@
       "client": {
         "id": "client",
         "uriOptions": {
-          "maxPoolSize": 1
+          "maxPoolSize": 1,
+          "appname": "waitQueueTimeoutErrorTest"
         },
         "useMultipleMongoses": false,
         "observeEvents": [
@@ -50,14 +52,15 @@
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
-                "times": 10
+                "times": 1
               },
               "data": {
                 "failCommands": [
                   "ping"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 500
+                "blockTimeMS": 500,
+                "appName": "waitQueueTimeoutErrorTest"
               }
             }
           }
@@ -109,7 +112,7 @@
           "name": "runCommand",
           "object": "database",
           "arguments": {
-            "timeoutMS": 200,
+            "timeoutMS": 100,
             "command": {
               "hello": 1
             },

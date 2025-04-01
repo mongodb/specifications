@@ -4,7 +4,7 @@ schemaVersion: "1.9"
 
 runOnRequirements:
   - minServerVersion: "4.4"
-    topologies: ["replicaset", "sharded"]
+    topologies: ["single", "replicaset", "sharded"]
 
 createEntities:
   - client:
@@ -14,6 +14,7 @@ createEntities:
       id: &client client
       uriOptions:
         maxPoolSize: 1
+        appname: &appname waitQueueTimeoutErrorTest
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
@@ -32,11 +33,12 @@ tests:
           client: *failPointClient
           failPoint:
             configureFailPoint: failCommand
-            mode: { times: 10 }
+            mode: { times: 1 }
             data:
               failCommands: ["ping"]
               blockConnection: true
               blockTimeMS: 500
+              appName: *appname
       # Start thread.
       - name: createEntities
         object: testRunner
@@ -67,7 +69,7 @@ tests:
       - name: runCommand
         object: *database
         arguments:
-          timeoutMS: 200
+          timeoutMS: 100
           command: { hello: 1 }
           commandName: hello
         expectError:
@@ -76,7 +78,7 @@ tests:
         object: testRunner
         arguments:
           thread: *thread0
-      # Run another command with no timeout ensure the pool is not cleared.
+      # Run another command with no timeout to ensure the pool is not cleared.
       - name: runCommand
         object: *database
         arguments:
