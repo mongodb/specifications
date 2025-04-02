@@ -1245,7 +1245,6 @@ The structure of this object is as follows:
     [topologyClosedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
     object.
 
-
 ##### hasServiceId
 
 This field is an optional boolean that specifies whether or not the `serviceId` field of an event is set. If true, test
