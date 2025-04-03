@@ -486,7 +486,7 @@ The structure of this object is as follows:
         - [serverHeartbeatFailedEvent](#expectedEvent_serverHeartbeatFailedEvent)
         - [topologyDescriptionChangedEvent](#expectedEvent_topologyDescriptionChangedEvent)
         - [topologyOpeningEvent](#expectedEvent_topologyOpeningEvent)
-        - [topologyClosedEvent](#expectedEvent_topologyOpeningEvent)
+        - [topologyClosedEvent](#expectedEvent_topologyClosedEvent)
 
     <span id="entity_client_ignoreCommandMonitoringEvents"></span>
 
