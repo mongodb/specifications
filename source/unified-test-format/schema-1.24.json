@@ -819,16 +819,6 @@
             }
           }
         },
-        "topologyOpeningEvent": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {}
-        },
-        "topologyClosedEvent": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {}
-        },
         "serverHeartbeatStartedEvent": {
           "type": "object",
           "additionalProperties": false,
