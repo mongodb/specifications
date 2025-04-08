@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "delete",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -23,8 +23,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -50,7 +49,26 @@
     {
       "databaseName": "default",
       "collectionName": "default",
-      "documents": [],
+      "documents": [
+        {
+          "_id": 1,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+              "subType": "06"
+            }
+          }
+        },
+        {
+          "_id": 2,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+              "subType": "06"
+            }
+          }
+        }
+      ],
       "createOptions": {
         "validator": {
           "$jsonSchema": {
@@ -153,49 +171,29 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "deleteOne with deterministic encryption",
       "operations": [
         {
-          "name": "insertOne",
-          "arguments": {
-            "document": {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          },
-          "object": "coll"
-        },
-        {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
-          "name": "find",
+          "name": "deleteOne",
           "arguments": {
             "filter": {
-              "_id": 1
+              "encrypted_string": "string0"
             }
           },
           "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
+          "expectResult": {
+            "deletedCount": 1
+          }
         }
       ],
       "outcome": [
         {
           "documents": [
             {
-              "_id": 1,
+              "_id": 2,
               "encrypted_string": {
                 "$binary": {
-                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
                   "subType": "06"
                 }
               }
@@ -256,32 +254,72 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "default",
-                  "documents": [
+                  "delete": "default",
+                  "deletes": [
                     {
-                      "_id": 1,
-                      "encrypted_string": {
-                        "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                          "subType": "06"
+                      "q": {
+                        "encrypted_string": {
+                          "$eq": {
+                            "$binary": {
+                              "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                              "subType": "06"
+                            }
+                          }
                         }
-                      }
+                      },
+                      "limit": 1
                     }
                   ],
                   "ordered": true
                 },
-                "commandName": "insert"
+                "commandName": "delete"
               }
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "deleteMany with deterministic encryption",
+      "operations": [
+        {
+          "name": "deleteMany",
+          "arguments": {
+            "filter": {
+              "encrypted_string": {
+                "$in": [
+                  "string0",
+                  "string1"
+                ]
+              }
+            }
+          },
+          "object": "coll",
+          "expectResult": {
+            "deletedCount": 2
+          }
+        }
+      ],
+      "outcome": [
+        {
+          "documents": [],
+          "collectionName": "default",
+          "databaseName": "default"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "default",
+                  "listCollections": 1,
                   "filter": {
-                    "_id": 1
+                    "name": "default"
                   }
                 },
-                "commandName": "find"
+                "commandName": "listCollections"
               }
             },
             {
@@ -315,6 +353,38 @@
                   }
                 },
                 "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "delete": "default",
+                  "deletes": [
+                    {
+                      "q": {
+                        "encrypted_string": {
+                          "$in": [
+                            {
+                              "$binary": {
+                                "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                                "subType": "06"
+                              }
+                            },
+                            {
+                              "$binary": {
+                                "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+                                "subType": "06"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "limit": 0
+                    }
+                  ],
+                  "ordered": true
+                },
+                "commandName": "delete"
               }
             }
           ]

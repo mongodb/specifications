@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "basic",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -23,8 +23,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -166,13 +165,6 @@
           "object": "coll"
         },
         {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
           "name": "find",
           "arguments": {
             "filter": {
@@ -283,6 +275,68 @@
                 },
                 "commandName": "find"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Insert with randomized encryption, then find it",
+      "operations": [
+        {
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "_id": 1,
+              "random": "123"
+            }
+          },
+          "object": "coll"
+        },
+        {
+          "name": "find",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          },
+          "object": "coll",
+          "expectResult": [
+            {
+              "_id": 1,
+              "random": "123"
+            }
+          ]
+        }
+      ],
+      "outcome": [
+        {
+          "documents": [
+            {
+              "_id": 1,
+              "random": {
+                "$$type": "binData"
+              }
+            }
+          ],
+          "collectionName": "default",
+          "databaseName": "default"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "listCollections": 1,
+                  "filter": {
+                    "name": "default"
+                  }
+                },
+                "commandName": "listCollections"
+              }
             },
             {
               "commandStartedEvent": {
@@ -312,6 +366,34 @@
                   "$db": "keyvault",
                   "readConcern": {
                     "level": "majority"
+                  }
+                },
+                "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "default",
+                  "documents": [
+                    {
+                      "_id": 1,
+                      "random": {
+                        "$$type": "binData"
+                      }
+                    }
+                  ],
+                  "ordered": true
+                },
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "default",
+                  "filter": {
+                    "_id": 1
                   }
                 },
                 "commandName": "find"

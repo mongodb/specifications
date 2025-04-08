@@ -1,9 +1,9 @@
 {
-  "description": "keyCache",
+  "description": "explain",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.1.10"
+      "minServerVersion": "7.0.0"
     }
   ],
   "createEntities": [
@@ -23,8 +23,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -50,7 +49,26 @@
     {
       "databaseName": "default",
       "collectionName": "default",
-      "documents": [],
+      "documents": [
+        {
+          "_id": 1,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+              "subType": "06"
+            }
+          }
+        },
+        {
+          "_id": 2,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+              "subType": "06"
+            }
+          }
+        }
+      ],
       "createOptions": {
         "validator": {
           "$jsonSchema": {
@@ -153,39 +171,22 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "Explain a find with deterministic encryption",
       "operations": [
         {
-          "name": "insertOne",
+          "name": "runCommand",
+          "object": "db",
           "arguments": {
-            "document": {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          },
-          "object": "coll"
-        },
-        {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
+            "command": {
+              "explain": {
+                "find": "default",
+                "filter": {
+                  "encrypted_string": "string1"
+                }
+              }
+            },
+            "commandName": "explain"
           }
-        },
-        {
-          "name": "find",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          },
-          "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
         }
       ],
       "outcome": [
@@ -196,6 +197,15 @@
               "encrypted_string": {
                 "$binary": {
                   "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                  "subType": "06"
+                }
+              }
+            },
+            {
+              "_id": 2,
+              "encrypted_string": {
+                "$binary": {
+                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
                   "subType": "06"
                 }
               }
@@ -256,65 +266,22 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "default",
-                  "documents": [
-                    {
-                      "_id": 1,
+                  "explain": {
+                    "find": "default",
+                    "filter": {
                       "encrypted_string": {
-                        "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                          "subType": "06"
+                        "$eq": {
+                          "$binary": {
+                            "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+                            "subType": "06"
+                          }
                         }
                       }
                     }
-                  ],
-                  "ordered": true
-                },
-                "commandName": "insert"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
-                          "$in": [
-                            {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "keyAltNames": {
-                          "$in": []
-                        }
-                      }
-                    ]
                   },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
+                  "verbosity": "allPlansExecution"
                 },
-                "commandName": "find"
+                "commandName": "explain"
               }
             }
           ]

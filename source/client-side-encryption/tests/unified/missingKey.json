@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "missingKey",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -11,6 +11,7 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.different",
           "kmsProviders": {
             "aws": {
               "accessKeyId": {
@@ -23,8 +24,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -153,54 +153,26 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "Insert with encryption on a missing key",
       "operations": [
         {
           "name": "insertOne",
           "arguments": {
             "document": {
               "_id": 1,
-              "encrypted_string": "string0"
+              "encrypted_string": "string0",
+              "random": "abc"
             }
           },
-          "object": "coll"
-        },
-        {
-          "name": "wait",
           "object": "coll",
-          "arguments": {
-            "ms": 50
+          "expectError": {
+            "errorContains": "not all keys requested were satisfied"
           }
-        },
-        {
-          "name": "find",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          },
-          "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
         }
       ],
       "outcome": [
         {
-          "documents": [
-            {
-              "_id": 1,
-              "encrypted_string": {
-                "$binary": {
-                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                  "subType": "06"
-                }
-              }
-            }
-          ],
+          "documents": [],
           "collectionName": "default",
           "databaseName": "default"
         }
@@ -223,71 +195,7 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
-                          "$in": [
-                            {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "keyAltNames": {
-                          "$in": []
-                        }
-                      }
-                    ]
-                  },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "insert": "default",
-                  "documents": [
-                    {
-                      "_id": 1,
-                      "encrypted_string": {
-                        "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                          "subType": "06"
-                        }
-                      }
-                    }
-                  ],
-                  "ordered": true
-                },
-                "commandName": "insert"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "datakeys",
+                  "find": "different",
                   "filter": {
                     "$or": [
                       {

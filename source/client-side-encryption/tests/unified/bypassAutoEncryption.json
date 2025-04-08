@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "bypassAutoEncryption",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -11,6 +11,7 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "bypassAutoEncryption": true,
           "kmsProviders": {
             "aws": {
               "accessKeyId": {
@@ -23,8 +24,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -50,7 +50,17 @@
     {
       "databaseName": "default",
       "collectionName": "default",
-      "documents": [],
+      "documents": [
+        {
+          "_id": 1,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+              "subType": "06"
+            }
+          }
+        }
+      ],
       "createOptions": {
         "validator": {
           "$jsonSchema": {
@@ -153,36 +163,32 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "Insert with bypassAutoEncryption",
       "operations": [
         {
           "name": "insertOne",
           "arguments": {
             "document": {
-              "_id": 1,
+              "_id": 2,
               "encrypted_string": "string0"
-            }
+            },
+            "bypassDocumentValidation": true
           },
           "object": "coll"
         },
         {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
           "name": "find",
           "arguments": {
-            "filter": {
-              "_id": 1
-            }
+            "filter": {}
           },
           "object": "coll",
           "expectResult": [
             {
               "_id": 1,
+              "encrypted_string": "string0"
+            },
+            {
+              "_id": 2,
               "encrypted_string": "string0"
             }
           ]
@@ -199,6 +205,10 @@
                   "subType": "06"
                 }
               }
+            },
+            {
+              "_id": 2,
+              "encrypted_string": "string0"
             }
           ],
           "collectionName": "default",
@@ -212,12 +222,25 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "listCollections": 1,
-                  "filter": {
-                    "name": "default"
-                  }
+                  "insert": "default",
+                  "documents": [
+                    {
+                      "_id": 2,
+                      "encrypted_string": "string0"
+                    }
+                  ],
+                  "ordered": true
                 },
-                "commandName": "listCollections"
+                "commandName": "insert"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "find": "default",
+                  "filter": {}
+                },
+                "commandName": "find"
               }
             },
             {
@@ -252,20 +275,76 @@
                 },
                 "commandName": "find"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Insert with bypassAutoEncryption for local schema",
+      "operations": [
+        {
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "_id": 2,
+              "encrypted_string": "string0"
             },
+            "bypassDocumentValidation": true
+          },
+          "object": "coll"
+        },
+        {
+          "name": "find",
+          "arguments": {
+            "filter": {}
+          },
+          "object": "coll",
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_string": "string0"
+            },
+            {
+              "_id": 2,
+              "encrypted_string": "string0"
+            }
+          ]
+        }
+      ],
+      "outcome": [
+        {
+          "documents": [
+            {
+              "_id": 1,
+              "encrypted_string": {
+                "$binary": {
+                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                  "subType": "06"
+                }
+              }
+            },
+            {
+              "_id": 2,
+              "encrypted_string": "string0"
+            }
+          ],
+          "collectionName": "default",
+          "databaseName": "default"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
             {
               "commandStartedEvent": {
                 "command": {
                   "insert": "default",
                   "documents": [
                     {
-                      "_id": 1,
-                      "encrypted_string": {
-                        "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                          "subType": "06"
-                        }
-                      }
+                      "_id": 2,
+                      "encrypted_string": "string0"
                     }
                   ],
                   "ordered": true
@@ -277,9 +356,7 @@
               "commandStartedEvent": {
                 "command": {
                   "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
+                  "filter": {}
                 },
                 "commandName": "find"
               }

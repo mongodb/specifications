@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "updateMany",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -23,8 +23,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -50,7 +49,26 @@
     {
       "databaseName": "default",
       "collectionName": "default",
-      "documents": [],
+      "documents": [
+        {
+          "_id": 1,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+              "subType": "06"
+            }
+          }
+        },
+        {
+          "_id": 2,
+          "encrypted_string": {
+            "$binary": {
+              "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+              "subType": "06"
+            }
+          }
+        }
+      ],
       "createOptions": {
         "validator": {
           "$jsonSchema": {
@@ -153,39 +171,32 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "updateMany with deterministic encryption",
       "operations": [
         {
-          "name": "insertOne",
-          "arguments": {
-            "document": {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          },
-          "object": "coll"
-        },
-        {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
-          "name": "find",
+          "name": "updateMany",
           "arguments": {
             "filter": {
-              "_id": 1
+              "encrypted_string": {
+                "$in": [
+                  "string0",
+                  "string1"
+                ]
+              }
+            },
+            "update": {
+              "$set": {
+                "encrypted_string": "string2",
+                "random": "abc"
+              }
             }
           },
           "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
+          "expectResult": {
+            "matchedCount": 2,
+            "modifiedCount": 2,
+            "upsertedCount": 0
+          }
         }
       ],
       "outcome": [
@@ -195,9 +206,24 @@
               "_id": 1,
               "encrypted_string": {
                 "$binary": {
-                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACQ76HWOut3DZtQuV90hp1aaCpZn95vZIaWmn+wrBehcEtcFwyJlBdlyzDzZTWPZCPgiFq72Wvh6Y7VbpU9NAp3A==",
                   "subType": "06"
                 }
+              },
+              "random": {
+                "$$type": "binData"
+              }
+            },
+            {
+              "_id": 2,
+              "encrypted_string": {
+                "$binary": {
+                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACQ76HWOut3DZtQuV90hp1aaCpZn95vZIaWmn+wrBehcEtcFwyJlBdlyzDzZTWPZCPgiFq72Wvh6Y7VbpU9NAp3A==",
+                  "subType": "06"
+                }
+              },
+              "random": {
+                "$$type": "binData"
               }
             }
           ],
@@ -256,68 +282,72 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "insert": "default",
-                  "documents": [
+                  "update": "default",
+                  "updates": [
                     {
-                      "_id": 1,
-                      "encrypted_string": {
-                        "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                          "subType": "06"
-                        }
-                      }
-                    }
-                  ],
-                  "ordered": true
-                },
-                "commandName": "insert"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
+                      "q": {
+                        "encrypted_string": {
                           "$in": [
                             {
                               "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
+                                "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                                "subType": "06"
+                              }
+                            },
+                            {
+                              "$binary": {
+                                "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+                                "subType": "06"
                               }
                             }
                           ]
                         }
                       },
-                      {
-                        "keyAltNames": {
-                          "$in": []
+                      "u": {
+                        "$set": {
+                          "encrypted_string": {
+                            "$binary": {
+                              "base64": "AQAAAAAAAAAAAAAAAAAAAAACQ76HWOut3DZtQuV90hp1aaCpZn95vZIaWmn+wrBehcEtcFwyJlBdlyzDzZTWPZCPgiFq72Wvh6Y7VbpU9NAp3A==",
+                              "subType": "06"
+                            }
+                          },
+                          "random": {
+                            "$$type": "binData"
+                          }
                         }
-                      }
-                    ]
-                  },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
+                      },
+                      "multi": true,
+                      "upsert": false
+                    }
+                  ],
+                  "ordered": true
                 },
-                "commandName": "find"
+                "commandName": "update"
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "description": "updateMany fails when filtering on a random field",
+      "operations": [
+        {
+          "name": "updateMany",
+          "arguments": {
+            "filter": {
+              "random": "abc"
+            },
+            "update": {
+              "$set": {
+                "encrypted_string": "string1"
+              }
+            }
+          },
+          "object": "coll",
+          "expectError": {
+            "errorContains": "Cannot query on fields encrypted with the randomized encryption"
+          }
         }
       ]
     }

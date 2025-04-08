@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "bulk",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -23,8 +23,7 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -153,39 +152,59 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "Bulk write with encryption",
       "operations": [
         {
-          "name": "insertOne",
+          "name": "bulkWrite",
           "arguments": {
-            "document": {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
+            "requests": [
+              {
+                "insertOne": {
+                  "document": {
+                    "_id": 1,
+                    "encrypted_string": "string0",
+                    "random": "abc"
+                  }
+                }
+              },
+              {
+                "insertOne": {
+                  "document": {
+                    "_id": 2,
+                    "encrypted_string": "string1"
+                  }
+                }
+              },
+              {
+                "updateOne": {
+                  "filter": {
+                    "encrypted_string": "string0"
+                  },
+                  "update": {
+                    "$set": {
+                      "encrypted_string": "string1"
+                    }
+                  }
+                }
+              },
+              {
+                "deleteOne": {
+                  "filter": {
+                    "$and": [
+                      {
+                        "encrypted_string": "string1"
+                      },
+                      {
+                        "_id": 2
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "ordered": true
           },
           "object": "coll"
-        },
-        {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
-          "name": "find",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          },
-          "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
         }
       ],
       "outcome": [
@@ -195,9 +214,12 @@
               "_id": 1,
               "encrypted_string": {
                 "$binary": {
-                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
                   "subType": "06"
                 }
+              },
+              "random": {
+                "$$type": "binData"
               }
             }
           ],
@@ -265,6 +287,18 @@
                           "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
                           "subType": "06"
                         }
+                      },
+                      "random": {
+                        "$$type": "binData"
+                      }
+                    },
+                    {
+                      "_id": 2,
+                      "encrypted_string": {
+                        "$binary": {
+                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+                          "subType": "06"
+                        }
                       }
                     }
                   ],
@@ -276,45 +310,69 @@
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
+                  "update": "default",
+                  "updates": [
+                    {
+                      "q": {
+                        "encrypted_string": {
+                          "$eq": {
+                            "$binary": {
+                              "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                              "subType": "06"
+                            }
+                          }
+                        }
+                      },
+                      "u": {
+                        "$set": {
+                          "encrypted_string": {
+                            "$binary": {
+                              "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+                              "subType": "06"
+                            }
+                          }
+                        }
+                      },
+                      "multi": false,
+                      "upsert": false
+                    }
+                  ],
+                  "ordered": true
                 },
-                "commandName": "find"
+                "commandName": "update"
               }
             },
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
-                          "$in": [
-                            {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
+                  "delete": "default",
+                  "deletes": [
+                    {
+                      "q": {
+                        "$and": [
+                          {
+                            "encrypted_string": {
+                              "$eq": {
+                                "$binary": {
+                                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==",
+                                  "subType": "06"
+                                }
                               }
                             }
-                          ]
-                        }
+                          },
+                          {
+                            "_id": {
+                              "$eq": 2
+                            }
+                          }
+                        ]
                       },
-                      {
-                        "keyAltNames": {
-                          "$in": []
-                        }
-                      }
-                    ]
-                  },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
+                      "limit": 1
+                    }
+                  ],
+                  "ordered": true
                 },
-                "commandName": "find"
+                "commandName": "delete"
               }
             }
           ]

@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "kmipKMS",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -12,19 +12,8 @@
         "id": "client0",
         "autoEncryptOpts": {
           "kmsProviders": {
-            "aws": {
-              "accessKeyId": {
-                "$$placeholder": 1
-              },
-              "secretAccessKey": {
-                "$$placeholder": 1
-              },
-              "sessionToken": {
-                "$$placeholder": 1
-              }
-            }
-          },
-          "keyExpirationMS": 1
+            "kmip": {}
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -55,14 +44,7 @@
         "validator": {
           "$jsonSchema": {
             "properties": {
-              "encrypted_w_altname": {
-                "encrypt": {
-                  "keyId": "/altname",
-                  "bsonType": "string",
-                  "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-                }
-              },
-              "encrypted_string": {
+              "encrypted_string_aws": {
                 "encrypt": {
                   "keyId": [
                     {
@@ -76,7 +58,35 @@
                   "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
               },
-              "random": {
+              "encrypted_string_azure": {
+                "encrypt": {
+                  "keyId": [
+                    {
+                      "$binary": {
+                        "base64": "AZURE+AAAAAAAAAAAAAAAA==",
+                        "subType": "04"
+                      }
+                    }
+                  ],
+                  "bsonType": "string",
+                  "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+              },
+              "encrypted_string_gcp": {
+                "encrypt": {
+                  "keyId": [
+                    {
+                      "$binary": {
+                        "base64": "GCP+AAAAAAAAAAAAAAAAAA==",
+                        "subType": "04"
+                      }
+                    }
+                  ],
+                  "bsonType": "string",
+                  "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+              },
+              "encrypted_string_local": {
                 "encrypt": {
                   "keyId": [
                     {
@@ -87,17 +97,28 @@
                     }
                   ],
                   "bsonType": "string",
-                  "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+                  "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
                 }
               },
-              "encrypted_string_equivalent": {
+              "encrypted_string_kmip": {
                 "encrypt": {
                   "keyId": [
                     {
                       "$binary": {
-                        "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                        "base64": "dBHpr8aITfeBQ15grpbLpQ==",
                         "subType": "04"
                       }
+                    }
+                  ],
+                  "bsonType": "string",
+                  "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+                }
+              },
+              "encrypted_string_kmip_delegated": {
+                "encrypt": {
+                  "keyId": [
+                    {
+                      "$uuid": "7411e9af-c688-4df7-8143-5e60ae96cba6"
                     }
                   ],
                   "bsonType": "string",
@@ -115,37 +136,70 @@
       "collectionName": "datakeys",
       "documents": [
         {
-          "status": 1,
           "_id": {
             "$binary": {
-              "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+              "base64": "dBHpr8aITfeBQ15grpbLpQ==",
               "subType": "04"
-            }
-          },
-          "masterKey": {
-            "provider": "aws",
-            "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-            "region": "us-east-1"
-          },
-          "updateDate": {
-            "$date": {
-              "$numberLong": "1552949630483"
             }
           },
           "keyMaterial": {
             "$binary": {
-              "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEqnsxXlR51T5EbEVezUqqKAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDHa4jo6yp0Z18KgbUgIBEIB74sKxWtV8/YHje5lv5THTl0HIbhSwM6EqRlmBiFFatmEWaeMk4tO4xBX65eq670I5TWPSLMzpp8ncGHMmvHqRajNBnmFtbYxN3E3/WjxmdbOOe+OXpnGJPcGsftc7cB2shRfA4lICPnE26+oVNXT6p0Lo20nY5XC7jyCO",
+              "base64": "eUYDyB0HuWb+lQgUwO+6qJQyTTDTY2gp9FbemL7ZFo0pvr0x6rm6Ff9OVUTGH6HyMKipaeHdiIJU1dzsLwvqKvi7Beh+U4iaIWX/K0oEg1GOsJc0+Z/in8gNHbGUYLmycHViM3LES3kdt7FdFSUl5rEBHrM71yoNEXImz17QJWMGOuT4x6yoi2pvnaRJwfrI4DjpmnnTrDMac92jgZehbg==",
               "subType": "00"
             }
           },
           "creationDate": {
             "$date": {
-              "$numberLong": "1552949630483"
+              "$numberLong": "1634220190041"
             }
+          },
+          "updateDate": {
+            "$date": {
+              "$numberLong": "1634220190041"
+            }
+          },
+          "status": {
+            "$numberInt": "0"
+          },
+          "masterKey": {
+            "provider": "kmip",
+            "keyId": "1"
           },
           "keyAltNames": [
             "altname",
-            "another_altname"
+            "kmip_altname"
+          ]
+        },
+        {
+          "_id": {
+            "$uuid": "7411e9af-c688-4df7-8143-5e60ae96cba6"
+          },
+          "keyMaterial": {
+            "$binary": {
+              "base64": "5TLMFWlguBWe5GUESTvOVtkdBsCrynhnV72XRyZ66/nk+EP9/1oEp1t1sg0+vwCTqULHjBiUE6DRx2mYD/Eup1+u2Jgz9/+1sV1drXeOPALNPkSgiZiDbIb67zRi+wTABEcKcegJH+FhmSGxwUoQAiHCsCbcvia5P8tN1lt98YQ=",
+              "subType": "00"
+            }
+          },
+          "creationDate": {
+            "$date": {
+              "$numberLong": "1634220190041"
+            }
+          },
+          "updateDate": {
+            "$date": {
+              "$numberLong": "1634220190041"
+            }
+          },
+          "status": {
+            "$numberInt": "0"
+          },
+          "masterKey": {
+            "provider": "kmip",
+            "delegated": true,
+            "keyId": "11"
+          },
+          "keyAltNames": [
+            "delegated"
           ]
         }
       ]
@@ -153,39 +207,17 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "Insert a document with auto encryption using KMIP KMS provider",
       "operations": [
         {
           "name": "insertOne",
           "arguments": {
             "document": {
               "_id": 1,
-              "encrypted_string": "string0"
+              "encrypted_string_kmip": "string0"
             }
           },
           "object": "coll"
-        },
-        {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
-          "name": "find",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          },
-          "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
         }
       ],
       "outcome": [
@@ -193,9 +225,9 @@
           "documents": [
             {
               "_id": 1,
-              "encrypted_string": {
+              "encrypted_string_kmip": {
                 "$binary": {
-                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                  "base64": "AXQR6a/GiE33gUNeYK6Wy6UCKCwtKFIsL8eKObDVxvqGupJNUk7kXswHhB7G5j/C1D+6no+Asra0KgSU43bTL3ooIBLVyIzbV5CDJYqzAsa4WQ==",
                   "subType": "06"
                 }
               }
@@ -231,7 +263,7 @@
                           "$in": [
                             {
                               "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
+                                "base64": "dBHpr8aITfeBQ15grpbLpQ==",
                                 "subType": "04"
                               }
                             }
@@ -245,10 +277,7 @@
                       }
                     ]
                   },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
+                  "$db": "keyvault"
                 },
                 "commandName": "find"
               }
@@ -260,9 +289,9 @@
                   "documents": [
                     {
                       "_id": 1,
-                      "encrypted_string": {
+                      "encrypted_string_kmip": {
                         "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
+                          "base64": "AXQR6a/GiE33gUNeYK6Wy6UCKCwtKFIsL8eKObDVxvqGupJNUk7kXswHhB7G5j/C1D+6no+Asra0KgSU43bTL3ooIBLVyIzbV5CDJYqzAsa4WQ==",
                           "subType": "06"
                         }
                       }
@@ -272,16 +301,55 @@
                 },
                 "commandName": "insert"
               }
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Insert a document with auto encryption using KMIP delegated KMS provider",
+      "operations": [
+        {
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "_id": 1,
+              "encrypted_string_kmip_delegated": "string0"
+            }
+          },
+          "object": "coll"
+        }
+      ],
+      "outcome": [
+        {
+          "documents": [
+            {
+              "_id": 1,
+              "encrypted_string_kmip_delegated": {
+                "$binary": {
+                  "base64": "AXQR6a/GiE33gUNeYK6Wy6YCkB+8NVfAAjIbvLqyXIg6g1a8tXrym92DPoqmxpcdQyH0vQM3aFNMz7tZwQBimKs29ztZV/LWjM633HhO5ACl9A==",
+                  "subType": "06"
+                }
+              }
+            }
+          ],
+          "collectionName": "default",
+          "databaseName": "default"
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
             {
               "commandStartedEvent": {
                 "command": {
-                  "find": "default",
+                  "listCollections": 1,
                   "filter": {
-                    "_id": 1
+                    "name": "default"
                   }
                 },
-                "commandName": "find"
+                "commandName": "listCollections"
               }
             },
             {
@@ -294,10 +362,7 @@
                         "_id": {
                           "$in": [
                             {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
-                              }
+                              "$uuid": "7411e9af-c688-4df7-8143-5e60ae96cba6"
                             }
                           ]
                         }
@@ -309,12 +374,29 @@
                       }
                     ]
                   },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
+                  "$db": "keyvault"
                 },
                 "commandName": "find"
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "command": {
+                  "insert": "default",
+                  "documents": [
+                    {
+                      "_id": 1,
+                      "encrypted_string_kmip_delegated": {
+                        "$binary": {
+                          "base64": "AXQR6a/GiE33gUNeYK6Wy6YCkB+8NVfAAjIbvLqyXIg6g1a8tXrym92DPoqmxpcdQyH0vQM3aFNMz7tZwQBimKs29ztZV/LWjM633HhO5ACl9A==",
+                          "subType": "06"
+                        }
+                      }
+                    }
+                  ],
+                  "ordered": true
+                },
+                "commandName": "insert"
               }
             }
           ]

@@ -1,9 +1,9 @@
 {
-  "description": "keyCache",
+  "description": "timeoutMS",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.1.10"
+      "minServerVersion": "4.4"
     }
   ],
   "createEntities": [
@@ -23,9 +23,19 @@
                 "$$placeholder": 1
               }
             }
-          },
-          "keyExpirationMS": 1
+          }
         },
+        "observeEvents": [
+          "commandStartedEvent"
+        ],
+        "uriOptions": {
+          "timeoutMS": 50
+        }
+      }
+    },
+    {
+      "client": {
+        "id": "client1",
         "observeEvents": [
           "commandStartedEvent"
         ]
@@ -35,21 +45,21 @@
       "database": {
         "id": "db",
         "client": "client0",
-        "databaseName": "default"
+        "databaseName": "cse-timeouts-db"
       }
     },
     {
       "collection": {
         "id": "coll",
         "database": "db",
-        "collectionName": "default"
+        "collectionName": "cse-timeouts-coll"
       }
     }
   ],
   "initialData": [
     {
-      "databaseName": "default",
-      "collectionName": "default",
+      "databaseName": "cse-timeouts-db",
+      "collectionName": "cse-timeouts-coll",
       "documents": [],
       "createOptions": {
         "validator": {
@@ -153,56 +163,41 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "timeoutMS applied to listCollections to get collection schema",
       "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client1",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listCollections"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 60
+              }
+            }
+          }
+        },
         {
           "name": "insertOne",
           "arguments": {
             "document": {
               "_id": 1,
-              "encrypted_string": "string0"
+              "encrypted_string": "string0",
+              "random": "abc"
             }
           },
-          "object": "coll"
-        },
-        {
-          "name": "wait",
           "object": "coll",
-          "arguments": {
-            "ms": 50
+          "expectResult": {
+            "isTimeoutError": true
           }
-        },
-        {
-          "name": "find",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          },
-          "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "documents": [
-            {
-              "_id": 1,
-              "encrypted_string": {
-                "$binary": {
-                  "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                  "subType": "06"
-                }
-              }
-            }
-          ],
-          "collectionName": "default",
-          "databaseName": "default"
         }
       ],
       "expectEvents": [
@@ -214,110 +209,59 @@
                 "command": {
                   "listCollections": 1,
                   "filter": {
-                    "name": "default"
+                    "name": "cse-timeouts-coll"
+                  },
+                  "maxTimeMS": {
+                    "$$type": [
+                      "int",
+                      "long"
+                    ]
                   }
                 },
                 "commandName": "listCollections"
               }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
-                          "$in": [
-                            {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "keyAltNames": {
-                          "$in": []
-                        }
-                      }
-                    ]
-                  },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "insert": "default",
-                  "documents": [
-                    {
-                      "_id": 1,
-                      "encrypted_string": {
-                        "$binary": {
-                          "base64": "AQAAAAAAAAAAAAAAAAAAAAACwj+3zkv2VM+aTfk60RqhXq6a/77WlLwu/BxXFkL7EppGsju/m8f0x5kBDD3EZTtGALGXlym5jnpZAoSIkswHoA==",
-                          "subType": "06"
-                        }
-                      }
-                    }
-                  ],
-                  "ordered": true
-                },
-                "commandName": "insert"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
-                          "$in": [
-                            {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "keyAltNames": {
-                          "$in": []
-                        }
-                      }
-                    ]
-                  },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
-                },
-                "commandName": "find"
-              }
             }
           ]
+        }
+      ]
+    },
+    {
+      "description": "remaining timeoutMS applied to find to get keyvault data",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client1",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 2
+              },
+              "data": {
+                "failCommands": [
+                  "listCollections",
+                  "find"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 30
+              }
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "_id": 1,
+              "encrypted_string": "string0",
+              "random": "abc"
+            }
+          },
+          "object": "coll",
+          "expectResult": {
+            "isTimeoutError": true
+          }
         }
       ]
     }

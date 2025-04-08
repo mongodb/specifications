@@ -1,5 +1,5 @@
 {
-  "description": "keyCache",
+  "description": "awsTemporary",
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
@@ -12,19 +12,8 @@
         "id": "client0",
         "autoEncryptOpts": {
           "kmsProviders": {
-            "aws": {
-              "accessKeyId": {
-                "$$placeholder": 1
-              },
-              "secretAccessKey": {
-                "$$placeholder": 1
-              },
-              "sessionToken": {
-                "$$placeholder": 1
-              }
-            }
-          },
-          "keyExpirationMS": 1
+            "awsTemporary": {}
+          }
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -42,6 +31,33 @@
       "collection": {
         "id": "coll",
         "database": "db",
+        "collectionName": "default"
+      }
+    },
+    {
+      "client": {
+        "id": "client1",
+        "autoEncryptOpts": {
+          "kmsProviders": {
+            "awsTemporaryNoSessionToken": {}
+          }
+        },
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "db1",
+        "client": "client1",
+        "databaseName": "default"
+      }
+    },
+    {
+      "collection": {
+        "id": "coll1",
+        "database": "db1",
         "collectionName": "default"
       }
     }
@@ -153,7 +169,7 @@
   ],
   "tests": [
     {
-      "description": "Insert with deterministic encryption, then find it",
+      "description": "Insert a document with auto encryption using the AWS provider with temporary credentials",
       "operations": [
         {
           "name": "insertOne",
@@ -164,28 +180,6 @@
             }
           },
           "object": "coll"
-        },
-        {
-          "name": "wait",
-          "object": "coll",
-          "arguments": {
-            "ms": 50
-          }
-        },
-        {
-          "name": "find",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          },
-          "object": "coll",
-          "expectResult": [
-            {
-              "_id": 1,
-              "encrypted_string": "string0"
-            }
-          ]
         }
       ],
       "outcome": [
@@ -245,10 +239,7 @@
                       }
                     ]
                   },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
+                  "$db": "keyvault"
                 },
                 "commandName": "find"
               }
@@ -272,52 +263,26 @@
                 },
                 "commandName": "insert"
               }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "default",
-                  "filter": {
-                    "_id": 1
-                  }
-                },
-                "commandName": "find"
-              }
-            },
-            {
-              "commandStartedEvent": {
-                "command": {
-                  "find": "datakeys",
-                  "filter": {
-                    "$or": [
-                      {
-                        "_id": {
-                          "$in": [
-                            {
-                              "$binary": {
-                                "base64": "AAAAAAAAAAAAAAAAAAAAAA==",
-                                "subType": "04"
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "keyAltNames": {
-                          "$in": []
-                        }
-                      }
-                    ]
-                  },
-                  "$db": "keyvault",
-                  "readConcern": {
-                    "level": "majority"
-                  }
-                },
-                "commandName": "find"
-              }
             }
           ]
+        }
+      ]
+    },
+    {
+      "description": "Insert with invalid temporary credentials",
+      "operations": [
+        {
+          "name": "insertOne",
+          "arguments": {
+            "document": {
+              "_id": 1,
+              "encrypted_string": "string0"
+            }
+          },
+          "object": "coll1",
+          "expectError": {
+            "errorContains": "security token"
+          }
         }
       ]
     }
