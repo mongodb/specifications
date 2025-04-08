@@ -33,6 +33,9 @@ initialData:
               'queries': {'queryType': 'equality', 'contention': {'$numberLong': '0'}}},
            {'keyId': {'$binary': {'base64': 'q83vqxI0mHYSNBI0VniQEg==', 'subType': '04'}},
               'path': 'encryptedUnindexed', 'bsonType': 'string'}]}
+  - databaseName: keyvault
+    collectionName: datakeys
+    documents: []
 tests:
   - description: "FLE2 encrypt fails with missing key"
     operations:

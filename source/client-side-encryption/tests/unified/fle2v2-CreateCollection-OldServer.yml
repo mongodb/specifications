@@ -43,23 +43,23 @@ tests:
             server. Upgrade server to use Queryable Encryption."
       # Assert no collections were created.
       - name: assertCollectionNotExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: &database_name "default"
-          collection: &esc_collection_name "enxcol_.encryptedCollection.esc"
+          databaseName: &database_name "default"
+          collectionName: &esc_collection_name "enxcol_.encryptedCollection.esc"
       # ecc collection is no longer created for QEv2
       - name: assertCollectionNotExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: *database_name
-          collection: &ecc_collection_name "enxcol_.encryptedCollection.ecc"
+          databaseName: *database_name
+          collectionName: &ecc_collection_name "enxcol_.encryptedCollection.ecc"
       - name: assertCollectionNotExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: *database_name
-          collection: &ecoc_collection_name "enxcol_.encryptedCollection.ecoc"
+          databaseName: *database_name
+          collectionName: &ecoc_collection_name "enxcol_.encryptedCollection.ecoc"
       - name: assertCollectionNotExists
-        object: "coll"
+        object: testRunner
         arguments:
-          database: *database_name
-          collection: encryptedCollection
+          databaseName: *database_name
+          collectionName: encryptedCollection
