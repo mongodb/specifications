@@ -14,7 +14,7 @@
     {
       "description": "Simple Vector PACKED_BIT",
       "valid": true,
-      "vector": [127, 8],
+      "vector": [127, 7],
       "dtype_hex": "0x10",
       "dtype_alias": "PACKED_BIT",
       "padding": 0,
