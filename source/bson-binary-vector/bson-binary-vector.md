@@ -184,7 +184,7 @@ Drivers MUST validate vector metadata and raise an error if any invariant is vio
 
 - Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within \[0, 7\] for PACKED_BIT.
 - A PACKED_BIT vector MUST NOT be empty if padding is in the range \[1, 7\].
-- For a PACKED_BIT vector, bits lower than the given padding (those ignored) must be zero.
+- For a PACKED_BIT vector, ignored bits must be zero.
 - When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and
     padding MUST be a multiple of 4 bytes.
 
@@ -256,7 +256,7 @@ See the [README](tests/README.md) for tests.
 
 ## Changelog
 
-- 2025-04-08: In PACKED_BIT vectors, bits lower than the given padding (those ignored) must be zero.
+- 2025-04-08: In PACKED_BIT vectors, ignored bits must be zero.
 
 - 2025-03-07: Update tests to use Extended JSON representation of +/-Infinity. (DRIVERS-3095)
 
