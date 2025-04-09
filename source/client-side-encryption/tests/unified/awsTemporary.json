@@ -41,7 +41,9 @@
         "autoEncryptOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "awsTemporaryNoSessionToken": {}
+            "awsTemporaryNoSessionToken": {
+              "$$placeholder": 1
+            }
           }
         },
         "observeEvents": [
