@@ -168,7 +168,7 @@ InsertOne: {
 ```
 
 Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
-`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteError` (referred to as
+`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteException` (referred to as
 `error`).
 
 Assert that `error.writeConcernErrors` has a length of 2.
@@ -216,7 +216,7 @@ Construct a list of write models (referred to as `models`) with `model` repeated
 Test that an unordered bulk write collects `WriteError`s across batches.
 
 Execute `bulkWrite` on `client` with `models` and `ordered` set to false. Assert that the bulk write fails and returns a
-`BulkWriteError` (referred to as `unorderedError`).
+`BulkWriteException` (referred to as `unorderedError`).
 
 Assert that `unorderedError.writeErrors` has a length of `maxWriteBatchSize + 1`.
 
@@ -227,7 +227,7 @@ Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 Test that an ordered bulk write does not execute further batches when a `WriteError` occurs.
 
 Execute `bulkWrite` on `client` with `models` and `ordered` set to true. Assert that the bulk write fails and returns a
-`BulkWriteError` (referred to as `orderedError`).
+`BulkWriteException` (referred to as `orderedError`).
 
 Assert that `orderedError.writeErrors` has a length of 1.
 
@@ -356,7 +356,7 @@ UpdateOne {
 ```
 
 Execute `bulkWrite` on `client` with `models` and `verboseResults` set to true. Assert that the bulk write fails and
-returns a `BulkWriteError` (referred to as `bulkWriteError`).
+returns a `BulkWriteException` (referred to as `bulkWriteError`).
 
 Assert that `bulkWriteError.error` is populated with an error (referred to as `topLevelError`). Assert that
 `topLevelError.errorCode` is equal to 8.
