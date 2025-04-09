@@ -427,6 +427,14 @@
             }
           }
         },
+        "awsTemporary": {
+          "type": "object",
+          "properties": {}
+        },
+        "awsTemporaryNoSessionToken": {
+          "type": "object",
+          "properties": {}
+        },
         "^azure(:[a-zA-Z0-9_]+)?$": {
           "type": "object",
           "additionalProperties": false,
