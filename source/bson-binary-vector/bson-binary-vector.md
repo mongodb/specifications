@@ -184,6 +184,7 @@ Drivers MUST validate vector metadata and raise an error if any invariant is vio
 
 - Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within \[0, 7\] for PACKED_BIT.
 - A PACKED_BIT vector MUST NOT be empty if padding is in the range \[1, 7\].
+- For a PACKED_BIT vector, ignored bits must be zero.
 - When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and
     padding MUST be a multiple of 4 bytes.
 
@@ -237,15 +238,25 @@ See the [README](tests/README.md) for tests.
 ## FAQ
 
 - What MongoDB Server version does this apply to?
+
     - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
+
 - In PACKED_BIT, why would one choose to use integers in \[0, 256)?
+
     - This follows a well-established precedent for packing binary-valued arrays into bytes (8 bits), This technique is
         widely used across different fields, such as data compression, communication protocols, and file formats, where
         you want to store or transmit binary data more efficiently by grouping 8 bits into a single byte (uint8). For an
         example in Python, see
         [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).
 
+- In PACKED_BIT, why are ignored bits required to be zero?
+
+    - To ensure the same data representation has the same encoding. For drivers supporting comparison operations, this
+        avoids comparing different unused bits.
+
 ## Changelog
+
+- 2025-04-08: In PACKED_BIT vectors, ignored bits must be zero.
 
 - 2025-03-07: Update tests to use Extended JSON representation of +/-Infinity. (DRIVERS-3095)
 
