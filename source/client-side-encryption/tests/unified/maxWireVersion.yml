@@ -10,9 +10,9 @@ createEntities:
   - client:
       id: &client0 client0
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           aws: {}
-        keyVaultNamespace: keyvault.datakeys
         extraOptions:
           mongocryptdBypassSpawn: true # mongocryptd probably won't be on the path. mongocryptd was introduced in server 4.2.
   - database:
