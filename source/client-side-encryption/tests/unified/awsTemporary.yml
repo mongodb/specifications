@@ -6,6 +6,7 @@ createEntities:
   - client:
       id: "client0"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           awsTemporary: {}
       observeEvents:
@@ -21,8 +22,9 @@ createEntities:
   - client:
       id: "client1"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          awsTemporaryNoSessionToken: {}
+          awsTemporaryNoSessionToken: { $$placeholder: 1 }
       observeEvents:
         - commandStartedEvent
   - database:

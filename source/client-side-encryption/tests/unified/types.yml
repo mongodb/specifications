@@ -6,6 +6,7 @@ createEntities:
   - client:
       id: "client0"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         schemaMap:
           "default.default": {'properties': {'encrypted_objectId': {'encrypt': {'keyId': [
                      '$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}],

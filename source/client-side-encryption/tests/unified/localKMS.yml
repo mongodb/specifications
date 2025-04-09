@@ -6,10 +6,11 @@ createEntities:
   - client:
       id: "client0"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
-          local: {'key': {'$binary': {'base64': 'Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk',
-                'subType': '00'}}}
+          local:
+            key: Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
       observeEvents:
         - commandStartedEvent
   - database:

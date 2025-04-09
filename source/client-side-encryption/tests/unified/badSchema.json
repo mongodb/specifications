@@ -11,6 +11,7 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "schemaMap": {
             "default.default": {
               "properties": {
@@ -69,6 +70,7 @@
       "client": {
         "id": "client1",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "schemaMap": {
             "default.default": {
               "properties": {
@@ -130,6 +132,7 @@
       "client": {
         "id": "client2",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "schemaMap": {
             "default.default": {
               "properties": {
@@ -188,6 +191,7 @@
       "client": {
         "id": "client3",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "schemaMap": {
             "default.default": {
               "anyOf": [

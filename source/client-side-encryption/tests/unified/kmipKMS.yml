@@ -6,6 +6,7 @@ createEntities:
   - client:
       id: "client0"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           kmip: {}
       observeEvents:

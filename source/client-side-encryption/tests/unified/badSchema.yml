@@ -6,6 +6,7 @@ createEntities:
   - client:
       id: "client0"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         schemaMap:
           "default.default": {'properties': {'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}, 'bsonType': 'array'}
         kmsProviders:
@@ -23,6 +24,7 @@ createEntities:
   - client:
       id: "client1"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         schemaMap:
           "default.default": {'properties': {'foo': {'properties': {'bar': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}}}}
         kmsProviders:
@@ -40,6 +42,7 @@ createEntities:
   - client:
       id: "client2"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         schemaMap:
           "default.default": {'properties': {'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}, 'bsonType': 'object'}}}
         kmsProviders:
@@ -57,6 +60,7 @@ createEntities:
   - client:
       id: "client3"
       autoEncryptOpts:
+        keyVaultNamespace: keyvault.datakeys
         schemaMap:
           "default.default": {'anyOf': [{'properties': {'encrypted_string': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}}}}]}
         kmsProviders:

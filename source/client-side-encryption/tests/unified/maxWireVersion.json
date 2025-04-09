@@ -3,7 +3,8 @@
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
-      "maxServerVersion": "4.0.99"
+      "maxServerVersion": "4.0.99",
+      "csfle": true
     }
   ],
   "createEntities": [
@@ -11,10 +12,10 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {}
           },
-          "keyVaultNamespace": "keyvault.datakeys",
           "extraOptions": {
             "mongocryptdBypassSpawn": true
           }

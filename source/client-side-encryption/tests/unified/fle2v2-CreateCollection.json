@@ -16,6 +16,7 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {
               "accessKeyId": {
@@ -69,6 +70,7 @@
       "client": {
         "id": "client1",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {
               "accessKeyId": {
@@ -117,6 +119,7 @@
       "client": {
         "id": "client2",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "aws": {
               "accessKeyId": {

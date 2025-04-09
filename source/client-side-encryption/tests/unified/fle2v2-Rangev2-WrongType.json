@@ -17,6 +17,7 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "local": {
               "key": {
