@@ -583,7 +583,7 @@ InsertOne {
 ```
 
 Execute `bulkWrite` on `client` with `largeDocumentModel`. Assert that an error (referred to as `error`) is returned.
-Assert that `error` is a client error.
+Assert that `error` is a client error. Assert the returned `BulkWriteException.partialResult` is unset.
 
 #### Case 2: `namespace` too large
 
@@ -603,7 +603,7 @@ InsertOne {
 ```
 
 Execute `bulkWrite` on `client` with `largeNamespaceModel`. Assert that an error (referred to as `error`) is returned.
-Assert that `error` is a client error.
+Assert that `error` is a client error. Assert the returned `BulkWriteException.partialResult` is unset.
 
 ### 13. `MongoClient.bulkWrite` returns an error if auto-encryption is configured
 
@@ -637,7 +637,8 @@ InsertOne {
 ```
 
 Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned. Assert that
-`error` is a client error containing the message: "bulkWrite does not currently support automatic encryption".
+`error` is a client error containing the message: "bulkWrite does not currently support automatic encryption". Assert
+the returned `BulkWriteException.partialResult` is unset.
 
 ### 14. `explain` helpers allow users to specify `maxTimeMS`
 
