@@ -168,8 +168,8 @@ InsertOne: {
 ```
 
 Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
-`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteException` (referred to as
-`error`).
+`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteException` (referred to
+as `error`).
 
 Assert that `error.writeConcernErrors` has a length of 2.
 
