@@ -1,11 +1,11 @@
 {
-  "description": "Operation timeouts do not cause connection churn",
+  "description": "Connection churn is prevented by reading pending responses during connection checkout",
   "schemaVersion": "1.9",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4",
       "topologies": [
-        "standalone",
+        "single",
         "replicaset"
       ]
     }
@@ -29,7 +29,10 @@
           "commandSucceededEvent",
           "connectionCheckedOutEvent",
           "connectionCheckedInEvent",
-          "connectionClosedEvent"
+          "connectionClosedEvent",
+          "connectionPendingReadSucceeded",
+          "connectionPendingReadStarted",
+          "connectionPendingReadFailed"
         ]
       }
     },
@@ -57,8 +60,18 @@
   ],
   "tests": [
     {
-      "description": "Write operation with successful pending read",
+      "description": "non-timeout write op with response and no error",
       "operations": [
+        {
+          "name": "runCommand",
+          "object": "test",
+          "command_name": "ping",
+          "arguments": {
+            "command": {
+              "ping": 1
+            }
+          }
+        },
         {
           "name": "failPoint",
           "object": "testRunner",
@@ -74,7 +87,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 750
+                "blockTimeMS": 100
               }
             }
           }
@@ -83,7 +96,7 @@
           "name": "insertOne",
           "object": "coll",
           "arguments": {
-            "timeoutMS": 50,
+            "timeoutMS": 75,
             "document": {
               "_id": 3,
               "x": 1
@@ -107,6 +120,11 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandSucceededEvent": {
+                "commandName": "ping"
+              }
+            },
             {
               "commandFailedEvent": {
                 "commandName": "insert"
@@ -134,14 +152,36 @@
             },
             {
               "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionPendingReadStarted": {}
+            },
+            {
+              "connectionPendingReadSucceeded": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "Concurrent write operation with successful pending read",
+      "description": "non-timeout op with no response",
       "operations": [
+        {
+          "name": "runCommand",
+          "object": "test",
+          "command_name": "ping",
+          "arguments": {
+            "command": {
+              "ping": 1
+            }
+          }
+        },
         {
           "name": "failPoint",
           "object": "testRunner",
@@ -157,139 +197,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 750
-              }
-            }
-          }
-        },
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
-              {
-                "thread": {
-                  "id": "thread0"
-                }
-              },
-              {
-                "thread": {
-                  "id": "thread1"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "runOnThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread0",
-            "operation": {
-              "name": "insertOne",
-              "object": "coll",
-              "arguments": {
-                "timeoutMS": 500,
-                "document": {
-                  "_id": 2
-                }
-              }
-            },
-            "expectError": {
-              "isTimeoutError": true
-            }
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "connectionCheckedOutEvent": {}
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "runOnThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread1",
-            "operation": {
-              "name": "insertOne",
-              "object": "coll",
-              "arguments": {
-                "document": {
-                  "_id": 3
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "waitForThread",
-          "object": "testRunner",
-          "arguments": {
-            "thread": "thread1"
-          }
-        }
-      ],
-      "expectEvents": [
-        {
-          "client": "client",
-          "events": [
-            {
-              "commandFailedEvent": {
-                "commandName": "insert"
-              }
-            },
-            {
-              "commandSucceededEvent": {
-                "commandName": "insert"
-              }
-            }
-          ]
-        },
-        {
-          "client": "client",
-          "eventType": "cmap",
-          "events": [
-            {
-              "connectionCheckedOutEvent": {}
-            },
-            {
-              "connectionCheckedInEvent": {}
-            },
-            {
-              "connectionCheckedOutEvent": {}
-            },
-            {
-              "connectionCheckedInEvent": {}
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "Write operation with unsuccessful pending read",
-      "operations": [
-        {
-          "name": "failPoint",
-          "object": "testRunner",
-          "arguments": {
-            "client": "failPointClient",
-            "failPoint": {
-              "configureFailPoint": "failCommand",
-              "mode": {
-                "times": 1
-              },
-              "data": {
-                "failCommands": [
-                  "insert"
-                ],
-                "blockConnection": true,
-                "blockTimeMS": 1100
+                "blockTimeMS": 3100
               }
             }
           }
@@ -309,13 +217,11 @@
           }
         },
         {
-          "name": "insertOne",
+          "name": "findOne",
           "object": "coll",
           "arguments": {
-            "timeoutMS": 1000,
-            "document": {
-              "_id": 3,
-              "x": 1
+            "filter": {
+              "_id": 1
             }
           },
           "expectError": {
@@ -327,6 +233,11 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandSucceededEvent": {
+                "commandName": "ping"
+              }
+            },
             {
               "commandFailedEvent": {
                 "commandName": "insert"
@@ -343,6 +254,18 @@
             },
             {
               "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionPendingReadStarted": {}
+            },
+            {
+              "connectionPendingReadFailed": {}
             },
             {
               "connectionClosedEvent": {
@@ -354,8 +277,18 @@
       ]
     },
     {
-      "description": "Read operation with successful pending read",
+      "description": "timeout write op with response and no error",
       "operations": [
+        {
+          "name": "runCommand",
+          "object": "test",
+          "command_name": "ping",
+          "arguments": {
+            "command": {
+              "ping": 1
+            }
+          }
+        },
         {
           "name": "failPoint",
           "object": "testRunner",
@@ -368,12 +301,26 @@
               },
               "data": {
                 "failCommands": [
-                  "find"
+                  "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 750
+                "blockTimeMS": 150
               }
             }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "coll",
+          "arguments": {
+            "timeoutMS": 75,
+            "document": {
+              "_id": 3,
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
           }
         },
         {
@@ -388,15 +335,6 @@
           "expectError": {
             "isTimeoutError": true
           }
-        },
-        {
-          "name": "findOne",
-          "object": "coll",
-          "arguments": {
-            "filter": {
-              "_id": 1
-            }
-          }
         }
       ],
       "expectEvents": [
@@ -404,13 +342,13 @@
           "client": "client",
           "events": [
             {
-              "commandFailedEvent": {
-                "commandName": "find"
+              "commandSucceededEvent": {
+                "commandName": "ping"
               }
             },
             {
-              "commandSucceededEvent": {
-                "commandName": "find"
+              "commandFailedEvent": {
+                "commandName": "insert"
               }
             }
           ]
@@ -430,14 +368,30 @@
             },
             {
               "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionPendingReadStarted": {}
+            },
+            {
+              "connectionPendingReadFailed": {}
             }
           ]
         }
       ]
     },
     {
-      "description": "Read operation with unsuccessful pending read",
+      "description": "timeout write op exceeds pending response timeout",
       "operations": [
+        {
+          "name": "runCommand",
+          "object": "test",
+          "command_name": "ping",
+          "arguments": {
+            "command": {
+              "ping": 1
+            }
+          }
+        },
         {
           "name": "failPoint",
           "object": "testRunner",
@@ -450,12 +404,33 @@
               },
               "data": {
                 "failCommands": [
-                  "find"
+                  "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 1100
+                "blockTimeMS": 150
               }
             }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "coll",
+          "arguments": {
+            "timeoutMS": 75,
+            "document": {
+              "_id": 3,
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 3000
           }
         },
         {
@@ -470,19 +445,6 @@
           "expectError": {
             "isTimeoutError": true
           }
-        },
-        {
-          "name": "findOne",
-          "object": "coll",
-          "arguments": {
-            "timeoutMS": 1000,
-            "filter": {
-              "_id": 1
-            }
-          },
-          "expectError": {
-            "isTimeoutError": true
-          }
         }
       ],
       "expectEvents": [
@@ -490,8 +452,13 @@
           "client": "client",
           "events": [
             {
+              "commandSucceededEvent": {
+                "commandName": "ping"
+              }
+            },
+            {
               "commandFailedEvent": {
-                "commandName": "find"
+                "commandName": "insert"
               }
             }
           ]
@@ -505,6 +472,18 @@
             },
             {
               "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
+            },
+            {
+              "connectionPendingReadStarted": {}
+            },
+            {
+              "connectionPendingReadFailed": {}
             },
             {
               "connectionClosedEvent": {
