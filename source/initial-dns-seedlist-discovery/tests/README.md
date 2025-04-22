@@ -121,6 +121,10 @@ resolving to `db.cluster.localhost` produces a seedlist containing `db.cluster.l
 Assert that configuring a MongoClient with any `srvHostValidator` and the non-SRV URI `mongodb://localhost:27017` throws
 an error.
 
+### 14. Do not throw when return address is identical to SRV hostname and SRV hostname has three or more `.` separated parts
+
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.mongodb.com`
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,
