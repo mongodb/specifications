@@ -31,7 +31,7 @@ laggy secondaries to mitigate the risk of very stale reads.
 - Provide a client-side knob to adjust the tradeoff between network-local reads and data recency.
 - Be robust in the face of clock skew between the client and servers, and skew between the primary and secondaries.
 - Avoid "inadvertent primary read preference": prevent a maxStalenessSeconds setting so small it forces all reads to the
-  primary regardless of actual replication lag.
+    primary regardless of actual replication lag.
 - Specify how mongos routers and shards track the opTimes of Config Servers as Replica Sets ("CSRS").
 
 ### Non-Goals
@@ -40,7 +40,7 @@ laggy secondaries to mitigate the risk of very stale reads.
 - Support small values for max staleness.
 - Make a consistency guarantee resembling readConcern "afterOpTime".
 - Specify how maxStalenessSeconds interacts with readConcern "afterOpTime" in drivers (distinct from the goal for
-  routers and shards).
+    routers and shards).
 - Compensate for the duration of server checks in staleness estimations.
 
 ## Specification
@@ -51,7 +51,7 @@ laggy secondaries to mitigate the risk of very stale reads.
 other read preference options like "readPreference" and "tag_sets". Clients MUST also recognize it in the connection
 string:
 
-```
+```text
 mongodb://host/?readPreference=secondary&maxStalenessSeconds=120
 ```
 
@@ -84,9 +84,9 @@ period as `idleWritePeriodMS` with constant value 10,000.
 A primary's or secondary's hello response contains a "lastWrite" subdocument with these fields (SERVER-8858):
 
 - lastWriteDate: a BSON UTC datetime, the wall-clock time of the **primary** when it most recently recorded a write to
-  the oplog.
+    the oplog.
 - opTime: an opaque value representing the position in the oplog of the most recently seen write. Needed for sharding,
-  not used for the maxStalenessSeconds read preference option.
+    not used for the maxStalenessSeconds read preference option.
 
 ### Wire Version
 
@@ -104,7 +104,7 @@ selection throws an error.
 
 When there is a known primary, a secondary S's staleness is estimated with this formula:
 
-```
+```javascript
 (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 ```
 
@@ -113,7 +113,7 @@ estimate could be temporarily negative.
 
 When there is no known primary, a secondary S's staleness is estimated with this formula:
 
-```
+```javascript
 SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
 ```
 
@@ -122,21 +122,21 @@ Where "SMax" is the secondary with the greatest lastWriteDate.
 #### Explanation of Staleness Estimate With Primary
 
 1. When the client checks the primary, it gets the delta between the primary's lastWriteDate and the client clock. Call
-   this "Client_to_Primary".
+    this "Client_to_Primary".
 2. When the client checks a secondary, it gets the delta between the secondary's lastWriteDate and the client clock.
-   Call this "Client_to_Secondary".
+    Call this "Client_to_Secondary".
 3. The difference of these two is an estimate of the delta between the primary's and secondary's lastWriteDate.
 
 Thus:
 
-```
+```javascript
 staleness = Client_to_Secondary - Client_to_Primary
 = (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate)
 ```
 
 Finally, add heartbeatFrequencyMS:
 
-```
+```javascript
 (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 ```
 
@@ -156,7 +156,7 @@ maxWireVersion 5 or greater. (See Server Discovery and Monitoring Spec for detai
 
 When a router or shard selects a CSRS member to read from with readConcern like:
 
-```
+```yaml
 readConcern: { afterOpTime: OPTIME }
 ```
 
@@ -166,7 +166,7 @@ readConcern: { afterOpTime: OPTIME }
 2. Filter out those whose last known opTime is older than OPTIME.
 3. If no servers remain, select the primary.
 4. Otherwise, select randomly one of the CSRS members whose roundTripTime is within localThresholdMS of the member with
-   the fastest roundTripTime.
+    the fastest roundTripTime.
 
 Step 4 is the standard localThresholdMS logic from the Server Selection Spec.
 
@@ -189,7 +189,7 @@ lastWriteDate is 10.
 
 Then, S reports its lastWriteDate is 0. The client estimates S's staleness as:
 
-```
+```javascript
 (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 = (60 - 0) - (60 - 10) + 10
 = 20 seconds
@@ -206,7 +206,7 @@ The client re-checks P and S 10 seconds later, at time 70 by the client's clock.
 of 5: it has fallen 5 seconds further behind. The client updates S's lastWriteDate and lastUpdateTime. The client now
 estimates S's staleness as:
 
-```
+```javascript
 (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 = (70 - 5) - (60 - 10) + 10
 = 25 seconds
@@ -215,7 +215,7 @@ estimates S's staleness as:
 Say that P's response arrives 10 seconds later, at client time 80, and reports its lastWriteDate is 30. S's staleness is
 still 25 seconds:
 
-```
+```javascript
 (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 = (70 - 5) - (80 - 30) + 10
 = 25 seconds
@@ -245,7 +245,7 @@ what.)
 
 S2's staleness estimate is:
 
-```
+```javascript
 SMax.lastWriteDate - S.lastWriteDate + heartbeatFrequencyMS
 = 20 - 5 + 10
 = 25
@@ -264,7 +264,7 @@ lastWriteDate is 60, the secondary reports 50.
 
 The client estimates S's staleness as:
 
-```
+```javascript
 (S.lastUpdateTime - S.lastWriteDate) - (P.lastUpdateTime - P.lastWriteDate) + heartbeatFrequencyMS
 = (60 - 50) - (60 - 60) + 0.5
 = 10.5
@@ -281,13 +281,13 @@ The same story as a table:
 
 In this scenario the actual secondary lag is between 0 and 10 seconds. But the staleness estimate can be as large as:
 
-```
+```javascript
 staleness = idleWritePeriodMS + heartbeatFrequencyMS
 ```
 
 To ensure the secondary is always eligible for reads in an idle replica set, we require:
 
-```
+```javascript
 maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
 ```
 
@@ -296,10 +296,10 @@ maxStalenessSeconds * 1000 >= heartbeatFrequencyMS + idleWritePeriodMS
 Python scripts in this document's source directory:
 
 - `test_max_staleness_spo.py`: Uses `scipy.optimize` to determine worst-case accuracy of the staleness estimate in an
-  idle replica set.
+    idle replica set.
 - `test_staleness_estimate.py`: Tests whether a client would correctly select a secondary from an idle replica set,
-  given a random distribution of values for maxStalenessSeconds, heartbeatFrequencyMS, lastWriteDate, and
-  lastUpdateTime.
+    given a random distribution of values for maxStalenessSeconds, heartbeatFrequencyMS, lastWriteDate, and
+    lastUpdateTime.
 
 ## Test Plan
 
@@ -324,12 +324,12 @@ Consider a scenario in which the primary does *not*:
 
 1. There are no writes for an hour.
 2. A client performs a heavy read-only workload with read preference mode "nearest" and maxStalenessSeconds of 90
-   seconds.
+    seconds.
 3. The primary receives a write.
 4. In the brief time before any secondary replicates the write, the client re-checks all servers.
 5. Since the primary's lastWriteDate is an hour ahead of all secondaries', the client only queries the primary.
 6. After heartbeatFrequencyMS, the client re-checks all servers and finds that the secondaries aren't lagging after all,
-   and resumes querying them.
+    and resumes querying them.
 
 This apparent "replication lag spike" is just a measurement error, but it causes exactly the behavior the user wanted to
 avoid: a small replication lag makes the client route all queries from the secondaries to the primary.
@@ -374,7 +374,7 @@ Therefore, this spec *also* requires that maxStalenessSeconds is at least 90:
 
 - To provide a minimum for all languages and topologies that is easy to document and explain
 - To avoid application breakage when moving from replica set to sharded cluster, or when using the same URI with
-  different drivers
+    different drivers
 - To emphasize that maxStalenessSeconds is a low-precision heuristic
 - To avoid the arbitrary-seeming minimum of 70 seconds imposed by single-threaded drivers
 
@@ -410,7 +410,7 @@ server and recording it on the client, complexity in the spec and the client cod
 
 A proposed staleness formula estimated the secondary's worst possible staleness:
 
-```
+```javascript
 P.lastWriteDate + (now - P.lastUpdateTime) - S.lastWriteDate
 ```
 
@@ -460,7 +460,7 @@ to configure from the server side how much replication lag makes a secondary too
 [Server-side Configuration](#server-side-configuration) above.) This could be implemented atop the current feature: if a
 server communicates is staleness configuration in its hello response like:
 
-```
+```javascript
 { hello: true, maxStalenessSeconds: 30 }
 ```
 
@@ -486,7 +486,7 @@ client-side setting.
 - 2016-10-24: Rename option from "maxStalenessMS" to "maxStalenessSeconds".
 
 - 2016-10-25: Change minimum maxStalenessSeconds value from 2 * heartbeatFrequencyMS to heartbeatFrequencyMS +
-  idleWritePeriodMS (with proper conversions of course).
+    idleWritePeriodMS (with proper conversions of course).
 
 - 2016-11-21: Revert changes that would allow idleWritePeriodMS to change in the future, require maxStalenessSeconds to
-  be at least 90.
+    be at least 90.

@@ -75,11 +75,12 @@ The serverMonitoringMode option configures which server monitoring protocol to u
 "auto". The default value MUST be "auto":
 
 - With "stream" mode, the client MUST use the streaming protocol when the server supports it or fall back to the polling
-  protocol otherwise.
+    protocol otherwise.
 - With "poll" mode, the client MUST use the polling protocol.
 - With "auto" mode, the client MUST behave the same as "poll" mode when running on a FaaS platform or the same as
-  "stream" mode otherwise. The client detects that it's running on a FaaS platform via the same rules for generating the
-  `client.env` handshake metadata field in the [MongoDB Handshake spec](../mongodb-handshake/handshake.md#client-env).
+    "stream" mode otherwise. The client detects that it's running on a FaaS platform via the same rules for generating
+    the `client.env` handshake metadata field in the
+    [MongoDB Handshake spec](../mongodb-handshake/handshake.md#client-env).
 
 Multi-threaded or asynchronous drivers MUST implement this option. See
 [Why disable the streaming protocol on FaaS platforms like AWS Lambda?](#why-disable-the-streaming-protocol-on-faas-platforms-like-aws-lambda)
@@ -106,9 +107,9 @@ users configure the timeouts for monitoring sockets separately if necessary to p
 The client begins monitoring a server when:
 
 - ... the client is initialized and begins monitoring each seed. See
-  [initial servers](server-discovery-and-monitoring.md#initial-servers).
+    [initial servers](server-discovery-and-monitoring.md#initial-servers).
 - ... [updateRSWithoutPrimary](server-discovery-and-monitoring.md#updateRSWithoutPrimary) or
-  [updateRSFromPrimary](server-discovery-and-monitoring.md#updateRSFromPrimary) discovers new replica set members.
+    [updateRSFromPrimary](server-discovery-and-monitoring.md#updateRSFromPrimary) discovers new replica set members.
 
 The following subsections specify how monitoring works, first in multi-threaded or asynchronous clients, and second in
 single-threaded clients. This spec provides detailed requirements for monitoring because it intends to make all drivers
@@ -208,7 +209,7 @@ of events.
 
 The scanning order is expressed in this pseudocode:
 
-```
+```text
 scanStartTime = now()
 # You'll likely need to convert units here.
 beforeCoolDown = scanStartTime - cooldownMS
@@ -239,13 +240,13 @@ This algorithm might be better understood with an example:
 1. The client is configured with one seed and TopologyType Unknown. It begins a scan.
 2. When it checks the seed, it discovers a secondary.
 3. The secondary's hello or legacy hello response includes the "primary" field with the address of the server that the
-   secondary thinks is primary.
+    secondary thinks is primary.
 4. The client creates a ServerDescription with that address, type PossiblePrimary, and lastUpdateTime "infinity ago".
-   (See [updateRSWithoutPrimary](server-discovery-and-monitoring.md#updateRSWithoutPrimary).)
+    (See [updateRSWithoutPrimary](server-discovery-and-monitoring.md#updateRSWithoutPrimary).)
 5. On the next iteration, there is still no RSPrimary, so the new PossiblePrimary is the top-priority server to check.
 6. The PossiblePrimary is checked and replaced with an RSPrimary. The client has now acquired an authoritative host
-   list. Any new hosts in the list are added to the TopologyDescription with lastUpdateTime "infinity ago". (See
-   [updateRSFromPrimary](server-discovery-and-monitoring.md#updateRSFromPrimary).)
+    list. Any new hosts in the list are added to the TopologyDescription with lastUpdateTime "infinity ago". (See
+    [updateRSFromPrimary](server-discovery-and-monitoring.md#updateRSFromPrimary).)
 7. The client continues scanning until all known hosts have been checked.
 
 Another common case might be scanning a pool of mongoses. When the client first scans its seed list, they all have the
@@ -340,13 +341,13 @@ A server that implements the new protocol follows these rules:
 - If the request includes topologyVersion without maxAwaitTimeMS or vice versa, return an error.
 - If the request omits topologyVersion and maxAwaitTimeMS, reply immediately.
 - If the request includes topologyVersion and maxAwaitTimeMS, then reply immediately if the server's
-  topologyVersion.processId does not match the request's, otherwise reply when the server's topologyVersion.counter is
-  greater than the request's, or maxAwaitTimeMS elapses, whichever comes first.
+    topologyVersion.processId does not match the request's, otherwise reply when the server's topologyVersion.counter is
+    greater than the request's, or maxAwaitTimeMS elapses, whichever comes first.
 - Following the [OP_MSG spec](../message/OP_MSG.md), if the request omits the exhaustAllowed flag, the server MUST NOT
-  set the moreToCome flag on the reply. If the request's exhaustAllowed flag is set, the server MAY set the moreToCome
-  flag on the reply. If the server sets moreToCome, it MUST continue streaming replies without awaiting further
-  requests. Between replies it MUST wait until the server's topologyVersion.counter is incremented or maxAwaitTimeMS
-  elapses, whichever comes first. If the reply includes `ok: 0` the server MUST NOT set the moreToCome flag.
+    set the moreToCome flag on the reply. If the request's exhaustAllowed flag is set, the server MAY set the moreToCome
+    flag on the reply. If the server sets moreToCome, it MUST continue streaming replies without awaiting further
+    requests. Between replies it MUST wait until the server's topologyVersion.counter is incremented or maxAwaitTimeMS
+    elapses, whichever comes first. If the reply includes `ok: 0` the server MUST NOT set the moreToCome flag.
 - On a topology change that changes the horizon parameters, the server will close all application connections.
 
 Example awaitable hello conversation:
@@ -406,12 +407,12 @@ process responses strictly in the order they were received.)
 A client follows these rules when processing the hello or legacy hello exhaust response:
 
 - If the response indicates a command error, or a network error or timeout occurs, the client MUST close the connection
-  and restart the monitoring protocol on a new connection. (See
-  [Network or command error during server check](#network-or-command-error-during-server-check).)
+    and restart the monitoring protocol on a new connection. (See
+    [Network or command error during server check](#network-or-command-error-during-server-check).)
 - If the response is successful (includes "ok:1") and includes the OP_MSG moreToCome flag, then the client begins
-  reading the next response.
+    reading the next response.
 - If the response is successful (includes "ok:1") and does not include the OP_MSG moreToCome flag, then the client
-  initiates a new awaitable hello or legacy hello with the topologyVersion field from the previous response.
+    initiates a new awaitable hello or legacy hello with the topologyVersion field from the previous response.
 
 #### Socket timeout
 
@@ -492,21 +493,27 @@ When a server [check](#check) fails due to a network error (including a network 
 the client MUST follow these steps:
 
 1. Close the current monitoring connection.
+
 2. Mark the server Unknown.
+
 3. Clear the connection pool for the server (See
-   [Clear the connection pool on both network and command errors](#clear-the-connection-pool-on-both-network-and-command-errors)).
-   For CMAP compliant drivers, clearing the pool MUST be synchronized with marking the server as Unknown (see
-   [Why synchronize clearing a server's pool with updating the topology?](server-discovery-and-monitoring.md#why-synchronize-clearing-a-servers-pool-with-updating-the-topology)).
-   If this was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true (see
-   [Why does the pool need to support closing in use connections as part of its clear logic?](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#why-does-the-pool-need-to-support-interrupting-in-use-connections-as-part-of-its-clear-logic))
+    [Clear the connection pool on both network and command errors](#clear-the-connection-pool-on-both-network-and-command-errors)).
+    For CMAP compliant drivers, clearing the pool MUST be synchronized with marking the server as Unknown (see
+    [Why synchronize clearing a server's pool with updating the topology?](server-discovery-and-monitoring.md#why-synchronize-clearing-a-servers-pool-with-updating-the-topology)).
+    If this was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true (see
+    [Why does the pool need to support closing in use connections as part of its clear logic?](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#why-does-the-pool-need-to-support-interrupting-in-use-connections-as-part-of-its-clear-logic))
+    
+
 4. If this was a network error and the server was in a known state before the error, the client MUST NOT sleep and MUST
-   begin the next check immediately. (See
-   [retry hello or legacy hello calls once](#retry-hello-or-legacy-hello-calls-once) and
-   [JAVA-1159](https://jira.mongodb.org/browse/JAVA-1159).)
+    begin the next check immediately. (See
+    [retry hello or legacy hello calls once](#retry-hello-or-legacy-hello-calls-once) and
+    [JAVA-1159](https://jira.mongodb.org/browse/JAVA-1159).)
+
 5. Otherwise, wait for heartbeatFrequencyMS (or minHeartbeatFrequencyMS if a check is requested) before restarting the
-   monitoring protocol on a new connection.
-   - Note that even in the streaming protocol, a monitor in this state will wait for an application operation to request
-     an immediate check or for the heartbeatFrequencyMS timeout to expire before beginning the next check.
+    monitoring protocol on a new connection.
+
+    - Note that even in the streaming protocol, a monitor in this state will wait for an application operation to request
+        an immediate check or for the heartbeatFrequencyMS timeout to expire before beginning the next check.
 
 See the pseudocode in the `Monitor thread` section.
 
@@ -786,7 +793,7 @@ responses. We reject this idea for a few reasons:
 - Not all programming languages have an API to access the TCP socket's RTT.
 - On Windows, RTT access requires Admin privileges.
 - TCP's SRTT would likely differ substantially from RTT measurements in the current protocol. For example, the SRTT can
-  be reset on [retransmission timeouts](https://tools.ietf.org/html/rfc2988#section-5).
+    be reset on [retransmission timeouts](https://tools.ietf.org/html/rfc2988#section-5).
 
 ## Rationale
 
@@ -838,7 +845,7 @@ It could pop a connection from its regular pool, but we rejected this option for
 - Under contention the RTT task may block application operations from completing in a timely manner.
 - Under contention the application may block the RTT task from completing in a timely manner.
 - Under contention the RTT task may often result in an extra connection anyway because the pool creates new connections
-  under contention up to maxPoolSize.
+    under contention up to maxPoolSize.
 - This would be inconsistent with the rule that a monitor SHOULD NOT use the client's regular connection pool.
 
 The client could open and close a new connection for each RTT check. We rejected this design, because if we ping every
@@ -979,7 +986,7 @@ outdated or inaccurate.
 - 2020-06-11: Support connectTimeoutMS=0 in streaming heartbeat protocol.
 
 - 2020-12-17: Mark the pool for a server as "ready" after performing a successful check. Synchronize pool clearing with
-  SDAM updates.
+    SDAM updates.
 
 - 2021-06-21: Added support for hello/helloOk to handshake and monitoring.
 
@@ -996,6 +1003,6 @@ outdated or inaccurate.
 - 2022-11-17: Add minimum RTT tracking and remove 90th percentile RTT.
 
 - 2023-10-05: Add serverMonitoringMode and default to the polling protocol on FaaS. Clients MUST NOT use dedicated
-  connections to measure RTT when using the polling protocol.
+    connections to measure RTT when using the polling protocol.
 
 ______________________________________________________________________

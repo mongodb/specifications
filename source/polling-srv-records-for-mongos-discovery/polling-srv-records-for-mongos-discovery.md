@@ -50,35 +50,35 @@ the original specification. The behaviour of the periodic rescan is similar, but
 initial seedlist discovery. Periodic scan MUST follow these rules:
 
 - The driver will query the DNS server for SRV records on `{hostname}.{domainname}`, prefixed with the SRV service name
-  and protocol. The SRV service name is provided in the
-  [srvServiceName](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename) URI option and
-  defaults to `mongodb`. The protocol is always `tcp`. After prefixing, the URI should look like:
-  `_{srvServiceName}._tcp.{hostname}.{domainname}`.
+    and protocol. The SRV service name is provided in the
+    [srvServiceName](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename) URI option and
+    defaults to `mongodb`. The protocol is always `tcp`. After prefixing, the URI should look like:
+    `_{srvServiceName}._tcp.{hostname}.{domainname}`.
 - A driver MUST verify that the host names returned through SRV records have the same parent `{domainname}`. When this
-  verification fails, a driver:
-  - MUST NOT add such a non-compliant host name to the topology
-  - MUST NOT raise an error
-  - SHOULD log the non-compliance, including the host name
-  - MUST NOT initiate a connection to any such host
+    verification fails, a driver:
+    - MUST NOT add such a non-compliant host name to the topology
+    - MUST NOT raise an error
+    - SHOULD log the non-compliance, including the host name
+    - MUST NOT initiate a connection to any such host
 - If the DNS request returns no verified hosts in SRV records, no SRV records at all, or a DNS error happens, the
-  driver:
-  - MUST NOT change the topology
-  - MUST NOT raise an error
-  - SHOULD log this situation, including the reason why the DNS records could not be found, if possible
-  - MUST temporarily set *rescanSRVIntervalMS* to *heartbeatFrequencyMS* until at least one verified SRV record is
-    obtained.
+    driver:
+    - MUST NOT change the topology
+    - MUST NOT raise an error
+    - SHOULD log this situation, including the reason why the DNS records could not be found, if possible
+    - MUST temporarily set *rescanSRVIntervalMS* to *heartbeatFrequencyMS* until at least one verified SRV record is
+        obtained.
 - For all verified host names, as returned through the DNS SRV query, the driver:
-  - MUST remove all hosts that are part of the topology, but are no longer in the returned set of valid hosts
-  - MUST NOT remove all hosts, and then re-add the ones that were returned. Hosts that have not changed, MUST be left
-    alone and unchanged.
-  - If [srvMaxHosts](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts) is zero or greater
-    than or equal to the number of valid hosts, each valid new host MUST be added to the topology as Unknown.
-  - If [srvMaxHosts](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts) is greater than
-    zero and less than the number of valid hosts, valid new hosts MUST be randomly selected and added to the topology as
-    Unknown until the topology has `srvMaxHosts` hosts. Drivers MUST use the same randomization algorithm as they do for
-    [initial selection](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns).
+    - MUST remove all hosts that are part of the topology, but are no longer in the returned set of valid hosts
+    - MUST NOT remove all hosts, and then re-add the ones that were returned. Hosts that have not changed, MUST be left
+        alone and unchanged.
+    - If [srvMaxHosts](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts) is zero or greater
+        than or equal to the number of valid hosts, each valid new host MUST be added to the topology as Unknown.
+    - If [srvMaxHosts](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvmaxhosts) is greater than
+        zero and less than the number of valid hosts, valid new hosts MUST be randomly selected and added to the topology
+        as Unknown until the topology has `srvMaxHosts` hosts. Drivers MUST use the same randomization algorithm as they
+        do for [initial selection](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns).
 - Priorities and weights in SRV records MUST continue to be ignored, and MUST NOT dictate which mongos server is used
-  for new connections.
+    for new connections.
 
 The rescan needs to happen periodically. As SRV records contain a TTL value, this value can be used to indicate when a
 rescan needs to happen. Different SRV records can have different TTL values. The *rescanSRVIntervalMS* value MUST be set
@@ -172,4 +172,4 @@ No future work is expected.
 - 2021-10-14: Specify behavior for `srvMaxHosts` MongoClient option.
 
 - 2021-09-15: Clarify that service name only defaults to `mongodb`, and should be defined by the `srvServiceName` URI
-  option.
+    option.

@@ -99,7 +99,7 @@ For the purposes of server selection RunCommand MUST assume all commands are rea
 selection the RunCommand operation MUST accept an optional `readPreference` option.
 
 - See Server Selection's section on
-  [Use of read preferences with commands](../server-selection/server-selection.md#use-of-read-preferences-with-commands)
+    [Use of read preferences with commands](../server-selection/server-selection.md#use-of-read-preferences-with-commands)
 
 If the provided ReadPreference is NOT `{mode: primary}` and the selected server is NOT a standalone, the command sent
 MUST include the `$readPreference` global command argument.
@@ -116,12 +116,12 @@ Every ClientSession has a corresponding logical session ID representing the serv
 ID MUST be included under `lsid` in the command sent to the server without modifying user input.
 
 - See Driver Sessions' section on
-  [Sending the session ID to the server on all commands](../sessions/driver-sessions.md#sending-the-session-id-to-the-server-on-all-commands)
+    [Sending the session ID to the server on all commands](../sessions/driver-sessions.md#sending-the-session-id-to-the-server-on-all-commands)
 
 The command sent to the server MUST gossip the `$clusterTime` if cluster time support is detected.
 
 - See Driver Sessions' section on
-  [Gossipping the cluster time](../sessions/driver-sessions.md#gossipping-the-cluster-time)
+    [Gossipping the cluster time](../sessions/driver-sessions.md#gossipping-the-cluster-time)
 
 ##### Transactions
 
@@ -129,14 +129,14 @@ If RunCommand is used within a transaction the read preference MUST be sourced f
 command sent to the server MUST include the transaction specific fields, summarized as follows:
 
 - If `runCommand` is executing within a transaction:
-  - `autocommit` - The autocommit flag MUST be set to false.
-  - `txnNumber` - MUST be set.
+    - `autocommit` - The autocommit flag MUST be set to false.
+    - `txnNumber` - MUST be set.
 - If `runCommand` is the first operation of the transaction:
-  - `startTransaction` - MUST be set to true.
-  - `readConcern` - MUST be set to the transaction's read concern if it is NOT the default.
+    - `startTransaction` - MUST be set to true.
+    - `readConcern` - MUST be set to the transaction's read concern if it is NOT the default.
 - See
-  [Generic RunCommand helper within a transaction](../transactions/transactions.md#generic-runcommand-helper-within-a-transaction)
-  in the Transactions specification.
+    [Generic RunCommand helper within a transaction](../transactions/transactions.md#generic-runcommand-helper-within-a-transaction)
+    in the Transactions specification.
 
 ##### ReadConcern and WriteConcern
 
@@ -150,9 +150,9 @@ If the user-provided command document already includes `readConcern` or `writeCo
 as-is.
 
 - See Read Concern's section on
-  [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method)
+    [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method)
 - See Write Concern's section on
-  [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method)
+    [Generic Command Method](../read-write-concern/read-write-concern.md#generic-command-method)
 
 ##### Retryability
 
@@ -160,16 +160,16 @@ All commands executed via RunCommand are non-retryable operations. Drivers MUST 
 it is a write and MUST NOT attach a `txnNumber`.
 
 - See Retryable Reads' section on
-  [Unsupported Read Operations](../retryable-reads/retryable-reads.md#unsupported-read-operations)
+    [Unsupported Read Operations](../retryable-reads/retryable-reads.md#unsupported-read-operations)
 - See Retryable Writes' section on
-  [Behavioral Changes for Write Commands](../retryable-writes/retryable-writes.md#behavioral-changes-for-write-commands)
+    [Behavioral Changes for Write Commands](../retryable-writes/retryable-writes.md#behavioral-changes-for-write-commands)
 
 ##### Stable API
 
 The command sent MUST attach stable API fields as configured on the MongoClient.
 
 - See Stable API's section on
-  [Generic Command Helper Behaviour](../versioned-api/versioned-api.md#generic-command-helper)
+    [Generic Command Helper Behaviour](../versioned-api/versioned-api.md#generic-command-helper)
 
 ##### Client Side Operations Timeout
 
@@ -178,9 +178,9 @@ attempt to check the command document for the presence of a `maxTimeMS` field. D
 RunCommand if a `maxTimeMS` field is already set on the command (such as overwriting the command field).
 
 - See Client Side Operations Timeout's section on
-  [runCommand](../client-side-operations-timeout/client-side-operations-timeout.md#runcommand)
+    [runCommand](../client-side-operations-timeout/client-side-operations-timeout.md#runcommand)
 - See Client Side Operations Timeout's section on
-  [runCommand behavior](../client-side-operations-timeout/client-side-operations-timeout.md#runcommand-behavior)
+    [runCommand behavior](../client-side-operations-timeout/client-side-operations-timeout.md#runcommand-behavior)
 
 ### `runCursorCommand`
 
@@ -249,13 +249,13 @@ or upon first iteration of the cursor.
 High level RunCursorCommand steps:
 
 - Run the cursor creating command provided by the caller and retain the ClientSession used as well as the server the
-  command was executed on.
+    command was executed on.
 - Create a local cursor instance and store the `firstBatch`, `ns`, and `id` from the response.
 - When the current batch has been fully iterated, execute a `getMore` using the same server the initial command was
-  executed on.
+    executed on.
 - Store the `nextBatch` from the `getMore` response and update the cursor's `id`.
 - Continue to execute `getMore` commands as needed when the caller empties local batches until the cursor is exhausted
-  or closed (i.e. `id` is zero).
+    or closed (i.e. `id` is zero).
 
 ##### Driver Sessions
 
@@ -294,12 +294,12 @@ commands MUST be constructed with the changes to those fields. If that API is of
 `getMore` commands are constructed with any updated fields.
 
 - See Find, getMore and killCursors commands' section on
-  [GetMore](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#getmore)
+    [GetMore](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#getmore)
 
 ##### Tailable and TailableAwait
 
 - **See first:** Find, getMore and killCursors commands's section on
-  [Tailable cursors](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#tailable-cursors)
+    [Tailable cursors](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#tailable-cursors)
 
 It is the responsibility of the caller to construct their initial command with `awaitData` and `tailable` flags **as
 well as** inform RunCursorCommand of the `cursorType` that should be constructed. Requesting a `cursorType` that does
@@ -312,9 +312,9 @@ cursor id is nonzero a KillCursors operation MUST be attempted, the result of th
 ClientSession associated with the cursor MUST be ended and the ServerSession returned to the pool.
 
 - See Driver Sessions' section on
-  [When sending a killCursors command](../sessions/driver-sessions.md#when-sending-a-killcursors-command)
+    [When sending a killCursors command](../sessions/driver-sessions.md#when-sending-a-killcursors-command)
 - See Find, getMore and killCursors commands' section on
-  [killCursors](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#killcursors)
+    [killCursors](../find_getmore_killcursors_commands/find_getmore_killcursors_commands.md#killcursors)
 
 ##### Client Side Operations Timeout
 
@@ -329,7 +329,7 @@ When `timeoutMS` and `timeoutMode` are provided the driver MUST support timeout 
 specification.
 
 - See Client Side Operations Timeout's section on
-  [Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors)
+    [Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors)
 
 ## Changelog
 

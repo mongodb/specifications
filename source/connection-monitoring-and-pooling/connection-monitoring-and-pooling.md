@@ -170,30 +170,30 @@ A driver-defined wrapper around a single TCP connection to an Endpoint. A [Conne
 properties:
 
 - **Single Endpoint:** A [Connection](#connection) MUST be associated with a single Endpoint. A
-  [Connection](#connection) MUST NOT be associated with multiple Endpoints.
+    [Connection](#connection) MUST NOT be associated with multiple Endpoints.
 - **Single Lifetime:** A [Connection](#connection) MUST NOT be used after it is closed.
 - **Single Owner:** A [Connection](#connection) MUST belong to exactly one Pool, and MUST NOT be shared across multiple
-  pools
+    pools
 - **Single Track:** A [Connection](#connection) MUST limit itself to one request / response at a time. A
-  [Connection](#connection) MUST NOT multiplex/pipeline requests to an Endpoint.
+    [Connection](#connection) MUST NOT multiplex/pipeline requests to an Endpoint.
 - **Monotonically Increasing ID:** A [Connection](#connection) MUST have an ID number associated with it.
-  [Connection](#connection) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
-  for each new Connection.
+    [Connection](#connection) IDs within a Pool MUST be assigned in order of creation, starting at 1 and increasing by 1
+    for each new Connection.
 - **Valid Connection:** A connection MUST NOT be checked out of the pool until it has successfully and fully completed a
-  MongoDB Handshake and Authentication as specified in the [Handshake](../mongodb-handshake/handshake.md),
-  [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
+    MongoDB Handshake and Authentication as specified in the [Handshake](../mongodb-handshake/handshake.md),
+    [OP_COMPRESSED](../compression/OP_COMPRESSED.md), and [Authentication](../auth/auth.md) specifications.
 - **Perishable**: it is possible for a [Connection](#connection) to become **Perished**. A [Connection](#connection) is
-  considered perished if any of the following are true:
-  - **Stale:** The [Connection](#connection) 's generation does not match the generation of the parent pool
-  - **Idle:** The [Connection](#connection) is currently "available" (as defined below) and has been for longer than
-    **maxIdleTimeMS**.
-  - **Errored:** The [Connection](#connection) has experienced an error that indicates it is no longer recommended for
-    use. Examples include, but are not limited to:
-    - Network Error
-    - Network Timeout
-    - Endpoint closing the connection
-    - Driver-Side Timeout
-    - Wire-Protocol Error
+    considered perished if any of the following are true:
+    - **Stale:** The [Connection](#connection) 's generation does not match the generation of the parent pool
+    - **Idle:** The [Connection](#connection) is currently "available" (as defined below) and has been for longer than
+        **maxIdleTimeMS**.
+    - **Errored:** The [Connection](#connection) has experienced an error that indicates it is no longer recommended for
+        use. Examples include, but are not limited to:
+        - Network Error
+        - Network Timeout
+        - Endpoint closing the connection
+        - Driver-Side Timeout
+        - Wire-Protocol Error
 
 ```typescript
 interface Connection {
@@ -244,10 +244,12 @@ A concept that represents pending requests for [Connections](#connection). When 
 either receives a [Connection](#connection) or times out. A WaitQueue has the following traits:
 
 - **Thread-Safe**: When multiple threads attempt to enter or exit a WaitQueue, they do so in a thread-safe manner.
-- **Ordered/Fair**: When [Connections](#connection) are made available, they are issued out to threads in the order that
-  the threads entered the WaitQueue.
+- **Ordered/fair**: When [Connections](#connection) are made available, they SHOULD be issued out to threads in the
+    order that the threads entered the WaitQueue. If this is behavior poses too much of an implementation burden, then
+    at the very least threads that have entered the queue more recently MUST NOT be intentionally prioritized over those
+    that entered it earlier.
 - **Timeout aggressively:** Members of a WaitQueue MUST timeout if they are enqueued for longer than the computed
-  timeout and MUST leave the WaitQueue immediately in this case.
+    timeout and MUST leave the WaitQueue immediately in this case.
 
 The implementation details of a WaitQueue are left to the driver. Example implementations include:
 
@@ -261,27 +263,27 @@ Endpoint. The pool has the following properties:
 
 - **Thread Safe:** All Pool behaviors MUST be thread safe.
 - **Not Fork-Safe:** A Pool is explicitly not fork-safe. If a Pool detects that is it being used by a forked process, it
-  MUST immediately clear itself and update its pid
+    MUST immediately clear itself and update its pid
 - **Single Owner:** A Pool MUST be associated with exactly one Endpoint, and MUST NOT be shared between Endpoints.
 - **Emit Events and Log Messages:** A Pool MUST emit pool events and log messages when dictated by this spec (see
-  [Connection Pool Monitoring](#connection-pool-monitoring)). Users MUST be able to subscribe to emitted events and log
-  messages in a manner idiomatic to their language and driver.
+    [Connection Pool Monitoring](#connection-pool-monitoring)). Users MUST be able to subscribe to emitted events and
+    log messages in a manner idiomatic to their language and driver.
 - **Closeable:** A Pool MUST be able to be manually closed. When a Pool is closed, the following behaviors change:
-  - Checking in a [Connection](#connection) to the Pool automatically closes the [Connection](#connection)
-  - Attempting to check out a [Connection](#connection) from the Pool results in an Error
+    - Checking in a [Connection](#connection) to the Pool automatically closes the [Connection](#connection)
+    - Attempting to check out a [Connection](#connection) from the Pool results in an Error
 - **Clearable:** A Pool MUST be able to be cleared. Clearing the pool marks all pooled and checked out
-  [Connections](#connection) as stale and lazily closes them as they are checkedIn or encountered in checkOut.
-  Additionally, all requests are evicted from the WaitQueue and return errors that are considered non-timeout network
-  errors.
+    [Connections](#connection) as stale and lazily closes them as they are checkedIn or encountered in checkOut.
+    Additionally, all requests are evicted from the WaitQueue and return errors that are considered non-timeout network
+    errors.
 - **Pausable:** A Pool MUST be able to be paused and resumed. A Pool is paused automatically when it is cleared, and it
-  can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
-  - Attempting to check out a [Connection](#connection) from the Pool results in a non-timeout network error
-  - Connections are not created in the background to satisfy minPoolSize
+    can be resumed by being marked as "ready". While the Pool is paused, it exhibits the following behaviors:
+    - Attempting to check out a [Connection](#connection) from the Pool results in a non-timeout network error
+    - Connections are not created in the background to satisfy minPoolSize
 - **Capped:** a pool is capped if **maxPoolSize** is set to a non-zero value. If a pool is capped, then its total number
-  of [Connections](#connection) (including available and in use) MUST NOT exceed **maxPoolSize**
+    of [Connections](#connection) (including available and in use) MUST NOT exceed **maxPoolSize**
 - **Rate-limited:** A Pool MUST limit the number of [Connections](#connection) being
-  [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
-  [pool option](#connection-pool-options).
+    [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
+    [pool option](#connection-pool-options).
 
 ```typescript
 interface ConnectionPool {
@@ -388,7 +390,7 @@ it has been marked as "ready". SDAM will mark the pool as "ready" on each succes
 [Connection Pool Management](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#connection-pool-management)
 section in the SDAM specification for more information.
 
-```
+```text
 set generation to 0
 set state to "paused"
 emit PoolCreatedEvent and equivalent log message
@@ -402,7 +404,7 @@ following behavior changes:
 - In use [Connections](#connection) MUST be closed when they are checked in to the closed pool.
 - Attempting to check out a [Connection](#connection) MUST result in an error.
 
-```
+```text
 mark pool as "closed"
 for connection in availableConnections:
   close connection
@@ -418,7 +420,7 @@ background.
 If the pool is already "ready" when this method is invoked, then this method MUST immediately return and MUST NOT emit a
 PoolReadyEvent.
 
-```
+```text
 mark pool as "ready"
 emit PoolReadyEvent and equivalent log message
 allow background thread to create connections
@@ -433,7 +435,7 @@ connections before observing the PoolReadyEvent event.
 When creating a [Connection](#connection), the initial [Connection](#connection) is in a "pending" state. This only
 creates a "virtual" [Connection](#connection), and performs no I/O.
 
-```
+```text
 connection = new Connection()
 increment totalConnectionCount
 increment pendingConnectionCount
@@ -448,7 +450,7 @@ return connection
 Before a [Connection](#connection) can be marked as either "available" or "in use", it must be established. This process
 involves performing the initial handshake, handling OP_COMPRESSED, and performing authentication.
 
-```
+```text
 try:
   connect connection via TCP / TLS
   perform connection handshake
@@ -469,7 +471,7 @@ When a [Connection](#connection) is closed, it MUST first be marked as "closed",
 to close its underlying socket. The Driver SHOULD perform this teardown in a non-blocking manner, such as via the use of
 a background thread or async I/O.
 
-```
+```text
 original state = connection state
 set connection state to "closed"
 
@@ -492,7 +494,7 @@ A [Connection](#connection) is "available" if it is able to be checked out. A [C
 marked as "available" until it has been established. The pool MUST keep track of the number of currently available
 [Connections](#connection).
 
-```
+```text
 increment availableConnectionCount
 set connection state to "available"
 add connection to availableConnections
@@ -524,7 +526,7 @@ observable to the [Thread](#thread). Informally, this order guarantees that no [
 establishing a [Connection](#connection) when there is an "available" [Connection](#connection) established as a result
 of populating the Pool.
 
-```
+```text
 wait until pendingConnectionCount < maxConnecting and pool is "ready"
 create connection
 try:
@@ -557,7 +559,7 @@ MUST wait to service the request until neither of those two conditions are met o
 becomes available, re-entering the checkOut loop in either case. This waiting MUST NOT prevent
 [Connections](#connection) from being checked into the pool. Additionally, the Pool MUST NOT service any newer checkOut
 requests before fulfilling the original one which could not be fulfilled. For drivers that implement the WaitQueue via a
-fair semaphore, a condition variable may also be needed to to meet this requirement. Waiting on the condition variable
+fair semaphore, a condition variable may also be needed to meet this requirement. Waiting on the condition variable
 SHOULD also be limited by the WaitQueueTimeout, if the driver supports one and it was specified by the user.
 
 If the pool is "closed" or "paused", any attempt to check out a [Connection](#connection) MUST throw an Error. The error
@@ -622,6 +624,7 @@ def await_pending_read(pool, conn):
 ```
 
 ```python
+```text
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
@@ -710,7 +713,7 @@ any of the following are true:
 
 Otherwise, the [Connection](#connection) is marked as available.
 
-```
+```text
 emit ConnectionCheckedInEvent and equivalent log message
 if connection is perished OR pool is closed:
   close connection
@@ -751,7 +754,7 @@ interrupting in-use connections, its next run MUST be scheduled as soon as possi
 The pool MUST only interrupt in-use Connections whose generation is less than or equal to the generation of the pool at
 the moment of the clear (before the increment) that used the interruptInUseConnections flag. Any operations that have
 their Connections interrupted in this way MUST fail with a retryable error. If possible, the error SHOULD be a
-PoolClearedError with the following message: "Connection to <pool address> interrupted due to server monitor timeout".
+PoolClearedError with the following message: `"Connection to <pool address> interrupted due to server monitor timeout"`.
 
 ##### Clearing a load balanced pool
 
@@ -795,9 +798,9 @@ A Pool SHOULD have a background Thread that is responsible for monitoring the st
 
 - Populate [Connections](#connection) to ensure that the pool always satisfies minPoolSize.
 - Remove and close perished available [Connections](#connection) including "in use" connections if
-  `interruptInUseConnections` option was set to true in the most recent pool clear.
+    `interruptInUseConnections` option was set to true in the most recent pool clear.
 - Apply timeouts to connection establishment per
-  [Client Side Operations Timeout: Background Connection Pooling](../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling).
+    [Client Side Operations Timeout: Background Connection Pooling](../client-side-operations-timeout/client-side-operations-timeout.md#background-connection-pooling).
 
 A pool SHOULD allow immediate scheduling of the next background thread iteration after a clear is performed.
 
@@ -1155,11 +1158,11 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                | Suggested Type | Value                                                                               |
-| ------------------ | -------------- | ----------------------------------------------------------------------------------- |
-| message            | String         | "Connection ready"                                                                  |
-| driverConnectionId | Int64          | The driver-generated ID for the connection as defined in [Connection](#connection). |
-| durationMS         | Int64          | `ConnectionReadyEvent.duration` converted to milliseconds.                          |
+| Key                | Suggested Type     | Value                                                                               |
+| ------------------ | ------------------ | ----------------------------------------------------------------------------------- |
+| message            | String             | "Connection ready"                                                                  |
+| driverConnectionId | Int64              | The driver-generated ID for the connection as defined in [Connection](#connection). |
+| durationMS         | Int32/Int64/Double | `ConnectionReadyEvent.duration` converted to milliseconds.                          |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1201,12 +1204,12 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key        | Suggested Type | Value                                                                                                                                                                                                                                                                                                                                                              |
-| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| message    | String         | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
-| reason     | String         | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
-| error      | Flexible       | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                              |
-| durationMS | Int64          | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
+| Key        | Suggested Type     | Value                                                                                                                                                                                                                                                                                                                                                              |
+| ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| message    | String             | "Connection checkout failed"                                                                                                                                                                                                                                                                                                                                       |
+| reason     | String             | A string describing the reason checkout. The following strings MUST be used for each possible reason as defined in [Events](#events) above:<br>- Timeout: "Wait queue timeout elapsed without a connection becoming available"<br>- ConnectionError: "An error occurred while trying to establish a new connection"<br>- Pool closed: "Connection pool was closed" |
+| error      | Flexible           | If `reason` is `ConnectionError`, the associated error. The type and format of this value is flexible; see the [logging specification](../logging/logging.md#representing-errors-in-log-messages) for details on representing errors in log messages.                                                                                                              |
+| durationMS | Int32/Int64/Double | `ConnectionCheckOutFailedEvent.duration` converted to milliseconds.                                                                                                                                                                                                                                                                                                |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1218,11 +1221,11 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                | Suggested Type | Value                                                                               |
-| ------------------ | -------------- | ----------------------------------------------------------------------------------- |
-| message            | String         | "Connection checked out"                                                            |
-| driverConnectionId | Int64          | The driver-generated ID for the connection as defined in [Connection](#connection). |
-| durationMS         | Int64          | `ConnectionCheckedOutEvent.duration` converted to milliseconds.                     |
+| Key                | Suggested Type     | Value                                                                               |
+| ------------------ | ------------------ | ----------------------------------------------------------------------------------- |
+| message            | String             | "Connection checked out"                                                            |
+| driverConnectionId | Int64              | The driver-generated ID for the connection as defined in [Connection](#connection). |
+| durationMS         | Int32/Int64/Double | `ConnectionCheckedOutEvent.duration` converted to milliseconds.                     |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1295,9 +1298,9 @@ Step-Down, which will be further addressed in our [Advanced Pooling Behaviors](#
 ConnectionCreated and ConnectionReady each involve different state changes in the pool.
 
 - ConnectionCreated adds a new "pending" [Connection](#connection), meaning the totalConnectionCount and
-  pendingConnectionCount increase by one
+    pendingConnectionCount increase by one
 - ConnectionReady establishes that the [Connection](#connection) is ready for use, meaning the availableConnectionCount
-  increases by one
+    increases by one
 
 ConnectionClosed indicates that the [Connection](#connection) is no longer a member of the pool, decrementing
 totalConnectionCount and potentially availableConnectionCount. After this point, the [Connection](#connection) is no
@@ -1310,12 +1313,11 @@ These options were originally only implemented in three drivers (Java, C#, and P
 these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error
 from occurring.
 
-Additionally, these options have the effect of prioritizing older requests over newer requests, which is not necessarily
-the behavior that users want. They can also result in cases where queue access oscillates back and forth between full
-and not full. If a driver has a full waitQueue, then all requests for [Connections](#connection) will be rejected. If
-the client is continually spammed with requests, you could wind up with a scenario where as soon as the waitQueue is no
-longer full, it is immediately filled. It is not a favorable situation to be in, partially b/c it violates the fairness
-guarantee that the waitQueue normally provides.
+Additionally, these options have the effect of prioritizing newer requests over older requests, which is not necessarily
+the behavior that users want. For example, consider a situation when a WaitQueue is full, and a request for
+[Connection](#connection) gets rejected. Then a spot opens in the WaitQueue, and a newer request gets accepted. One may
+say that the newer request was prioritized over the older one, which violates the fairness recommendation that the
+WaitQueue normally adheres to.
 
 Because of these issues, it does not make sense to
 [go against driver mantras and provide an additional knob](../driver-mantras.md#). We may eventually pursue an
@@ -1353,15 +1355,15 @@ The distinction between the "paused" state and the "ready" state allows the pool
 endpoint it is associated with is available or not. This enables the following behaviors:
 
 1. The pool can halt the creation of background connection establishments until the endpoint becomes available again.
-   Without the "paused" state, the pool would have no way of determining when to begin establishing background
-   connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize was
-   satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.
+    Without the "paused" state, the pool would have no way of determining when to begin establishing background
+    connections again, so it would just continually attempt, and often fail, to create connections until minPoolSize
+    was satisfied, even after repeated failures. This could unnecessarily waste resources both server and driver side.
 2. The pool can evict requests that enter the WaitQueue after the pool was cleared but before the server was in a known
-   state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
-   highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
-   would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM and
-   Server Selection. These requests would then likely fail with potentially high latency, again wasting resources both
-   server and driver side.
+    state again. Such requests can occur when a server is selected at the same time as it becomes marked as Unknown in
+    highly concurrent workloads. Without the "paused" state, the pool would attempt to service these requests, since it
+    would assume they were routed to the pool because its endpoint was available, not because of a race between SDAM
+    and Server Selection. These requests would then likely fail with potentially high latency, again wasting resources
+    both server and driver side.
 
 ### Why not emit PoolCleared events and log messages when clearing a paused pool?
 
@@ -1409,10 +1411,10 @@ This specification does not dictate how SDAM Monitoring connections are managed.
 NOT use the client's regular Connection pool". Some possible solutions for this include:
 
 - Having each Endpoint representation in the driver create and manage a separate dedicated [Connection](#connection) for
-  monitoring purposes
+    monitoring purposes
 - Having each Endpoint representation in the driver maintain a separate pool of maxPoolSize 1 for monitoring purposes.
 - Having each Pool maintain a dedicated [Connection](#connection) for monitoring purposes, with an API to expose that
-  Connection.
+    Connection.
 
 ### Advanced Pooling Behaviors
 
@@ -1426,10 +1428,18 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 ## Changelog
 
+- 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
+
+- 2024-11-27: Relaxed the WaitQueue fairness requirement.
+
+- 2024-11-01: Fixed race condition in pool-checkout-returned-connection-maxConnecting.yml test.
+
+- 2024-01-23: Migrated from reStructuredText to Markdown.
+
 - 2019-06-06: Add "connectionError" as a valid reason for ConnectionCheckOutFailedEvent
 
 - 2020-09-03: Clarify Connection states and definition. Require the use of a background thread and/or async I/O. Add
-  tests to ensure ConnectionReadyEvents are fired after ConnectionCreatedEvents.
+    tests to ensure ConnectionReadyEvents are fired after ConnectionCreatedEvents.
 
 - 2020-09-24: Introduce maxConnecting requirement
 

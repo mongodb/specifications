@@ -21,7 +21,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Terms
 
-<div id="callback">
+<span id="callback"></span>
 
 **Callback**
 
@@ -37,7 +37,7 @@ specification. The name of this object MAY vary across drivers.
 
 The root object of a driver's API. The name of this object MAY vary across drivers.
 
-<div id="TransactionOptions">
+<span id="TransactionOptions"></span>
 
 **TransactionOptions**
 
@@ -113,37 +113,40 @@ needed (e.g. user data to pass as a parameter to the callback).
 
 This method should perform the following sequence of actions:
 
-01. Record the current monotonic time, which will be used to enforce the 120-second timeout before later retry attempts.
-02. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session. If TransactionOptions
+1. Record the current monotonic time, which will be used to enforce the 120-second timeout before later retry attempts.
+2. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session. If TransactionOptions
     were specified in the call to `withTransaction`, those MUST be used for `startTransaction`. Note that
     `ClientSession.defaultTransactionOptions` will be used in the absence of any explicit TransactionOptions.
-03. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` and return
+3. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` and return
     immediately.
-04. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
+4. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
     ClientSession as the first parameter, rely on lexical scoping). Drivers MAY pass additional parameters as needed
     (e.g. user data solicited by withTransaction).
-05. Control returns to `withTransaction`. Determine the current
+5. Control returns to `withTransaction`. Determine the current
     [state](../transactions/transactions.md#clientsession-changes) of the ClientSession and whether the callback
     reported an error (e.g. thrown exception, error output parameter).
-06. If the callback reported an error:
+6. If the callback reported an error:
     1. If the ClientSession is in the "starting transaction" or "transaction in progress" state, invoke
-       [abortTransaction](../transactions/transactions.md#aborttransaction) on the session.
+        [abortTransaction](../transactions/transactions.md#aborttransaction) on the session.
     2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
-       less than 120 seconds, jump back to step two.
+        less than 120 seconds, jump back to step two.
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
-       committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
-       immediately.
+        committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
+        immediately.
     4. Otherwise, propagate the callback's error to the caller of `withTransaction` and return immediately.
-07. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
+7. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
-08. Invoke [commitTransaction](../transactions/transactions.md#committransaction) on the session.
-09. If `commitTransaction` reported an error:
+8. Invoke [commitTransaction](../transactions/transactions.md#committransaction) on the session.
+9. If `commitTransaction` reported an error:
     1. If the `commitTransaction` error includes a "UnknownTransactionCommitResult" label and the error is not
-       MaxTimeMSExpired and the elapsed time of `withTransaction` is less than 120 seconds, jump back to step eight. We
-       will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
-       [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
+        MaxTimeMSExpired and the elapsed time of `withTransaction` is less than 120 seconds, jump back to step eight.
+        We will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
+        [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
+        
+
     2. If the `commitTransaction` error includes a "TransientTransactionError" label and the elapsed time of
-       `withTransaction` is less than 120 seconds, jump back to step two.
+        `withTransaction` is less than 120 seconds, jump back to step two.
+
     3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
 10. The transaction was committed successfully. Return immediately.
 
@@ -274,7 +277,7 @@ of two ways:
 
 - The callback aborts the transaction directly and returns to `withTransaction`, which will then return to its caller.
 - The callback raises an error without the "TransientTransactionError" label, in which case `withTransaction` will abort
-  the transaction and return to its caller.
+    the transaction and return to its caller.
 
 ### Applications are responsible for passing ClientSession for operations within a transaction
 
@@ -305,7 +308,7 @@ is applied for the the following errors:
 - Retryable error (as defined in the [Retryable Writes](../retryable-writes/retryable-writes.md#terms) specification)
 - Write concern failure or timeout (excluding UnsatisfiableWriteConcern and UnknownReplWriteConcern)
 - MaxTimeMSExpired errors, ie `{ok:0, code: 50, codeName: "MaxTimeMSExpired"}` and
-  `{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}`.
+    `{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}`.
 
 A previous design for `withTransaction` retried for all of these errors *except* for write concern timeouts, so as not
 to exceed the user's original intention for `wtimeout`. The current design of this specification no longer excludes

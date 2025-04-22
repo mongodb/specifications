@@ -31,7 +31,7 @@ python3 scripts/migrate_to_md.py "source/<path_to_rst_file>"
 - Ensure that the generated markdown file is properly formatted.
 
 - Ensure that the links in the new file are working, by running `pre-commit run markdown-link-check` and addressing
-  failures until that passes.
+    failures until that passes.
 
 - Remove the rst file using `git rm`.
 

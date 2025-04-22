@@ -53,18 +53,6 @@ ServerDescription's error field.
 
 Clients MUST NOT depend on any particular field order in these responses.
 
-### getLastError
-
-GLE response after OP_INSERT on an arbiter, secondary, recovering member, or ghost:
-
-> {ok: 1, err: "not writable primary"}
-
-[Possible GLE response in MongoDB 2.6](https://jira.mongodb.org/browse/SERVER-9617) during failover:
-
-> {ok: 1, err: "replicatedToNum called but not master anymore"}
-
-Note that this error message contains "not master" but does not start with it.
-
 ### Write command
 
 Response to an "insert" command on an arbiter, secondary, recovering member, or ghost:
@@ -132,20 +120,20 @@ This test requires MongoDB 4.9.0+.
 
 1. Enable the following failpoint:
 
-   ```
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 5 },
-       data: {
-           failCommands: ["hello"], // or legacy hello command
-           errorCode: 1234,
-           appName: "SDAMMinHeartbeatFrequencyTest"
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 5 },
+        data: {
+            failCommands: ["hello"], // or legacy hello command
+            errorCode: 1234,
+            appName: "SDAMMinHeartbeatFrequencyTest"
+        }
+    }
+    ```
 
 2. Create a client with directConnection=true, appName="SDAMMinHeartbeatFrequencyTest", and
-   serverSelectionTimeoutMS=5000.
+    serverSelectionTimeoutMS=5000.
 
 3. Start a timer.
 
@@ -160,24 +148,24 @@ This test will be used to ensure monitors properly create and unpause connection
 This test requires failCommand appName support which is only available in MongoDB 4.2.9+.
 
 1. Create a client with directConnection=true, appName="SDAMPoolManagementTest", and heartbeatFrequencyMS=500 (or lower
-   if possible).
+    if possible).
 
 2. Verify via SDAM and CMAP event monitoring that a ConnectionPoolReadyEvent occurs after the first
-   ServerHeartbeatSucceededEvent event does.
+    ServerHeartbeatSucceededEvent event does.
 
 3. Enable the following failpoint:
 
-   ```
-   {
-       configureFailPoint: "failCommand",
-       mode: { times: 2 },
-       data: {
-           failCommands: ["hello"], // or legacy hello command
-           errorCode: 1234,
-           appName: "SDAMPoolManagementTest"
-       }
-   }
-   ```
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 2 },
+        data: {
+            failCommands: ["hello"], // or legacy hello command
+            errorCode: 1234,
+            appName: "SDAMPoolManagementTest"
+        }
+    }
+    ```
 
 4. Verify that a ServerHeartbeatFailedEvent and a ConnectionPoolClearedEvent (CMAP) are emitted.
 

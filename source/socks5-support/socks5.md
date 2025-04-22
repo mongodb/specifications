@@ -70,12 +70,12 @@ When establishing a new outgoing TCP connection, drivers MUST perform the follow
 
 2. Perform a SOCKS5 handshake as specified in RFC1928.
 
-   > If `proxyUsername` and `proxyPassword` were passed, drivers MUST indicate in the handshake that both "no
-   > authentication" and "username/password authentication" are supported. Otherwise, drivers MUST indicate support for
-   > "no authentication" only.
-   >
-   > Drivers MUST NOT attempt to perform DNS A or AAAA record resolution of the destination hostname and instead pass
-   > the hostname to the proxy as-is.
+    > If `proxyUsername` and `proxyPassword` were passed, drivers MUST indicate in the handshake that both "no
+    > authentication" and "username/password authentication" are supported. Otherwise, drivers MUST indicate support for
+    > "no authentication" only.
+    >
+    > Drivers MUST NOT attempt to perform DNS A or AAAA record resolution of the destination hostname and instead pass
+    > the hostname to the proxy as-is.
 
 3. Continue with connection establishment as if the connection was one to the destination host.
 

@@ -44,7 +44,7 @@ If the **hello** command returns **maxWireVersion >= 4**, drivers:
 
 - MUST implement queries with the `find` command instead of `OP_QUERY`.
 - MUST implement cursor operations with the `getMore` and `killCursors` commands instead of `OP_GET_MORE` and
-  `OP_KILL_CURSORS`, respectively.
+    `OP_KILL_CURSORS`, respectively.
 - MUST NOT use OP_QUERY except to execute commands.
 
 ## Commands
@@ -185,7 +185,7 @@ used instead of negative values.
 In order to have consistency between old and new applications, the following transformations MUST be performed before
 adding options to the **find** command:
 
-```
+```text
 singleBatch = (limit < 0) || (batchSize < 0)
 limit       = abs(limit)
 if singleBatch:
@@ -323,7 +323,7 @@ commands. The **killCursors** command is optional to implement in **MongoDB 3.2*
 
 The command response will be as follows:
 
-```javascript
+```typescript
 {
   "cursorsKilled": [
     <cursor id 1>
@@ -357,7 +357,7 @@ that the **killCursors** command returns a response while the **OP_KILL_CURSORS*
 
 The **OP_REPLY** message has the following general structure.
 
-```javascript
+```c
 struct {
     int32     messageLength;  // total message size, including
                               // this
@@ -465,7 +465,7 @@ More in depth information about passing read preferences to Mongos can be found 
 - 2022-02-01: Replace examples/tables for find, getMore, and killCursors with server manual links.
 
 - 2021-12-14: Exhaust cursors may fallback to non-exhaust cursors on 5.1+ servers. Relax requirement of OP_MSG for
-  exhaust cursors.
+    exhaust cursors.
 
 - 2021-08-27: Exhaust cursors must use OP_MSG on 3.6+ servers.
 
@@ -474,8 +474,8 @@ More in depth information about passing read preferences to Mongos can be found 
 - 2015-10-21: If no **maxAwaitTimeMS** is specified, the driver SHOULD not set **maxTimeMS** on the **getMore** command.
 
 - 2015-10-13: Added guidance on batchSize values as related to the **getMore** command. Legacy secondaryOk flag SHOULD
-  not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore
-  commands when the cursor is a tailable cursor with awaitData set.
+    not be set on getMore and killCursors commands. Introduced maxAwaitTimeMS option for setting maxTimeMS on getMore
+    commands when the cursor is a tailable cursor with awaitData set.
 
 - 2015-09-30: Legacy secondaryOk flag must be set to true on **getMore** and **killCursors** commands to make drivers
-  have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.
+    have same behavior as for OP_GET_MORE and OP_KILL_CURSORS.

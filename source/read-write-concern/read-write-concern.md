@@ -116,10 +116,10 @@ If the `Client`, `Database`, or `Collection` being operated on either has no `Re
 default `ReadConcern` - `readconcern>: { }`:
 
 - If the `ReadConcern` specified for the command is the server default `readConcern: { }`, the driver MUST omit it when
-  sending the command.
+    sending the command.
 - If the `ReadConcern` specified for the command is any `ReadConcern` besides the server default, including an
-  explicitly specified `ReadConcern` of `readConcern: { level: "local" }`, the driver MUST include the `ReadConcern`
-  when sending the command.
+    explicitly specified `ReadConcern` of `readConcern: { level: "local" }`, the driver MUST include the `ReadConcern`
+    when sending the command.
 
 If the `Client`, `Database`, or `Collection` being operated on has a non-default `ReadConcern` specified, then the
 driver MUST include the command's `ReadConcern` when sending the command. This includes if the command specifies the
@@ -175,16 +175,16 @@ Options
 
 For example:
 
-```
+```text
 mongodb://server:27017/db?readConcernLevel=majority
 ```
 
 #### Errors
 
 - MaxWireVersion \< 4 Only the server's default `ReadConcern` is support by MaxWireVersion \< 4. When using other
-  `readConcernLevels` with clients reporting `MaxWireVersion` \< 4, the driver MUST raise an error. This check MUST
-  happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately
-  define a `ReadPreference` such that intermittent errors do not occur.
+    `readConcernLevels` with clients reporting `MaxWireVersion` \< 4, the driver MUST raise an error. This check MUST
+    happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately
+    define a `ReadPreference` such that intermittent errors do not occur.
 
 > [!NOTE]
 > `ReadConcern` is only supported for commands.
@@ -297,19 +297,6 @@ writeConcern = { w: 0, wtimeoutMS: 100 }; // Unacknowledged
 ```
 
 #### On the Wire
-
-##### OP_INSERT, OP_DELETE, OP_UPDATE
-
-`WriteConcern` is implemented by sending the `getLastError` (GLE) command directly after the operation. Drivers SHOULD
-piggy-back the GLE onto the same buffer as the operation. Regardless, GLE MUST be sent on the same connection as the
-initial write operation.
-
-When a user has not specified a `WriteConcern` or has specified the server's default `WriteConcern`, drivers MUST send
-the GLE command without arguments. For example: `{ getLastError: 1 }`
-
-Drivers MUST NOT send a GLE for an `Unacknowledged WriteConcern`. In this instance, the server will not send a reply.
-
-See the `getLastError` command documentation for other formatting.
 
 ##### Write Commands
 
@@ -440,8 +427,8 @@ writeConcernError but may not be exhaustive. Note that some errors have been abb
 - `{ok:1, writeConcernError: {code: 11600, codeName: "InterruptedAtShutdown"}}`
 - `{ok:1, writeConcernError: {code: 11601, codeName: "Interrupted"}}`
 - `{ok:1, writeConcernError: {code: 11602, codeName: "InterruptedDueToReplStateChange"}}`
-- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}`
-- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernFailed", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`[^1]
+- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernTimeout", errmsg: "waiting for replication timed out", errInfo: {wtimeout: True}}}`
+- `{ok:1, writeConcernError: {code: 64, codeName: "WriteConcernTimeout", errmsg: "multiple errors reported : {...} at shardName1 :: and :: {...} at shardName2"}}`[^1]
 - `{ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}`
 - `{ok:1, writeConcernError: {code: 100, codeName: "UnsatisfiableWriteConcern", errmsg: "Not enough data-bearing nodes"}}`
 - `{ok:1, writeConcernError: {code: 79, codeName: "UnknownReplWriteConcern"}}`
@@ -492,7 +479,7 @@ Options
 
 For example:
 
-```
+```text
 mongodb://server:27017/db?w=3
 
 mongodb://server:27017/db?journal=true
@@ -516,18 +503,14 @@ Below are English descriptions of other items that should be tested:
 ### ReadConcern
 
 1. Commands supporting a read concern MUST raise an error when MaxWireVersion is less than 4 and a non-default,
-   non-local read concern is specified.
+    non-local read concern is specified.
 2. Commands supporting a read concern MUST NOT send the default read concern to the server.
 3. Commands supporting a read concern MUST send any non-default read concern to the server.
 
 ### WriteConcern
 
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
-2. Commands supporting a write concern MUST send any non-default acknowledged write concern to the server, either in the
-   command or as a getLastError.
-3. On ServerVersion less than 2.6, drivers MUST NOT send a getLastError command for an Unacknowledged write concern.
-4. FindAndModify helper methods MUST NOT send a write concern when the MaxWireVersion is less than 4.
-5. Helper methods for other commands that write MUST NOT send a write concern when the MaxWireVersion is less than 5.
+2. Commands supporting a write concern MUST send any non-default write concern to the server in the command.
 
 ## Reference Implementation
 
@@ -550,7 +533,7 @@ instance, we send it.
 
 ## Changelog
 
-- 2024-08-23: Migrated from reStructuredText to Markdown.
+- 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
 
 - 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
 
@@ -559,15 +542,15 @@ instance, we send it.
 - 2016-06-17: Added "linearizable" to ReadConcern levels.
 
 - 2016-07-15: Command-specific helper methods for commands that write SHOULD check the server's MaxWireVersion and
-  decide whether to send writeConcern. Advise drivers to parse server replies for writeConcernError and raise an
-  exception if found, only in command-specific helper methods that take a writeConcern parameter, not in generic command
-  methods. Don't mention obscure commands with no helpers.
+    decide whether to send writeConcern. Advise drivers to parse server replies for writeConcernError and raise an
+    exception if found, only in command-specific helper methods that take a writeConcern parameter, not in generic
+    command methods. Don't mention obscure commands with no helpers.
 
 - 2016-08-06: Further clarify that command-specific helper methods for commands that write take write concern options in
-  their parameter lists, and relax from SHOULD to MAY.
+    their parameter lists, and relax from SHOULD to MAY.
 
 - 2017-03-13: reIndex silently ignores writeConcern in MongoDB 3.4 and returns an error if writeConcern is included with
-  MongoDB 3.5+. See [SERVER-27891](https://jira.mongodb.org/browse/SERVER-27891).
+    MongoDB 3.5+. See [SERVER-27891](https://jira.mongodb.org/browse/SERVER-27891).
 
 - 2017-11-17: Added list of commands that support readConcern
 
@@ -593,8 +576,12 @@ instance, we send it.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
+- 2024-08-23: Migrated from reStructuredText to Markdown.
+
+- 2024-10-30: Remove reference to getLastError
+
 [^1]: This is only possible in a sharded cluster. When a write is routed to multiple shards and more than one shard
-    returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernFailed" error
+    returns a writeConcernError, then mongos will construct a new writeConcernError with the "WriteConcernTimeout" error
     code and an errmsg field contains the stringified writeConcernError from each shard. Note that each shard may return
     a different writeConcernError.
 

@@ -13,8 +13,8 @@ Each YAML file has the following keys:
 
 - `version`: A version number indicating the expected format of the spec tests (current version = 1)
 - `style`: A string indicating what style of tests this file contains. Contains one of the following:
-  - `"unit"`: a test that may be run without connecting to a MongoDB deployment.
-  - `"integration"`: a test that MUST be run against a real MongoDB deployment.
+    - `"unit"`: a test that may be run without connecting to a MongoDB deployment.
+    - `"integration"`: a test that MUST be run against a real MongoDB deployment.
 - `description`: A text description of what the test is meant to assert
 
 ## Unit Test Format:
@@ -22,56 +22,56 @@ Each YAML file has the following keys:
 All Unit Tests have some of the following fields:
 
 - `poolOptions`: If present, connection pool options to use when creating a pool; both
-  [standard ConnectionPoolOptions](../../connection-monitoring-and-pooling.md#connection-pool-options) and the following
-  test-specific options are allowed:
-  - `backgroundThreadIntervalMS`: A time interval between the end of a
-    [Background Thread Run](../../connection-monitoring-and-pooling.md#background-thread) and the beginning of the next
-    Run. If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option. If the
-    option is not specified, an implementation is free to use any value it finds reasonable.
+    [standard ConnectionPoolOptions](../../connection-monitoring-and-pooling.md#connection-pool-options) and the
+    following test-specific options are allowed:
+    - `backgroundThreadIntervalMS`: A time interval between the end of a
+        [Background Thread Run](../../connection-monitoring-and-pooling.md#background-thread) and the beginning of the
+        next Run. If a Connection Pool does not implement a Background Thread, the Test Runner MUST ignore the option. If
+        the option is not specified, an implementation is free to use any value it finds reasonable.
 
-    Possible values (0 is not allowed):
+        Possible values (0 is not allowed):
 
-    - A negative value: never begin a Run.
-    - A positive value: the interval between Runs in milliseconds.
+        - A negative value: never begin a Run.
+        - A positive value: the interval between Runs in milliseconds.
 - `operations`: A list of operations to perform. All operations support the following fields:
-  - `name`: A string describing which operation to issue.
-  - `thread`: The name of the thread in which to run this operation. If not specified, runs in the default thread
+    - `name`: A string describing which operation to issue.
+    - `thread`: The name of the thread in which to run this operation. If not specified, runs in the default thread
 - `error`: Indicates that the main thread is expected to error during this test. An error may include of the following
-  fields:
-  - `type`: the type of error emitted
-  - `message`: the message associated with that error
-  - `address`: Address of pool emitting error
+    fields:
+    - `type`: the type of error emitted
+    - `message`: the message associated with that error
+    - `address`: Address of pool emitting error
 - `events`: An array of all connection monitoring events expected to occur while running `operations`. An event may
-  contain any of the following fields
-  - `type`: The type of event emitted
-  - `address`: The address of the pool emitting the event
-  - `connectionId`: The id of a connection associated with the event
-  - `duration`: The event duration
-  - `options`: Options used to create the pool
-  - `reason`: A reason giving more information on why the event was emitted
+    contain any of the following fields
+    - `type`: The type of event emitted
+    - `address`: The address of the pool emitting the event
+    - `connectionId`: The id of a connection associated with the event
+    - `duration`: The event duration
+    - `options`: Options used to create the pool
+    - `reason`: A reason giving more information on why the event was emitted
 - `ignore`: An array of event names to ignore
 
 Valid Unit Test Operations are the following:
 
 - `start(target)`: Starts a new thread named `target`
-  - `target`: The name of the new thread to start
+    - `target`: The name of the new thread to start
 - `wait(ms)`: Sleep the current thread for `ms` milliseconds
-  - `ms`: The number of milliseconds to sleep the current thread for
+    - `ms`: The number of milliseconds to sleep the current thread for
 - `waitForThread(target)`: wait for thread `target` to finish executing. Propagate any errors to the main thread.
-  - `target`: The name of the thread to wait for.
+    - `target`: The name of the thread to wait for.
 - `waitForEvent(event, count, timeout)`: block the current thread until `event` has occurred `count` times
-  - `event`: The name of the event
-  - `count`: The number of times the event must occur (counting from the start of the test)
-  - `timeout`: If specified, time out with an error after waiting for this many milliseconds without seeing the required
-    events
+    - `event`: The name of the event
+    - `count`: The number of times the event must occur (counting from the start of the test)
+    - `timeout`: If specified, time out with an error after waiting for this many milliseconds without seeing the required
+        events
 - `label = pool.checkOut()`: call `checkOut` on pool, returning the checked out connection
-  - `label`: If specified, associate this label with the returned connection, so that it may be referenced in later
-    operations
+    - `label`: If specified, associate this label with the returned connection, so that it may be referenced in later
+        operations
 - `pool.checkIn(connection)`: call `checkIn` on pool
-  - `connection`: A string label identifying which connection to check in. Should be a label that was previously set
-    with `checkOut`
+    - `connection`: A string label identifying which connection to check in. Should be a label that was previously set
+        with `checkOut`
 - `pool.clear()`: call `clear` on Pool
-  - `interruptInUseConnections`: Determines whether "in use" connections should be also interrupted
+    - `interruptInUseConnections`: Determines whether "in use" connections should be also interrupted
 - `pool.close()`: call `close` on Pool
 - `pool.ready()`: call `ready` on Pool
 
@@ -80,18 +80,18 @@ Valid Unit Test Operations are the following:
 The integration test format is identical to the unit test format with the addition of the following fields to each test:
 
 - `runOn` (optional): An array of server version and/or topology requirements for which the tests can be run. If the
-  test environment satisfies one or more of these requirements, the tests may be executed; otherwise, this test should
-  be skipped. If this field is omitted, the tests can be assumed to have no particular requirements and should be
-  executed. Each element will have some or all of the following fields:
-  - `minServerVersion` (optional): The minimum server version (inclusive) required to successfully run the tests. If
-    this field is omitted, it should be assumed that there is no lower bound on the required server version.
-  - `maxServerVersion` (optional): The maximum server version (inclusive) against which the tests can be run
-    successfully. If this field is omitted, it should be assumed that there is no upper bound on the required server
-    version.
+    test environment satisfies one or more of these requirements, the tests may be executed; otherwise, this test should
+    be skipped. If this field is omitted, the tests can be assumed to have no particular requirements and should be
+    executed. Each element will have some or all of the following fields:
+    - `minServerVersion` (optional): The minimum server version (inclusive) required to successfully run the tests. If
+        this field is omitted, it should be assumed that there is no lower bound on the required server version.
+    - `maxServerVersion` (optional): The maximum server version (inclusive) against which the tests can be run
+        successfully. If this field is omitted, it should be assumed that there is no upper bound on the required server
+        version.
 - `failPoint`: optional, a document containing a `configureFailPoint` command to run against the endpoint being used for
-  the test.
+    the test.
 - `poolOptions.appName` (optional): appName attribute to be set in connections, which will be affected by the fail
-  point.
+    point.
 
 ## Spec Test Match Function
 
@@ -100,11 +100,11 @@ The definition of MATCH or MATCHES in the Spec Test Runner is as follows:
 - MATCH takes two values, `expected` and `actual`
 - Notation is "Assert `actual` MATCHES `expected`"
 - Assertion passes if `expected` is a subset of `actual`, with the values `42` and `"42"` acting as placeholders for
-  "any value"
+    "any value"
 
 Pseudocode implementation of `actual` MATCHES `expected`:
 
-```
+```text
 If expected is "42" or 42:
   Assert that actual exists (is not null or undefined)
 Else:
@@ -127,20 +127,20 @@ use a mock connection class for testing the pool behavior in unit tests
 For each YAML file with `style: unit`:
 
 - Create a Pool `pool`, subscribe and capture any Connection Monitoring events emitted in order.
-  - If `poolOptions` is specified, use those options to initialize both pools
-  - The returned pool must have an `address` set as a string value.
+    - If `poolOptions` is specified, use those options to initialize both pools
+    - The returned pool must have an `address` set as a string value.
 - Process each `operation` in `operations` (on the main thread)
-  - If a `thread` is specified, the main thread MUST schedule the operation to execute in the corresponding thread.
-    Otherwise, execute the operation directly in the main thread.
+    - If a `thread` is specified, the main thread MUST schedule the operation to execute in the corresponding thread.
+        Otherwise, execute the operation directly in the main thread.
 - If `error` is presented
-  - Assert that an actual error `actualError` was thrown by the main thread
-  - Assert that `actualError` MATCHES `error`
+    - Assert that an actual error `actualError` was thrown by the main thread
+    - Assert that `actualError` MATCHES `error`
 - Else:
-  - Assert that no errors were thrown by the main thread
+    - Assert that no errors were thrown by the main thread
 - calculate `actualEvents` as every Connection Event emitted whose `type` is not in `ignore`
 - if `events` is not empty, then for every `idx`/`expectedEvent` in `events`
-  - Assert that `actualEvents[idx]` exists
-  - Assert that `actualEvents[idx]` MATCHES `expectedEvent`
+    - Assert that `actualEvents[idx]` exists
+    - Assert that `actualEvents[idx]` MATCHES `expectedEvent`
 
 It is important to note that the `ignore` list is used for calculating `actualEvents`, but is NOT used for the
 `waitForEvent` command
@@ -151,17 +151,17 @@ The steps to run the integration tests are the same as those used to run the uni
 modifications:
 
 - The integration tests MUST be run against an actual endpoint. If the deployment being tested contains multiple
-  endpoints, then the runner MUST only use one of them to run the tests against.
+    endpoints, then the runner MUST only use one of them to run the tests against.
 
 - For each test, if `failPoint` is specified, its value is a `configureFailPoint` command. Run the command on the admin
-  database of the endpoint being tested to enable the fail point.
+    database of the endpoint being tested to enable the fail point.
 
 - At the end of each test, any enabled fail point MUST be disabled to avoid spurious failures in subsequent tests. The
-  fail point may be disabled like so:
+    fail point may be disabled like so:
 
-  ```javascript
-  db.adminCommand({
-      configureFailPoint: "<fail point name>",
-      mode: "off"
-  });
-  ```
+    ```javascript
+    db.adminCommand({
+        configureFailPoint: "<fail point name>",
+        mode: "off"
+    });
+    ```

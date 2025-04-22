@@ -133,7 +133,7 @@ All methods:
 - MAY allow the `cursor.batchSize` option to be passed.
 - SHOULD allow the `comment` option to be passed.
 - MUST apply timeouts per the
-  [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification.
+    [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification.
 
 All methods that return cursors MUST support the timeout options documented in
 [Client Side Operations Timeout: Cursors](../client-side-operations-timeout/client-side-operations-timeout.md#cursors).
@@ -181,12 +181,12 @@ In MongoDB 4.4, the `ns` field was removed from the index specifications, so the
 `idIndex` field of the collection information will no longer contain an `ns` field.
 
 - For drivers that report those index specifications in the form of documents or dictionaries, no special handling is
-  necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the `ns` field will
-  no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no special
-  mention of the `ns` field is necessary.
+    necessary, but any documentation of the contents of the documents/dictionaries MUST indicate that the `ns` field
+    will no longer be present in MongoDB 4.4+. If the contents of the documents/dictionaries are undocumented, then no
+    special mention of the `ns` field is necessary.
 - For drivers that report those index specifications in the form of statically defined models, the driver MUST manually
-  populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
-  `listCollections` command response. The `ns` field is not required to be a part of the models, however.
+    populate the `ns` field of the models with the appropriate namespace if the server does not report it in the
+    `listCollections` command response. The `ns` field is not required to be a part of the models, however.
 
 Example return (a cursor which returns documents, not a simple array):
 
@@ -246,7 +246,7 @@ method
 - `listCollections` can be run on a secondary node.
 - Querying `system.indexes` on a secondary node requires secondaryOk to be set.
 - Drivers MUST run `listCollections` on the primary node when in a replica set topology, unless directly connected to a
-  secondary node in Single topology.
+    secondary node in Single topology.
 
 ## Test Plan
 
@@ -269,16 +269,16 @@ For each of the configurations:
 ### Tests
 
 - Run the driver's method that returns a list of collection names (e.g. `listCollectionNames()`):
-  - verify that *all* collection names are represented in the result
-  - verify that there are no duplicate collection names
-  - there are no returned collections that do not exist
-  - there are no returned collections containing an '$'
+    - verify that *all* collection names are represented in the result
+    - verify that there are no duplicate collection names
+    - there are no returned collections that do not exist
+    - there are no returned collections containing an '$'
 - Run the driver's method that returns a list of collection names (e.g. `listCollectionNames()`), pass a filter of
-  `{ 'options.capped': true }`, and:
-  - verify that *only* names of capped collections are represented in the result
-  - verify that there are no duplicate collection names
-  - there are no returned collections that do not exist
-  - there are no returned collections containing an '$'
+    `{ 'options.capped': true }`, and:
+    - verify that *only* names of capped collections are represented in the result
+    - verify that there are no duplicate collection names
+    - there are no returned collections that do not exist
+    - there are no returned collections containing an '$'
 
 ## Backwards Compatibility
 
@@ -309,7 +309,7 @@ The shell implements the first algorithm for falling back if the `listCollection
 - 2020-03-18: MongoDB 4.4 no longer includes `ns` field in `idIndex` field for `listCollections` responses.
 
 - 2019-03-21: The method that returns a list of collection names should be named `listCollectionNames`. The method that
-  returns a list of collection objects may be named `listMongoCollections`.
+    returns a list of collection objects may be named `listMongoCollections`.
 
 - 2018-07-03: Clarify that `nameOnly` must not be used with filters other than `name`.
 
@@ -318,6 +318,6 @@ The shell implements the first algorithm for falling back if the `listCollection
 - 2017-09-27: Clarify reason for filtering collection names containing '$'.
 
 - 2015-01-14: Clarify trimming of database name. Put preferred method name for listing collections with a cursor as
-  return value.
+    return value.
 
 - 2014-12-18: Update with the server change to return a cursor for `listCollections`.

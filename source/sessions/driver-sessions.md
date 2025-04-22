@@ -90,6 +90,11 @@ with sessions.
 
 Any network exception writing to or reading from a socket (e.g. a socket timeout or error).
 
+**SDAM**
+
+An abbreviated form of "Server Discovery and Monitoring", specification defined in
+[Server Discovery and Monitoring Specification](../server-discovery-and-monitoring/server-discovery-and-monitoring.md).
+
 ## Specification
 
 Drivers currently have no concept of a session. The driver API will be expanded to provide a way for applications to
@@ -429,9 +434,9 @@ There is a possible race condition that can happen between the time the driver c
 subsequently sends a command to the server:
 
 - The server might have supported sessions at the time the connection was first opened (and reported a value for
-  logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.md)), but have
-  subsequently been downgraded to not support sessions. The server does not close the socket in this scenario, so the
-  driver will conclude that the server at the other end of this connection supports sessions.
+    logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.md)), but
+    have subsequently been downgraded to not support sessions. The server does not close the socket in this scenario, so
+    the driver will conclude that the server at the other end of this connection supports sessions.
 
 There is nothing that the driver can do about this race condition, and the server will just return an error in this
 scenario.
@@ -494,10 +499,10 @@ session ID for each unacknowledged write, but that would result in many orphaned
 Therefore drivers MUST NOT send a session ID with unacknowledged writes under any circumstances:
 
 - For unacknowledged writes with an explicit session, drivers SHOULD raise an error. If a driver allows users to provide
-  an explicit session with an unacknowledged write (e.g. for backwards compatibility), the driver MUST NOT send the
-  session ID.
+    an explicit session with an unacknowledged write (e.g. for backwards compatibility), the driver MUST NOT send the
+    session ID.
 - For unacknowledged writes without an explicit session, drivers SHOULD NOT use an implicit session. If a driver creates
-  an implicit session for unacknowledged writes without an explicit session, the driver MUST NOT send the session ID.
+    an implicit session for unacknowledged writes without an explicit session, the driver MUST NOT send the session ID.
 
 Drivers MUST document the behavior of unacknowledged writes for both explicit and implicit sessions.
 
@@ -688,10 +693,10 @@ remain dirty for the remainder of its lifetime regardless if later commands succ
 
 1. If the server session pool is empty create a new `ServerSession` and use it
 2. Otherwise remove a `ServerSession` from the front of the queue and examine it:
-   - If the driver is in load balancer mode, use this `ServerSession`.
-   - If it has at least one minute left before becoming stale use this `ServerSession`
-   - If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to
-     step 1.
+    - If the driver is in load balancer mode, use this `ServerSession`.
+    - If it has at least one minute left before becoming stale use this `ServerSession`
+    - If it has less than one minute left before becoming stale discard it (let it be garbage collected) and return to
+        step 1.
 
 See the [Load Balancer Specification](../load-balancers/load-balancers.md#session-expiration) for details on session
 expiration.
@@ -699,18 +704,19 @@ expiration.
 ### Algorithm to return a ServerSession instance to the server session pool
 
 1. Before returning a server session to the pool a driver MUST first check the server session pool for server sessions
-   at the back of the queue that are about to expire (meaning they will expire in less than one minute). A driver MUST
-   stop checking server sessions once it encounters a server session that is not about to expire. Any server sessions
-   found that are about to expire are removed from the end of the queue and discarded (or allowed to be garbage
-   collected)
+    at the back of the queue that are about to expire (meaning they will expire in less than one minute). A driver MUST
+    stop checking server sessions once it encounters a server session that is not about to expire. Any server sessions
+    found that are about to expire are removed from the end of the queue and discarded (or allowed to be garbage
+    collected)
 2. Then examine the server session that is being returned to the pool and:
-   - If this session is marked dirty (i.e. it was involved in a network error) discard it (let it be garbage collected)
-   - If it will expire in less than one minute discard it (let it be garbage collected)
-   - If it won't expire for at least one minute add it to the front of the queue
+    - If this session is marked dirty (i.e. it was involved in a network error) discard it (let it be garbage collected)
+    - If it will expire in less than one minute discard it (let it be garbage collected)
+    - If it won't expire for at least one minute add it to the front of the queue
 
 ## Gossipping the cluster time
 
-Drivers MUST gossip the cluster time when connected to a deployment that uses cluster times.
+Drivers MUST gossip the cluster time when connected to a deployment that uses cluster times. However, drivers MUST NOT
+gossip cluster time on SDAM commands.
 
 Gossipping the cluster time is a process in which the driver participates in distributing the logical cluster time in a
 deployment. Drivers learn the current cluster time (from a particular server's perspective) in responses they receive
@@ -722,7 +728,7 @@ received from a server.
 
 ### Receiving the current cluster time
 
-Drivers MUST examine all responses from the server commands to see if they contain a top level field named
+Drivers MUST examine all non-SDAM responses from the server commands to see if they contain a top level field named
 `$clusterTime` formatted as follows:
 
 ```typescript
@@ -748,8 +754,9 @@ not participate in the comparison.
 
 ### Sending the highest seen cluster time
 
-Whenever a driver sends a command to a server it MUST include the highest seen cluster time in a top level field called
-`$clusterTime`, in the same format as it was received in (but see Gossipping with mixed server versions below).
+Whenever a driver sends a non-SDAM command to a server it MUST include the highest seen cluster time in a top level
+field called `$clusterTime`, in the same format as it was received in (but see Gossipping with mixed server versions
+below).
 
 ### How to compute the `$clusterTime` to send to a server
 
@@ -768,11 +775,11 @@ The safe way to compute the `$clusterTime` to send to a server is:
 1. When the `ClientSession` is first started its `clusterTime` is set to null.
 
 2. When the driver sends `$clusterTime` to the server it should send the greater of the `ClientSession` `clusterTime`
-   and the `MongoClient` `clusterTime` (either one could be null).
+    and the `MongoClient` `clusterTime` (either one could be null).
 
 3. When the driver receives a `$clusterTime` from the server it should advance both the `ClientSession` and the
-   `MongoClient` `clusterTime`. The `clusterTime` of a `ClientSession` can also be advanced by calling
-   `advanceClusterTime`.
+    `MongoClient` `clusterTime`. The `clusterTime` of a `ClientSession` can also be advanced by calling
+    `advanceClusterTime`.
 
 This sequence ensures that if the `clusterTime` of a `ClientSession` is invalid only that one session will be affected.
 The `MongoClient` `clusterTime` is only updated with `$clusterTime` values known to be valid because they were received
@@ -790,6 +797,15 @@ Drivers MUST check that the server they are sending a command to supports `$clus
 the command. A server supports `$clusterTime` when the `maxWireVersion` >= 6.
 
 This supports the (presumably short lived) scenario where not all servers have been upgraded to 3.6.
+
+### Do not gossip on SDAM commands
+
+Drivers MUST NOT gossip cluster time on SDAM commands. In earlier versions of this spec, drivers did gossip cluster time
+on SDAM commands, however it was discovered that doing so provides little benefit and can result in a loss of
+availability. For example, if the driver attempts to connect to a member of a different replica set, the driver can end
+up with an invalid cluster time. Worse, this invalid cluster time may remain the highest for an indefinite time since
+clocks between different clusters are not synced. This results in all operations failing until the application is
+restarted. To fix this issue we decided it was more robust to stop gossiping on SDAM commands altogether.
 
 ## Test Plan
 
@@ -876,7 +892,7 @@ session must be used sequentially. This results in multiple problems:
 
 1. killSessions to end an earlier operation would surprisingly also end a later operation.
 2. An otherwise unrelated operation that just happens to use that same server session will potentially block waiting for
-   the previous operation to complete. For example, a transactional write will block a subsequent transactional write.
+    the previous operation to complete. For example, a transactional write will block a subsequent transactional write.
 
 ### Why do automatic retry attempts re-use a dirty implicit session?
 
@@ -918,6 +934,7 @@ has risks that do not justify the potential guaranteed `ServerSession` allocatio
 
 ## Changelog
 
+- 2025-02-24: Drivers MUST NOT gossip $clusterTime on SDAM commands.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2017-09-13: If causalConsistency option is omitted assume true
 - 2017-09-16: Omit session ID when opening and authenticating a connection

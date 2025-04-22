@@ -124,10 +124,10 @@ MUST raise an error.
 There are no new server commands related to snapshot reads. Instead, snapshot reads are implemented by:
 
 1. Saving the `atClusterTime` returned by 5.0+ servers for the first find/aggregate/distinct operation in a private
-   `snapshotTime` property of the `ClientSession` object. Drivers MUST save `atClusterTime` in the `ClientSession`
-   object.
+    `snapshotTime` property of the `ClientSession` object. Drivers MUST save `atClusterTime` in the `ClientSession`
+    object.
 2. Passing that `snapshotTime` in the `atClusterTime` field of the `readConcern` field for subsequent snapshot read
-   operations (i.e. find/aggregate/distinct commands).
+    operations (i.e. find/aggregate/distinct commands).
 
 ## Server Command Responses
 
@@ -160,9 +160,9 @@ the `readConcern` with a `snapshot` level in subsequent read operations.
 ## Server Errors
 
 1. The server may reply to read commands with a `SnapshotTooOld(239)` error if the client's `atClusterTime` value is not
-   available in the server's history.
+    available in the server's history.
 2. The server will return `InvalidOptions(72)` error if both `atClusterTime` and `afterClusterTime` options are set to
-   true.
+    true.
 3. The server will return `InvalidOptions(72)` error if the command does not support readConcern.level "snapshot".
 
 ## Snapshot Read Commands

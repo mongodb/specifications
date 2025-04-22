@@ -64,10 +64,8 @@ string error labels. Drivers may also add error labels to errors that they retur
 
 #### Transient Transaction Error
 
-Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
-error encountered running any command other than commitTransaction in a transaction. If a network error occurs while
-running the commitTransaction command then it is not known whether the transaction committed or not, and thus the
-"TransientTransactionError" label MUST NOT be added.
+Any command, network, or driver error that includes the "TransientTransactionError" error label in the "errorLabels"
+field.
 
 ### **Naming variations**
 
@@ -78,7 +76,7 @@ instead. For example, you might use StartTransaction or start_transaction instea
 A non-exhaustive list of acceptable naming deviations are as follows:
 
 - Using "maxCommitTimeMS" as an example, .NET would use "MaxCommitTime" where it's type is a TimeSpan structure that
-  includes units. However, calling it "MaximumCommitTime" would not be acceptable.
+    includes units. However, calling it "MaximumCommitTime" would not be acceptable.
 
 ### **Transaction API**
 
@@ -205,6 +203,19 @@ Drivers MUST raise an error if the user provides or if defaults would result in 
 Driver Sessions spec disallows using unacknowledged writes in a session. The error message MUST contain "transactions do
 not support unacknowledged write concerns".
 
+If a higher level object, such as a Collection, is created inside a transaction, their write concern option MUST be
+ignored if provided and the transaction level write concern used instead. An example of expected behaviour is:
+
+```python
+client = MongoClient("mongodb://host/?readPreference=nearest")
+coll = client.db.test
+with client.start_session() as s:
+    with s.start_transaction():
+        w_0_coll = db.get_collection("w_0_coll", writeConcern=WriteConcern(w=0))
+        # This is allowed, the write concern of the transaction is used instead of w=0 from the collection.
+        w_0_coll.insert_one({}, session=s)
+```
+
 #### readPreference
 
 The read preference to use for all read operations in this transaction.
@@ -232,8 +243,6 @@ with client.start_session() as s:
         coll.find_one(session=s)  # Error: "read preference in a transaction must be primary"
 ```
 
-In the future, we might relax this restriction and allow any read preference on a transaction.
-
 #### maxCommitTimeMS
 
 NOTE: This option is deprecated in favor of
@@ -258,8 +267,7 @@ ClientSession is in one of five states: "no transaction", "starting transaction"
 "transaction committed", and "transaction aborted". It transitions among these states according to the following
 diagram:
 
-<img src="client-session-transaction-states.png"
-style="width:6.5in;height:3.68056in" alt="states" />
+![ClientSession transaction states](client-session-transaction-states.png)
 ([GraphViz source](client-session-transaction-states.dot))
 
 When a ClientSession is created it starts in the "no transaction" state. Starting, committing, and aborting a
@@ -634,18 +642,19 @@ retries of commitTransaction and abortTransaction) to the same mongos.
 Drivers MUST unpin a ClientSession in the following situations:
 
 1. The transaction is aborted. The session MUST be unpinned regardless of whether or the `abortTransaction` command
-   succeeds or fails, or was executed at all. If the operation fails with a retryable error, the session MUST be
-   unpinned before performing server selection for the retry.
+    succeeds or fails, or was executed at all. If the operation fails with a retryable error, the session MUST be
+    unpinned before performing server selection for the retry.
 2. Any operation in the transaction, including `commitTransaction` fails with a TransientTransactionError. Transient
-   errors indicate that the transaction in question has already been aborted or that the pinnned mongos is
-   down/unavailable. Unpinning the session ensures that a subsequent `abortTransaction` (or `commitTransaction`) does
-   not block waiting on a server that is unreachable.
+    errors indicate that the transaction in question has already been aborted or that the pinnned mongos is
+    down/unavailable. Unpinning the session ensures that a subsequent `abortTransaction` (or `commitTransaction`) does
+    not block waiting on a server that is unreachable.
 3. Any `commitTransaction` attempt fails with an `UnknownTransactionCommitResult` error label. If the error is also
-   considered retryable, the session MUST be unpinned before performing server selection for the retry.
+    considered retryable, the session MUST be unpinned before performing server selection for the retry.
 4. A new transaction is started on the ClientSession after the previous transaction has been committed. The session MUST
-   be unpinned before performing server selection for the first operation of the new transaction.
+    be unpinned before performing server selection for the first operation of the new transaction.
 5. A non-transactional operation is performed using the ClientSession. The session MUST be unpinned before performing
-   server selection for the operation.
+    server selection for the operation.
+6. The ClientSession is ended either explicitly via `endSession` method, or implicitly when supported by the driver.
 
 Note that committing a transaction on a pinned ClientSession MUST NOT unpin the session as `commitTransaction` may be
 called multiple times.
@@ -677,12 +686,15 @@ contents of the document.
 Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
 string error labels.
 
-### TransientTransactionError
+### Transient Transaction Error
 
-Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
-error or server selection error encountered running any command besides commitTransaction in a transaction. In the case
-of command errors, the server adds the label; in the case of network errors or server selection errors where the client
-receives no server reply, the client adds the label.
+- Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. In the case of
+    command errors, the server adds the label.
+- Any network error or server selection error encountered running any command besides commitTransaction in a
+    transaction. In the case of network errors or server selection errors where the client receives no server reply, the
+    client MUST add the label. If a network error occurs while running the commitTransaction command then it is not
+    known whether the transaction committed or not, and thus the "TransientTransactionError" label MUST NOT be added.
+- `PoolClearedError`. Driver MUST add the label to this error.
 
 #### Retrying transactions that fail with TransientTransactionError
 
@@ -876,14 +888,14 @@ The [Python driver](https://github.com/mongodb/mongo-python-driver/) serves as a
 - Support retryable writes within a transaction.
 
 - Support transactions on secondaries. In this case, drivers would be required to pin a transaction to the server
-  selected for the initial operation. All subsequent operations in the transaction would go to the pinned server.
+    selected for the initial operation. All subsequent operations in the transaction would go to the pinned server.
 
 - Support for transactions that read from multiple nodes in a replica set. One interesting use case would be to run a
-  single transaction that performs low-latency reads with readPreference "nearest" followed by some writes.
+    single transaction that performs low-latency reads with readPreference "nearest" followed by some writes.
 
 - Support for unacknowledged transaction commits. This might be useful when data consistency is paramount but durability
-  is optional. Imagine a system that increments two counters in two different collections. The system may want to use
-  transactions to guarantee that both counters are always incremented together or not at all.
+    is optional. Imagine a system that increments two counters in two different collections. The system may want to use
+    transactions to guarantee that both counters are always incremented together or not at all.
 
 ## **Justifications**
 
@@ -925,6 +937,11 @@ transactions. There will then be new error scenarios, such as a transaction with
 won't be possible in the future for startTransaction to check that the read preference is correct for all operations the
 application will perform in the transaction. Therefore, we specify now that the readPreference must be checked
 per-operation. (However, we have not completely planned how read preference validation will behave in MongoDB 4.2.)
+
+*Update 28.Oct.20214*
+
+Note this section is retained in the spec for historical reasons and that the read preference in transactions must
+always be primary.
 
 ### Users cannot pass readConcern or writeConcern to operations in transactions
 
@@ -991,18 +1008,18 @@ that calling commitTransaction again may succeed.
 
 The following commands are allowed inside transactions:
 
-01. find
-02. getMore
+1. find
+2. getMore
     - Note that it is not possible to start a transaction with a getMore command, the cursor must have been created
-      within the transaction in order for the getMore to succeed.
-03. killCursors
-04. insert, including into a non-existing collection that implicitly creates it
-05. update
-06. delete
-07. findAndModify
-08. aggregate (including `$lookup`)
+        within the transaction in order for the getMore to succeed.
+3. killCursors
+4. insert, including into a non-existing collection that implicitly creates it
+5. update
+6. delete
+7. findAndModify
+8. aggregate (including `$lookup`)
     - The `$out` and `$merge` stages are prohibited.
-09. distinct
+9. distinct
 10. geoSearch
 11. create
 12. createIndexes on an empty collection created in the same transaction or on a non-existing collection
@@ -1031,10 +1048,10 @@ Consider the following scenario:
 
 1. The driver is connected to a replica set where node A is primary.
 2. The driver sends commitTransaction to A with `w:1`. A commits the transaction but dies before it can reply. This
-   constitutes a retryable error, which means the driver can retry the commitTransaction command.
+    constitutes a retryable error, which means the driver can retry the commitTransaction command.
 3. Node B is briefly elected.
 4. The driver retries commitTransaction on B with `w:1`, and B replies with a NoSuchTransaction error code and
-   TransientTransactionError error label. This implies that the driver may retry the entire transaction.
+    TransientTransactionError error label. This implies that the driver may retry the entire transaction.
 5. Node A revives before B has done any `w:majority` writes and is reëlected as primary.
 6. The driver then retries the entire transaction on A where it commits successfully.
 
@@ -1045,13 +1062,13 @@ Drivers can avoid this scenario if they always use a majority write concern when
 majority write concern to step four in the above scenario would lead to one of the following possible outcomes:
 
 - Node B replies with failed response, which does not include a TransientTransactionError error label. This does not
-  constitute a retryable error. Control is returned to the user.
+    constitute a retryable error. Control is returned to the user.
 - Node B replies with a successful response (e.g. `ok:1`) indicating that the retried commitTransaction has succeeded
-  durably and the driver can continue. Control is returned to the user.
+    durably and the driver can continue. Control is returned to the user.
 - Node B replies with a wtimeout error. This does not constitute a retryable error. Control is returned to the user.
 - Node B replies with a failure response that includes the TransientTransactionError label, which indicates it is safe
-  to retry the entire transaction. Drivers can trust that a server response will not include both a write concern error
-  and TransientTransactionError label (see: [SERVER-37179](https://jira.mongodb.org/browse/SERVER-37179)).
+    to retry the entire transaction. Drivers can trust that a server response will not include both a write concern
+    error and TransientTransactionError label (see: [SERVER-37179](https://jira.mongodb.org/browse/SERVER-37179)).
 
 Adding a majority write concern only when retrying commitTransaction provides a good compromise of performance and
 durability. Applications can use `w:1` for the initial transaction attempt for a performance advantage in the happy
@@ -1069,6 +1086,14 @@ has been disabled, drivers can readily trust that a majority write concern is du
 objective of avoiding duplicate commits.
 
 ## **Changelog**
+
+- 2024-11-01: Clarify collection options inside txn.
+
+- 2024-11-01: Specify that ClientSession must be unpinned when ended.
+
+- 2024-10-31: Clarify when drivers must add TransientTransactionError label.
+
+- 2024-10-28: Note read preference must always be primary in a transaction.
 
 - 2024-05-08: Add bulkWrite to the list of commands allowed in transactions.
 
@@ -1097,7 +1122,7 @@ objective of avoiding duplicate commits.
 - 2019-06-07: Mention `$merge` stage for aggregate alongside `$out`
 
 - 2019-05-13: Add support for maxTimeMS on transaction commit, MaxTimeMSExpired errors on commit are labelled
-  UnknownTransactionCommitResult.
+    UnknownTransactionCommitResult.
 
 - 2019-02-19: Add support for sharded transaction recoveryToken.
 

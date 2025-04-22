@@ -23,12 +23,16 @@ repos:
       stages: [manual]
 
 - repo: https://github.com/executablebooks/mdformat
-  rev: 0.7.17
+  rev: 0.7.18
   hooks:
     - id: mdformat
       args: ["--wrap=120", "--number"]
       additional_dependencies:
-        [mdformat-gfm, mdformat-frontmatter, mdformat-footnote, mdformat-gfm-alerts]
+        - mdformat-footnote
+        - mdformat-frontmatter
+        - mdformat-gfm
+        - mdformat-gfm-alerts
+        - mdformat-mkdocs~=3.0
 
 - repo: local
   hooks:
@@ -41,6 +45,11 @@ repos:
     types: [markdown]
     language: system
     entry: python3 scripts/check_links.py
+  - id: markdown-html-check
+    name: markdown-html-check
+    types: [markdown]
+    language: system
+    entry: python3 scripts/check_md_html.py
 
 - repo: https://github.com/tcort/markdown-link-check
   rev: v3.12.2
@@ -72,7 +81,7 @@ repos:
   rev: "v2.3.0"
   hooks:
   - id: codespell
-    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te,checkin"]
+    args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te,checkin,aks"]
     exclude: |
             (?x)^(.*\.rst
             )$

@@ -25,29 +25,29 @@ to support for specifying max document length as discussed in the
 *Test 1: Default truncation limit*
 
 1. Configure logging with a minimum severity level of "debug" for the "command" component. Do not explicitly configure
-   the max document length.
+    the max document length.
 2. Construct an array `docs` containing the document `{"x" : "y"}` repeated 100 times.
 3. Insert `docs` to a collection via `insertMany`.
 4. Inspect the resulting "command started" log message and assert that the "command" value is a string of length 1000 +
-   (length of trailing ellipsis).
+    (length of trailing ellipsis).
 5. Inspect the resulting "command succeeded" log message and assert that the "reply" value is a string of length \<=
-   1000 + (length of trailing ellipsis).
+    1000 + (length of trailing ellipsis).
 6. Run `find()` on the collection where the document was inserted.
 7. Inspect the resulting "command succeeded" log message and assert that the reply is a string of length 1000 + (length
-   of trailing ellipsis).
+    of trailing ellipsis).
 
 *Test 2: Explicitly configured truncation limit*
 
 1. Configure logging with a minimum severity level of "debug" for the "command" component. Set the max document length
-   to 5.
+    to 5.
 2. Run the command `{"hello": true}`.
 3. Inspect the resulting "command started" log message and assert that the "command" value is a string of length 5 +
-   (length of trailing ellipsis).
+    (length of trailing ellipsis).
 4. Inspect the resulting "command succeeded" log message and assert that the "reply" value is a string of length 5 +
-   (length of trailing ellipsis).
+    (length of trailing ellipsis).
 5. If the driver attaches raw server responses to failures and can access these via log messages to assert on, run the
-   command `{"notARealCommand": true}`. Inspect the resulting "command failed" log message and confirm that the server
-   error is a string of length 5 + (length of trailing ellipsis).
+    command `{"notARealCommand": true}`. Inspect the resulting "command failed" log message and confirm that the server
+    error is a string of length 5 + (length of trailing ellipsis).
 
 *Test 3: Truncation with multi-byte codepoints*
 

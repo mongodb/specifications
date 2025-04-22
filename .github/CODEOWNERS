@@ -46,5 +46,8 @@
 # URI Options
 /source/uri-options/ @mongodb/dbx-spec-owners-uri-options
 
+# Workforce OIDC
+/docs/workforce-human-oidc-auth.md @mongodb/dbx-spec-owners-workforce-oidc
+
 # Workflows and code ownership file
 /.github/ @mongodb/dbx-leadership

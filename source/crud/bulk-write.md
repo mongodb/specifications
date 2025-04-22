@@ -235,7 +235,7 @@ defines the collection on which the operation should be performed. Drivers SHOUL
 is most idiomatic for its language. For example, drivers may:
 
 - Include a required `namespace` field on each `WriteModel` variant and accept a list of `WriteModel` objects for the
-  `models` parameter.
+    `models` parameter.
 - Accept a list of `(Namespace, WriteModel)` tuples for `models`.
 - Define the following pair class:
 
@@ -258,12 +258,12 @@ Drivers MUST throw an exception if the list provided for `models` is empty.
 #### Update vs. replace document validation
 
 Update documents provided in `UpdateOne` and `UpdateMany` write models are required only to contain atomic modifiers
-(i.e. keys that start with "$"). Drivers MUST throw an error if an update document is empty or if the document's first
-key does not start with "$". Drivers MUST rely on the server to return an error if any other entries in the update
+(i.e. keys that start with `$`). Drivers MUST throw an error if an update document is empty or if the document's first
+key does not start with `$`. Drivers MUST rely on the server to return an error if any other entries in the update
 document are not atomic modifiers. Drivers are not required to perform validation on update pipelines.
 
 Replacement documents provided in `ReplaceOne` write models are required not to contain atomic modifiers. Drivers MUST
-throw an error if a replacement document is nonempty and its first key starts with "$". Drivers MUST rely on the server
+throw an error if a replacement document is nonempty and its first key starts with `$`. Drivers MUST rely on the server
 to return an error if any other entries in the replacement document are atomic modifiers.
 
 ### Options
@@ -438,8 +438,9 @@ verbose results without inspecting the value provided for `verboseResults` in `B
 this in a number of ways, including:
 
 - Expose the `hasVerboseResults` field in `BulkWriteResult` as defined above. Document what will happen if a user
-  attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is false.
-  Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is false.
+    attempts to access the `insertResults`, `updateResults`, or `deleteResults` values when `hasVerboseResults` is
+    false. Drivers MAY raise an error if a user attempts to access one of these values when `hasVerboseResults` is
+    false.
 - Embed the verbose results in an optional type:
 
 ```typescript
@@ -473,8 +474,9 @@ class VerboseResults {
 ```
 
 - Define separate `SummaryBulkWriteResult` and `VerboseBulkWriteResult` types. `SummaryBulkWriteResult` MUST only
-  contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
-  fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult` otherwise.
+    contain the summary result fields, and `VerboseBulkWriteResult` MUST contain both the summary and verbose result
+    fields. Return `VerboseBulkWriteResult` when `verboseResults` was set to true and `SummaryBulkWriteResult`
+    otherwise.
 
 #### Individual results
 
@@ -632,22 +634,6 @@ write concern containing the following message:
 
 > Cannot request unacknowledged write concern and ordered writes
 
-### Size Limits
-
-The server reports a `maxBsonObjectSize` in its `hello` response. This value defines the maximum size for documents that
-are inserted into the database. Documents that are sent to the server but are not intended to be inserted into the
-database (e.g. command documents) have a size limit of `maxBsonObjectSize + 16KiB`. When an acknowledged write concern
-is used, drivers MUST NOT perform any checks related to these size limits and MUST rely on the server to raise an error
-if a limit is exceeded. However, when an unacknowledged write concern is used, drivers MUST raise an error if one of the
-following limits is exceeded:
-
-- The size of a document to be inserted MUST NOT exceed `maxBsonObjectSize`. This applies to the `document` field of an
-  `InsertOneModel` and the `replacement` field of a `ReplaceOneModel`.
-- The size of an entry in the `ops` array MUST NOT exceed `maxBsonObjectSize + 16KiB`.
-- The size of the `bulkWrite` command document MUST NOT exceed `maxBsonObjectSize + 16KiB`.
-
-See [SERVER-10643](https://jira.mongodb.org/browse/SERVER-10643) for more details on these size limits.
-
 ## Auto-Encryption
 
 If `MongoClient.bulkWrite` is called on a `MongoClient` configured with `AutoEncryptionOpts`, drivers MUST return an
@@ -684,7 +670,7 @@ operation-agnostic command field bytes (e.g. `txnNumber`, `lsid`). Drivers MUST 
 sequence to `maxMessageSizeBytes - 1000` to account for this overhead. The following pseudocode demonstrates how to
 apply this limit in batch-splitting logic:
 
-```
+```javascript
 MESSAGE_OVERHEAD_BYTES = 1000
 
 bulkWriteCommand = Document { "bulkWrite": 1 }
@@ -756,9 +742,9 @@ Drivers MUST record the summary count fields in a `BulkWriteResult` to be return
 `BulkWriteException` if the response indicates that at least one write was successful:
 
 - For ordered bulk writes, at least one write was successful if `nErrors` is 0 or if the `idx` value for the write error
-  returned in the results cursor is greater than 0.
+    returned in the results cursor is greater than 0.
 - For unordered bulk writes, at least one write was successful if `nErrors` is less than the number of operations that
-  were included in the `bulkWrite` command.
+    were included in the `bulkWrite` command.
 
 Drivers MUST NOT populate the `partialResult` field in `BulkWriteException` if it cannot be determined that at least one
 write was successfully performed.
@@ -895,19 +881,6 @@ recording the summary counts. We expect that most users are not interested in th
 and that most users will rely on defaults, so `verboseResults` defaults to `false` to improve performance in the common
 case.
 
-### Why should drivers send `bypassDocumentValidation: false` for `bulkWrite`?
-
-[DRIVERS-450](https://jira.mongodb.org/browse/DRIVERS-450) introduced a requirement that drivers only send a value for
-`bypassDocumentValidation` on write commands if it was specified as true. The original motivation for this change is not
-documented. This specification requires that drivers send `bypassDocumentValidation` in the `bulkWrite` command if it is
-set by the user in `BulkWriteOptions`, regardless of its value.
-
-Explicitly defining `bypassDocumentValidation: false` aligns with the server's default to perform schema validation and
-thus has no effect. However, checking the value of an option that the user specified and omitting it from the command
-document if it matches the server's default creates unnecessary work for drivers. Always sending the user's specified
-value also safeguards against the unlikely event that the server changes the default value for
-`bypassDocumentValidation` in the future.
-
 ### Why is providing access to the raw server response when a command error occurs required?
 
 This allows users to access new error fields that the server may add in the future without needing to upgrade their
@@ -933,7 +906,18 @@ number was determined by constructing `OP_MSG` messages with various fields atta
 Drivers are required to use this value even if they are capable of determining the exact size of the message prior to
 batch-splitting to standardize implementations across drivers and simplify batch-splitting testing.
 
+### Why is there no requirement to validate the size of a BSON document?
+
+Following
+["_Where possible, depend on server to return errors_"](https://github.com/mongodb/specifications/blob/f8dbd2469f18d093f917efa1f758024bca5d3aaa/source/driver-mantras.md#where-possible-depend-on-server-to-return-errors),
+drivers should rely on the server to return errors about exceeded size limits. Such reliance is not possible for
+unacknowledged writes. This specification previously required drivers to check size limits for unacknowledged writes.
+The requirement has since been removed. Checking size limits complicates some driver implementations. Returning a driver
+error in this specific situation does not seem helpful enough to require size checks.
+
 ## **Changelog**
+
+- 2024-11-05: Updated the requirements regarding the size validation.
 
 - 2024-10-07: Error if `w:0` is used with `ordered=true` or `verboseResults=true`.
 

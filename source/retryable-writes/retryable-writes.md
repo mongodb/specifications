@@ -89,7 +89,7 @@ MMAPv1 storage engine which is available in both MongoDB 3.6 and 4.0. Since `ret
 MUST raise an actionable error message when the server returns code 20 with errmsg starting with "Transaction numbers".
 The replacement error message MUST be:
 
-```
+```text
 This MongoDB deployment does not support retryable writes. Please add
 retryWrites=false to your connection string.
 ```
@@ -173,55 +173,55 @@ the error.
 The RetryableWriteError label might be added to an error in a variety of ways:
 
 - When the driver encounters a network error establishing an initial connection to a server, it MUST add a
-  RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites configuration
-  option set to true.
+    RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
+    configuration option set to true.
 
 - When the driver encounters a network error communicating with any server version that supports retryable writes, it
-  MUST add a RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
-  configuration option set to true.
+    MUST add a RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
+    configuration option set to true.
 
 - When a CMAP-compliant driver encounters a
-  [PoolClearedError](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors)
-  during connection check out, it MUST add a RetryableWriteError label to that error if the MongoClient performing the
-  operation has the retryWrites configuration option set to true.
+    [PoolClearedError](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors)
+    during connection check out, it MUST add a RetryableWriteError label to that error if the MongoClient performing the
+    operation has the retryWrites configuration option set to true.
 
 - For server versions 4.4 and newer, the server will add a RetryableWriteError label to errors or server responses that
-  it considers retryable before returning them to the driver. As new server versions are released, the errors that are
-  labeled with the RetryableWriteError label may change. Drivers MUST NOT add a RetryableWriteError label to any error
-  derived from a 4.4+ server response (i.e. any error that is not a network error).
+    it considers retryable before returning them to the driver. As new server versions are released, the errors that are
+    labeled with the RetryableWriteError label may change. Drivers MUST NOT add a RetryableWriteError label to any error
+    derived from a 4.4+ server response (i.e. any error that is not a network error).
 
 - When receiving a command result with an error from a pre-4.4 server that supports retryable writes, the driver MUST
-  add a RetryableWriteError label to errors that meet the following criteria if the retryWrites option is set to true on
-  the client performing the relevant operation:
+    add a RetryableWriteError label to errors that meet the following criteria if the retryWrites option is set to true
+    on the client performing the relevant operation:
 
-  - a mongod or mongos response with any the following error codes in the top-level `code` field:
+    - a mongod or mongos response with any the following error codes in the top-level `code` field:
 
-    | Error Name                      | Error Code |
-    | ------------------------------- | ---------- |
-    | InterruptedAtShutdown           | 11600      |
-    | InterruptedDueToReplStateChange | 11602      |
-    | NotWritablePrimary              | 10107      |
-    | NotPrimaryNoSecondaryOk         | 13435      |
-    | NotPrimaryOrSecondary           | 13436      |
-    | PrimarySteppedDown              | 189        |
-    | ShutdownInProgress              | 91         |
-    | HostNotFound                    | 7          |
-    | HostUnreachable                 | 6          |
-    | NetworkTimeout                  | 89         |
-    | SocketException                 | 9001       |
-    | ExceededTimeLimit               | 262        |
+        | Error Name                      | Error Code |
+        | ------------------------------- | ---------- |
+        | InterruptedAtShutdown           | 11600      |
+        | InterruptedDueToReplStateChange | 11602      |
+        | NotWritablePrimary              | 10107      |
+        | NotPrimaryNoSecondaryOk         | 13435      |
+        | NotPrimaryOrSecondary           | 13436      |
+        | PrimarySteppedDown              | 189        |
+        | ShutdownInProgress              | 91         |
+        | HostNotFound                    | 7          |
+        | HostUnreachable                 | 6          |
+        | NetworkTimeout                  | 89         |
+        | SocketException                 | 9001       |
+        | ExceededTimeLimit               | 262        |
 
-  - a mongod response with any of the previously listed codes in the `writeConcernError.code` field.
+    - a mongod response with any of the previously listed codes in the `writeConcernError.code` field.
 
-  Drivers MUST NOT add a RetryableWriteError label based on the following:
+    Drivers MUST NOT add a RetryableWriteError label based on the following:
 
-  - any `writeErrors[].code` fields in a mongod or mongos response
-  - the `writeConcernError.code` field in a mongos response
+    - any `writeErrors[].code` fields in a mongod or mongos response
+    - the `writeConcernError.code` field in a mongos response
 
-  The criteria for retryable errors is similar to the discussion in the SDAM spec's section on
-  [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling), but includes
-  additional error codes. See [What do the additional error codes mean?](#what-do-the-additional-error-codes-mean) for
-  the reasoning behind these additional errors.
+    The criteria for retryable errors is similar to the discussion in the SDAM spec's section on
+    [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling), but includes
+    additional error codes. See [What do the additional error codes mean?](#what-do-the-additional-error-codes-mean) for
+    the reasoning behind these additional errors.
 
 To understand why the driver should only add the RetryableWriteError label to an error when the retryWrites option is
 true on the MongoClient performing the operation, see
@@ -309,9 +309,13 @@ original retryable error.
 Drivers MUST then retry the operation as many times as necessary until any one of the following conditions is reached:
 
 - the operation succeeds.
+
 - the operation fails with a non-retryable error.
+
 - CSOT is enabled and the operation times out per
-  [Client Side Operations Timeout: Retryability](../client-side-operations-timeout/client-side-operations-timeout.md#retryability).
+    [Client Side Operations Timeout: Retryability](../client-side-operations-timeout/client-side-operations-timeout.md#retryability).
+    
+
 - CSOT is not enabled and one retry was attempted.
 
 For each retry attempt, drivers MUST select a writable server. In a sharded cluster, the server on which the operation
@@ -501,11 +505,11 @@ MongoClient where retryable writes have been enabled:
 
 - Executing the same write operation (and transaction ID) multiple times should yield an identical write result.
 - Test at-most-once behavior by observing that subsequent executions of the same write operation do not incur further
-  modifications to the collection data.
+    modifications to the collection data.
 - Exercise supported single-statement write operations (i.e. deleteOne, insertOne, replaceOne, updateOne, and
-  findAndModify).
+    findAndModify).
 - Exercise supported multi-statement insertMany and bulkWrite operations, which contain only supported single-statement
-  write operations. Both ordered and unordered execution should be tested.
+    write operations. Both ordered and unordered execution should be tested.
 
 Additional prose tests for other scenarios are also included.
 
@@ -611,17 +615,17 @@ the driver's implementation and limits the driver's ability to immediately take 
 Several other alternatives were discussed:
 
 - The server could inform drivers which write operations support retryable behavior in its `hello` or legacy hello
-  response. This would be a form of feature discovery, for which there is no established protocol. It would also add
-  complexity to the connection handshake.
+    response. This would be a form of feature discovery, for which there is no established protocol. It would also add
+    complexity to the connection handshake.
 - The server could ignore a transaction ID on the first observed attempt of an unsupported write command and only yield
-  an error on subsequent attempts. This would require the server to create a transaction record for unsupported writes
-  to avoid the risk of applying a write twice and ensuring that retry attempts could be differentiated. It also poses a
-  significant problem for sharding if a multi-document write does not reach all shards, since those shards would not
-  know to create a transaction record.
+    an error on subsequent attempts. This would require the server to create a transaction record for unsupported writes
+    to avoid the risk of applying a write twice and ensuring that retry attempts could be differentiated. It also poses
+    a significant problem for sharding if a multi-document write does not reach all shards, since those shards would not
+    know to create a transaction record.
 - The driver could allow more fine-grained control retryable write behavior by supporting a `retryWrites` option on the
-  database and collection objects. This would allow users to enable `retryWrites` on a MongoClient and disable it as
-  needed to execute unsupported write operations, or vice versa. Since we expect the `retryWrites` option to become less
-  relevant once transactions are implemented, we would prefer not to add the option throughout the driver API.
+    database and collection objects. This would allow users to enable `retryWrites` on a MongoClient and disable it as
+    needed to execute unsupported write operations, or vice versa. Since we expect the `retryWrites` option to become
+    less relevant once transactions are implemented, we would prefer not to add the option throughout the driver API.
 
 ### How will users know which operations are supported?
 
@@ -684,20 +688,20 @@ retryWrites is not true would be inconsistent with the server and potentially co
 - 2024-04-29: Fix the link to the Driver Sessions spec.
 
 - 2024-01-16: Do not use `writeConcernError.code` in pre-4.4 mongos response to determine retryability. Do not use
-  `writeErrors[].code` in pre-4.4 server responses to determine retryability.
+    `writeErrors[].code` in pre-4.4 server responses to determine retryability.
 
 - 2023-12-06: Clarify that writes are not retried within transactions.
 
 - 2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,
-  even in the presence of retries.
+    even in the presence of retries.
 
 - 2023-10-02: When CSOT is not enabled, one retry attempt occurs.
 
 - 2023-08-26: Require that in a sharded cluster the server on which the operation failed MUST be provided to the server
-  selection mechanism as a deprioritized server.
+    selection mechanism as a deprioritized server.
 
 - 2022-11-17: Add logic for persisting "currentError" as "previousError" on first retry attempt, avoiding raising "null"
-  errors.
+    errors.
 
 - 2022-11-09: CLAM must apply both events and log messages.
 
@@ -714,20 +718,20 @@ retryWrites is not true would be inconsistent with the server and potentially co
 - 2021-03-24: Require that PoolClearedErrors be retried
 
 - 2020-09-01: State the the driver should only add the RetryableWriteError label to network errors when connected to a
-  4.4+ server.
+    4.4+ server.
 
 - 2020-02-25: State that the driver should only add the RetryableWriteError label when retryWrites is on, and make it
-  clear that mongos will sometimes perform internal retries and not return the RetryableWriteError label.
+    clear that mongos will sometimes perform internal retries and not return the RetryableWriteError label.
 
 - 2020-02-10: Remove redundant content in Tests section.
 
 - 2020-01-14: Add ExceededTimeLimit to the list of error codes that should receive a RetryableWriteError label.
 
 - 2019-10-21: Change the definition of "retryable write" to be based on the RetryableWriteError label. Stop requiring
-  drivers to parse errmsg to categorize retryable errors for pre-4.4 servers.
+    drivers to parse errmsg to categorize retryable errors for pre-4.4 servers.
 
 - 2019-07-30: Drivers must rewrite error messages for error code 20 when txnNumber is not supported by the storage
-  engine.
+    engine.
 
 - 2019-06-07: Mention `$merge` stage for aggregate alongside `$out`
 
@@ -744,16 +748,16 @@ retryWrites is not true would be inconsistent with the server and potentially co
 - 2018-03-14: Clarify that retryable writes may fail with a FCV 3.4 shard.
 
 - 2017-11-02: Drivers should not raise errors if selected server does not support retryable writes and instead fall back
-  to non-retryable behavior. In addition to wire protocol version, drivers may check for `logicalSessionTimeoutMinutes`
-  to determine if a server supports sessions and retryable writes.
+    to non-retryable behavior. In addition to wire protocol version, drivers may check for
+    `logicalSessionTimeoutMinutes` to determine if a server supports sessions and retryable writes.
 
 - 2017-10-26: Errors when retrying may be raised instead of the original error provided they allow the user to infer
-  that an attempt was made.
+    that an attempt was made.
 
 - 2017-10-23: Drivers must document operations that support retryability.
 
 - 2017-10-23: Raise the original retryable error if server selection or wire protocol checks fail during the retry
-  attempt. Encourage drivers to provide intermediary write results after an unrecoverable failure during a bulk write.
+    attempt. Encourage drivers to provide intermediary write results after an unrecoverable failure during a bulk write.
 
 - 2017-10-18: Standalone servers do not support retryable writes.
 
@@ -762,6 +766,6 @@ retryWrites is not true would be inconsistent with the server and potentially co
 - 2017-10-08: Renamed `txnNum` to `txnNumber` and noted that it must be a 64-bit integer (BSON type 0x12).
 
 - 2017-08-25: Drivers will maintain an allow list so that only supported write operations may be retried. Transaction
-  IDs will not be included in unsupported write commands, irrespective of the `retryWrites` option.
+    IDs will not be included in unsupported write commands, irrespective of the `retryWrites` option.
 
 - 2017-08-18: `retryWrites` is now a MongoClient option.

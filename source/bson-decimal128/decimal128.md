@@ -59,7 +59,7 @@ retrieve the abstracted value as a different type (e.g. casting it). `double x =
 ### BSON Decimal128 implementation details
 
 The `BSON Decimal128` data type implements the
-[Decimal Arithmetic Encodings](http://speleotrove.com/decimal/decbits.html) specification, with certain exceptions
+[Decimal Arithmetic Encodings](https://speleotrove.com/decimal/decbits.html) specification, with certain exceptions
 around value integrity and the coefficient encoding. When a value cannot be represented exactly, the value will be
 rejected.
 
@@ -67,31 +67,32 @@ The coefficient MUST be stored as an unsigned binary integer (BID) rather than t
 the specification. See either the `IEEE Std 754-2008` spec or the driver examples for further detail.
 
 The specification defines several statuses which are meant to signal exceptional
-[circumstances](http://speleotrove.com/decimal/daexcep.html), such as when overflowing occurs, and how to handle them.
+[circumstances](https://speleotrove.com/decimal/daexcep.html), such as when overflowing occurs, and how to handle them.
 
 `BSON Decimal128` Value Objects MUST implement these actions for these exceptions:
 
 - Overflow
 
-  - When overflow occurs, the operation MUST emit an error and result in a failure
+    - When overflow occurs, the operation MUST emit an error and result in a failure
 
 - Underflow
 
-  - When underflow occurs, the operation MUST emit an error and result in a failure
+    - When underflow occurs, the operation MUST emit an error and result in a failure
 
 - Clamping
 
-  - Since clamping does not change the actual value, only the representation of it, clamping MUST occur without emitting
-    an error.
+    - Since clamping does not change the actual value, only the representation of it, clamping MUST occur without emitting
+        an error.
 
 - Rounding
 
-  - When the coefficient requires more digits then Decimal128 provides, rounding MUST be done without emitting an error,
-    unless it would result in inexact rounding, in which case the operation MUST emit an error and result in a failure.
+    - When the coefficient requires more digits then Decimal128 provides, rounding MUST be done without emitting an error,
+        unless it would result in inexact rounding, in which case the operation MUST emit an error and result in a
+        failure.
 
 - Conversion Syntax
 
-  - Invalid strings MUST emit an error and result in a failure.
+    - Invalid strings MUST emit an error and result in a failure.
 
 It should be noted that the given exponent is a preferred representation. If the value cannot be stored due to the value
 of the exponent being too large or too small, but can be stored using an alternative representation by clamping and or
@@ -152,14 +153,13 @@ user will then create a new Decimal128 Value Object and optionally overwrite the
 
 ### From String Representation
 
-For finite numbers, we will use the definition at <http://speleotrove.com/decimal/daconvs.html>. It has been modified to
-account for a different NaN representation and whitespace rules and copied here:
+For finite numbers, we will use the definition at <https://speleotrove.com/decimal/daconvs.html>. It has been modified
+to account for a different NaN representation and whitespace rules and copied here:
 
-```
+```text
 Strings which are acceptable for conversion to the abstract representation of
 numbers, or which might result from conversion from the abstract representation
 to a string, are called numeric strings.
-
 
 A numeric string is a character string that describes either a finite
 number or a special value.
@@ -201,11 +201,8 @@ diagnostic NaNs should be reversible if possible. If an implementation does not
 support diagnostic information on NaNs, these digits should be ignored where
 necessary. A plain 'NaN' is usually the same as 'NaN0'.
 
-
 Drivers MAY choose to support signed NaN (sNaN), along with sNaN with
 diagnostic information. 
-
-
 
 Examples::
 Some numeric strings are:
@@ -231,20 +228,18 @@ Notes:
 
 ### To String Representation
 
-For finite numbers, we will use the definition at <http://speleotrove.com/decimal/daconvs.html>. It has been copied
+For finite numbers, we will use the definition at <https://speleotrove.com/decimal/daconvs.html>. It has been copied
 here:
 
-```
+```text
 The coefficient is first converted to a string in base ten using the characters
 0 through 9 with no leading zeros (except if its value is zero, in which case a
 single 0 character is used).
-
 
 Next, the adjusted exponent is calculated; this is the exponent, plus the
 number of characters in the converted coefficient, less one. That is,
 exponent+(clength-1), where clength is the length of the coefficient in decimal
 digits.
-
 
 If the exponent is less than or equal to zero and the adjusted exponent is
 greater than or equal to -6, the number will be converted to a character form
@@ -255,7 +250,6 @@ number of characters to the right of the decimal point. '0' characters are
 added to the left of the converted coefficient as necessary. If no character
 precedes the decimal point after this insertion then a conventional '0'
 character is prefixed.
-
 
 Otherwise (that is, if the exponent is positive, or the adjusted exponent is
 less than -6), the number will be converted to a character form using
@@ -270,14 +264,14 @@ sign character ('-' if the calculated exponent is negative, '+' otherwise).
 
 This corresponds to the following code snippet:
 
-> ```c
-> var adjusted_exponent = _exponent + (clength - 1);
-> if (_exponent > 0 || adjusted_exponent < -6) {
->     // exponential notation
-> } else {
->     // character form without using exponential notation
-> }
-> ```
+```c
+var adjusted_exponent = _exponent + (clength - 1);
+if (_exponent > 0 || adjusted_exponent < -6) {
+    // exponential notation
+} else {
+    // character form without using exponential notation
+}
+```
 
 For special numbers such as infinity or the not a number (NaN) variants, the below table is used:
 
@@ -332,27 +326,27 @@ BSON/Extended JSON Decimal128.
 See the [BSON Corpus](../bson-corpus/bson-corpus.md) for tests.
 
 Most of the tests are converted from the
-[General Decimal Arithmetic Testcases](http://speleotrove.com/decimal/dectest.html).
+[General Decimal Arithmetic Testcases](https://speleotrove.com/decimal/dectest.html).
 
 ## Q&A
 
 - Is it true Decimal128 doesn't normalize the value?
 
-  - Yes. As a result of non-normalization rules of the Decimal128 data type, precision is represented exactly. For
-    example, '2.00' always remains stored as 200E-2 in Decimal128, and it differs from the representation of '2.0'
-    (20E-1). These two values compare equally, but represent different ideas.
+    - Yes. As a result of non-normalization rules of the Decimal128 data type, precision is represented exactly. For
+        example, '2.00' always remains stored as 200E-2 in Decimal128, and it differs from the representation of '2.0'
+        (20E-1). These two values compare equally, but represent different ideas.
 
 - How does Decimal128 "2.000" look in the shell?
 
-  - NumberDecimal("2.000")
+    - NumberDecimal("2.000")
 
 - Should a driver avoid sending Decimal128 values to pre-3.4 servers?
 
-  - No
+    - No
 
 - Is there a wire version bump or something for Decimal128?
 
-  - No
+    - No
 
 ## Changelog
 
