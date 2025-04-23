@@ -676,7 +676,6 @@ def await_pending_response(timeout, conn):
         raise error  
 ```
 ```python
-```text
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
@@ -734,7 +733,7 @@ if connection state is "pending":
 else:
     decrement availableConnectionCount
 
-error = await_pending_read(pool, connection)
+error = await_pending_response(pool, connection)
 if error:
   return error
 
