@@ -576,14 +576,12 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
-If an operation times out the socket while awaiting a server response and CSOT is enabled and maxTimeMS was added to the 
-command, the driver MUST mark the connection as "pending" and record the current time in a way that can be updated. The 
-next time the connection is checked out, the driver MUST attempt to read and discard the remaining response from the 
-socket.
+If an operation times out the socket while awaiting a server response and CSOT is enabled and `maxTimeMS` was added to
+the command, the driver MUST mark the connection as "pending" and record the current time in a way that can be updated.
+The next time the connection is checked out, the driver MUST attempt to read and discard the remaining response from
+the socket. The workflow for this is as follows:
 
-When performing a pending response read:
-
-- The connection MUST persist the timestamp recorded immediately after the original socket timeout, and this timestamp 
+- The connection MUST persist the current time recorded immediately after the original socket timeout, and this timestamp 
 MUST be updated to the current time whenever any data is successfully read from the socket during a pending response read 
 attempt.
 - If the connection remains idle (i.e., no data is read) for more than 3 seconds since the pending state began or since 
