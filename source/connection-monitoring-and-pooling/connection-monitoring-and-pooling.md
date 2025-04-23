@@ -576,53 +576,105 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
-If an operation times out the socket while awaiting a server response, the driver MUST mark the connection as "pending." 
-When this connection is next checked out the driver MUST attempt to complete the read. This process should continue 
-until the response is successfully read or the cumulative `pendingResponseTimeoutLimit` of 400ms is reached. If the `pendingResponseTimeoutLimit` is reached, the connection MUST be closed. The goal of this procedure is to minimize 
-connection churn by attempting to empty server responses under CSOT conditions rather than strictly closing a 
-connection.
+If an operation times out the socket while awaiting a server response and CSOT is enabled and maxTimeMS was added to the 
+command, the driver MUST mark the connection as "pending" and record the current time in a way that can be updated. The 
+next time the connection is checked out, the driver MUST attempt to read and discard the remaining response from the 
+socket.
 
-```python 
-def await_pending_read(pool, conn):
-  # If there are no bytes pending read, do nothing
-  if conn.await_remaining_bytes is None:
-    return None
+When performing a pending response read:
 
-  size = conn.await_remaining_bytes
-  check_in = False
+- The connection MUST persist the timestamp recorded immediately after the original socket timeout, and this timestamp 
+MUST be updated to the current time whenever any data is successfully read from the socket during a pending response read 
+attempt.
+- If the connection remains idle (i.e., no data is read) for more than 3 seconds since the pending state began or since 
+the last successful read, the driver MUST attempt to verify the connection's health by either performing a non-blocking 
+read or using the minimal possible timeout to check if at least one byte can be read.
+- If a user-provided timeout is specified for the pending response read, the driver MUST use the minimum of the 
+remaining time before the 3-second pending-response window elapses and the user-provided timeout as the effective 
+timeout for the read operation.
+- If no user-provided timeout is specified, the driver MUST use the minimum of the remaining 3-second pending-response 
+window and the socketTimeoutMS (if supported by the driver) as the effective timeout for the read operation.
+- If reading from the socket results in an error that is not a timeout, or if the connection exceeds the 3-second 
+pending-response window, the driver MUST close the connection.
+- If the pending response is fully read and successfully discarded, and the connection remains healthy, the pending 
+state may be cleared and the connection MAY be returned to the pool for reuse.
 
-  try:
-    start_time = current_time()
+```mermaid
+sequenceDiagram  
+    participant Driver
+    participant Pool  
+    participant Conn as Connection (*) 
+    participant Server  
+  
+    Driver->>Pool: Checkout Connection (*)
+    Pool->>Driver: Return connection (*)
 
-    if size == 0:
-      size_buf = conn.read_bytes(4)
-      if size_buf is None:
-        conn.remaining_time_for_pending_read -= time_since(start_time)
-        check_in = True
-        raise Exception("Error reading the message size")
+    Driver->>Conn: Send operation (1) (CSOT enabled, maxTimeMS > 0)  
+    Conn->>Server: Send command  
+    Server-->>Conn: (No response, socket times out)  
+    Conn->>Conn: Mark as "pending", record current time 
+    Conn-->>Driver: Error  
 
-      size = conn.parse_message_size(size_buf) - 4
+    Driver->>Pool: Checkout Connection (*)
+    Pool->>Driver: Return connection (*)
 
-    bytes_read = conn.discard_bytes(size)
-    if bytes_read < size:
-      # If the read times out, record the bytes left to read before exiting
-      if bytes_read == 0 and conn.is_timeout_error():
-        conn.await_remaining_bytes += size
-        conn.remaining_for_pending_read -= time_since(start_time)
+    Driver->>Conn: Send operation (2)
 
-        check_in = True
-        raise Exception(f"Error discarding {size} byte message")
+ 
+    Conn->>Server: Attempt to discard pending response from operation (1)
+    Conn->>Conn: Update pending read timestamp if bytes read  
 
-      conn.await_remaining_bytes = None
-      conn.remaining_time_for_pending_read = None
-
-  finally:
-    if conn.remaining_time_for_pending_read is not None and conn.remaining_time_for_pending_read < 0:
-      conn.close()
-    elif check_in:
-      pool.check_in(conn)
+    alt Timeout window exceeded or non-timeout error 
+        Conn->>Conn: Close connection  
+        Conn-->>Driver: Error  
+    else Timeout window not exceeded  
+       alt Error  
+            Conn->>Conn: Clear pending read state
+            Conn->>Conn: Reset to current time  
+            Conn->>Pool: Check connection back into pool  
+            Conn-->>Driver: Error  
+        else No error  
+            Conn->>Conn: Clear pending read state  
+            Conn->>Driver: Return connection to execute operation  
+        end  
+    end  
 ```
-
+```python 
+PENDING_RESPONSE_TIMEOUT_MS = 3000  # static timeout  
+  
+def await_pending_response(timeout, conn):  
+    # Note: conn.pending_start is initialized after the original socket timeout  
+    # and not in this function since the connection will sit in the pool for some  
+    # non-deterministic amount of time after the socket timeout.  
+  
+    remaining_time = (conn.pending_start + PENDING_RESPONSE_TIMEOUT_MS) - current_time()  
+    if remaining_time <= 0:  
+        # Use the smallest timeout (or enable non-blocking read).  
+        remaining_time = 0.001  
+  
+    if timeout is None:  
+        timeout = min(remaining_time, conn.socket_timeout_ms)  
+    else:  
+        timeout = min(remaining_time, timeout)  
+  
+    data, error = execute_pending_response(timeout, conn)  
+    end_time = current_time()  
+  
+    if error is not None and error is not timeout:  
+        close_connection(conn)  
+        raise  
+  
+    if len(data) > 0:  
+        # Refresh the remaining time upon a successful read  
+        conn.pending_start = end_time  
+  
+    # Check if the remaining time has been exceeded  
+    if end_time - conn.pending_start >= PENDING_RESPONSE_TIMEOUT_MS:  
+        close_connection(conn)  
+  
+    if error is not None:  
+        raise error  
+```
 ```python
 ```text
 connection = Null
