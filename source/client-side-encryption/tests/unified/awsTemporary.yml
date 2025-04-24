@@ -8,7 +8,10 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          awsTemporary: {}
+          aws:
+            accessKeyId: { $$placeholder: 1 }
+            secretAccessKey: { $$placeholder: 1 }
+            sessionToken: { $$placeholder: 1 } # Indicates use of temporary
       observeEvents:
         - commandStartedEvent
   - database:
@@ -24,7 +27,10 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          awsTemporaryNoSessionToken: { $$placeholder: 1 }
+          aws:
+            accessKeyId: { $$placeholder: 1 }
+            secretAccessKey: { $$placeholder: 1 }
+            sessionToken: "bad"
       observeEvents:
         - commandStartedEvent
   - database:

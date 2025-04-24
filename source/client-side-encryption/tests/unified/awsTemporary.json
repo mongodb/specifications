@@ -13,7 +13,17 @@
         "autoEncryptOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "awsTemporary": {}
+            "aws": {
+              "accessKeyId": {
+                "$$placeholder": 1
+              },
+              "secretAccessKey": {
+                "$$placeholder": 1
+              },
+              "sessionToken": {
+                "$$placeholder": 1
+              }
+            }
           }
         },
         "observeEvents": [
@@ -41,8 +51,14 @@
         "autoEncryptOpts": {
           "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
-            "awsTemporaryNoSessionToken": {
-              "$$placeholder": 1
+            "aws": {
+              "accessKeyId": {
+                "$$placeholder": 1
+              },
+              "secretAccessKey": {
+                "$$placeholder": 1
+              },
+              "sessionToken": "bad"
             }
           }
         },

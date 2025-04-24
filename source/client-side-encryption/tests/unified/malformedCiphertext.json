@@ -75,9 +75,6 @@
               },
               "secretAccessKey": {
                 "$$placeholder": 1
-              },
-              "sessionToken": {
-                "$$placeholder": 1
               }
             }
           }

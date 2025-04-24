@@ -13,7 +13,7 @@ createEntities:
                   'bsonType': 'objectId', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}},
             'bsonType': 'object'}
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }, sessionToken: { $$placeholder: 1 } }
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
       observeEvents:
         - commandStartedEvent
   - database:

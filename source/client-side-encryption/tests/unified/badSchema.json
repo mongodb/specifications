@@ -40,9 +40,6 @@
               },
               "secretAccessKey": {
                 "$$placeholder": 1
-              },
-              "sessionToken": {
-                "$$placeholder": 1
               }
             }
           }
@@ -102,9 +99,6 @@
               },
               "secretAccessKey": {
                 "$$placeholder": 1
-              },
-              "sessionToken": {
-                "$$placeholder": 1
               }
             }
           }
@@ -160,9 +154,6 @@
                 "$$placeholder": 1
               },
               "secretAccessKey": {
-                "$$placeholder": 1
-              },
-              "sessionToken": {
                 "$$placeholder": 1
               }
             }
@@ -222,9 +213,6 @@
                 "$$placeholder": 1
               },
               "secretAccessKey": {
-                "$$placeholder": 1
-              },
-              "sessionToken": {
                 "$$placeholder": 1
               }
             }
