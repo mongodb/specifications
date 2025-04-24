@@ -1140,6 +1140,11 @@ interface PendingResponseSucceeded {
    *  The time it took to complete the pending read.
    */
   duration: Duration;
+
+  /**
+   *  The driver-generated request ID associated with the network timeout.
+   */
+  requestID: int64;
 }
 
 /**
@@ -1161,11 +1166,6 @@ interface PendingResponseFailed {
    *  The driver-generated request ID associated with the network timeout.
    */
   requestID: int64;
-
-  /**
-   *  Time in milliseconds remaining for the next pending read attempt.
-   */
-  msRemaining: int64;
 
   /**
    *  The reason for why the pending read failed.
@@ -1393,6 +1393,7 @@ In addition to the common fields defined above, this message MUST contain the fo
 |---------------------|----------------|--------------------------------------------|
 | message             | string         | "Pending response succeeded"               |
 | driverConnectionID  | int64          | The driver-generated ID for the connection |
+| requestID           | int64          | The driver-generated request ID associated with the network timeout |
 | durationMS          | Int32/Int64/Double | The time it took to complete the pending read |
 
 
@@ -1410,14 +1411,13 @@ In addition to the common fields defined above, this message MUST contain the fo
 |---------------------|----------------|--------------------------------------------------------------|
 | message             | string         | "Pending response failed"                                    |
 | driverConnectionID  | int64          | The driver-generated ID for the connection                   |
-| remainingtimeMS     | int64          | Remaining time for the next pending response read attempt    |
 | reason              | string         | The reason for why the pending response read failed          |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
 > Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
-> remaining time={{remainingtimeMS}} ms, reason={{reason}}
+> reason={{reason}}
 
 ### Connection Pool Errors
 
