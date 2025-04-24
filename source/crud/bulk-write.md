@@ -634,13 +634,6 @@ write concern containing the following message:
 
 > Cannot request unacknowledged write concern and ordered writes
 
-## Auto-Encryption
-
-If `MongoClient.bulkWrite` is called on a `MongoClient` configured with `AutoEncryptionOpts`, drivers MUST return an
-error with the message: "bulkWrite does not currently support automatic encryption".
-
-This is expected to be removed once [DRIVERS-2888](https://jira.mongodb.org/browse/DRIVERS-2888) is implemented.
-
 ## Command Batching
 
 Drivers MUST accept an arbitrary number of operations as input to the `MongoClient.bulkWrite` method. Because the server
@@ -916,6 +909,8 @@ The requirement has since been removed. Checking size limits complicates some dr
 error in this specific situation does not seem helpful enough to require size checks.
 
 ## **Changelog**
+
+- 2025-04-23: Removed the requirement to error when QE is enabled.
 
 - 2024-11-05: Updated the requirements regarding the size validation.
 
