@@ -25,6 +25,10 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name coll0
+  - client:
+      id: &client1 client1
+      observeEvents:
+        - commandStartedEvent
   - database:
       id: &database1 database1
       client: *client0
@@ -33,6 +37,14 @@ createEntities:
       id: &collection1 collection1
       database: *database0
       collectionName: &collection1Name datakeys
+  - database:
+      id: &database2 database2
+      client: *client1
+      databaseName: &database0Name crud-tests
+  - collection:
+      id: &collection2 collection2
+      database: *database2
+      collectionName: &collection0Name coll0
 
 
 initialData:
@@ -87,13 +99,14 @@ tests:
         expectResult:
           - _id: 1
             encryptedInt: 44
-    outcome:
-      - collectionName: *collection0Name
-        databaseName: *database0Name
-        documents:
+      - object: *collection2
+        name: find
+        arguments:
+          filter: {}
+        expectResult:
           - { _id: 1, encryptedInt: { $$type: binData }, __safeContent__: { $$type: array} }
-          - { _id: 2, encryptedInt: { $$type: binData }, __safeContent__: { $$type: array}  }
-          - { _id: 3, encryptedInt: { $$type: binData }, __safeContent__: { $$type: array}  }
+          - { _id: 2, encryptedInt: { $$type: binData }, __safeContent__: { $$type: array} }
+          - { _id: 3, encryptedInt: { $$type: binData }, __safeContent__: { $$type: array} }
   - description: client bulkWrite QE with multiple replace fails
     operations:
       - object: *client0
