@@ -1099,6 +1099,79 @@ interface ConnectionCheckedInEvent {
    */
   connectionId: int64;
 }
+
+/**
+ *  Emitted when the connection being checked out is attempting to read and 
+ *  discard a pending server response.
+ */
+interface PendingResponseStarted {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection.
+   */
+  connectionId: int64;
+
+  /**
+   *  The driver-generated request ID associated with the network timeout.
+   */
+  requestID: int64;
+}
+
+/**
+ *  Emitted when the connection successfully read the pending read and is ready 
+ *  to be checked out.
+ */
+interface PendingResponseSucceeded {
+ /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection.
+   */
+  connectionId: int64;
+
+  /**
+   *  The time it took to complete the pending read.
+   */
+  duration: Duration;
+}
+
+/**
+ *  Emitted when the connection being checked out failed to complete the pending
+ *  read.
+ */
+interface PendingResponseFailed {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection.
+   */
+  connectionId: int64;
+
+  /**
+   *  The driver-generated request ID associated with the network timeout.
+   */
+  requestID: int64;
+
+  /**
+   *  Time in milliseconds remaining for the next pending read attempt.
+   */
+  msRemaining: int64;
+
+  /**
+   *  The reason for why the pending read failed.
+   */
+  reason: string;
+}
 ```
 
 ### Connection Pool Logging
@@ -1295,6 +1368,56 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 placeholders as appropriate:
 
 > Connection checked in: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
+
+#### Connection Pending Response Started
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key                 | Suggested Type | Value                                         |
+|---------------------|----------------|-----------------------------------------------|
+| message             | string         | "Pending response started"                    |
+| driverConnectionID  | int64          | The driver-generated ID for the connection    |
+| requestID           | int64          | The driver-generated request ID associated with the network timeout |
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
+> request ID={{requestID}}
+
+#### Connection Pending Response Succeeded
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key                 | Suggested Type | Value                                      |
+|---------------------|----------------|--------------------------------------------|
+| message             | string         | "Pending response succeeded"               |
+| driverConnectionID  | int64          | The driver-generated ID for the connection |
+| durationMS          | Int32/Int64/Double | The time it took to complete the pending read |
+
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
+> DurationMS={{durationMS}} ms
+
+#### Connection Pending Response Failed
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key                 | Suggested Type | Value                                                        |
+|---------------------|----------------|--------------------------------------------------------------|
+| message             | string         | "Pending response failed"                                    |
+| driverConnectionID  | int64          | The driver-generated ID for the connection                   |
+| remainingtimeMS     | int64          | Remaining time for the next pending response read attempt    |
+| reason              | string         | The reason for why the pending response read failed          |
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
+> remaining time={{remainingtimeMS}} ms, reason={{reason}}
 
 ### Connection Pool Errors
 

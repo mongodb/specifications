@@ -32,7 +32,8 @@ read and a failed one.
 1. Initialize a mock TCP listener to simulate the server-side behavior. The listener should write at least 5 bytes to
 the connection to prevent size-related errors (e.g. `0x01, 0x02, 0x03, 0x04, 0x05, 0xFF`). The response should be
 delayed by 2x the size of the socket timeout.
-2. Implement a monitoring mechanism to capture the `ConnectionPendingReadFailed` event
+2. Implement a monitoring mechanism to capture the `ConnectionPendingResponseStarted` and `ConnectionPendingResponseFailed`
+events.
 3. Instantiate a connection pool using the mock listener’s address, ensuring readiness without error. Attach the event
 monitor to observe the connection’s state.
 4. Check out a connection from the pool and initiate a read operation with an appropriate socket timeout (e.g, 10ms)
@@ -42,6 +43,8 @@ operation returns a timeout error.
 the pending response timeout, forcing an aliveness check.
 6. Check the connection out. The aliveness check should fail since no additional bytes were added after the delay in
 step 1.
+7. Verify that one event for each `ConnectionPendingResponseStarted` and `ConnectionPendingResponseFailed` was emitted.
+Also verify that the fields were correctly set for each event.
 
 
 #### Connection Aliveness Check Succeeds 
@@ -50,7 +53,8 @@ step 1.
 the connection to prevent size-related errors (e.g. `0x01, 0x02, 0x03, 0x04, 0x05, 0xFF`). The response should be
 delayed by 2x the size of the socket timeout. Write at least 1 additional byte after the delay so that the aliveness
 check succeeds (e.g. `0xAA`).
-2. Implement a monitoring mechanism to capture the `ConnectionPendingReadFailed` event
+2. Implement a monitoring mechanism to capture the `ConnectionPendingResponseStarted` and `ConnectionPendingResponseSucceeded` 
+events.
 3. Instantiate a connection pool using the mock listener’s address, ensuring readiness without error. Attach the event
 monitor to observe the connection’s state.
 4. Check out a connection from the pool and initiate a read operation with an appropriate socket timeout (e.g, 10ms)
@@ -60,6 +64,8 @@ operation returns a timeout error.
 the pending response timeout, forcing an aliveness check.
 6. Check the connection out. The aliveness check should succeed since no additional bytes were added after the delay in
 step 1.
+7. Verify that one event for each `ConnectionPendingResponseStarted` and `ConnectionPendingResponseSucceeded` was emitted.
+Also verify that the fields were correctly set for each event.
 
 
 ## Logging Tests
