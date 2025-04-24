@@ -59,7 +59,6 @@ tests:
           - &doc0_encrypted {_id: 1, encrypted_string_azure: {'$binary': {'base64': 'AQGVERPgAAAAAAAAAAAAAAAC5DbBSwPwfSlBrDtRuglvNvCXD1KzDuCKY2P+4bRFtHDjpTOE2XuytPAUaAbXf1orsPq59PVZmsbTZbt2CB8qaQ==',
                 'subType': '06'}}}
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

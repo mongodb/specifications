@@ -53,7 +53,6 @@ tests:
           - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AZaHGpfp2pntvgAAAAAAAAAC07sFvTQ0I4O2U49hpr4HezaK44Ivluzv5ntQBTYHDlAJMLyRMyB6Dl+UGHBgqhHe/Xw+pcT9XdiUoOJYAx9g+w==',
                 'subType': '06'}}}
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

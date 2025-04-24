@@ -23,6 +23,18 @@ createEntities:
       id: "coll"
       database: "db"
       collectionName: default
+  - client:
+      id: "client_unencrypted"
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: "db_unencrypted"
+      client: "client_unencrypted"
+      databaseName: default
+  - collection:
+      id: "coll_unencrypted"
+      database: "db_unencrypted"
+      collectionName: default
 initialData:
   - databaseName: default
     collectionName: default
@@ -54,13 +66,14 @@ tests:
           filter: {encryptedIndexed: "123"}
         object: "coll"
         expectResult: [*doc0]
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {"_id": 1, "encryptedIndexed": {$$type: "binData"}, "__safeContent__": [
                "$binary": {"base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
                     "subType": "00"}]}
-        collectionName: &collection_name "default"
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:
@@ -68,7 +81,7 @@ tests:
               command:
                 listCollections: 1
                 filter:
-                  name: *collection_name
+                  name: &collection_name default
               commandName: listCollections
           - commandStartedEvent:
               command:

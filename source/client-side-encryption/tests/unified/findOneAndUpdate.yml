@@ -59,7 +59,6 @@ tests:
           - {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
                 'subType': '06'}}}
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

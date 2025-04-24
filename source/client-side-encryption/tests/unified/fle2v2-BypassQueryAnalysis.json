@@ -44,6 +44,28 @@
         "database": "encryptedDB",
         "collectionName": "default"
       }
+    },
+    {
+      "client": {
+        "id": "unencryptedClient",
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "unencryptedDB",
+        "client": "unencryptedClient",
+        "databaseName": "default"
+      }
+    },
+    {
+      "collection": {
+        "id": "unencryptedColl",
+        "database": "unencryptedDB",
+        "collectionName": "default"
+      }
     }
   ],
   "initialData": [
@@ -152,6 +174,29 @@
             {
               "_id": 1,
               "encryptedIndexed": "123"
+            }
+          ]
+        },
+        {
+          "name": "find",
+          "object": "unencryptedColl",
+          "arguments": {
+            "filter": {}
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "encryptedIndexed": {
+                "$$type": "binData"
+              },
+              "__safeContent__": [
+                {
+                  "$binary": {
+                    "base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
+                    "subType": "00"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -271,28 +316,6 @@
                 },
                 "commandName": "find"
               }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "default",
-          "databaseName": "default",
-          "documents": [
-            {
-              "_id": 1,
-              "encryptedIndexed": {
-                "$$type": "binData"
-              },
-              "__safeContent__": [
-                {
-                  "$binary": {
-                    "base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
-                    "subType": "00"
-                  }
-                }
-              ]
             }
           ]
         }

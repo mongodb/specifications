@@ -65,7 +65,6 @@ tests:
                 'subType': '06'}}}
           - {_id: 2, encrypted_string: "string0"}
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

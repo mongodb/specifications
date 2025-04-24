@@ -14,10 +14,20 @@ createEntities:
   - database:
       id: "db"
       client: "client0"
-      databaseName: default
+      databaseName: &database_name default
   - collection:
       id: "coll"
       database: "db"
+      collectionName: &collection_name default
+  - client:
+      id: "client_unencrypted"
+  - database:
+      id: "db_unencrypted"
+      client: "client_unencrypted"
+      databaseName: default
+  - collection:
+      id: "coll_unencrypted"
+      database: "db_unencrypted"
       collectionName: default
 initialData:
   - databaseName: default
@@ -58,15 +68,15 @@ tests:
           matchedCount: 2
           modifiedCount: 2
           upsertedCount: 0
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {_id: 1, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACQ76HWOut3DZtQuV90hp1aaCpZn95vZIaWmn+wrBehcEtcFwyJlBdlyzDzZTWPZCPgiFq72Wvh6Y7VbpU9NAp3A==',
                 'subType': '06'}}, random: {$$type: "binData"}}
           - {_id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACQ76HWOut3DZtQuV90hp1aaCpZn95vZIaWmn+wrBehcEtcFwyJlBdlyzDzZTWPZCPgiFq72Wvh6Y7VbpU9NAp3A==',
                 'subType': '06'}}, random: {$$type: "binData"}}
-        collectionName: &collection_name "default"
-
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:

@@ -54,7 +54,6 @@ tests:
     outcome:
       - documents: []
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

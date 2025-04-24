@@ -18,10 +18,20 @@ createEntities:
   - database:
       id: "db"
       client: "client0"
-      databaseName: default
+      databaseName: &database_name default
   - collection:
       id: "coll"
       database: "db"
+      collectionName: &collection_name default
+  - client:
+      id: "client_unencrypted"
+  - database:
+      id: "db_unencrypted"
+      client: "client_unencrypted"
+      databaseName: default
+  - collection:
+      id: "coll_unencrypted"
+      database: "db_unencrypted"
       collectionName: default
 initialData:
   - databaseName: default
@@ -56,13 +66,14 @@ tests:
           matchedCount: 1
           modifiedCount: 1
           upsertedCount: 0
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {"_id": 1, "encryptedIndexed": {"$$type": "binData"}, "foo": "bar", "__safeContent__": [
                "$binary": {"base64": "ThpoKfQ8AkOzkFfNC1+9PF0pY2nIzfXvRdxQgjkNbBw=",
                     "subType": "00"}]}
-        collectionName: &collection_name "default"
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:
@@ -134,13 +145,14 @@ tests:
           filter: {"_id": 1}
         object: "coll"
         expectResult: ["encryptedIndexed": "value456"]
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {"_id": 1, "encryptedIndexed": {"$$type": "binData"}, "__safeContent__": [
                "$binary": {"base64": "rhe7/w8Ob8Unl44rGr/moScx6m5VODQnscDhF4Nkn6g=",
                     "subType": "00"}]}
-        collectionName: *collection_name
-        databaseName: *database_name
     expectEvents:
       - client: "client0"
         events:

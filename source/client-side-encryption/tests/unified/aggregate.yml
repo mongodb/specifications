@@ -59,7 +59,6 @@ tests:
       - documents:
           - *doc0_encrypted
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

@@ -18,10 +18,20 @@ createEntities:
   - database:
       id: "db"
       client: "client0"
-      databaseName: default
+      databaseName: &database_name default
   - collection:
       id: "coll"
       database: "db"
+      collectionName: &collection_name default
+  - client:
+      id: "client_unencrypted"
+  - database:
+      id: "db_unencrypted"
+      client: "client_unencrypted"
+      databaseName: default
+  - collection:
+      id: "coll_unencrypted"
+      database: "db_unencrypted"
       collectionName: default
 initialData:
   - databaseName: default
@@ -57,8 +67,11 @@ tests:
           returnDocument: Before
         object: "coll"
         expectResult: *doc1
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {"_id": 0, "encryptedDoubleNoPrecision": {$$type: "binData"}, "__safeContent__": [
                "$binary": {"base64": "6YrBn2ofIw1b5ooakrLOwF41BWrps8OO0H9WH4/rtlE=",
                     "subType": "00"}, "$binary": {"base64": "n+XAuFnP8Dov9TnhGFxNx0K/MnVM9WbJ7RouEu0ndO0=",
@@ -191,8 +204,6 @@ tests:
                     "subType": "00"}, "$binary": {"base64": "b6iSxiI1FM9SzxuG1bHqGA1i4+3GOi0/SPW00XB4L7o=",
                     "subType": "00"}, "$binary": {"base64": "kn3LsxAVkzIZKK9I6fi0Cctr0yjXOYgaQWMCoj4hLpM=",
                     "subType": "00"}]}
-        collectionName: &collection_name "default"
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:

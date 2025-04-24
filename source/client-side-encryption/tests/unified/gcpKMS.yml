@@ -60,7 +60,6 @@ tests:
           - &doc0_encrypted {_id: 1, encrypted_string_gcp: {'$binary': {'base64': 'ARgj/gAAAAAAAAAAAAAAAAACwFd+Y5Ojw45GUXNvbcIpN9YkRdoHDHkR4kssdn0tIMKlDQOLFkWFY9X07IRlXsxPD8DcTiKnl6XINK28vhcGlg==',
                 'subType': '06'}}}
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"

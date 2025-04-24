@@ -18,10 +18,20 @@ createEntities:
   - database:
       id: "db"
       client: "client0"
-      databaseName: default
+      databaseName: &database_name default
   - collection:
       id: "coll"
       database: "db"
+      collectionName: &collection_name default
+  - client:
+      id: "client_unencrypted"
+  - database:
+      id: "db_unencrypted"
+      client: "client_unencrypted"
+      databaseName: default
+  - collection:
+      id: "coll_unencrypted"
+      database: "db_unencrypted"
       collectionName: default
 initialData:
   - databaseName: default
@@ -57,8 +67,11 @@ tests:
         object: "coll"
         expectResult:
           deletedCount: 1
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {"_id": 0, "encryptedInt": {$$type: "binData"}, "__safeContent__": ["$binary": {
                     "base64": "RjBYT2h3ZAoHxhf8DU6/dFbDkEBZp0IxREcsRTu2MXs=", "subType": "00"},
                "$binary": {"base64": "x7GR49EN0t3WXQDihkrbonK7qNIBYC87tpL/XEUyIYc=",
@@ -69,8 +82,6 @@ tests:
                     "subType": "00"}, "$binary": {"base64": "+vC6araOEo+fpW7PSIP40/EnzBCj1d2N10Jr3rrXJJM=",
                     "subType": "00"}, "$binary": {"base64": "6SV63Mf51Z6A6p2X3rCnJKCu6ku3Oeb45mBYbz+IoAo=",
                     "subType": "00"}]}
-        collectionName: &collection_name "default"
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:

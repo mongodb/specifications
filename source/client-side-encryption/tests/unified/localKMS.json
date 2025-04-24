@@ -44,6 +44,25 @@
         "database": "db",
         "collectionName": "default"
       }
+    },
+    {
+      "client": {
+        "id": "client_unencrypted"
+      }
+    },
+    {
+      "database": {
+        "id": "db_unencrypted",
+        "client": "client_unencrypted",
+        "databaseName": "default"
+      }
+    },
+    {
+      "collection": {
+        "id": "coll_unencrypted",
+        "database": "db_unencrypted",
+        "collectionName": "default"
+      }
     }
   ],
   "initialData": [
@@ -140,11 +159,14 @@
             }
           },
           "object": "coll"
-        }
-      ],
-      "outcome": [
+        },
         {
-          "documents": [
+          "name": "find",
+          "object": "coll_unencrypted",
+          "arguments": {
+            "filter": {}
+          },
+          "expectResult": [
             {
               "_id": 1,
               "encrypted_string": {
@@ -157,9 +179,7 @@
                 "$$type": "binData"
               }
             }
-          ],
-          "collectionName": "default",
-          "databaseName": "default"
+          ]
         }
       ],
       "expectEvents": [

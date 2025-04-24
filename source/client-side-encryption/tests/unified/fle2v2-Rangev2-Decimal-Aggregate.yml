@@ -19,10 +19,20 @@ createEntities:
   - database:
       id: "db"
       client: "client0"
-      databaseName: default
+      databaseName: &database_name default
   - collection:
       id: "coll"
       database: "db"
+      collectionName: &collection_name default
+  - client:
+      id: "client_unencrypted"
+  - database:
+      id: "db_unencrypted"
+      client: "client_unencrypted"
+      databaseName: default
+  - collection:
+      id: "coll_unencrypted"
+      database: "db_unencrypted"
       collectionName: default
 initialData:
   - databaseName: default
@@ -56,8 +66,11 @@ tests:
           pipeline: [$match: {"encryptedDecimalNoPrecision": {$gt: {$numberDecimal: "0"}}}]
         object: "coll"
         expectResult: [*doc1]
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - {"_id": {"$numberInt": "0"}, "encryptedDecimalNoPrecision": {$$type: "binData"},
             "__safeContent__": ["$binary": {"base64": "rbf3AeBEv4wWFAKknqDxRW5cLNkFvbIs6iJjc6LShQY=",
                     "subType": "00"}, "$binary": {"base64": "n+XAuFnP8Dov9TnhGFxNx0K/MnVM9WbJ7RouEu0ndO0=",
@@ -318,8 +331,6 @@ tests:
                     "subType": "00"}, "$binary": {"base64": "1jQsNMarSnarlYmXEuoFokeBMg/090qUD9wqo1Zn8Gs=",
                     "subType": "00"}, "$binary": {"base64": "hupXNKhRpJxpyDAAP1TgJ5JMZh9lhbMk6s7D7dMS3C8=",
                     "subType": "00"}]}
-        collectionName: &collection_name "default"
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:
