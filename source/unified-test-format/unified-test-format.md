@@ -3495,6 +3495,16 @@ ignored in order to test the test runner implementation (e.g. defining entities 
 The specification does prefer "MUST" in other contexts, such as discussing parts of the test file format that *are*
 enforceable by the JSON schema or the test runner implementation.
 
+<span id="rationale_dropping_metadata"></span>
+
+### Why are `_enxcol` collections dropped?
+
+The collections `_enxcol.<collectionName>.esc` and `_enxcol.<collectionName>.ecoc` are [automatically
+created]((../client-side-encryption/client-side-encryption.md#create-collection-helper)) for Queryable Encryption
+collections. If these collections are present and non-empty, the server generated `__safeContent__` field may differ.
+`__safeContent__` includes a count of the number of instances of the given value. To do exact matching on
+`__safeContent__` the test runner is required to drop these collections.
+
 <span id="rationale_observeSensitiveCommands"></span>
 
 ### Why can't `observeSensitiveCommands` be true when authentication is enabled?
@@ -3555,6 +3565,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-04-25: Drop `_enxcol` collections.
 
 - 2025-01-21: **Schema version 1.23.**
 
