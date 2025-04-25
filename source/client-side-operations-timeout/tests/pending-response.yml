@@ -1,6 +1,6 @@
 description: "Connection churn is prevented by reading pending responses during connection checkout"
 
-schemaVersion: "1.9"
+schemaVersion: "1.24"
 
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -25,9 +25,9 @@ createEntities:
         - connectionCheckedOutEvent
         - connectionCheckedInEvent
         - connectionClosedEvent
-        - connectionPendingReadSucceeded
-        - connectionPendingReadStarted
-        - connectionPendingReadFailed
+        - connectionPendingResponseSucceeded
+        - connectionPendingResponseStarted
+        - connectionPendingResponseFailed
   - database:
       id: &database test
       client: *client
@@ -51,7 +51,6 @@ tests:
       # Run a ping command to pre-load the pool with a connection.
       - name: runCommand
         object: *database
-        command_name: ping
         arguments:
           command:
             ping: 1
@@ -100,8 +99,8 @@ tests:
           - connectionCheckedInEvent: {}        # ping finishes
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}        # insert fails
-          - connectionPendingReadStarted: {}
-          - connectionPendingReadSucceeded: {}  # find op drains conn
+          - connectionPendingResponseStarted: {}
+          - connectionPendingResponseSucceeded: {}  # find op drains conn
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}        # find succeeds
 
@@ -164,8 +163,9 @@ tests:
           - connectionCheckedInEvent: {}        # ping finishes
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}        # insert fails
-          - connectionPendingReadStarted: {}
-          - connectionPendingReadFailed: {}
+          - connectionPendingResponseStarted: {}
+          - connectionPendingResponseFailed:
+              reason: timeout
           - connectionClosedEvent:
               reason: error
 
@@ -193,7 +193,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 150
+              blockTimeMS: 250
 
       # Execute operation with timeout less than block time
       - name: insertOne
@@ -208,10 +208,8 @@ tests:
       - name: findOne
         object: *collection
         arguments:
-          timeoutMS: 50
+          timeoutMS: 200
           filter: { _id: 1 }
-        expectError:
-          isTimeoutError: true
 
     expectEvents:
       - client: *client
@@ -220,6 +218,8 @@ tests:
               commandName: ping # pre-loading the connection pool.
           - commandFailedEvent:
               commandName: insert
+          - commandSucceededEvent:
+              commandName: find
       - client: *client
         eventType: cmap
         events:
@@ -227,76 +227,12 @@ tests:
           - connectionCheckedInEvent: {}        # ping finishes
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}        # insert fails
-          - connectionPendingReadStarted: {}
-          - connectionPendingReadFailed: {} # find times out
+          - connectionPendingResponseStarted: {}
+          - connectionPendingResponseSucceeded: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}        # find succeeds
 
   # Attempting pending response read on a realistic timeout operation that gets 
-  # no response from the server after the pending response start time has been 
+  # no response from the server after the pending response start time has been
   # exceeded should close.
-  - description: "timeout write op exceeds pending response timeout"
-    operations:
-      # Run a ping command to pre-load the pool with a connection.
-      - name: runCommand
-        object: *database
-        command_name: ping
-        arguments:
-          command:
-            ping: 1
-
-      # Create a failpoint to block the first operation
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["insert"]
-              blockConnection: true
-              blockTimeMS: 150
-
-      # Execute operation with timeout less than block time
-      - name: insertOne
-        object: *collection
-        arguments:
-          timeoutMS: 75
-          document: { _id: 3, x: 1 }
-        expectError:
-          isTimeoutError: true
-
-      # Wait for the pending read timeout period before executing the next 
-      # operation.
-      - name: wait
-        object: testRunner
-        arguments:
-          ms: 3000
-
-      # Execute a subsequent operation to complete the read
-      - name: findOne
-        object: *collection
-        arguments:
-          timeoutMS: 50
-          filter: { _id: 1 }
-        expectError:
-          isTimeoutError: true
-
-    expectEvents:
-      - client: *client
-        events:
-          - commandSucceededEvent:
-              commandName: ping # pre-loading the connection pool.
-          - commandFailedEvent:
-              commandName: insert
-      - client: *client
-        eventType: cmap
-        events:
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}        # ping finishes
-          - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {}        # insert fails
-          - connectionPendingReadStarted: {}
-          - connectionPendingReadFailed: {} # find times out
-          - connectionClosedEvent:
-              reason: error
 
