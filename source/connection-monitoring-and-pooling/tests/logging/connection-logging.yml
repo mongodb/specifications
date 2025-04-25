@@ -1,6 +1,6 @@
 description: "connection-logging"
 
-schemaVersion: "1.13"
+schemaVersion: "1.24"
 
 runOnRequirements:
   - topologies:
