@@ -60,7 +60,7 @@
   ],
   "tests": [
     {
-      "description": "non-timeout write op with response and no error",
+      "description": "non-timeout op with response and no error",
       "operations": [
         {
           "name": "runCommand",
@@ -277,7 +277,7 @@
       ]
     },
     {
-      "description": "timeout write op with response and no error",
+      "description": "timeout op with response and no error",
       "operations": [
         {
           "name": "runCommand",
