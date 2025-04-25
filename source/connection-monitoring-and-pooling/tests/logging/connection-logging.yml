@@ -251,7 +251,6 @@ tests:
       # Run a ping command to pre-load the pool with a connection.
       - name: runCommand
         object: *database
-        command_name: ping
         arguments:
           command:
             ping: 1
