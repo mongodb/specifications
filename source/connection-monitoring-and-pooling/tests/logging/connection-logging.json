@@ -1,6 +1,6 @@
 {
   "description": "connection-logging",
-  "schemaVersion": "1.13",
+  "schemaVersion": "1.24",
   "runOnRequirements": [
     {
       "topologies": [
@@ -560,7 +560,6 @@
         {
           "name": "runCommand",
           "object": "test",
-          "command_name": "ping",
           "arguments": {
             "command": {
               "ping": 1
