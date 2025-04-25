@@ -1667,8 +1667,7 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 - 2023-10-04: Commit to the currently specified requirements regarding durations in events.
 
-- 2024-01-23: Migrated from reStructuredText to Markdown.
-
-- 2024-10-30: Attempt pending reads during connection check-out for sockets that have timed out.
+- Improved connection reuse and availability by allowing pending server responses to be read with a 3-second static 
+timeout after a client-side operation timeout.
 
 ______________________________________________________________________
