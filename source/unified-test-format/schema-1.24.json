@@ -787,6 +787,25 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {}
+        },
+        "connectionPendingResponseStarted": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionPendingResponseSucceeded": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "connectionPendingResponseFailed": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "reason": {
+              "type": "string"
+            }
+          }
         }
       }
     },

@@ -111,7 +111,6 @@ tests:
       # Run a ping command to pre-load the pool with a connection.
       - name: runCommand
         object: *database
-        command_name: ping
         arguments:
           command:
             ping: 1
@@ -177,7 +176,6 @@ tests:
       # Run a ping command to pre-load the pool with a connection.
       - name: runCommand
         object: *database
-        command_name: ping
         arguments:
           command:
             ping: 1
@@ -231,8 +229,3 @@ tests:
           - connectionPendingResponseSucceeded: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}        # find succeeds
-
-  # Attempting pending response read on a realistic timeout operation that gets 
-  # no response from the server after the pending response start time has been
-  # exceeded should close.
-
