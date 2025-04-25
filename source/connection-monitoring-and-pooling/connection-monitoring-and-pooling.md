@@ -578,24 +578,24 @@ availableConnectionCount MUST be decremented.
 
 If an operation times out the socket while awaiting a server response and CSOT is enabled and `maxTimeMS` was added to
 the command, the driver MUST mark the connection as "pending" and record the current time in a way that can be updated.
-The next time the connection is checked out, the driver MUST attempt to read and discard the remaining response from
-the socket. The workflow for this is as follows:
+The next time the connection is checked out, the driver MUST attempt to read and discard the remaining response from the
+socket. The workflow for this is as follows:
 
-- The connection MUST persist the current time recorded immediately after the original socket timeout, and this timestamp 
-MUST be updated to the current time whenever any data is successfully read from the socket during a pending response read 
-attempt.
-- If the connection remains idle (i.e., no data is read) for more than 3 seconds since the pending state began or since 
-the last successful read, the driver MUST attempt to verify the connection's health by either performing a non-blocking 
-read or using the minimal possible timeout to check if at least one byte can be read.
-- If a user-provided timeout is specified for the pending response read, the driver MUST use the minimum of the 
-remaining time before the 3-second pending-response window elapses and the user-provided timeout as the effective 
-timeout for the read operation.
-- If no user-provided timeout is specified, the driver MUST use the minimum of the remaining 3-second pending-response 
-window and the socketTimeoutMS (if supported by the driver) as the effective timeout for the read operation.
-- If reading from the socket results in an error that is not a timeout, or if the connection exceeds the 3-second 
-pending-response window, the driver MUST close the connection.
-- If the pending response is fully read and successfully discarded, and the connection remains healthy, the pending 
-state may be cleared and the connection MAY be returned to the pool for reuse.
+- The connection MUST persist the current time recorded immediately after the original socket timeout, and this
+    timestamp MUST be updated to the current time whenever any data is successfully read from the socket during a
+    pending response read attempt.
+- If the connection remains idle (i.e., no data is read) for more than 3 seconds since the pending state began or since
+    the last successful read, the driver MUST attempt to verify the connection's health by either performing a
+    non-blocking read or using the minimal possible timeout to check if at least one byte can be read.
+- If a user-provided timeout is specified for the pending response read, the driver MUST use the minimum of the
+    remaining time before the 3-second pending-response window elapses and the user-provided timeout as the effective
+    timeout for the read operation.
+- If no user-provided timeout is specified, the driver MUST use the minimum of the remaining 3-second pending-response
+    window and the socketTimeoutMS (if supported by the driver) as the effective timeout for the read operation.
+- If reading from the socket results in an error that is not a timeout, or if the connection exceeds the 3-second
+    pending-response window, the driver MUST close the connection.
+- If the pending response is fully read and successfully discarded, and the connection remains healthy, the pending
+    state may be cleared and the connection MAY be returned to the pool for reuse.
 
 ```mermaid
 sequenceDiagram  
@@ -637,7 +637,8 @@ sequenceDiagram
         end  
     end  
 ```
-```python 
+
+```python
 PENDING_RESPONSE_TIMEOUT_MS = 3000  # static timeout  
   
 def await_pending_response(timeout, conn):  
@@ -673,6 +674,7 @@ def await_pending_response(timeout, conn):
     if error is not None:  
         raise error  
 ```
+
 ```python
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
@@ -1373,29 +1375,28 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                 | Suggested Type | Value                                         |
-|---------------------|----------------|-----------------------------------------------|
-| message             | string         | "Pending response started"                    |
-| driverConnectionID  | int64          | The driver-generated ID for the connection    |
-| requestID           | int64          | The driver-generated request ID associated with the network timeout |
+| Key                | Suggested Type | Value                                                               |
+| ------------------ | -------------- | ------------------------------------------------------------------- |
+| message            | string         | "Pending response started"                                          |
+| driverConnectionID | int64          | The driver-generated ID for the connection                          |
+| requestID          | int64          | The driver-generated request ID associated with the network timeout |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
-> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
-> request ID={{requestID}}
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
+> ID={{requestID}}
 
 #### Connection Pending Response Succeeded
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                 | Suggested Type | Value                                      |
-|---------------------|----------------|--------------------------------------------|
-| message             | string         | "Pending response succeeded"               |
-| driverConnectionID  | int64          | The driver-generated ID for the connection |
-| requestID           | int64          | The driver-generated request ID associated with the network timeout |
-| durationMS          | Int32/Int64/Double | The time it took to complete the pending read |
-
+| Key                | Suggested Type     | Value                                                               |
+| ------------------ | ------------------ | ------------------------------------------------------------------- |
+| message            | string             | "Pending response succeeded"                                        |
+| driverConnectionID | int64              | The driver-generated ID for the connection                          |
+| requestID          | int64              | The driver-generated request ID associated with the network timeout |
+| durationMS         | Int32/Int64/Double | The time it took to complete the pending read                       |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1407,11 +1408,11 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                 | Suggested Type | Value                                                        |
-|---------------------|----------------|--------------------------------------------------------------|
-| message             | string         | "Pending response failed"                                    |
-| driverConnectionID  | int64          | The driver-generated ID for the connection                   |
-| reason              | string         | The reason for why the pending response read failed          |
+| Key                | Suggested Type | Value                                               |
+| ------------------ | -------------- | --------------------------------------------------- |
+| message            | string         | "Pending response failed"                           |
+| driverConnectionID | int64          | The driver-generated ID for the connection          |
+| reason             | string         | The reason for why the pending response read failed |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1569,13 +1570,14 @@ environment setup.
 Using a dynamic timeout introduces additional complexity. In particular, RTT is an unreliable metric for predicting
 future operation latency as both server and network conditions are unpredictable. Benchmarks demonstrate that even in
 slow, high-latency scenarios (e.g. reading a 16MiB document over cross-country), reads reliably complete in under 1
-second. The 3-second timeout ensures that every realistic pending response read will not result in premature connection 
+second. The 3-second timeout ensures that every realistic pending response read will not result in premature connection
 closure, but will still close in pathological conditions (e.g., a dead server or true network outage).
 
 ### Why is the pending response read timeout not configurable?
 
-Because of the ["no knobs" mantra](https://github.com/mongodb/specifications/blob/master/source/driver-mantras.md#no-knobs). 
-We can always reconsider this in the future
+Because of the
+["no knobs" mantra](https://github.com/mongodb/specifications/blob/master/source/driver-mantras.md#no-knobs). We can
+always reconsider this in the future
 
 ### Why does the pending response read timeout include the time the connection is idle in the pool?
 
@@ -1667,7 +1669,7 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 - 2023-10-04: Commit to the currently specified requirements regarding durations in events.
 
-- Improved connection reuse and availability by allowing pending server responses to be read with a 3-second static 
-timeout after a client-side operation timeout.
+- Improved connection reuse and availability by allowing pending server responses to be read with a 3-second static
+    timeout after a client-side operation timeout.
 
 ______________________________________________________________________
