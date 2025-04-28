@@ -28,3 +28,6 @@ jobs:
         run: make
       - name: Check all unified tests schema version is valid
         run: bash .github/workflows/check_schema_version.sh
+      - name: Check schema-latest.json has been updated 
+        working-directory: source/unified-test-format
+        run: bash .github/workflows/check-schema-latest.sh
