@@ -30,6 +30,7 @@ fi
 expected="schema-1.$max.json"
 if ! diff -u "$expected" schema-latest.json >/dev/null; then
   echo "schema-latest.json is not up to date with schema-1.$max.json"
+  echo "from 'source/',please run 'make update-schema-latest' to update it"
   exit 1
 fi
 
