@@ -389,7 +389,7 @@ The streaming protocol MUST be disabled when either:
 
 - the client is configured with serverMonitoringMode=poll, or
 - the client is configured with serverMonitoringMode=auto and a FaaS platform is detected, or
-- the server does not support streaming (eg MongoDB \< 4.4).
+- the server does not support streaming (eg MongoDB < 4.4).
 
 When the streaming protocol is disabled the client MUST use the [polling protocol](#polling-protocol) and MUST NOT start
 an extra thread or connection for [Measuring RTT](#measuring-rtt).
@@ -473,9 +473,8 @@ clients MUST cancel the hello or legacy hello check on that server and close the
 
 ### Polling Protocol
 
-The polling protocol is used to monitor MongoDB \< 4.4 servers or when streaming is disabled. The client
-[checks](#check) a server with a hello or legacy hello command and then sleeps for heartbeatFrequencyMS before running
-another check.
+The polling protocol is used to monitor MongoDB < 4.4 servers or when streaming is disabled. The client [checks](#check)
+a server with a hello or legacy hello command and then sleeps for heartbeatFrequencyMS before running another check.
 
 ### Marking the connection pool as ready (CMAP only)
 

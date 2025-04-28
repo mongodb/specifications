@@ -42,7 +42,7 @@ Using a 4.0+ server, set the following failpoint:
 Then, perform an insert operation and assert that a WriteConcernError occurs and that its `details` property is both
 accessible and matches the `errInfo` object from the failpoint.
 
-### 2. WriteError.details exposes writeErrors\[\].errInfo
+### 2. WriteError.details exposes writeErrors[].errInfo
 
 Test that `writeErrors[].errInfo` in a command response is propagated as `WriteError.details` (or equivalent) in the
 driver.

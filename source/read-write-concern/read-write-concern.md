@@ -181,8 +181,8 @@ mongodb://server:27017/db?readConcernLevel=majority
 
 #### Errors
 
-- MaxWireVersion \< 4 Only the server's default `ReadConcern` is support by MaxWireVersion \< 4. When using other
-    `readConcernLevels` with clients reporting `MaxWireVersion` \< 4, the driver MUST raise an error. This check MUST
+- MaxWireVersion < 4 Only the server's default `ReadConcern` is support by MaxWireVersion < 4. When using other
+    `readConcernLevels` with clients reporting `MaxWireVersion` < 4, the driver MUST raise an error. This check MUST
     happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately
     define a `ReadPreference` such that intermittent errors do not occur.
 
@@ -326,7 +326,7 @@ as-is.
 The `findAndModify` command takes a named parameter, `writeConcern`. See command documentation for further examples.
 
 If writeConcern is specified for the Collection, `writeConcern` MUST be omitted when sending `findAndModify` with
-MaxWireVersion \< 4.
+MaxWireVersion < 4.
 
 If the findAndModify helper accepts writeConcern as a parameter, the driver MUST raise an error with MaxWireVersion \<
 4\.
@@ -340,11 +340,11 @@ If the findAndModify helper accepts writeConcern as a parameter, the driver MUST
 
 Command helper methods for commands that write, other than those discussed above, MAY accept a write concern or write
 concern options in their parameter list. If the helper accepts a write concern, the driver MUST error if the selected
-server's MaxWireVersion \< 5 and a write concern has explicitly been specified.
+server's MaxWireVersion < 5 and a write concern has explicitly been specified.
 
 Helper methods that apply the write concern inherited from the Collection or Database, SHOULD check whether the selected
 server's MaxWireVersion >= 5 and if so, include the inherited write concern in the command on the wire. If the selected
-server's MaxWireVersion \< 5, these methods SHOULD silently omit the write concern from the command on the wire.
+server's MaxWireVersion < 5, these methods SHOULD silently omit the write concern from the command on the wire.
 
 These commands that write are:
 
@@ -518,7 +518,7 @@ These are currently under construction.
 
 ## Q & A
 
-Q: Why is specifying a non-default `ReadConcern` for servers \< 3.2 an error while a non-default write concern gets
+Q: Why is specifying a non-default `ReadConcern` for servers < 3.2 an error while a non-default write concern gets
 ignored in `findAndModify`? `findAndModify` is an existing command and since `WriteConcern` may be defined globally,
 anyone using `findAndModify` in their applications with a non-default `WriteConcern` defined globally would have all
 their `findAndModify` operations fail.
@@ -535,7 +535,7 @@ instance, we send it.
 
 - 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
 
-- 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion \< 4.
+- 2015-10-16: ReadConcern of local is no longer allowed to be used when talking with MaxWireVersion < 4.
 
 - 2016-05-20: Added note about helpers for commands that write accepting a writeConcern parameter.
 

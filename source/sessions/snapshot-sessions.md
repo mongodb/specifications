@@ -243,7 +243,7 @@ C# driver will provide the reference implementation. The corresponding ticket is
 
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2021-06-15: Initial version.
-- 2021-06-28: Raise client side error on \< 5.0.
+- 2021-06-28: Raise client side error on < 5.0.
 - 2021-06-29: Send readConcern with all snapshot session commands.
 - 2021-07-16: Grammar revisions. Change SHOULD to MUST for startTransaction error to comply with existing tests.
 - 2021-08-09: Updated client-side error spec tests to use correct syntax for `test.expectEvents`

@@ -553,7 +553,7 @@ encountered, such a [Connection](#connection) MUST be closed (as described in
 list of available [Connections](#connection) is exhausted.
 
 If the list is exhausted, the total number of [Connections](#connection) is less than maxPoolSize, and
-pendingConnectionCount \< maxConnecting, the pool MUST create a [Connection](#connection), establish it, mark it as "in
+pendingConnectionCount < maxConnecting, the pool MUST create a [Connection](#connection), establish it, mark it as "in
 use" and return it. If totalConnectionCount == maxPoolSize or pendingConnectionCount == maxConnecting, then the pool
 MUST wait to service the request until neither of those two conditions are met or until a [Connection](#connection)
 becomes available, re-entering the checkOut loop in either case. This waiting MUST NOT prevent

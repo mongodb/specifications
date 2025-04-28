@@ -317,7 +317,7 @@ mongocryptd is released alongside the server. mongocryptd is available in versio
 Drivers MUST run all tests with mongocryptd on at least one platform for all tested server versions.
 
 Drivers MUST run all tests with [crypt_shared](../client-side-encryption.md#crypt_shared) on at least one platform for
-all tested server versions. For server versions \< 6.0, drivers MUST test with the latest major release of
+all tested server versions. For server versions < 6.0, drivers MUST test with the latest major release of
 [crypt_shared](../client-side-encryption.md#crypt_shared). Using the latest major release of
 [crypt_shared](../client-side-encryption.md#crypt_shared) is supported with older server versions.
 
