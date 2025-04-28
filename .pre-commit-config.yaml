@@ -33,6 +33,7 @@ repos:
         - mdformat-gfm
         - mdformat-gfm-alerts
         - mdformat-mkdocs~=3.0
+        - mdformat_admon<2.1
 
 - repo: local
   hooks:
