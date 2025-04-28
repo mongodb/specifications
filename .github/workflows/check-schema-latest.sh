@@ -1,10 +1,16 @@
-#!user/bin/env bash
+#!/usr/bin/env bash
 
-# Find the max X in unified-test-format/schema-1.X.json
+# Change to the working directory where the schema files are located
+cd source/unified-test-format || {
+  echo "Directory source/unified-test-format not found."
+  exit 1
+}
+
+# Find the max X in schema-1.X.json
 max=0
 for file in schema-1.*.json; do
   # Extract the version number from the filename
-  version=${f##*schema-1.}
+  version=${file##*schema-1.}
   version=${version%.json}
 
   if [[ $version =~ ^[0-9]+$ ]]; then
@@ -21,9 +27,9 @@ if ((max == 0)); then
 fi
 
 # Compare that file vs schema-latest.json
-expected="schema-$max.json"
+expected="schema-1.$max.json"
 if ! diff -u "$expected" schema-latest.json >/dev/null; then
-  echo "schema-latest.json is not up to date with schema-$max.json"
+  echo "schema-latest.json is not up to date with schema-1.$max.json"
   exit 1
 fi
 
