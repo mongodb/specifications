@@ -866,13 +866,12 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
     Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to
     validate it works.
 
-4. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+4. Call `client_encryption.createDataKey()` with "kmip" as the provider and the following masterKey:
 
     ```javascript
     {
-      region: "us-east-1",
-      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-      endpoint: "kms.us-east-1.amazonaws.com:12345"
+      "keyId": "1",
+      "endpoint": "localhost:12345"
     }
     ```
 
