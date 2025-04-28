@@ -78,9 +78,9 @@ struct {
 | ------------------ | ------------------------------------------------------------------- |
 | **Name**           | **Description**                                                     |
 | subtype            | Type of blob format and encryption algorithm used.                  |
-| key_uuid\[16\]     | The value of \_id for the key used to decrypt the ciphertext.       |
+| key_uuid[16]       | The value of \_id for the key used to decrypt the ciphertext.       |
 | original_bson_type | The byte representing the original BSON type of the encrypted data. |
-| ciphertext\[\]     | The encrypted ciphertext (includes IV prepended).                   |
+| ciphertext[]       | The encrypted ciphertext (includes IV prepended).                   |
 
 ## Test Plan
 

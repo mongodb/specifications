@@ -56,7 +56,7 @@ Each YAML file has the following keys:
 The definition of MATCH or MATCHES in the Spec Test Runner is as follows:
 
 - MATCH takes two values, `expected` and `actual`
-- Notation is "Assert \[actual\] MATCHES \[expected\]
+- Notation is "Assert [actual] MATCHES [expected]
 - Assertion passes if `expected` is a subset of `actual`, with the value `42` acting as placeholders for "any value"
 
 Pseudocode implementation of `actual` MATCHES `expected`:
@@ -167,7 +167,7 @@ and sharded clusters unless otherwise specified:
 
 1. `ChangeStream` must continuously track the last seen `resumeToken`
 
-2. `ChangeStream` will throw an exception if the server response is missing the resume token (if wire version is \< 8,
+2. `ChangeStream` will throw an exception if the server response is missing the resume token (if wire version is < 8,
     this is a driver-side error; for 8+, this is a server-side error)
 
 3. After receiving a `resumeToken`, `ChangeStream` will automatically resume one time on a resumable error with the

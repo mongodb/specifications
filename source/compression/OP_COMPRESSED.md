@@ -6,7 +6,7 @@
 
 ## Abstract
 
-This specification describes how to implement Wire Protocol Compression between MongoDB drivers and mongo\[d|s\].
+This specification describes how to implement Wire Protocol Compression between MongoDB drivers and mongo[d|s].
 
 Compression is achieved through a new bi-directional wire protocol opcode, referred to as OP_COMPRESSED.
 
@@ -278,7 +278,7 @@ normally.
     {"t":{"$date":"2021-04-20T09:57:26.825-06:00"},"s":"I",  "c":"COMMAND",  "id":51803,   "ctx":"conn5","msg":"Slow query","attr":{"type":"command","ns":"admin.$cmd","command":{"hello":1,"client":{"driver":{"name":"mongo-csharp-driver","version":"2.12.2.0"},"os":{"type":"macOS","name":"Darwin 19.6.0 Darwin Kernel Version 19.6.0: Tue Jan 12 22:13:05 PST 2021; root:xnu-6153.141.16~1/RELEASE_X86_64","architecture":"x86_64","version":"19.6.0"},"platform":".NET 5.0.3"},"compression":[],"$readPreference":{"mode":"secondaryPreferred"},"$db":"admin"},"numYields":0,"reslen":319,"locks":{},"remote":"127.0.0.1:54372","protocol":"op_query","durationMillis":1}}
     ```
 
-    e.g., empty compression: \[\] array. No operations should have been compressed.
+    e.g., empty compression: [] array. No operations should have been compressed.
 
     The results of the program should have been:
 
