@@ -1578,7 +1578,7 @@ closure, but will still close in pathological conditions (e.g., a dead server or
 
 Because of the
 ["no knobs" mantra](https://github.com/mongodb/specifications/blob/master/source/driver-mantras.md#no-knobs). We can
-always reconsider this in the future
+always reconsider this in the future.
 
 ### Why does the pending response read timeout include the time the connection is idle in the pool?
 
