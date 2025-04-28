@@ -3,7 +3,6 @@ docs_dir: source
 nav:
   - 'index.md'
 markdown_extensions:
-  - admonition
   - footnotes
   - pymdownx.superfences
   - pymdownx.arithmatex
