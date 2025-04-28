@@ -8,7 +8,7 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          kmip: {}
+          kmip: { endpoint: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
