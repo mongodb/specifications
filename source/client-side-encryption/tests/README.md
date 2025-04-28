@@ -811,7 +811,7 @@ Configure with KMS providers as follows:
          "endpoint": "doesnotexist.invalid:443"
       },
       "kmip": {
-         "endpoint": "doesnotexist.local:5698"
+         "endpoint": "doesnotexist.invalid:5698"
       }
 }
 ```
@@ -960,7 +960,7 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
     validate it works.
 
     Call `client_encryption_invalid.createDataKey()` with the same masterKey. Expect this to fail with a network
-    exception indicating failure to resolve "doesnotexist.local".
+    exception indicating failure to resolve "doesnotexist.invalid".
 
 11. Call `client_encryption.createDataKey()` with "kmip" as the provider and the following masterKey:
 
@@ -979,11 +979,11 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
     ```javascript
     {
       "keyId": "1",
-      "endpoint": "doesnotexist.local:5698"
+      "endpoint": "doesnotexist.invalid:5698"
     }
     ```
 
-    Expect this to fail with a network exception indicating failure to resolve "doesnotexist.local".
+    Expect this to fail with a network exception indicating failure to resolve "doesnotexist.invalid".
 
 ### 8. Bypass Spawning mongocryptd
 
