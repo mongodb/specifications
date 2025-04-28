@@ -1745,7 +1745,7 @@ Expect an error indicating TLS handshake failed due to an invalid hostname.
 Call `client_encryption_no_client_cert.createDataKey()` with "azure" as the provider and the following masterKey:
 
 ```javascript
-{ 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+{ 'keyVaultEndpoint': 'doesnotexist.invalid', 'keyName': 'foo' }
 ```
 
 Expect an error indicating TLS handshake failed.
@@ -1857,7 +1857,7 @@ Call `client_encryption_with_names.createDataKey()` with "azure:no_client_cert" 
 masterKey:
 
 ```javascript
-{ 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+{ 'keyVaultEndpoint': 'doesnotexist.invalid', 'keyName': 'foo' }
 ```
 
 Expect an error indicating TLS handshake failed.
