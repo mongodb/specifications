@@ -50,7 +50,8 @@ For this test, run each of the following cases:
 
 ### 5. Do not throw when return address is identical to SRV hostname and SRV hostname has three or more `.` separated parts
 
-- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.mongodb.com`
+- the SRV `mongodb+srv://build.10gen.cc` resolving to `build.10gen.cc`
+- the SRV `mongodb+srv://test.build.10gen.cc` resolving to `test.build.10gen.cc`
 
 ## Test Setup
 
