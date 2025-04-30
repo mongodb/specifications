@@ -3580,6 +3580,9 @@ other specs *and* collating spec changes developed in parallel or during the sam
 ## Changelog
 
 - 2025-04-25: **Schema version 1.24**
+  
+    Add pending response events to `expectEvents` and `observeEvents` for client entities. These include 
+    `PendingResponseStartedEvent`, `PendingResponseSucceededEvent`, and `PendingResponseFailedEvent`.
 
 - 2025-01-21: **Schema version 1.23.**
 
