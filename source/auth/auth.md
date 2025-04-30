@@ -922,18 +922,18 @@ else // the valid host string contains no periods and is not "aws.amazonaws.com"
 
 Examples are provided below.
 
-| Host                           | Region     | Notes                                            |
-| ------------------------------ | ---------- | ------------------------------------------------ |
-| sts.amazonaws.com              | us-east-1  | the host is "sts.amazonaws.com"; use `us-east-1` |
-| sts.us-west-2.amazonaws.com    | us-west-2  | use the second label                             |
-| sts.us-west-2.amazonaws.com.ch | us-west-2  | use the second label                             |
-| example.com                    | com        | use the second label                             |
-| localhost                      | us-east-1  | no "`.`" character; use the default region       |
-| sts..com                       | \< Error > | second label is empty                            |
-| .amazonaws.com                 | \< Error > | starts with a period                             |
-| sts.amazonaws.                 | \< Error > | ends with a period                               |
-| ""                             | \< Error > | empty string                                     |
-| "string longer than 255"       | \< Error > | string longer than 255 bytes                     |
+| Host                           | Region    | Notes                                            |
+| ------------------------------ | --------- | ------------------------------------------------ |
+| sts.amazonaws.com              | us-east-1 | the host is "sts.amazonaws.com"; use `us-east-1` |
+| sts.us-west-2.amazonaws.com    | us-west-2 | use the second label                             |
+| sts.us-west-2.amazonaws.com.ch | us-west-2 | use the second label                             |
+| example.com                    | com       | use the second label                             |
+| localhost                      | us-east-1 | no "`.`" character; use the default region       |
+| sts..com                       | < Error > | second label is empty                            |
+| .amazonaws.com                 | < Error > | starts with a period                             |
+| sts.amazonaws.                 | < Error > | ends with a period                               |
+| ""                             | < Error > | empty string                                     |
+| "string longer than 255"       | < Error > | string longer than 255 bytes                     |
 
 #### [MongoCredential](#mongocredential) Properties
 

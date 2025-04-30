@@ -380,7 +380,7 @@ Therefore, this spec *also* requires that maxStalenessSeconds is at least 90:
 
 ### All servers must have wire version 5 to support maxStalenessSeconds
 
-Clients with minWireVersion \< 5 MUST throw an error if maxStalenessSeconds is set, and any available server in the
+Clients with minWireVersion < 5 MUST throw an error if maxStalenessSeconds is set, and any available server in the
 topology has maxWireVersion less than 5.
 
 An available server is defined in the [Server Selection](../server-selection/server-selection.md#terms) specification.

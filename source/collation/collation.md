@@ -12,7 +12,7 @@ and sorting on language strings in a locale-aware fashion.
 
 A driver MUST support a Collation option for each of the relevant operations in server versions >= 3.4 (maxWireVersion
 5\) and MUST throw an error if a user supplies a Collation option for the operation and the selected server has
-maxWireVersion \< 5 or if the user is using opcode-based unacknowledged writes.
+maxWireVersion < 5 or if the user is using opcode-based unacknowledged writes.
 
 The CRUD and Index Management specs include the collation option in descriptions of API elements where it is supported.
 This document provides more details on the specific driver behavior required to handle the collation option.
@@ -43,7 +43,7 @@ gains.
 Server versions earlier than 3.4 don't always throw an error if an unknown option is supplied to certain operations.
 Because a Collation defines how documents are matched and sorted for both read and write operations, behavior
 differences between server versions are significant. Drivers therefore MUST throw an error if a user specifies a
-Collation and the selected server has a maxWireVersion \< 5 or if using opcode-based unacknowledged writes.
+Collation and the selected server has a maxWireVersion < 5 or if using opcode-based unacknowledged writes.
 
 ## Specification
 
@@ -140,7 +140,7 @@ hinting an index. See the [Index Management specification](../index-management/i
 ### Require maxWireVersion 5
 
 Drivers MUST require the server's maxWireVersion >= 5 to support Collations. When a collation is explicitly specified
-for a server with maxWireVersion \< 5, the driver MUST raise an error.
+for a server with maxWireVersion < 5, the driver MUST raise an error.
 
 ### Opcode-based Unacknowledged Writes
 
@@ -160,7 +160,7 @@ db.command({
 
 ### BulkWrite API
 
-If maxWireVersion \< 5, the driver MUST inspect each BulkWrite operation model for a collation and MUST raise an error
+If maxWireVersion < 5, the driver MUST inspect each BulkWrite operation model for a collation and MUST raise an error
 and MUST NOT send any operations to the server if a collation is explicitly specified on an operation. For example, the
 user will provide BulkWrite operation models as in the following example:
 
@@ -178,7 +178,7 @@ db.collection.bulkWrite([
 ]);
 ```
 
-The driver must inspect each operation for a Collation if maxWireVersion is \< 5 and fail the entire bulkWrite if a
+The driver must inspect each operation for a Collation if maxWireVersion is < 5 and fail the entire bulkWrite if a
 collation was explicitly specified. In the example above, that means even the insertOne (without Collation) MUST NOT be
 sent.
 
@@ -192,7 +192,7 @@ custom name must be provided for one of them. Then, the test should ensure that 
 delete_one is called with an index name.
 
 Drivers should also test that errors are raised in each place Collation can be provided to a API method and the selected
-server has maxWireVersion \< 5.
+server has maxWireVersion < 5.
 
 ## Backwards Compatibility
 

@@ -28,6 +28,6 @@ In server versions 5.0 and earlier, the wire version was defined as a numeric li
 [src/mongo/db/wire_version.h](https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h). Since server
 version 5.1 ([SERVER-58346](https://jira.mongodb.org/browse/SERVER-58346)), the wire version is derived from the number
 of releases since 4.0 (using
-[src/mongo/util/version/releases.h.tpl](https://github.com/mongodb/mongo/blob/master/src/mongo/util/version/releases.h.tpl)
+[src/mongo/util/version/releases.tpl.h](https://github.com/mongodb/mongo/blob/master/src/mongo/util/version/releases.tpl.h)
 and
 [src/mongo/util/version/releases.yml](https://github.com/mongodb/mongo/blob/master/src/mongo/util/version/releases.yml)).

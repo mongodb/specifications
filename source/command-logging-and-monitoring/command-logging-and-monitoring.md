@@ -449,13 +449,11 @@ penalties, particularly when event listeners are introduced.
 - 2024-09-11: Migrated from reStructuredText to Markdown.
 
 - 2015-09-16: Removed `limit` from find test with options to support 3.2.\
-    Changed find test read preference to
-    `primaryPreferred`.
+    Changed find test read preference to `primaryPreferred`.
 
 - 2015-10-01: Changed find test with a kill cursors to not run on server versions\
-    greater than 3.0. Added a find test
-    with no kill cursors command which only runs on 3.1 and higher. Added notes on which tests should run based on
-    server versions.
+    greater than 3.0. Added a find test with no kill cursors command which only runs on 3.1 and higher. Added notes on
+    which tests should run based on server versions.
 
 - 2015-10-19: Changed batchSize in the 3.2 find tests to expect the remaining value.
 
@@ -478,12 +476,11 @@ penalties, particularly when event listeners are introduced.
 - 2021-05-05: Updated to use hello and legacy hello.
 
 - 2021-08-30: Added `serverConnectionId` field to `CommandStartedEvent`,\
-    `CommandSucceededEvent` and
-    `CommandFailedEvent`.
+    `CommandSucceededEvent` and `CommandFailedEvent`.
 
 - 2022-05-18: Converted legacy tests to the unified test format.
 
-- 2022-09-02: Remove material that only applies to MongoDB versions \< 3.6.
+- 2022-09-02: Remove material that only applies to MongoDB versions < 3.6.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
 
@@ -492,14 +489,12 @@ penalties, particularly when event listeners are introduced.
 - 2022-11-16: Update sensitive command tests to only run on server versions where the commands are supported.
 
 - 2022-12-13: Updated log message `serverPort` field description to clarify drivers should populate it with the\
-    default
-    port 27017 when relevant. Updated suggested unstructured forms of log messages to more clearly label connection IDs
-    and use more readable server address representations.
+    default port 27017 when relevant. Updated suggested unstructured forms of log messages to more clearly label
+    connection IDs and use more readable server address representations.
 
 - 2023-03-23: Updated `serverConnectionId` field to be Int64 as long-running servers can return Int64.
 
 - 2023-06-13: Added `databaseName` field to `CommandFailedEvent` and `CommandSucceededEvent`.\
-    Updated suggested
-    unstructured forms of log messages reflecting the changes.
+    Updated suggested unstructured forms of log messages reflecting the changes.
 
 - 2023-10-19: Add Q&A section

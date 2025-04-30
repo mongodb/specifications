@@ -105,7 +105,7 @@ be cached.
 
 In accordance with [RFC: 6960: 3.2](https://tools.ietf.org/html/rfc6960#section-3.2), a cached response SHOULD be
 considered valid up to and excluding the time specified in the response's `nextUpdate` field. In other words, if the
-current time is *t*, then the cache entry SHOULD be considered valid if *thisUpdate ⩽ t \< nextUpdate*.
+current time is *t*, then the cache entry SHOULD be considered valid if *thisUpdate ⩽ t < nextUpdate*.
 
 If a driver would accept a stapled OCSP response and that response has a later `nextUpdate` than the response already in
 the cache, drivers SHOULD replace the older entry in the cache with the fresher response.
@@ -356,7 +356,7 @@ server team's certificate generation tool to generate V3 certificates.
 
 Another example comes from [.NET on Linux](https://github.com/dotnet/corefx/issues/41475), which currently enforces the
 CA/Browser forum requirement that while a leaf certificate can be covered solely by OCSP, "public CAs have to have
-CRL\[s\] covering their issuing CAs". This requirement is not enforced with Java's default TLS libraries. See also:
+CRL[s] covering their issuing CAs". This requirement is not enforced with Java's default TLS libraries. See also:
 [Future Work: CA/Browser Forum Requirements Complications](#cabrowser-forum-requirements-complications).
 
 ## Future Work
@@ -377,7 +377,7 @@ Options to configure failure behavior (e.g. to maximize security or availability
 The test plan may need to be reworked if we discover that a driver's TLS library strictly implements CA/Browser forum
 requirements (e.g. [.NET on Linux](https://github.com/dotnet/corefx/issues/41475)). This is because our current chain of
 certificates does not fulfill the following requirement: while a leaf certificate can be covered solely by OCSP, "public
-CAs have to have CRL\[s\] covering their issuing CAs." This rework of the test plan may happen during the initial
+CAs have to have CRL[s] covering their issuing CAs." This rework of the test plan may happen during the initial
 implementation of OCSP support or happen later if a driver's TLS library implements the relevant CA/Browser forum
 requirement.
 

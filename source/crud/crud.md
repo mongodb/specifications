@@ -2274,8 +2274,8 @@ a read preference for the operation. As of `featureCompatibilityVersion` 4.4, se
 `$out` or `$merge`. Since drivers do not track `featureCompatibilityVersion`, the decision to consider a read preference
 for such a pipeline will depend on the wire version(s) of the server(s) to which the driver is connected.
 
-If there are one or more available servers and one or more of those servers is pre-5.0 (i.e. wire version \< 13),
-drivers MUST NOT use the available read preference and MUST instead select a server using a primary read preference.
+If there are one or more available servers and one or more of those servers is pre-5.0 (i.e. wire version < 13), drivers
+MUST NOT use the available read preference and MUST instead select a server using a primary read preference.
 
 Otherwise, if there are either no available servers, all available servers are 5.0+ (i.e. wire version >= 13), or the
 topology type is LoadBalanced (we can assume the backing mongos is 5.0+), drivers MUST use the available read
@@ -2438,11 +2438,10 @@ able to be used as this change is non-backwards breaking. Any driver which imple
 deprecate it and drivers that have not built it should not do so.
 
 Q: Should drivers offer explain helpers?\
-Originally, it was determined that explain should not be exposed via
-specialized APIs in drivers because it it was deemed to be an unusual use-case for a driver. We'd like users to use the
-shell for this purpose. However, explain is still possible from a driver. Some drivers have historically provided
-explain helpers and continue to do so. Drivers that do not offer explain helpers can run explain commands using the
-runCommand API.
+Originally, it was determined that explain should not be exposed via specialized APIs in drivers because it it was
+deemed to be an unusual use-case for a driver. We'd like users to use the shell for this purpose. However, explain is
+still possible from a driver. Some drivers have historically provided explain helpers and continue to do so. Drivers
+that do not offer explain helpers can run explain commands using the runCommand API.
 
 Q: What about explain?
 
@@ -2482,7 +2481,7 @@ release.
 Q: Where is `singleBatch` in FindOptions?
 
 Drivers have historically allowed users to request a single batch of results (after which the cursor is closed) by
-specifying a negative value for the `limit` option. For servers \< 3.2, a single batch may be requested by specifying a
+specifying a negative value for the `limit` option. For servers < 3.2, a single batch may be requested by specifying a
 negative value in the `numberToReturn` wire protocol field. For servers >= 3.2, the `find` command defines `limit` as a
 non-negative integer option but introduces a `singleBatch` boolean option. Rather than introduce a `singleBatch` option
 to FindOptions, the spec preserves the existing API for `limit` and instructs drivers to convert negative values
@@ -2575,7 +2574,7 @@ aforementioned allowance in the SemVer spec.
 
 - 2020-01-10: Clarify client-side error reporting for unsupported options
 
-- 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers \< 4.2
+- 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
 
 - 2019-10-28: Removed link to old language examples.
 
