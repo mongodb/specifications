@@ -217,17 +217,20 @@ interface Connection {
    * The current state of the Connection.
    *
    * Possible values are the following:
-   *   - "pending":       The Connection has been created but has not yet been established. Contributes to
-   *                      totalConnectionCount and pendingConnectionCount.
+   *   - "pending":           The Connection has been created but has not yet been established. Contributes to
+   *                          totalConnectionCount and pendingConnectionCount.
    *
-   *   - "available":     The Connection has been established and is waiting in the pool to be checked
-   *                      out. Contributes to both totalConnectionCount and availableConnectionCount.
+   *   - "pending response":  The Connection is attempting to discard a response for an operation where the socket timed 
+   *                          out. This state is only used when CSOT is enabled and maxTimeMS was added to the command.
    *
-   *   - "in use":        The Connection has been established, checked out from the pool, and has yet
-   *                      to be checked back in. Contributes to totalConnectionCount.
+   *   - "available":         The Connection has been established and is waiting in the pool to be checked
+   *                          out. Contributes to both totalConnectionCount and availableConnectionCount.
    *
-   *   - "closed":        The Connection has had its socket closed and cannot be used for any future
-   *                      operations. Does not contribute to any connection counts.
+   *   - "in use":            The Connection has been established, checked out from the pool, and has yet
+   *                          to be checked back in. Contributes to totalConnectionCount.
+   *
+   *   - "closed":            The Connection has had its socket closed and cannot be used for any future
+   *                          operations. Does not contribute to any connection counts.
    *
    * Note: this field is mainly used for the purposes of describing state
    * in this specification. It is not required that drivers
@@ -576,10 +579,12 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
+##### Awaiting Pending Read (CSOT-only)
+
 If an operation times out the socket while awaiting a server response and CSOT is enabled and `maxTimeMS` was added to
-the command, the driver MUST mark the connection as "pending" and record the current time in a way that can be updated.
-The next time the connection is checked out, the driver MUST attempt to read and discard the remaining response from the
-socket. The workflow for this is as follows:
+the command, the connection is put into a "pending response" state and MUST record the current time in a way that can be
+updated. The next time the connection is checked out, the driver MUST attempt to read and discard the remaining response
+from the socket. The workflow for this is as follows:
 
 - The connection MUST persist the current time recorded immediately after the original socket timeout, and this
     timestamp MUST be updated to the current time whenever any data is successfully read from the socket during a
@@ -674,6 +679,10 @@ def await_pending_response(timeout, conn):
     if error is not None:  
         raise error  
 ```
+
+##### Pseudocode 
+
+This subsection outlines the pseudocode steps for acquiring a connection from the pool.
 
 ```python
 connection = Null
@@ -1170,6 +1179,11 @@ interface PendingResponseFailed {
   requestId: int64;
 
   /**
+   *  The time spent attempting a pending response read.
+   */
+  duration: Duration;
+
+  /**
    *  The reason for why the pending read failed.
    */
   reason: string;
@@ -1414,12 +1428,13 @@ In addition to the common fields defined above, this message MUST contain the fo
 | driverConnectionId | int64          | The driver-generated ID for the connection          |
 | requestId          | int64              | The driver-generated request ID associated with the network timeout |
 | reason             | string         | The reason for why the pending response read failed |
+| durationMS         | Int32/Int64/Double | The time it took to complete the pending read                       |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
 > Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
-> request ID={{requestId}}, reason={{reason}}
+> request ID={{requestId}}, reason={{reason}}, duration={{durationMS}} ms
 
 ### Connection Pool Errors
 
