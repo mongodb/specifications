@@ -59,7 +59,8 @@ all: atlas-data-lake \
 
 # Keep specifications sorted alphabetically
 # When adding a new specification, remember to add it to the all and .PHONY targets above
-# For specifications that contain
+# For specifications that contain multiple test folders, create a target for each folder
+# in addition to a target for the specification itself
 atlas-data-lake: HAS_AJV
 	@ajv test -s $(SCHEMA) -d "../../atlas-data-lake-testing/tests/unified/*.yml" --valid
 
