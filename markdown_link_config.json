@@ -12,5 +12,6 @@
       {
         "pattern": "cloudkms.googleapis.com"
       }
-    ]
+    ],
+    "retryOn429": true
 }
