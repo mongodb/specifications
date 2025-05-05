@@ -1,6 +1,6 @@
 {
   "description": "connection-logging",
-  "schemaVersion": "1.13",
+  "schemaVersion": "1.24",
   "runOnRequirements": [
     {
       "topologies": [
@@ -13,11 +13,9 @@
       "client": {
         "id": "failPointClient"
       }
-    }
-  ],
-  "tests": [
+    },
     {
-      "description": "Create a client, run a command, and close the client",
+      "description": "force a pending response read, fail first try, succeed second try",
       "operations": [
         {
           "name": "createEntities",
@@ -27,29 +25,110 @@
               {
                 "client": {
                   "id": "client",
+                  "uriOptions": {
+                    "retryReads": false,
+                    "appname": "clientAppName",
+                    "heartbeatFrequencyMS": 10000
+                  },
                   "observeLogMessages": {
                     "connection": "debug"
                   }
+                }
+              },
+              {
+                "database": {
+                  "id": "test",
+                  "client": "client",
+                  "databaseName": "test"
+                }
+              },
+              {
+                "collection": {
+                  "id": "coll",
+                  "database": "test",
+                  "collectionName": "coll"
                 }
               }
             ]
           }
         },
         {
-          "name": "listDatabases",
-          "object": "client",
+          "name": "runCommand",
+          "object": "test",
           "arguments": {
-            "filter": {}
+            "command": {
+              "ping": 1
+            }
           }
         },
         {
-          "name": "close",
-          "object": "client"
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "failPointClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "insert"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 200
+              }
+            }
+          }
+        },
+        {
+          "name": "insertOne",
+          "object": "coll",
+          "arguments": {
+            "timeoutMS": 50,
+            "document": {
+              "_id": 3,
+              "x": 1
+            }
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        },
+        {
+          "name": "findOne",
+          "object": "coll",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            },
+            "timeoutMS": 100
+          },
+          "expectError": {
+            "isTimeoutError": true
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 75
+          }
+        },
+        {
+          "name": "findOne",
+          "object": "coll",
+          "arguments": {
+            "filter": {
+              "_id": 1
+            }
+          }
         }
       ],
       "expectLogMessages": [
         {
           "client": "client",
+          "ignoreExtraMessages": true,
           "messages": [
             {
               "level": "debug",
@@ -272,119 +351,39 @@
               "level": "debug",
               "component": "connection",
               "data": {
-                "message": "Connection closed",
+                "message": "Connection checkout started",
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "connection",
+              "data": {
+                "message": "Pending response started",
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
                 "driverConnectionId": {
                   "$$type": [
                     "int",
                     "long"
                   ]
                 },
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "reason": "Connection pool was closed"
-              }
-            },
-            {
-              "level": "debug",
-              "component": "connection",
-              "data": {
-                "message": "Connection pool closed",
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "description": "Connection checkout fails due to error establishing connection",
-      "runOnRequirements": [
-        {
-          "auth": true,
-          "minServerVersion": "4.0"
-        }
-      ],
-      "operations": [
-        {
-          "name": "createEntities",
-          "object": "testRunner",
-          "arguments": {
-            "entities": [
-              {
-                "client": {
-                  "id": "client",
-                  "uriOptions": {
-                    "retryReads": false,
-                    "appname": "clientAppName",
-                    "heartbeatFrequencyMS": 10000
-                  },
-                  "observeLogMessages": {
-                    "connection": "debug"
-                  }
-                }
-              }
-            ]
-          }
-        },
-        {
-          "name": "failPoint",
-          "object": "testRunner",
-          "arguments": {
-            "client": "failPointClient",
-            "failPoint": {
-              "configureFailPoint": "failCommand",
-              "mode": {
-                "times": 1
-              },
-              "data": {
-                "failCommands": [
-                  "saslContinue"
-                ],
-                "closeConnection": true,
-                "appName": "clientAppName"
-              }
-            }
-          }
-        },
-        {
-          "name": "listDatabases",
-          "object": "client",
-          "arguments": {
-            "filter": {}
-          },
-          "expectError": {
-            "isClientError": true
-          }
-        }
-      ],
-      "expectLogMessages": [
-        {
-          "client": "client",
-          "messages": [
-            {
-              "level": "debug",
-              "component": "connection",
-              "data": {
-                "message": "Connection pool created",
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
+                "requestId": {
                   "$$type": [
                     "int",
                     "long"
@@ -396,7 +395,7 @@
               "level": "debug",
               "component": "connection",
               "data": {
-                "message": "Connection pool ready",
+                "message": "Pending response failed",
                 "serverHost": {
                   "$$type": "string"
                 },
@@ -405,7 +404,20 @@
                     "int",
                     "long"
                   ]
-                }
+                },
+                "driverConnectionId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "requestId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "reason": "timeout"
               }
             },
             {
@@ -428,17 +440,23 @@
               "level": "debug",
               "component": "connection",
               "data": {
-                "message": "Connection created",
+                "message": "Pending response started",
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
                 "driverConnectionId": {
                   "$$type": [
                     "int",
                     "long"
                   ]
                 },
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
+                "requestId": {
                   "$$type": [
                     "int",
                     "long"
@@ -450,7 +468,7 @@
               "level": "debug",
               "component": "connection",
               "data": {
-                "message": "Connection pool cleared",
+                "message": "Pending response succeeded",
                 "serverHost": {
                   "$$type": "string"
                 },
@@ -459,56 +477,73 @@
                     "int",
                     "long"
                   ]
-                }
-              }
-            },
-            {
-              "level": "debug",
-              "component": "connection",
-              "data": {
-                "message": "Connection closed",
+                },
                 "driverConnectionId": {
                   "$$type": [
                     "int",
                     "long"
                   ]
                 },
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
+                "requestId": {
                   "$$type": [
                     "int",
                     "long"
                   ]
-                },
-                "reason": "An error occurred while using the connection",
-                "error": {
-                  "$$exists": true
-                }
-              }
-            },
-            {
-              "level": "debug",
-              "component": "connection",
-              "data": {
-                "message": "Connection checkout failed",
-                "serverHost": {
-                  "$$type": "string"
-                },
-                "serverPort": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "reason": "An error occurred while trying to establish a new connection",
-                "error": {
-                  "$$exists": true
                 },
                 "durationMS": {
                   "$$type": [
                     "double",
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "connection",
+              "data": {
+                "message": "Connection checked out",
+                "driverConnectionId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "durationMS": {
+                  "$$type": [
+                    "double",
+                    "int",
+                    "long"
+                  ]
+                }
+              }
+            },
+            {
+              "level": "debug",
+              "component": "connection",
+              "data": {
+                "message": "Connection checked in",
+                "driverConnectionId": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                },
+                "serverHost": {
+                  "$$type": "string"
+                },
+                "serverPort": {
+                  "$$type": [
                     "int",
                     "long"
                   ]
