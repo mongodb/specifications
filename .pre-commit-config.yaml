@@ -23,7 +23,7 @@ repos:
       stages: [manual]
 
 - repo: https://github.com/executablebooks/mdformat
-  rev: 0.7.18
+  rev: 0.7.22
   hooks:
     - id: mdformat
       args: ["--wrap=120", "--number"]
@@ -32,7 +32,7 @@ repos:
         - mdformat-frontmatter
         - mdformat-gfm
         - mdformat-gfm-alerts
-        - mdformat-mkdocs~=3.0
+        - mdformat-mkdocs
 
 - repo: local
   hooks:
@@ -55,7 +55,7 @@ repos:
   rev: v3.12.2
   hooks:
     - id: markdown-link-check
-      args: ["-c", "markdown_link_config.json"]
+      args: ["-q", "-c", "markdown_link_config.json"]
 
 - repo: https://github.com/rstcheck/rstcheck
   rev: v6.2.0
