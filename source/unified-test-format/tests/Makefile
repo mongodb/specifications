@@ -1,8 +1,61 @@
 SCHEMA=../schema-1.23.json
 
-.PHONY: all atlas-data-lake auth change-streams client-side-encryption client-side-operations-timeout collection-management command-logging-and-monitoring command-logging-and-monitoring/logging command-logging-and-monitoring/monitoring connection-monitoring-and-pooling connection-monitoring-and-pooling/logging crud gridfs index-management load-balancers read-write-concern retryable-reads retryable-writes run-command server-discovery-and-monitoring server-selection server-selection/logging sessions transactions-convenient-api transactions unified-test-format unified-test-format/invalid unified-test-format/valid-fail unified-test-format/valid-pass versioned-api HAS_AJV
+.PHONY: all \
+	atlas-data-lake \
+	auth \
+	change-streams \
+	client-side-encryption \
+	client-side-operations-timeout \
+	collection-management \
+	command-logging-and-monitoring \
+	command-logging-and-monitoring/logging \
+	command-logging-and-monitoring/monitoring \
+	connection-monitoring-and-pooling \
+	connection-monitoring-and-pooling/logging \
+	crud \
+	gridfs \
+	index-management \
+	load-balancers \
+	read-write-concern \
+	retryable-reads \
+	retryable-writes \
+	run-command \
+	server-discovery-and-monitoring \
+	server-selection \
+	server-selection/logging \
+	sessions \
+	transactions-convenient-api \
+	transactions \
+	unified-test-format \
+	unified-test-format/invalid \
+	unified-test-format/valid-fail \
+	unified-test-format/valid-pass \
+	versioned-api \
+	HAS_AJV
 
-all: atlas-data-lake auth change-streams client-side-encryption client-side-operations-timeout collection-management command-logging-and-monitoring connection-monitoring-and-pooling crud gridfs index-management load-balancers read-write-concern retryable-reads retryable-writes run-command server-discovery-and-monitoring server-selection sessions transactions-convenient-api transactions unified-test-format versioned-api
+all: atlas-data-lake \
+	auth \
+	change-streams \
+	client-side-encryption \
+	client-side-operations-timeout \
+	collection-management \
+	command-logging-and-monitoring \
+	connection-monitoring-and-pooling \
+	crud \
+	gridfs \
+	index-management \
+	load-balancers \
+	read-write-concern \
+	retryable-reads \
+	retryable-writes \
+	run-command \
+	server-discovery-and-monitoring \
+	server-selection \
+	sessions \
+	transactions-convenient-api \
+	transactions \
+	unified-test-format \
+	versioned-api
 
 # Keep specifications sorted alphabetically
 # When adding a new specification, remember to add it to the all and .PHONY targets above
