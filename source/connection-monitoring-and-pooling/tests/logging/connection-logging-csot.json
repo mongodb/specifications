@@ -13,7 +13,9 @@
       "client": {
         "id": "failPointClient"
       }
-    },
+    }
+  ],
+  "tests": [
     {
       "description": "force a pending response read, fail first try, succeed second try",
       "operations": [
