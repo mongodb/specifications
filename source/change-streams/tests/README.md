@@ -194,23 +194,13 @@ and sharded clusters unless otherwise specified:
 
 11. For a `ChangeStream` under these conditions:
 
-    - Running against a server `>=4.0.7`.
     - The batch is empty or has been iterated to the last document.
 
     Expected result:
 
     - `getResumeToken` must return the `postBatchResumeToken` from the current command response.
 
-12. For a `ChangeStream` under these conditions:
-
-    - Running against a server `<4.0.7`.
-    - The batch is empty or has been iterated to the last document.
-
-    Expected result:
-
-    - `getResumeToken` must return the `_id` of the last document returned if one exists.
-    - `getResumeToken` must return `resumeAfter` from the initial aggregate if the option was specified.
-    - If `resumeAfter` was not specified, the `getResumeToken` result must be empty.
+12. **Removed**
 
 13. For a `ChangeStream` under these conditions:
 
