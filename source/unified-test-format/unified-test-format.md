@@ -3569,9 +3569,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2025-04-07: **Schema version 1.24.**
-
-    Add `topologyOpeningEvent` and `topologyClosedEvent` to "observeEvents" and "expectedSdamEvent".
+- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format.
 
 - 2025-01-21: **Schema version 1.23.**
 
