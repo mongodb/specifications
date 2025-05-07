@@ -144,7 +144,9 @@
                   "connectionCheckedOutEvent",
                   "connectionCheckedInEvent",
                   "serverDescriptionChangedEvent",
-                  "topologyDescriptionChangedEvent"
+                  "topologyDescriptionChangedEvent",
+                  "topologyOpeningEvent",
+                  "topologyClosedEvent"
                 ]
               }
             },
