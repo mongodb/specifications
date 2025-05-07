@@ -416,7 +416,7 @@ After client metadata update, drivers MUST apply updated metadata to newly creat
 it to already established connections.
 
 ### Appending metadata
-If `DriverInfoOptions` are provided during or after driver initialization, these options MUST NOT replace any existing metadata values,
+If `DriverInfoOptions` are provided during or after MongoClient initialization, these options MUST NOT replace any existing metadata values,
 including driver-generated metadata and previously provided options. The provided options MUST be
 appended to their respective fields, and be delimited by a `|` character. For example, when
 [Motor](https://www.mongodb.com/docs/drivers/motor/) wraps PyMongo, the following fields are updated to include Motor's
