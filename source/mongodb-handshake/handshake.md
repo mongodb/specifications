@@ -405,15 +405,25 @@ class DriverInfoOptions {
 }
 ```
 
-Note that how these options are provided to a driver is left up to the implementer.
+Note that how these options are provided to a driver during MongoClient initialization is left up to the implementer.
 
-If provided, these options MUST NOT replace the values used for metadata generation. The provided options MUST be
+### Metadata updates after MongoClient initialization
+Drivers MUST provide an API that allows to append `DriverInfoOptions` to a MongoClient instance after initialization. Drivers MUST 
+ignore provided `DriverInfoOptions` if the name of the library wrapping the driver already exists in the generated 
+metadata [client.driver.name](#clientdrivername) field.
+
+After client metadata update, drivers MUST apply updated metadata to newly created connections and MUST NOT apply 
+it to already established connections.
+
+### Appending metadata
+If `DriverInfoOptions` are provided during or after driver initialization, these options MUST NOT replace any existing metadata values,
+including driver-generated metadata and previously provided options. The provided options MUST be
 appended to their respective fields, and be delimited by a `|` character. For example, when
 [Motor](https://www.mongodb.com/docs/drivers/motor/) wraps PyMongo, the following fields are updated to include Motor's
 "driver info":
 
 ```typescript
-{
+{ 
     client: {
         driver: {
             name: "PyMongo|Motor",
@@ -534,6 +544,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2025-05-07: Add requirement to allow appending to client metadata after MongoClient initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
 - 2024-10-09: Clarify that FaaS and container metadata must both be populated when both are present.
 - 2024-08-16: Migrated from reStructuredText to Markdown.
