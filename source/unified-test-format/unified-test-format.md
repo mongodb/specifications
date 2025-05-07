@@ -3569,7 +3569,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format.
+- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format and schema 1.20+ as they
+  were omitted in error.
 
 - 2025-01-21: **Schema version 1.23.**
 
