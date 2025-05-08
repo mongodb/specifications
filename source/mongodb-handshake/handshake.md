@@ -408,9 +408,7 @@ class DriverInfoOptions {
 Note that how these options are provided to a driver during MongoClient initialization is left up to the implementer.
 
 ### Metadata updates after MongoClient initialization
-Drivers MUST provide an API that allows to append `DriverInfoOptions` to a MongoClient instance after initialization. Drivers MUST 
-ignore provided `DriverInfoOptions` if the name of the library wrapping the driver already exists in the generated 
-metadata [client.driver.name](#clientdrivername) field.
+Drivers MUST provide an API that allows to append `DriverInfoOptions` to a MongoClient instance after initialization.
 
 After client metadata update, drivers MUST apply updated metadata to newly created connections and MUST NOT apply 
 it to already established connections.
