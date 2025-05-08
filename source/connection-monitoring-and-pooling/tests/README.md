@@ -21,7 +21,7 @@ The following tests have not yet been automated, but MUST still be tested:
 5. When a check out attempt fails because connection set up throws an error, assert that a ConnectionCheckOutFailedEvent
     with reason="connectionError" is emitted.
 
-### Pending Response: Connection Aliveness Tests
+### Pending Response
 
 If a connection with a pending response is idle for > 3 seconds, then drivers are expected to perform an aliveness check
 by attempting a non-blocking read of 1 byte from the inbound TCP buffer. The following two cases test both a successful
@@ -65,6 +65,18 @@ read and a failed one.
     step 1.
 7. Verify that one event for each `ConnectionPendingResponseStarted` and `ConnectionPendingResponseSucceeded` was
     emitted. Also verify that the fields were correctly set for each event.
+
+#### Exhaust Cursors 
+
+Drivers that support the `exhaustAllowed` `OP_MSG` bit flag must ensure that responses which contain `moreToCome` will 
+not result in a connection being put into a "pending response" state. Drivers that don't support this behavior can 
+skip this prose test.
+
+1. Configure a failpoint to block `getMore` for 500ms.
+2. Insert > 2 records into the collection.
+2. Create an exhaust cursor using `find` and iterate one `getMore` using `batchSize=1`.
+3. Call a subsequent `getMore` on the exhaust cursor with a client-side timeout of 100ms.
+4. Ensure that the `ConnectionClosed` event is emitted due to timeout.
 
 ## Logging Tests
 

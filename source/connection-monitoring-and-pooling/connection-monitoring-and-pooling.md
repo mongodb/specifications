@@ -582,9 +582,11 @@ availableConnectionCount MUST be decremented.
 ##### Awaiting Pending Read (CSOT-only)
 
 If an operation times out the socket while awaiting a server response and CSOT is enabled and `maxTimeMS` was added to
-the command, the connection is put into a "pending response" state and MUST record the current time in a way that can be
-updated. The next time the connection is checked out, the driver MUST attempt to read and discard the remaining response
-from the socket. The workflow for this is as follows:
+the command, and the command was not sent with the `exhaustAllowed` `OP_MSG` bit flag, then the connection is put into a
+"pending response" state and MUST record the current time in a way that can be updated. Otherwise (i.e. for commands
+sent with `exhaustAllowed`), the driver MUST NOT transaction to "pending response" and instead MUST immediately close
+the connection. The next time the connection is checked out, the driver MUST attempt to read and discard the remaining 
+response from the socket. The workflow for this is as follows:
 
 - The connection MUST persist the current time recorded immediately after the original socket timeout, and this
     timestamp MUST be updated to the current time whenever any data is successfully read from the socket during a
@@ -1609,6 +1611,12 @@ users don't encounter avoidable delays.
 By refreshing the timeout after each successful read, we acknowledge that progress is being made, and we provide a new
 time window for the next segment of data to arrive. Refreshing is less costly than re-establishing a connection since
 there is no reason to believe that a new connection would reduce latency.
+
+### Why are exhaust cursors prohibited from transitioning a connection to the "pending response" state?
+
+Exhaust cursors are incompatible with the "pending response" connection state due to the non-deterministic nature of the
+connection's completion, which occurs only when `moreToCome=0` is received. Consequently, discarding one of these
+responses does not restore the connection to a reusable state. 
 
 ## Backwards Compatibility
 
