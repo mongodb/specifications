@@ -42,6 +42,7 @@ tests:
         arguments:
           command:
             ping: 1
+          commandName: ping
 
       # Create a failpoint to block the first operation
       - name: failPoint

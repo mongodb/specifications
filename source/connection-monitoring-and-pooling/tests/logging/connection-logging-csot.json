@@ -60,7 +60,8 @@
           "arguments": {
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         },
         {

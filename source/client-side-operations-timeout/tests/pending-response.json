@@ -68,7 +68,8 @@
           "arguments": {
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         },
         {
@@ -177,7 +178,8 @@
           "arguments": {
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         },
         {
@@ -285,7 +287,8 @@
           "arguments": {
             "command": {
               "ping": 1
-            }
+            },
+            "commandName": "ping"
           }
         },
         {
