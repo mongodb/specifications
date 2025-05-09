@@ -1155,7 +1155,13 @@ interface PendingResponseSucceeded {
   connectionId: int64;
 
   /**
-   *  The time it took to complete the pending read.
+   *  The time it took to complete the pending read. Measured from when the
+   *  `PendingResponseStarted` event is emitted as part of the same connection
+   *  checkout.
+   *
+   *  Drivers SHOULD choose an idiomatic duration type. If the type doesn't
+   *  include units (e.g. `int64`), include them in the name (for example,
+   *  `durationMS`).
    */
   duration: Duration;
 
@@ -1186,7 +1192,13 @@ interface PendingResponseFailed {
   requestId: int64;
 
   /**
-   *  The time spent attempting a pending response read.
+   *  Duration until the pending response drain failed. Measured from when the
+   *  `PendingResponseStarted` event is emitted as part of the same connection
+   *  checkout.
+   *
+   *  Drivers SHOULD choose an idiomatic duration type. If the type doesn't
+   *  include units (e.g. `int64`), include them in the name (for example,
+   *  `durationMS`).
    */
   duration: Duration;
 
@@ -1412,12 +1424,12 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                | Suggested Type     | Value                                                               |
-| ------------------ | ------------------ | ------------------------------------------------------------------- |
-| message            | string             | "Pending response succeeded"                                        |
-| driverConnectionId | int64              | The driver-generated ID for the connection                          |
-| requestId          | int64              | The driver-generated request ID associated with the network timeout |
-| durationMS         | Int32/Int64/Double | The time it took to complete the pending read                       |
+| Key                | Suggested Type     | Value                                                                |
+| ------------------ | ------------------ | -------------------------------------------------------------------- |
+| message            | string             | "Pending response succeeded"                                         |
+| driverConnectionId | int64              | The driver-generated ID for the connection.                          |
+| requestId          | int64              | The driver-generated request ID associated with the network timeout. |
+| durationMS         | Int32/Int64/Double | `PendingResponseSucceeded.duration` converted to milliseconds.         |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
@@ -1429,13 +1441,13 @@ placeholders as appropriate:
 
 In addition to the common fields defined above, this message MUST contain the following key-value pairs:
 
-| Key                | Suggested Type | Value                                               |
-| ------------------ | -------------- | --------------------------------------------------- |
-| message            | string         | "Pending response failed"                           |
-| driverConnectionId | int64          | The driver-generated ID for the connection          |
+| Key                | Suggested Type     | Value                                                               |
+| ------------------ | ------------------ | ------------------------------------------------------------------- |
+| message            | string             | "Pending response failed"                                           |
+| driverConnectionId | int64              | The driver-generated ID for the connection                          |
 | requestId          | int64              | The driver-generated request ID associated with the network timeout |
-| reason             | string         | The reason for why the pending response read failed |
-| durationMS         | Int32/Int64/Double | The time it took to complete the pending read                       |
+| reason             | string             | The reason for why the pending response read failed                 |
+| durationMS         | Int32/Int64/Double | `PendingResponseFailed.duration` converted to milliseconds.           |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
