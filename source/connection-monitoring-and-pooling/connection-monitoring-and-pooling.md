@@ -582,30 +582,38 @@ availableConnectionCount MUST be decremented.
 ##### Awaiting Pending Read (CSOT-only)
 
 If an operation times out the socket while awaiting a server response and CSOT is enabled and `maxTimeMS` was added to
-the command, and the command was not sent with the `exhaustAllowed` `OP_MSG` bit flag, then the connection is put into a
-"pending response" state and MUST record the current time in a way that can be updated. Otherwise (i.e. for commands
-sent with `exhaustAllowed`), the driver MUST NOT transaction to "pending response" and instead MUST immediately close
-the connection. The next time the connection is checked out, the driver MUST attempt to read and discard the remaining 
-response from the socket. The workflow for this is as follows:
+the command:
 
-- The connection MUST persist the current time recorded immediately after the original socket timeout, and this
-    timestamp MUST be updated to the current time whenever any data is successfully read from the socket during a
-    pending response read attempt.
-- If the connection remains idle (i.e., no data is read) for more than 3 seconds since the pending state began or since
-    the last successful read, the driver MUST attempt to verify the connection's health by either performing a
-    non-blocking read or using the minimal possible timeout to check if at least one byte can be read.
-- If a user-provided timeout is specified for the pending response read, the driver MUST use the minimum of the
-    remaining time before the 3-second pending-response window elapses and the user-provided timeout as the effective
-    timeout for the read operation.
-- If no user-provided timeout is specified, the driver MUST use the minimum of the remaining 3-second pending-response
-    window and the socketTimeoutMS (if supported by the driver) as the effective timeout for the read operation.
-- If reading from the socket results in an error that is not a timeout, or if the connection exceeds the 3-second
-    pending-response window, the driver MUST close the connection.
-- If the pending response is fully read and successfully discarded, and the connection remains healthy, the pending
-    state may be cleared and the connection MAY be returned to the pool for reuse.
+- **Non-exhaust commands**: If the command was not sent with the `exhaustAllowed` OP_MSG bit flag, the driver MUST:
+  1. Put the connection into a "pending response" state.
+  2. Record the current time in a way that can be updated while awaiting a pending response.
+- **Exhaust commands**: If the command was sent with the `exhaustAllowed` bit, the driver MUST NOT transition the
+connection to a "pending response" state and MUST instead immediately close the connection.
+
+The next time connection in the "pending response" state is checked out, the driver MUST ensure that any remaining
+response data is drained and discarded either by explicit reads or, in push-based I/O implementations (e.g. Node.JS),
+by consuming buffered data.
+
+1. **Persist and update timestamp**: The connection must record the current time immediately after the original socket
+timeout. This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or
+consumed while explicitly awaiting the pending response as part of checking out the connection.
+2. **Aliveness check**: If the connection remains idle (i.e. no data is read or received) for more than 3 seconds since
+the start of the "pending response" state or since the last successful read/receive, the driver MUST attempt to verify
+the connection’s health by either performing a non-blocking read or using the minimal possible timeout to check if at
+least one byte can be read/received.
+3. **User-provided timeout**: If a user-provided timeout is specified for the "pending response" drain, the driver MUST
+use the minimum of (a) the remaining time before the 3 second "pending response" window elapses and (b) the
+user-provided timeout as the effective timeout for the read/drain operation.
+4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining
+3 second "pending response" window and (b) the `socketTimeoutMS` (if supported by the driver) as the effective timeout
+for the read/drain operation.
+5. **Error or over-age**: If reading from the socket (or draining buffered data) results in an error that is not a
+timeout, or if the connection exceeds the 3 second pending-response window, the driver MUST close the connection.
+6. **Clear pending state on success**: If the pending response is fully drained and successfully discarded, and the
+connection remains healthy, the pending state may be cleared and the connection MAY be returned to the pool for reuse.
 
 ```mermaid
-sequenceDiagram  
+sequenceDiagram
     participant Driver
     participant Pool  
     participant Conn as Connection (*) 
@@ -613,33 +621,30 @@ sequenceDiagram
   
     Driver->>Pool: Checkout Connection (*)
     Pool->>Driver: Return connection (*)
-
-    Driver->>Conn: Send operation (1) (CSOT enabled, maxTimeMS > 0)  
+    Driver->>Conn: Send operation (1) (CSOT enabled, maxTimeMS > 0, exhaustAllowed = false)  
     Conn->>Server: Send command  
-    Server-->>Conn: (No response, socket times out)  
-    Conn->>Conn: Mark as "pending", record current time 
+    Server-->>Conn: (No response, socket times out)
+
+    Conn->>Conn: Transition connection to "pending response" state, record current time 
     Conn-->>Driver: Error  
 
     Driver->>Pool: Checkout Connection (*)
     Pool->>Driver: Return connection (*)
-
     Driver->>Conn: Send operation (2)
-
  
-    Conn->>Server: Attempt to discard pending response from operation (1)
+    Conn->>Conn: Attempt to drain pending response from operation (1)
     Conn->>Conn: Update pending read timestamp if bytes read  
-
     alt Timeout window exceeded or non-timeout error 
         Conn->>Conn: Close connection  
         Conn-->>Driver: Error  
     else Timeout window not exceeded  
        alt Error  
-            Conn->>Conn: Clear pending read state
+            Conn->>Conn: Clear pending response state
             Conn->>Conn: Reset to current time  
             Conn->>Pool: Check connection back into pool  
             Conn-->>Driver: Error  
         else No error  
-            Conn->>Conn: Clear pending read state  
+            Conn->>Conn: Clear pending response state  
             Conn->>Driver: Return connection to execute operation  
         end  
     end  
