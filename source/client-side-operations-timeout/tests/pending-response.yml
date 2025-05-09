@@ -212,3 +212,133 @@ tests:
           - connectionPendingResponseSucceeded: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {} # Find succeeds.  
+  # It may take multiple calls to the pending response handler to drain the
+  # inbound buffer.
+  - description: "multiple calls to drain buffer"
+    operations:
+      # Run a ping command to pre-load the pool with a connection.  
+      - name: runCommand
+        object: *database
+        arguments:
+          command:
+            ping: 1
+          commandName: ping
+      # Create a failpoint to block the first and second operation.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 500
+      # Execute operation with timeout less than block time.
+      - name: insertOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          document: {_id: 3, x: 1}
+        expectError:
+          isTimeoutError: true
+      # Execute a subsequent operation with a timeout less than the block time.
+      - name: findOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          filter: {_id: 1}
+        expectError:
+          isTimeoutError: true
+      # Execute a final operation to drain the buffer.
+      - name: findOne
+        object: *collection
+        arguments:
+          filter: {_id: 1}
+    expectEvents:
+      - client: *client
+        events:
+          - commandSucceededEvent:
+              commandName: ping # Pre-loading the connection pool.  
+          - commandFailedEvent:
+              commandName: insert
+          - commandSucceededEvent:
+              commandName: find
+      - client: *client
+        eventType: cmap
+        events:
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Ping finishes.  
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Insert fails.  
+          - connectionPendingResponseStarted: {} # First find fails
+          - connectionPendingResponseFailed:
+              reason: timeout
+          - connectionPendingResponseStarted: {} # Second find drains the buffer.
+          - connectionPendingResponseSucceeded: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Second find succeeds.  
+    # If the connection is closed server-side while draining the response, the 
+    # driver must close the connection.
+  - description: "connection closed server-side while draining response"
+    operations:
+      # Run a ping command to pre-load the pool with a connection.  
+      - name: runCommand
+        object: *database
+        arguments:
+          command:
+            ping: 1
+          commandName: ping
+      # Create a failpoint to block the first and second operation.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 500
+              closeConnection: true
+      # Execute operation with timeout less than block time.
+      - name: insertOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          document: {_id: 3, x: 1}
+        expectError:
+          isTimeoutError: true
+      - name: wait
+        object: testRunner
+        arguments:
+          ms: 500
+      # Execute a subsequent operation with a timeout less than the block time.
+      - name: findOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          filter: {_id: 1}
+        expectError:
+          isTimeoutError: false
+    expectEvents:
+      - client: *client
+        events:
+          - commandSucceededEvent:
+              commandName: ping # Pre-loading the connection pool.  
+          - commandFailedEvent:
+              commandName: insert
+      - client: *client
+        eventType: cmap
+        events:
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Ping finishes.  
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Insert fails.  
+          - connectionPendingResponseStarted: {} # First find fails
+          - connectionPendingResponseFailed:
+              reason: error
+          - connectionClosedEvent:
+              reason: error
