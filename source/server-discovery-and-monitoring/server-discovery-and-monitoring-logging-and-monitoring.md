@@ -368,14 +368,14 @@ The following table describes the rules for determining if a topology type has r
 preference is passed to `hasReadableServer`, the driver MUST default the value to the default read preference,
 `primary`, or treat the call as if `primary` was provided.
 
-| Topology Type         | `hasReadableServer`                                                                                                                                                                               | `hasWritableServer`                |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| Unknown               | `false`                                                                                                                                                                                           | `false`                            |
-| Single                | `true` if the server is available                                                                                                                                                                 | `true` if the server is available  |
-| ReplicaSetNoPrimary   | Called with `primary`: `false`  <br>Called with any other option: uses the read preference to determine if any server in the cluster is suitable for reading.  <br>Called with no option: `false` | `false`                            |
-| ReplicaSetWithPrimary | Called with any valid option: uses the read preference to determine if any server in the cluster is suitable for reading.  <br>Called with no option: `true`                                      | `true`                             |
-| Sharded               | `true` if 1+ servers are available                                                                                                                                                                | `true` if 1+ servers are available |
-| LoadBalanced          | `true`                                                                                                                                                                                            | `true`                             |
+| Topology Type         | `hasReadableServer`                                                                                                                                                                             | `hasWritableServer`                |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Unknown               | `false`                                                                                                                                                                                         | `false`                            |
+| Single                | `true` if the server is available                                                                                                                                                               | `true` if the server is available  |
+| ReplicaSetNoPrimary   | Called with `primary`: `false` <br>Called with any other option: uses the read preference to determine if any server in the cluster is suitable for reading. <br>Called with no option: `false` | `false`                            |
+| ReplicaSetWithPrimary | Called with any valid option: uses the read preference to determine if any server in the cluster is suitable for reading. <br>Called with no option: `true`                                     | `true`                             |
+| Sharded               | `true` if 1+ servers are available                                                                                                                                                              | `true` if 1+ servers are available |
+| LoadBalanced          | `true`                                                                                                                                                                                          | `true`                             |
 
 ### Log Messages
 
