@@ -405,18 +405,20 @@ class DriverInfoOptions {
 }
 ```
 
-Note that how these options are provided to a driver during MongoClient initialization is left up to the implementer.
+Note that how these options are provided to a driver during `MongoClient` initialization is left up to the implementer.
 
 ### Metadata updates after MongoClient initialization
+
 Drivers MUST provide an API that allows to append `DriverInfoOptions` to a MongoClient instance after initialization.
 
-After client metadata update, drivers MUST apply updated metadata to newly created connections and MUST NOT apply 
-it to already established connections.
+After client metadata update, drivers MUST apply updated metadata to newly created connections and MUST NOT apply it to
+already established connections.
 
 ### Appending metadata
-If `DriverInfoOptions` are provided during or after MongoClient initialization, these options MUST NOT replace any existing metadata values,
-including driver-generated metadata and previously provided options. The provided options MUST be
-appended to their respective fields, and be delimited by a `|` character. For example, when
+
+If `DriverInfoOptions` are provided during or after MongoClient initialization, these options MUST NOT replace any
+existing metadata values, including driver-generated metadata and previously provided options. The provided options MUST
+be appended to their respective fields, and be delimited by a `|` character. For example, when
 [Motor](https://www.mongodb.com/docs/drivers/motor/) wraps PyMongo, the following fields are updated to include Motor's
 "driver info":
 
