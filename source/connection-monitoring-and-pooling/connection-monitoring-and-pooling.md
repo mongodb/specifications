@@ -1600,13 +1600,13 @@ some equivalent configuration, but this configuration will also require target f
 5.0. The advantage of using Background Thread to manage perished connections is that it will work regardless of
 environment setup.
 
-### Why is pending response read timeout not calculated dynamically? Why is it specifically 3 seconds?
+### Why is the pending response timeout not calculated dynamically? Why is it specifically 3 seconds?
 
 Using a dynamic timeout introduces additional complexity. In particular, RTT is an unreliable metric for predicting
 future operation latency as both server and network conditions are unpredictable. Benchmarks demonstrate that even in
-slow, high-latency scenarios (e.g. reading a 16MiB document over cross-country), reads reliably complete in under 1
-second. The 3-second timeout ensures that every realistic pending response read will not result in premature connection
-closure, but will still close in pathological conditions (e.g., a dead server or true network outage).
+slow, high-latency scenarios (e.g. draining a 16MiB document over cross-country), reads reliably complete in under 1
+second. The 3-second timeout ensures that every realistic pending response draining will not result in premature
+connection closure, but will still close in pathological conditions (e.g., a dead server or true network outage).
 
 ### Why is the pending response read timeout not configurable?
 
@@ -1614,20 +1614,20 @@ Because of the
 ["no knobs" mantra](https://github.com/mongodb/specifications/blob/master/source/driver-mantras.md#no-knobs). We can
 always reconsider this in the future.
 
-### Why does the pending response read timeout include the time the connection is idle in the pool?
+### Why does the pending response timeout include the time the connection is idle in the pool?
 
-The pending response read timeout includes idle time in the pool so that stale or unusable connections (e.g., if the
+The pending response timeout includes idle time in the pool so that stale or unusable connections (e.g., if the
 socket is dead) are detected and closed promptly instead of incurring an additional 3-second wait upon checkout. By
 tracking the timeout during idle periods, we ensure that the driver can quickly determine if the connection should be
-closed with a fast, non-blocking check as soon as it’s checked out, avoiding introducing unnecessary latency while still
+closed with a fast, non-blocking check as soon as it's checked out, avoiding introducing unnecessary latency while still
 protecting connection availability. This approach maintains a balance between minimizing connection churn and ensuring
 users don't encounter avoidable delays.
 
-### Why do we refresh the pending response read timeout each time we successfully read bytes from the TCP stream?
+### Why do we refresh the pending response timeout each time we successfully drain bytes from the TCP stream?
 
-By refreshing the timeout after each successful read, we acknowledge that progress is being made, and we provide a new
-time window for the next segment of data to arrive. Refreshing is less costly than re-establishing a connection since
-there is no reason to believe that a new connection would reduce latency.
+By refreshing the timeout after each successful draining, we acknowledge that progress is being made, and we provide a
+new time window for the next segment of data to arrive. Refreshing is less costly than re-establishing a connection
+since there is no reason to believe that a new connection would reduce latency.
 
 ### Why are exhaust cursors prohibited from transitioning a connection to the "pending response" state?
 
