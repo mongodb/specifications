@@ -48,15 +48,20 @@ entire test with a note (e.g. *Removed*).
 
 ### Immutability of Existing Tests
 
-**Do not modify existing tests**, unless they are testing incorrect behavior. Default to creating new tests or test files instead of altering existing ones.
+**Do not modify existing tests**, unless they are testing incorrect behavior. Default to creating new tests or test
+files instead of altering existing ones.
 
-Test files can only be deleted once no driver runs them anymore. In the meantime, for cases where a spec change removes functionality:
-- **Unified Tests:** Use `runOnRequirements` to ensure tests are only executed by drivers supporting the required functionality.
+Test files can only be deleted once no driver runs them anymore. In the meantime, for cases where a spec change removes
+functionality:
+
+- **Unified Tests:** Use `runOnRequirements` to ensure tests are only executed by drivers supporting the required
+    functionality.
 - **Non-Unified Tests (e.g., SDAM):** Drivers should skip tests that no longer apply to them.
 
 ### Test Isolation
 
-When creating a new test, only test functionality directly related to the new spec requirements. Omit irrelevant fields in command expectations. 
+When creating a new test, only test functionality directly related to the new spec requirements. Omit irrelevant fields
+in command expectations.
 
 This makes tests more resilient against spec updates and avoids needing to change tests down the line.
 
@@ -64,8 +69,9 @@ This makes tests more resilient against spec updates and avoids needing to chang
 
 Use the **lowest possible schema version** for each test.
 
-Do NOT default to using the latest unified test format schema version, as the drivers may not all implement it.
-Use the oldest schema version that supports all functionality used in the test, even if it requires creating a new test file with a lower schema version.
+Do NOT default to using the latest unified test format schema version, as the drivers may not all implement it. Use the
+oldest schema version that supports all functionality used in the test, even if it requires creating a new test file
+with a lower schema version.
 
 ## Building Documents
 
