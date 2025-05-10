@@ -114,7 +114,7 @@ visible in the `hello` command of new connections.
 
 3. Wait 5ms for the connection to become idle.
 
-4. Append the following metadata to the `MongoClient`:
+4. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value              |
     | -------- | ------------------ |
@@ -155,7 +155,7 @@ connections, and that no new `hello` command is sent.
     - The command succeeds.
     - The wrapping library metadata is appended to the respective `client.driver` fields of the `hello` command.
 
-3. Append the following metadata to the `MongoClient`:
+3. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value              |
     | -------- | ------------------ |
