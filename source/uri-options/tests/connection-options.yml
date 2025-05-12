@@ -233,3 +233,74 @@ tests:
         hosts: ~
         auth: ~
         options: ~
+    -
+        description: "timeoutMS with large value"
+        uri: "mongodb://example.com/?timeoutMS=100000"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            timeoutMS: 100000
+    -
+        description: "timeoutMS with SRV URI"
+        uri: "mongodb+srv://test1.test.build.10gen.cc/?timeoutMS=5000"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            timeoutMS: 5000
+    -
+        description: "Valid appname is parsed correctly"
+        uri: "mongodb://example.com/?appname=MyApplication"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            appname: "MyApplication"
+    -
+        description: "Empty appname is parsed correctly"
+        uri: "mongodb://example.com/?appname="
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            appname: ""
+    -
+        description: "retryReads=true is parsed correctly"
+        uri: "mongodb://example.com/?retryReads=true"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            retryReads: true
+    -
+        description: "retryReads=false is parsed correctly"
+        uri: "mongodb://example.com/?retryReads=false"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            retryReads: false
+    -
+        description: "Invalid retryReads causes a warning"
+        uri: "mongodb://example.com/?retryReads=invalid"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "retryWrites=false is parsed correctly"
+        uri: "mongodb://example.com/?retryWrites=false"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            retryWrites: false
