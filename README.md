@@ -36,13 +36,42 @@ To run a manual hook like `shellcheck` manually, run:
 pre-commit run --all-files --hook-stage manual shellcheck
 ```
 
-## Prose test numbering
+## Prose Test Numbering
 
 When numbering prose tests, always use relative numbered bullets (`1.`). New tests must be appended at the end of the
 test list, since drivers may refer to existing tests by number.
 
 Outdated tests must not be removed completely, but may be marked as such (e.g. by striking through or replacing the
 entire test with a note (e.g. *Removed*).
+
+## Automated Test Best Practices
+
+### Immutability of Existing Tests
+
+**Do not modify existing tests**, unless they are testing incorrect behavior. Default to creating new tests or test
+files instead of altering existing ones.
+
+Test files can only be deleted once no driver runs them anymore. In the meantime, for cases where a spec change removes
+functionality:
+
+- **Unified Tests:** Use `runOnRequirements` to ensure tests are only executed by drivers supporting the required
+    functionality.
+- **Non-Unified Tests (e.g., SDAM):** Drivers should skip tests that no longer apply to them.
+
+### Test Isolation
+
+When creating a new test, only test functionality directly related to the new spec requirements. Omit irrelevant fields
+in command expectations.
+
+This makes tests more resilient against spec updates and avoids needing to change tests down the line.
+
+### Schema Version Usage
+
+Use the **lowest possible schema version** for each test.
+
+Do NOT default to using the latest unified test format schema version, as the drivers may not all implement it. Use the
+oldest schema version that supports all functionality used in the test, even if it requires creating a new test file
+with a lower schema version.
 
 ## Building Documents
 
