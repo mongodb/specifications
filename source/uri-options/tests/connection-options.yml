@@ -218,6 +218,15 @@ tests:
         options:
             timeoutMS: 0
     -
+        description: "timeoutMS with valid integer value"
+        uri: "mongodb://example.com/?timeoutMS=5000"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            timeoutMS: 5000
+    -
         description: "Non-numeric timeoutMS causes a warning"
         uri: "mongodb://example.com/?timeoutMS=invalid"
         valid: true
@@ -228,6 +237,14 @@ tests:
     -
         description: "Too low timeoutMS causes a warning"
         uri: "mongodb://example.com/?timeoutMS=-2"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "timeoutMS with negative value causes a warning"
+        uri: "mongodb://example.com/?timeoutMS=-1000"
         valid: true
         warning: true
         hosts: ~

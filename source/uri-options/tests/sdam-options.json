@@ -41,6 +41,48 @@
       "hosts": null,
       "auth": null,
       "options": null
+    },
+    {
+      "description": "serverMonitoringMode=auto with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?serverMonitoringMode=auto",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "serverMonitoringMode": "auto"
+      }
+    },
+    {
+      "description": "serverMonitoringMode=stream with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?serverMonitoringMode=stream",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "serverMonitoringMode": "stream"
+      }
+    },
+    {
+      "description": "serverMonitoringMode=poll with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?serverMonitoringMode=poll",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "serverMonitoringMode": "poll"
+      }
+    },
+    {
+      "description": "invalid serverMonitoringMode with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?serverMonitoringMode=invalid",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": null
     }
   ]
 }

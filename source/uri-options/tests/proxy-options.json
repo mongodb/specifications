@@ -134,6 +134,82 @@
       "hosts": null,
       "auth": null,
       "options": {}
+    },
+    {
+      "description": "proxyHost with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyHost=proxy.example.com",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "proxyHost": "proxy.example.com"
+      }
+    },
+    {
+      "description": "proxyPort with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyPort=1080",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "proxyPort": 1080
+      }
+    },
+    {
+      "description": "proxyUsername with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyUsername=user",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "proxyUsername": "user"
+      }
+    },
+    {
+      "description": "proxyPassword with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyPassword=password",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "proxyPassword": "password"
+      }
+    },
+    {
+      "description": "invalid proxyPort with SRV URI causes a warning",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyPort=invalid",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": null
+    },
+    {
+      "description": "negative proxyPort with SRV URI causes a warning",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyPort=-1",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": null
+    },
+    {
+      "description": "complete proxy configuration with SRV URI",
+      "uri": "mongodb+srv://test1.test.build.10gen.cc/?proxyHost=proxy.example.com&proxyPort=1080&proxyUsername=user&proxyPassword=password",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "proxyHost": "proxy.example.com",
+        "proxyPort": 1080,
+        "proxyUsername": "user",
+        "proxyPassword": "password"
+      }
     }
   ]
 }
