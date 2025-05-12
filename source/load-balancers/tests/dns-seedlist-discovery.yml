@@ -1,0 +1,48 @@
+description: DNS seedlist discovery for load-balanced clusters
+
+schemaVersion: '1.4'
+
+runOnRequirements:
+  - topologies: [ load-balanced ]
+
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: true
+      observeEvents:
+        - topologyDescriptionChangedEvent
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name database0
+
+tests:
+  - description: SRV polling is disabled with loadBalanced=true
+    operations:
+      # Wait for initial topology description events
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client0
+          event:
+            topologyDescriptionChangedEvent:
+              topologyType: LoadBalanced
+      # Wait long enough for any SRV polling to occur (if implemented)
+      - name: wait
+        object: testRunner
+        arguments:
+          ms: 60000
+      # Run an operation to check that we're still connected
+      - name: runCommand
+        object: *database0
+        arguments:
+          commandName: ping
+          command: { ping: 1 }
+      # Verify that no additional topology events were published
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event:
+            topologyDescriptionChangedEvent: 2
+          count: 2  # Only two events: initial Unknown -> LoadBalanced, and LoadBalanced server details

@@ -1,0 +1,62 @@
+description: server discovery and monitoring for load-balanced clusters
+
+schemaVersion: '1.4'
+
+runOnRequirements:
+  - topologies: [ load-balanced ]
+
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: true
+      observeEvents:
+        - topologyOpeningEvent
+        - topologyDescriptionChangedEvent
+        - serverOpeningEvent
+        - serverDescriptionChangedEvent
+        - topologyClosedEvent
+        - serverClosedEvent
+
+tests:
+  - description: proper SDAM events are emitted for load-balanced clusters
+    operations:
+      - name: createCollection
+        object: testRunner
+        arguments:
+          client: *client0
+          events:
+            - topologyOpeningEvent: {}
+            - topologyDescriptionChangedEvent:
+                previousDescription:
+                  topologyType: Unknown
+                  servers: []
+                newDescription:
+                  topologyType: LoadBalanced
+                  servers:
+                    - address: { $$type: string }
+                      type: Unknown
+            - serverOpeningEvent: {}
+            - serverDescriptionChangedEvent:
+                previousDescription:
+                  address: { $$type: string }
+                  type: Unknown
+                newDescription:
+                  address: { $$type: string }
+                  type: LoadBalancer
+            - topologyDescriptionChangedEvent:
+                newDescription:
+                  topologyType: LoadBalanced
+                  servers:
+                    - address: { $$type: string }
+                      type: LoadBalancer
+      # Close the client and verify closing events
+      - name: close
+        object: *client0
+      - name: assertEventCount
+        object: testRunner
+        arguments:
+          client: *client0
+          event:
+            serverClosedEvent: 1
+            topologyClosedEvent: 1
+            topologyDescriptionChangedEvent: 3  # Initial, server description change, and closing

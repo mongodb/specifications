@@ -1,0 +1,56 @@
+description: driver sessions for load-balanced clusters
+
+schemaVersion: '1.4'
+
+runOnRequirements:
+  - topologies: [ load-balanced ]
+
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: true
+      observeEvents:
+        - commandStartedEvent
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name database0
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name collection0
+
+tests:
+  - description: sessions are always supported with load-balanced topology
+    operations:
+      - name: createClientSession
+        object: *client0
+        arguments: {}
+        saveResultAsEntity: &session0 session0
+      # Perform a simple operation with the session
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: { x: 1 }
+          session: *session0
+
+  - description: ServerType LoadBalancer is considered a data-bearing server
+    operations:
+      # The previous test already verifies this implicitly by allowing insertOne,
+      # but we can add additional operations
+      - name: createClientSession
+        object: *client0
+        arguments: {}
+        saveResultAsEntity: &session1 session1
+      - name: runCommand
+        object: *database0
+        arguments:
+          commandName: ping
+          command: { ping: 1 }
+          session: *session1
+      # Test that we can use read operations as well (which require a data-bearing server)
+      - name: find
+        object: *collection0
+        arguments:
+          filter: {}
+          session: *session1
