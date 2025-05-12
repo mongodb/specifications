@@ -61,4 +61,57 @@ tests:
         hosts: ~
         auth: ~
         options: ~
+    -
+        description: "readPreference=primary"
+        uri: "mongodb://example.com/?readPreference=primary"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            readPreference: "primary"
+    -
+        description: "readPreference=secondary"
+        uri: "mongodb://example.com/?readPreference=secondary"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            readPreference: "secondary"
+    -
+        description: "readPreference=secondaryPreferred"
+        uri: "mongodb://example.com/?readPreference=secondaryPreferred"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            readPreference: "secondaryPreferred"
+    -
+        description: "readPreference=nearest"
+        uri: "mongodb://example.com/?readPreference=nearest"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            readPreference: "nearest"
+    -
+        description: "Invalid readPreference does not cause a warning"
+        uri: "mongodb://example.com/?readPreference=invalid"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            readPreference: "invalid"
+    -
+        description: "readPreferenceTags with primary causes a warning"
+        uri: "mongodb://example.com/?readPreference=primary&readPreferenceTags=dc:ny"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
 

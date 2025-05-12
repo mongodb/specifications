@@ -1,82 +1,146 @@
 {
-  "tests": [
-    {
-      "description": "Valid read preference options are parsed correctly",
-      "uri": "mongodb://example.com/?readPreference=primaryPreferred&readPreferenceTags=dc:ny,rack:1&maxStalenessSeconds=120&readPreferenceTags=dc:ny",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": null,
-      "options": {
-        "readPreference": "primaryPreferred",
-        "readPreferenceTags": [
-          {
-            "dc": "ny",
-            "rack": "1"
-          },
-          {
-            "dc": "ny"
-          }
-        ],
-        "maxStalenessSeconds": 120
-      }
-    },
-    {
-      "description": "Single readPreferenceTags is parsed as array of size one",
-      "uri": "mongodb://example.com/?readPreference=secondary&readPreferenceTags=dc:ny",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": null,
-      "options": {
-        "readPreferenceTags": [
-          {
-            "dc": "ny"
-          }
-        ]
-      }
-    },
-    {
-      "description": "Read preference tags are case sensitive",
-      "uri": "mongodb://example.com/?readPreference=secondary&readPreferenceTags=dc:NY",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": null,
-      "options": {
-        "readPreferenceTags": [
-          {
-            "dc": "NY"
-          }
-        ]
-      }
-    },
-    {
-      "description": "Invalid readPreferenceTags causes a warning",
-      "uri": "mongodb://example.com/?readPreferenceTags=invalid",
-      "valid": true,
-      "warning": true,
-      "hosts": null,
-      "auth": null,
-      "options": null
-    },
-    {
-      "description": "Non-numeric maxStalenessSeconds causes a warning",
-      "uri": "mongodb://example.com/?maxStalenessSeconds=invalid",
-      "valid": true,
-      "warning": true,
-      "hosts": null,
-      "auth": null,
-      "options": null
-    },
-    {
-      "description": "Too low maxStalenessSeconds causes a warning",
-      "uri": "mongodb://example.com/?maxStalenessSeconds=-2",
-      "valid": true,
-      "warning": true,
-      "hosts": null,
-      "auth": null,
-      "options": null
-    }
-  ]
+    "tests": [
+        {
+            "description": "Valid read preference options are parsed correctly",
+            "uri": "mongodb://example.com/?readPreference=primaryPreferred&readPreferenceTags=dc:ny,rack:1&maxStalenessSeconds=120&readPreferenceTags=dc:ny",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreference": "primaryPreferred",
+                "readPreferenceTags": [
+                    {
+                        "dc": "ny",
+                        "rack": "1"
+                    },
+                    {
+                        "dc": "ny"
+                    }
+                ],
+                "maxStalenessSeconds": 120
+            }
+        },
+        {
+            "description": "Single readPreferenceTags is parsed as array of size one",
+            "uri": "mongodb://example.com/?readPreference=secondary&readPreferenceTags=dc:ny",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreferenceTags": [
+                    {
+                        "dc": "ny"
+                    }
+                ]
+            }
+        },
+        {
+            "description": "Read preference tags are case sensitive",
+            "uri": "mongodb://example.com/?readPreference=secondary&readPreferenceTags=dc:NY",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreferenceTags": [
+                    {
+                        "dc": "NY"
+                    }
+                ]
+            }
+        },
+        {
+            "description": "Invalid readPreferenceTags causes a warning",
+            "uri": "mongodb://example.com/?readPreferenceTags=invalid",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        },
+        {
+            "description": "Non-numeric maxStalenessSeconds causes a warning",
+            "uri": "mongodb://example.com/?maxStalenessSeconds=invalid",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        },
+        {
+            "description": "Too low maxStalenessSeconds causes a warning",
+            "uri": "mongodb://example.com/?maxStalenessSeconds=-2",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        },
+        {
+            "description": "readPreference=primary",
+            "uri": "mongodb://example.com/?readPreference=primary",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreference": "primary"
+            }
+        },
+        {
+            "description": "readPreference=secondary",
+            "uri": "mongodb://example.com/?readPreference=secondary",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreference": "secondary"
+            }
+        },
+        {
+            "description": "readPreference=secondaryPreferred",
+            "uri": "mongodb://example.com/?readPreference=secondaryPreferred",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreference": "secondaryPreferred"
+            }
+        },
+        {
+            "description": "readPreference=nearest",
+            "uri": "mongodb://example.com/?readPreference=nearest",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreference": "nearest"
+            }
+        },
+        {
+            "description": "Invalid readPreference does not cause a warning",
+            "uri": "mongodb://example.com/?readPreference=invalid",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "readPreference": "invalid"
+            }
+        },
+        {
+            "description": "readPreferenceTags with primary causes a warning",
+            "uri": "mongodb://example.com/?readPreference=primary&readPreferenceTags=dc:ny",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        }
+    ]
 }

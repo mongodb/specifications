@@ -1,46 +1,108 @@
 {
-  "tests": [
-    {
-      "description": "serverMonitoringMode=auto",
-      "uri": "mongodb://example.com/?serverMonitoringMode=auto",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": null,
-      "options": {
-        "serverMonitoringMode": "auto"
-      }
-    },
-    {
-      "description": "serverMonitoringMode=stream",
-      "uri": "mongodb://example.com/?serverMonitoringMode=stream",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": null,
-      "options": {
-        "serverMonitoringMode": "stream"
-      }
-    },
-    {
-      "description": "serverMonitoringMode=poll",
-      "uri": "mongodb://example.com/?serverMonitoringMode=poll",
-      "valid": true,
-      "warning": false,
-      "hosts": null,
-      "auth": null,
-      "options": {
-        "serverMonitoringMode": "poll"
-      }
-    },
-    {
-      "description": "invalid serverMonitoringMode",
-      "uri": "mongodb://example.com/?serverMonitoringMode=invalid",
-      "valid": true,
-      "warning": true,
-      "hosts": null,
-      "auth": null,
-      "options": null
-    }
-  ]
+    "tests": [
+        {
+            "description": "serverMonitoringMode=auto",
+            "uri": "mongodb://example.com/?serverMonitoringMode=auto",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "serverMonitoringMode": "auto"
+            }
+        },
+        {
+            "description": "serverMonitoringMode=stream",
+            "uri": "mongodb://example.com/?serverMonitoringMode=stream",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "serverMonitoringMode": "stream"
+            }
+        },
+        {
+            "description": "serverMonitoringMode=poll",
+            "uri": "mongodb://example.com/?serverMonitoringMode=poll",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "serverMonitoringMode": "poll"
+            }
+        },
+        {
+            "description": "invalid serverMonitoringMode",
+            "uri": "mongodb://example.com/?serverMonitoringMode=invalid",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        },
+        {
+            "description": "maxStalenessSeconds with valid value",
+            "uri": "mongodb://example.com/?maxStalenessSeconds=90",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "maxStalenessSeconds": 90
+            }
+        },
+        {
+            "description": "maxStalenessSeconds with -1 (no max staleness check)",
+            "uri": "mongodb://example.com/?maxStalenessSeconds=-1",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "maxStalenessSeconds": -1
+            }
+        },
+        {
+            "description": "maxStalenessSeconds with value less than minimum (90) causes a warning",
+            "uri": "mongodb://example.com/?maxStalenessSeconds=89",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        },
+        {
+            "description": "maxStalenessSeconds with non-integer value causes a warning",
+            "uri": "mongodb://example.com/?maxStalenessSeconds=invalid",
+            "valid": true,
+            "warning": true,
+            "hosts": null,
+            "auth": null,
+            "options": null
+        },
+        {
+            "description": "replicaSet is parsed correctly",
+            "uri": "mongodb://example.com/?replicaSet=mySet",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "replicaSet": "mySet"
+            }
+        },
+        {
+            "description": "Empty replicaSet is parsed correctly",
+            "uri": "mongodb://example.com/?replicaSet=",
+            "valid": true,
+            "warning": false,
+            "hosts": null,
+            "auth": null,
+            "options": {
+                "replicaSet": ""
+            }
+        }
+    ]
 }

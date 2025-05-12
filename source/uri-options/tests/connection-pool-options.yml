@@ -65,3 +65,36 @@ tests:
       hosts: ~
       auth: ~
       options: ~
+    -
+        description: "waitQueueTimeoutMS with valid value"
+        uri: "mongodb://example.com/?waitQueueTimeoutMS=1000"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            waitQueueTimeoutMS: 1000
+    -
+        description: "waitQueueTimeoutMS with zero value causes a warning"
+        uri: "mongodb://example.com/?waitQueueTimeoutMS=0"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "waitQueueTimeoutMS with negative value causes a warning"
+        uri: "mongodb://example.com/?waitQueueTimeoutMS=-1"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "waitQueueTimeoutMS with non-integer value causes a warning"
+        uri: "mongodb://example.com/?waitQueueTimeoutMS=invalid"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
