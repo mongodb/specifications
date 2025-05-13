@@ -1,0 +1,81 @@
+{
+  "description": "log messages for load-balanced clusters",
+  "schemaVersion": "1.4",
+  "runOnRequirements": [
+    {
+      "topologies": [
+        "load-balanced"
+      ]
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "useMultipleMongoses": true,
+        "logMessages": [
+          "Starting topology monitoring",
+          "Stopped topology monitoring",
+          "Starting server monitoring",
+          "Stopped server monitoring",
+          "Topology description changed"
+        ]
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "proper SDAM log messages are emitted for load-balanced clusters",
+      "operations": [
+        {
+          "name": "insertOne",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "logs": [
+              {
+                "levelContains": "info",
+                "componentContains": "topology",
+                "messageContains": "Starting topology monitoring"
+              },
+              {
+                "levelContains": "info",
+                "componentContains": "topology",
+                "messageContains": "Topology description changed"
+              },
+              {
+                "levelContains": "info",
+                "componentContains": "topology",
+                "messageContains": "Starting server monitoring"
+              }
+            ]
+          }
+        },
+        {
+          "name": "close",
+          "object": "client0"
+        },
+        {
+          "name": "assertLogMessageCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "logs": [
+              {
+                "levelContains": "info",
+                "componentContains": "topology",
+                "messageContains": "Stopped server monitoring"
+              },
+              {
+                "levelContains": "info",
+                "componentContains": "topology",
+                "messageContains": "Stopped topology monitoring"
+              }
+            ],
+            "count": 1
+          }
+        }
+      ]
+    }
+  ]
+}

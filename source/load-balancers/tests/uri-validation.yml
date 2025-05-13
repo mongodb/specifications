@@ -1,0 +1,68 @@
+description: URI validation for load-balanced clusters
+
+schemaVersion: '1.4'
+
+# Run on a topology that supports a single host (not replica set)
+runOnRequirements:
+  - topologies: [ single, sharded ]
+
+createEntities:
+  - client:
+      id: &regularClient regularClient
+      useMultipleMongoses: false
+  - database:
+      id: &regularDatabase regularDatabase
+      client: *regularClient
+      databaseName: &regularDatabaseName testdb
+
+tests:
+  - description: error when connection string contains multiple hosts with loadBalanced=true
+    operations:
+      - name: createClient
+        object: testRunner
+        arguments:
+          clientOptions:
+            uriOptions:
+              loadBalanced: true
+            # Use two hosts to trigger validation error
+            uriHosts: 
+              - "localhost:27017"
+              - "localhost:27018"
+        expectError:
+          errorContains: "cannot be used with multiple hosts"
+
+  - description: error when connection string contains replicaSet with loadBalanced=true
+    operations:
+      - name: createClient
+        object: testRunner
+        arguments:
+          clientOptions:
+            uriOptions:
+              loadBalanced: true
+              replicaSet: mySet
+        expectError:
+          errorContains: "cannot be used with replicaSet"
+
+  - description: error when connection string contains directConnection=true with loadBalanced=true
+    operations:
+      - name: createClient
+        object: testRunner
+        arguments:
+          clientOptions:
+            uriOptions:
+              loadBalanced: true
+              directConnection: true
+        expectError:
+          errorContains: "cannot be used with directConnection=true"
+
+  - description: error when connection string contains srvMaxHosts with loadBalanced=true
+    operations:
+      - name: createClient
+        object: testRunner
+        arguments:
+          clientOptions:
+            uriOptions:
+              loadBalanced: true
+              srvMaxHosts: 2
+        expectError:
+          errorContains: "cannot be used with srvMaxHosts"

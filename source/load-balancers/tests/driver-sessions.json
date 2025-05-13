@@ -1,0 +1,89 @@
+{
+  "description": "driver sessions for load-balanced clusters",
+  "schemaVersion": "1.4",
+  "runOnRequirements": [
+    {
+      "topologies": [
+        "load-balanced"
+      ]
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "useMultipleMongoses": true,
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "database0"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection0",
+        "database": "database0",
+        "collectionName": "collection0"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "sessions are always supported with load-balanced topology",
+      "operations": [
+        {
+          "name": "createClientSession",
+          "object": "client0",
+          "arguments": {},
+          "saveResultAsEntity": "session0"
+        },
+        {
+          "name": "insertOne",
+          "object": "collection0",
+          "arguments": {
+            "document": {
+              "x": 1
+            },
+            "session": "session0"
+          }
+        }
+      ]
+    },
+    {
+      "description": "ServerType LoadBalancer is considered a data-bearing server",
+      "operations": [
+        {
+          "name": "createClientSession",
+          "object": "client0",
+          "arguments": {},
+          "saveResultAsEntity": "session1"
+        },
+        {
+          "name": "runCommand",
+          "object": "database0",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            },
+            "session": "session1"
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection0",
+          "arguments": {
+            "filter": {},
+            "session": "session1"
+          }
+        }
+      ]
+    }
+  ]
+}

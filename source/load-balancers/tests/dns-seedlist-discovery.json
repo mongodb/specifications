@@ -1,0 +1,76 @@
+{
+  "description": "DNS seedlist discovery for load-balanced clusters",
+  "schemaVersion": "1.4",
+  "runOnRequirements": [
+    {
+      "topologies": [
+        "load-balanced"
+      ]
+    }
+  ],
+  "createEntities": [
+    {
+      "client": {
+        "id": "client0",
+        "useMultipleMongoses": true,
+        "observeEvents": [
+          "topologyDescriptionChangedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "database0",
+        "client": "client0",
+        "databaseName": "database0"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "SRV polling is disabled with loadBalanced=true",
+      "operations": [
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "event": {
+              "topologyDescriptionChangedEvent": {
+                "topologyType": "LoadBalanced"
+              }
+            }
+          }
+        },
+        {
+          "name": "wait",
+          "object": "testRunner",
+          "arguments": {
+            "ms": 60000
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "database0",
+          "arguments": {
+            "commandName": "ping",
+            "command": {
+              "ping": 1
+            }
+          }
+        },
+        {
+          "name": "assertEventCount",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client0",
+            "event": {
+              "topologyDescriptionChangedEvent": 2
+            },
+            "count": 2
+          }
+        }
+      ]
+    }
+  ]
+}
