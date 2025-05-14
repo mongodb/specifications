@@ -336,3 +336,70 @@ tests:
           - { _id: 4, array: [ 1, 2, 3 ] }
           - { _id: 5, array: [ 1, 2, 4 ] }
           - { _id: 6, array: [ 1, 2, 6 ] }
+  - description: "client bulkWrite update with non-Int32 hint"
+    operations:
+      - object: *client0
+        name: clientBulkWrite
+        arguments:
+          models:
+            - updateOne:
+                namespace: *namespace
+                filter: { _id: 1 }
+                update: { $set: { array: [ 1, 2, 4 ] } }
+                hint: { _id: { $numberLong: "1" } }
+            - updateMany:
+                namespace: *namespace
+                filter:
+                  $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                update: { $set: { array: [ 1, 2, 5 ] } }
+                hint: { _id: { $numberLong: "1" } }
+          verboseResults: true
+        expectResult:
+          insertedCount: 0
+          upsertedCount: 0
+          matchedCount: 3
+          modifiedCount: 3
+          deletedCount: 0
+          insertResults: {}
+          updateResults:
+            0:
+              matchedCount: 1
+              modifiedCount: 1
+              upsertedId: { $$exists: false }
+            1:
+              matchedCount: 2
+              modifiedCount: 2
+              upsertedId: { $$exists: false }
+          deleteResults: {}
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              commandName: bulkWrite
+              databaseName: admin
+              command:
+                bulkWrite: 1
+                errorsOnly: false
+                ordered: true
+                ops:
+                  - update: 0
+                    filter: { _id: 1 }
+                    updateMods: { $set: { array: [ 1, 2, 4 ] } }
+                    hint: { _id: { $numberLong: "1" } }
+                    multi: false
+                  - update: 0
+                    filter:
+                      $and: [ { _id: { $gt: 1 } }, { _id: { $lte: 3 } } ]
+                    updateMods: { $set: { array: [ 1, 2, 5 ] } }
+                    hint: { _id: { $numberLong: "1" } }
+                    multi: true
+                nsInfo:
+                  - ns: *namespace
+    outcome:
+      - databaseName: *database0Name
+        collectionName: *collection0Name
+        documents:
+          - { _id: 1, array: [ 1, 2, 4 ] }
+          - { _id: 2, array: [ 1, 2, 5 ] }
+          - { _id: 3, array: [ 1, 2, 5 ] }
+          - { _id: 4, array: [ 1, 2, 3 ] }
