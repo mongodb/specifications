@@ -711,6 +711,149 @@
           ]
         }
       ]
+    },
+    {
+      "description": "client bulkWrite with unacknowledged write concern (w:0) for all batches",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0",
+          "serverless": "forbid"
+        }
+      ],
+      "operations": [
+        {
+          "object": "client0",
+          "name": "clientBulkWrite",
+          "arguments": {
+            "models": [
+              {
+                "insertOne": {
+                  "namespace": "crud-tests.coll0",
+                  "document": {
+                    "_id": 5,
+                    "x": 55
+                  }
+                }
+              },
+              {
+                "insertOne": {
+                  "namespace": "crud-tests.coll0",
+                  "document": {
+                    "_id": 6,
+                    "x": 66
+                  }
+                }
+              }
+            ],
+            "verboseResults": false,
+            "ordered": false,
+            "writeConcern": {
+              "w": 0
+            }
+          },
+          "expectError": {
+            "isClientError": true,
+            "errorContains": "Cannot request unacknowledged write concern and ordered writes"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": []
+        }
+      ]
+    },
+    {
+      "description": "client bulkWrite with unacknowledged write concern (w:0) for all batches with ordered=false",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "8.0",
+          "serverless": "forbid"
+        }
+      ],
+      "operations": [
+        {
+          "object": "client0",
+          "name": "clientBulkWrite",
+          "arguments": {
+            "models": [
+              {
+                "insertOne": {
+                  "namespace": "crud-tests.coll0",
+                  "document": {
+                    "_id": 5,
+                    "x": 55
+                  }
+                }
+              },
+              {
+                "insertOne": {
+                  "namespace": "crud-tests.coll0",
+                  "document": {
+                    "_id": 6,
+                    "x": 66
+                  }
+                }
+              }
+            ],
+            "verboseResults": false,
+            "ordered": false,
+            "writeConcern": {
+              "w": 0
+            }
+          },
+          "expectResult": {
+            "$$unsetOrMatches": {
+              "acknowledged": {
+                "$$unsetOrMatches": false
+              }
+            }
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "bulkWrite",
+                "databaseName": "admin",
+                "command": {
+                  "bulkWrite": 1,
+                  "errorsOnly": false,
+                  "ordered": false,
+                  "ops": [
+                    {
+                      "insert": 0,
+                      "document": {
+                        "_id": 5,
+                        "x": 55
+                      }
+                    },
+                    {
+                      "insert": 0,
+                      "document": {
+                        "_id": 6,
+                        "x": 66
+                      }
+                    }
+                  ],
+                  "nsInfo": [
+                    {
+                      "ns": "crud-tests.coll0"
+                    }
+                  ],
+                  "writeConcern": {
+                    "w": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
