@@ -349,7 +349,7 @@ tests:
                     document: { _id: 3, x: 33 }
                 nsInfo:
                   - ns: *namespace
-  - description: "client bulkWrite with unacknowledged write concern (w:0) for all batches"
+  - description: "client bulkWrite with unacknowledged write concern (w:0) for all batches - expected to return an error"
     runOnRequirements:
       - minServerVersion: "8.0"
         serverless: forbid
@@ -365,7 +365,7 @@ tests:
                 namespace: *namespace
                 document: { _id: 6, x: 66 }
           verboseResults: false
-          ordered: false
+          ordered: true
           writeConcern: { w: 0 }
         expectError:
           isClientError: true
