@@ -713,7 +713,7 @@
       ]
     },
     {
-      "description": "client bulkWrite with unacknowledged write concern (w:0) for all batches - expected to return an error",
+      "description": "client bulkWrite with unacknowledged write concern (w:0) and ordered:true - expected to return an error",
       "runOnRequirements": [
         {
           "minServerVersion": "8.0",
