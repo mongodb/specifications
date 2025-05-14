@@ -265,7 +265,7 @@
       ]
     },
     {
-      "description": "client bulk write delete with non-Int32 hint",
+      "description": "client bulkWrite delete with non-Int32 hint",
       "operations": [
         {
           "object": "client0",
