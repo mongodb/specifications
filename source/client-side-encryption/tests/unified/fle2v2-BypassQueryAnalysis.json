@@ -18,12 +18,12 @@
       "client": {
         "id": "client0",
         "autoEncryptOpts": {
+          "keyVaultNamespace": "keyvault.datakeys",
           "kmsProviders": {
             "local": {
               "key": "Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk"
             }
           },
-          "keyVaultNamespace": "keyvault.datakeys",
           "bypassQueryAnalysis": true
         },
         "observeEvents": [
@@ -42,6 +42,28 @@
       "collection": {
         "id": "encryptedColl",
         "database": "encryptedDB",
+        "collectionName": "default"
+      }
+    },
+    {
+      "client": {
+        "id": "unencryptedClient",
+        "observeEvents": [
+          "commandStartedEvent"
+        ]
+      }
+    },
+    {
+      "database": {
+        "id": "unencryptedDB",
+        "client": "unencryptedClient",
+        "databaseName": "default"
+      }
+    },
+    {
+      "collection": {
+        "id": "unencryptedColl",
+        "database": "unencryptedDB",
         "collectionName": "default"
       }
     }
@@ -152,6 +174,29 @@
             {
               "_id": 1,
               "encryptedIndexed": "123"
+            }
+          ]
+        },
+        {
+          "name": "find",
+          "object": "unencryptedColl",
+          "arguments": {
+            "filter": {}
+          },
+          "expectResult": [
+            {
+              "_id": 1,
+              "encryptedIndexed": {
+                "$$type": "binData"
+              },
+              "__safeContent__": [
+                {
+                  "$binary": {
+                    "base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
+                    "subType": "00"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -271,28 +316,6 @@
                 },
                 "commandName": "find"
               }
-            }
-          ]
-        }
-      ],
-      "outcome": [
-        {
-          "collectionName": "default",
-          "databaseName": "default",
-          "documents": [
-            {
-              "_id": 1,
-              "encryptedIndexed": {
-                "$$type": "binData"
-              },
-              "__safeContent__": [
-                {
-                  "$binary": {
-                    "base64": "31eCYlbQoVboc5zwC8IoyJVSkag9PxREka8dkmbXJeY=",
-                    "subType": "00"
-                  }
-                }
-              ]
             }
           ]
         }
