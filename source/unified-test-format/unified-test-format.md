@@ -3500,7 +3500,7 @@ enforceable by the JSON schema or the test runner implementation.
 ### Why are `_enxcol` collections dropped?
 
 The collections `_enxcol.<collectionName>.esc` and `_enxcol.<collectionName>.ecoc` are [automatically
-created]((../client-side-encryption/client-side-encryption.md#create-collection-helper)) for Queryable Encryption
+created](../client-side-encryption/client-side-encryption.md#create-collection-helper) for Queryable Encryption
 collections. If these collections are present and non-empty, the server generated `__safeContent__` field may differ.
 `__safeContent__` includes a count of the number of instances of the given value. To do exact matching on
 `__safeContent__` the test runner is required to drop these collections.
