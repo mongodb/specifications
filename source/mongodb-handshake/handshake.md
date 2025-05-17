@@ -409,7 +409,7 @@ Note that how these options are provided to a driver during `MongoClient` initia
 
 ### Metadata updates after MongoClient initialization
 
-Drivers MUST provide an API that allows to append `DriverInfoOptions` to a MongoClient instance after initialization.
+Drivers MUST provide an API that allows appending `DriverInfoOptions` to a MongoClient instance after initialization.
 
 After client metadata update, drivers MUST apply updated metadata to newly created connections and MUST NOT apply it to
 already established connections.
@@ -423,7 +423,7 @@ be appended to their respective fields, and be delimited by a `|` character. For
 "driver info":
 
 ```typescript
-{ 
+{
     client: {
         driver: {
             name: "PyMongo|Motor",
