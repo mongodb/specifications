@@ -179,7 +179,7 @@ Before each test case, perform the setup.
 ### Test 2: Test that metadata is not updated on established connections
 
 Drivers should verify that appending metadata after `MongoClient` initialization does **not** close existing
-connections, and that no new `hello` command is sent on existing connections.
+connections, and that no new `hello` command is sent.
 
 1. Create a `MongoClient` instance with wrapping library metadata:
 

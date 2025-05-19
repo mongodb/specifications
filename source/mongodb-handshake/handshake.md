@@ -411,8 +411,9 @@ Note that how these options are provided to a driver during `MongoClient` initia
 
 Drivers MUST provide an API that allows appending `DriverInfoOptions` to a MongoClient instance after initialization.
 
-After client metadata update, drivers MUST apply updated metadata to newly created connections and MUST NOT apply it to
-already established connections.
+After client metadata update, drivers MUST apply updated metadata to newly created connections. Drivers MUST NOT apply
+updated metadata to already established connections, nor create new connections solely for the purpose of transferring
+updated metadata.
 
 ### Appending metadata
 
