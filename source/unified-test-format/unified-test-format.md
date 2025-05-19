@@ -485,6 +485,8 @@ The structure of this object is as follows:
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
         - [serverHeartbeatFailedEvent](#expectedEvent_serverHeartbeatFailedEvent)
         - [topologyDescriptionChangedEvent](#expectedEvent_topologyDescriptionChangedEvent)
+        - [topologyOpeningEvent](#expectedEvent_topologyOpeningEvent)
+        - [topologyClosedEvent](#expectedEvent_topologyClosedEvent)
 
     <span id="entity_client_ignoreCommandMonitoringEvents"></span>
 
@@ -1230,6 +1232,18 @@ The structure of this object is as follows:
 
         Test runners SHOULD ignore any other fields present on the `previousDescription` and `newDescription` fields of the
         captured `topologyDescriptionChangedEvent`.
+
+<span id="expectedEvent_topologyOpeningEvent"></span>
+
+- `topologyOpeningEvent`: Optional object. Assertions for one
+    [topologyOpeningEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
+
+<span id="expectedEvent_topologyClosedEvent"></span>
+
+- `topologyClosedEvent`: Optional object. Assertions for one
+    [topologyClosedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
 
 ##### hasServiceId
 
@@ -3567,6 +3581,9 @@ other specs *and* collating spec changes developed in parallel or during the sam
 ## Changelog
 
 - 2025-04-25: Drop `_enxcol` collections.
+
+- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format and schema 1.20+ as they
+    were omitted in error.
 
 - 2025-01-21: **Schema version 1.23.**
 
