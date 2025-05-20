@@ -115,9 +115,10 @@ Before each test case, perform the setup.
 
     - The command succeeds.
     - The wrapping library metadata is appended to the respective `client.driver` fields of the `hello` command.
-    - Save intercepted `client` document as `initialClientMetadata`.
 
-3. Wait 5ms for the connection to become idle.
+3. Save intercepted `client` document as `initialClientMetadata`.
+
+4. Wait 5ms for the connection to become idle.
 
 #### Parameterized test cases
 
