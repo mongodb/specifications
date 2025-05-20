@@ -405,19 +405,19 @@ class DriverInfoOptions {
 }
 ```
 
-Note that how these options are provided to a driver during `MongoClient` initialization is left up to the implementer.
+Note that how these options are provided to a driver is left up to the implementer.
 
 ### Metadata updates after MongoClient initialization
 
-Drivers MUST provide an API that allows appending `DriverInfoOptions` to a MongoClient instance after initialization.
+Drivers MUST provide an API that allows appending `DriverInfoOptions` to a `MongoClient` instance after initialization.
 
 After client metadata update, drivers MUST apply updated metadata to newly created connections. Drivers MUST NOT apply
-updated metadata to already established connections, create new connections, or close existing connections solely for the purpose of transferring
-updated metadata.
+updated metadata to already established connections, create new connections, or close existing connections solely for
+the purpose of transferring updated metadata.
 
 ### Appending metadata
 
-If `DriverInfoOptions` are provided during or after MongoClient initialization, these options MUST NOT replace any
+If `DriverInfoOptions` are provided during or after `MongoClient` initialization, these options MUST NOT replace any
 existing metadata values, including driver-generated metadata and previously provided options. The provided options MUST
 be appended to their respective fields, and be delimited by a `|` character. For example, when
 [Motor](https://www.mongodb.com/docs/drivers/motor/) wraps PyMongo, the following fields are updated to include Motor's
@@ -545,7 +545,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
-- 2025-05-07: Add requirement to allow appending to client metadata after MongoClient initialization.
+- 2025-05-20: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
 - 2024-10-09: Clarify that FaaS and container metadata must both be populated when both are present.
 - 2024-08-16: Migrated from reStructuredText to Markdown.
