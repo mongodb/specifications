@@ -85,9 +85,8 @@ the following sets of environment variables:
 
 ## Client Metadata Update Prose Tests
 
-The driver **MAY** implement the following tests. Drivers that do not emit events for commands issued as part of the
-handshake with the server will need to create a test-only backdoor mechanism to intercept the handshake `hello` command
-for verification purposes.
+Drivers that do not emit events for commands issued as part of the handshake with the server will need to create a
+test-only backdoor mechanism to intercept the handshake `hello` command for verification purposes.
 
 ### Test 1: Test that the driver updates metadata
 
