@@ -1,0 +1,98 @@
+{
+  "description" : "command-logging",
+  "schemaVersion" : "1.13",
+  "createEntities" : [
+    {
+      "client" : {
+        "id" : "client",
+        "tracing" : true
+      }
+    },
+    {
+      "database" : {
+        "id" : "database",
+        "client" : "client",
+        "databaseName" : "logging-tests"
+      }
+    },
+    {
+      "collection" : {
+        "id" : "collection",
+        "database" : "database",
+        "collectionName" : "logging-tests-collection"
+      }
+    }
+  ],
+  "initialData" : [
+    {
+      "collectionName" : "logging-tests-collection",
+      "databaseName" : "logging-tests",
+      "documents" : [
+        {
+          "_id" : 1,
+          "x" : 11
+        }
+      ]
+    }
+  ],
+  "tests" : [
+    {
+      "description" : "A successful command",
+      "operations" : [
+        {
+          "name" : "runCommand",
+          "object" : "database",
+          "arguments" : {
+            "command" : {
+              "ping" : 1
+            },
+            "commandName" : "ping"
+          }
+        },
+        {
+          "name" : "insertOne",
+          "object" : "collection",
+          "arguments" : {
+            "document" : {
+              "x" : 1
+            }
+          }
+        }
+      ],
+      "expectTracingSpans" :
+        {
+          "client" : "client",
+          "spans" : [
+            {
+              "name" : "Command ping",
+              "tags" : {
+                "server.address" : "localhost",
+                "server.type" : "REPLICA_SET_PRIMARY",
+                "db.system" : "mongodb",
+                "server.port" : "27018",
+                "db.namespace" : "logging-tests.$cmd",
+                "db.query.summary" : "ping",
+                "db.query.opcode" : "OP_MSG"
+              }
+            },
+            {
+              "name" : "MixedBulkWriteOperation logging-tests.logging-tests-collection",
+              "tags" : {}
+            },
+            {
+              "name" : "Command insert",
+              "tags" : {
+                "server.address" : "localhost",
+                "server.type" : "REPLICA_SET_PRIMARY",
+                "db.system" : "mongodb",
+                "server.port" : "27018",
+                "db.namespace" : "logging-tests.$cmd",
+                "db.query.summary" : "insert",
+                "db.query.opcode" : "OP_MSG"
+              }
+            }
+          ]
+        }
+    }
+  ]
+}
