@@ -82,3 +82,128 @@ the following sets of environment variables:
 2. Create and connect a `Connection` object that connects to the server that returns the mocked response.
 
 3. Assert that no error is raised.
+
+## Client Metadata Update Prose Tests
+
+Drivers that do not emit events for commands issued as part of the handshake with the server will need to create a
+test-only backdoor mechanism to intercept the handshake `hello` command for verification purposes.
+
+### Test 1: Test that the driver updates metadata
+
+Drivers should verify that metadata provided after `MongoClient` initialization is appended, not replaced, and is
+visible in the `hello` command of new connections.
+
+There are multiple test cases parameterized with `DriverInfoOptions` to be appended after `MongoClient` initialization.
+Before each test case, perform the setup.
+
+#### Setup
+
+1. Create a `MongoClient` instance with the following:
+
+    - `maxIdleTimeMS` set to `1ms`
+
+    - Wrapping library metadata:
+
+        | Field    | Value            |
+        | -------- | ---------------- |
+        | name     | library          |
+        | version  | 1.2              |
+        | platform | Library Platform |
+
+2. Send a `ping` command to the server and verify:
+
+    - The command succeeds.
+    - The wrapping library metadata is appended to the respective `client.driver` fields of the `hello` command.
+
+3. Save intercepted `client` document as `initialClientMetadata`.
+
+4. Wait 5ms for the connection to become idle.
+
+#### Parameterized test cases
+
+**Case 1**
+
+| Field    | Value              |
+| -------- | ------------------ |
+| name     | framework          |
+| version  | 2.0                |
+| platform | Framework Platform |
+
+**Case 2**
+
+| Field    | Value     |
+| -------- | --------- |
+| name     | framework |
+| version  | 2.0       |
+| platform | null      |
+
+**Case 3**
+
+| Field    | Value              |
+| -------- | ------------------ |
+| name     | framework          |
+| version  | null               |
+| platform | Framework Platform |
+
+**Case 4**
+
+| Field    | Value     |
+| -------- | --------- |
+| name     | framework |
+| version  | null      |
+| platform | null      |
+
+#### Running a test case
+
+1. Append the `DriverInfoOptions` from the selected test case to the `MongoClient` metadata.
+
+2. Send a `ping` command to the server and verify:
+
+    - The command succeeds.
+
+    - The framework metadata is appended to the existing `DriverInfoOptions` in the `client.driver` fields of the `hello`
+        command, with values separated by a pipe `|`.
+
+        - `client.driver.name`:
+            - If test case's name is non-null: `library|<name>`
+            - Otherwise, the field remains unchanged: `library`
+        - `client.driver.version`:
+            - If test case's version is non-null: `1.2|<version>`
+            - Otherwise, the field remains unchanged: `1.2`
+        - `client.driver.platform`:
+            - If test case's platform is non-null: `Library Platform|<platform>`
+            - Otherwise, the field remains unchanged: `Library Platform`
+
+    - All other subfields in the `client` document remain unchanged from `initialClientMetadata`.
+
+### Test 2: Test that metadata is not updated on established connections
+
+Drivers should verify that appending metadata after `MongoClient` initialization does **not** close existing
+connections, and that no new `hello` command is sent.
+
+1. Create a `MongoClient` instance with wrapping library metadata:
+
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+2. Send a `ping` command to the server and verify:
+
+    - The command succeeds.
+    - The wrapping library metadata is appended to the respective `client.driver` fields of the `hello` command.
+
+3. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+
+    | Field    | Value              |
+    | -------- | ------------------ |
+    | name     | framework          |
+    | version  | 2.0                |
+    | platform | Framework Platform |
+
+4. Send a `ping` command to the server and verify:
+
+    - The command succeeds.
+    - No `hello` command is sent.
+    - No `ConnectionClosedEvent` is emitted.
