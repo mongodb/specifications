@@ -279,11 +279,11 @@ tests:
           - connectionPendingResponseSucceeded: {}
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {} # Second find succeeds.  
-    # If the connection is closed server-side while draining the response, the 
-    # driver must close the connection.
-  - description: "connection closed server-side while draining response"
+    # If the connection is closed server-side while draining the response, the
+    # driver must retry with a different connection.
+  - description: "read op retries when connection closes server-side while draining response"
     operations:
-      # Run a ping command to pre-load the pool with a connection.  
+      # Run a ping command to pre-load the pool with a connection.
       - name: runCommand
         object: *database
         arguments:
@@ -321,24 +321,91 @@ tests:
         arguments:
           timeoutMS: 50
           filter: {_id: 1}
-        expectError:
-          isTimeoutError: false
     expectEvents:
       - client: *client
         events:
           - commandSucceededEvent:
-              commandName: ping # Pre-loading the connection pool.  
+              commandName: ping # Pre-loading the connection pool.
           - commandFailedEvent:
+              commandName: insert
+          - commandSucceededEvent:
+              commandName: find
+      - client: *client
+        eventType: cmap
+        events:
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Ping finishes.
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Insert fails.
+          - connectionPendingResponseStarted: {} # Pending read fails on first find
+          - connectionPendingResponseFailed:
+              reason: error
+          - connectionClosedEvent:
+              reason: error
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Find finishes.
+    # If the connection is closed server-side while draining the response, the
+    # driver must retry with a different connection.
+  - description: "write op retries when connection closes server-side while draining response"
+    operations:
+      # Run a ping command to pre-load the pool with a connection.
+      - name: runCommand
+        object: *database
+        arguments:
+          command:
+            ping: 1
+          commandName: ping
+      # Create a failpoint to block the first and second operation.
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: {times: 1}
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 500
+              closeConnection: true
+      # Execute operation with timeout less than block time.
+      - name: insertOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          document: {_id: 3, x: 1}
+        expectError:
+          isTimeoutError: true
+      - name: wait
+        object: testRunner
+        arguments:
+          ms: 500
+      # Execute a subsequent operation with a timeout less than the block time.
+      - name: insertOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          document: {_id: 3, x: 1}
+    expectEvents:
+      - client: *client
+        events:
+          - commandSucceededEvent:
+              commandName: ping # Pre-loading the connection pool.
+          - commandFailedEvent:
+              commandName: insert
+          - commandSucceededEvent:
               commandName: insert
       - client: *client
         eventType: cmap
         events:
           - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {} # Ping finishes.  
+          - connectionCheckedInEvent: {} # Ping finishes.
           - connectionCheckedOutEvent: {}
-          - connectionCheckedInEvent: {} # Insert fails.  
-          - connectionPendingResponseStarted: {} # First find fails
+          - connectionCheckedInEvent: {} # Insert fails.
+          - connectionPendingResponseStarted: {} # Pending read fails on first find
           - connectionPendingResponseFailed:
               reason: error
           - connectionClosedEvent:
               reason: error
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {} # Find finishes.
