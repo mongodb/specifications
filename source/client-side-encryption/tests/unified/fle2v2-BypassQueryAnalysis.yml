@@ -14,10 +14,10 @@ createEntities:
   - client:
       id: &client0 client0
       autoEncryptOpts:
-        keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           local:
             key: Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
+        keyVaultNamespace: keyvault.datakeys
         bypassQueryAnalysis: true
       observeEvents: [ commandStartedEvent ]
   - database:
@@ -29,16 +29,15 @@ createEntities:
       database: *encryptedDB
       collectionName: &encryptedCollName default
   - client:
-      id: &unencryptedClient unencryptedClient
-      observeEvents: [ commandStartedEvent ]
+      id: &client1 client1
   - database:
       id: &unencryptedDB unencryptedDB
-      client: *unencryptedClient
-      databaseName: &encryptedDBName default
+      client: *client1
+      databaseName: *encryptedDBName
   - collection:
       id: &unencryptedColl unencryptedColl
       database: *unencryptedDB
-      collectionName: &encryptedCollName default
+      collectionName: *encryptedCollName
 
 initialData:
   - databaseName: &keyvaultDBName keyvault
@@ -72,8 +71,8 @@ tests:
         arguments:
           filter: { "_id": 1 }
         expectResult: [{"_id": 1, "encryptedIndexed": "123" }]
-      - name: find
-        object: unencryptedColl
+      - object: *unencryptedColl
+        name: find
         arguments:
           filter: {}
         expectResult:
