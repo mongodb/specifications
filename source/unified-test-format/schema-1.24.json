@@ -147,7 +147,9 @@
                   "connectionPendingResponseStarted",
                   "connectionPendingResponseFailed",
                   "serverDescriptionChangedEvent",
-                  "topologyDescriptionChangedEvent"
+                  "topologyDescriptionChangedEvent",
+                  "topologyOpeningEvent",
+                  "topologyClosedEvent"
                 ]
               }
             },
