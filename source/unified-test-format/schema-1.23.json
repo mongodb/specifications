@@ -144,7 +144,9 @@
                   "connectionCheckedOutEvent",
                   "connectionCheckedInEvent",
                   "serverDescriptionChangedEvent",
-                  "topologyDescriptionChangedEvent"
+                  "topologyDescriptionChangedEvent",
+                  "topologyOpeningEvent",
+                  "topologyClosedEvent"
                 ]
               }
             },
@@ -426,14 +428,6 @@
               "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
             }
           }
-        },
-        "awsTemporary": {
-          "type": "object",
-          "properties": {}
-        },
-        "awsTemporaryNoSessionToken": {
-          "type": "object",
-          "properties": {}
         },
         "^azure(:[a-zA-Z0-9_]+)?$": {
           "type": "object",
