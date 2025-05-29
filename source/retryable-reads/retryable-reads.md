@@ -53,8 +53,9 @@ An error is considered retryable if it meets any of the following criteria:
 | SocketException                    | 9001           |
 
 - a [PoolClearedError](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool-errors)
-- Any of the above retryable errors that occur during a connection handshake (including the authentication step). For
-    example, a network error or ShutdownInProgress error encountered when running the hello or saslContinue commands.
+- Any of the above retryable errors that occur during a connection handshake (including the authentication step) or
+    connection checkout. For example, a network error or ShutdownInProgress error encountered when running the hello or
+    saslContinue commands.
 
 ### MongoClient Configuration
 
@@ -546,6 +547,8 @@ reads because the resilience benefit of retryable reads outweighs the minor risk
 any customers experiencing degraded performance can simply disable `retryableReads`.
 
 ## Changelog
+
+- 2025-05-28: Include connection checkout in the transient network error retryability criteria.
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
