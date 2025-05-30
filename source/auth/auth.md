@@ -1009,7 +1009,8 @@ The order in which Drivers MUST search for credentials is:
 2. Environment variables
 3. A custom AWS credential provider if the driver supports it.
 4. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
-5. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
+5. The EKS endpoint if `AWS_CONTAINER_CREDENTIALS_FULL_URI` and `AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE` are set.
+6. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
 > [!NOTE]
 > See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q-and-a)
@@ -1098,6 +1099,33 @@ The JSON response from the STS endpoint will contain credentials in this format:
 ```
 
 Note that the token is called `SessionToken` and not `Token` as it would be with other credential responses.
+
+##### EKS endpoint
+
+If a username and password are not provided and the aforementioned environment variables are not set and
+`AWS_CONTAINER_CREDENTIALS_FULL_URI` and `AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE` are set, then drivers MUST use the
+Amazon EKS Pod Identity endpoint to get the credentials. Drivers SHOULD enforce a 10 second read timeout while waiting
+for incoming content.
+
+The "Authorization" header value for the request is obtained by reading the contents of the file given by
+`AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE`.
+
+Querying the URI will return the JSON response:
+
+```javascript
+{
+ "AccessKeyId": <access_key>,
+ "Expiration": <date>,
+ "SecretAccessKey": <secret_access_key>,
+ "Token": <security_token>
+ "AccountId": <aws_account_id>
+}
+```
+
+```bash
+$ TOKEN=$(cat $AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE)
+$ curl -H Authorization:$TOKEN $AWS_CONTAINER_CREDENTIALS_FULL_URI
+```
 
 ##### ECS endpoint
 
