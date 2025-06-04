@@ -501,7 +501,6 @@ the client MUST follow these steps:
     [Why synchronize clearing a server's pool with updating the topology?](server-discovery-and-monitoring.md#why-synchronize-clearing-a-servers-pool-with-updating-the-topology)).
     If this was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true (see
     [Why does the pool need to support closing in use connections as part of its clear logic?](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#why-does-the-pool-need-to-support-interrupting-in-use-connections-as-part-of-its-clear-logic))
-    
 
 4. If this was a network error and the server was in a known state before the error, the client MUST NOT sleep and MUST
     begin the next check immediately. (See
