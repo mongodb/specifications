@@ -485,6 +485,8 @@ The structure of this object is as follows:
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
         - [serverHeartbeatFailedEvent](#expectedEvent_serverHeartbeatFailedEvent)
         - [topologyDescriptionChangedEvent](#expectedEvent_topologyDescriptionChangedEvent)
+        - [topologyOpeningEvent](#expectedEvent_topologyOpeningEvent)
+        - [topologyClosedEvent](#expectedEvent_topologyClosedEvent)
 
     <span id="entity_client_ignoreCommandMonitoringEvents"></span>
 
@@ -1230,6 +1232,18 @@ The structure of this object is as follows:
 
         Test runners SHOULD ignore any other fields present on the `previousDescription` and `newDescription` fields of the
         captured `topologyDescriptionChangedEvent`.
+
+<span id="expectedEvent_topologyOpeningEvent"></span>
+
+- `topologyOpeningEvent`: Optional object. Assertions for one
+    [topologyOpeningEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
+
+<span id="expectedEvent_topologyClosedEvent"></span>
+
+- `topologyClosedEvent`: Optional object. Assertions for one
+    [topologyClosedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
 
 ##### hasServiceId
 
@@ -3123,7 +3137,8 @@ If [test.runOnRequirements](#test_runOnRequirements) is specified, the test runn
 
 If [initialData](#initialData) is specified, for each [collectionData](#collectiondata) therein the test runner MUST set
 up the collection. All setup operations MUST use the internal MongoClient and a "majority" write concern. The test
-runner MUST first drop the collection. If a `createOptions` document is present, the test runner MUST execute a `create`
+runner MUST first drop the collection. The test runner must also drop the collections `_enxcol.<collectionName>.esc` and
+`_enxcol.<collectionName>.ecoc`. If a `createOptions` document is present, the test runner MUST execute a `create`
 command to create the collection with the specified options. The test runner MUST then insert the specified documents
 (if any). If no documents are present and `createOptions` is not set, the test runner MUST create the collection. If the
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
@@ -3494,6 +3509,16 @@ ignored in order to test the test runner implementation (e.g. defining entities 
 The specification does prefer "MUST" in other contexts, such as discussing parts of the test file format that *are*
 enforceable by the JSON schema or the test runner implementation.
 
+<span id="rationale_dropping_metadata"></span>
+
+### Why are `_enxcol` collections dropped?
+
+The collections `_enxcol.<collectionName>.esc` and `_enxcol.<collectionName>.ecoc` are
+[automatically created](../client-side-encryption/client-side-encryption.md#create-collection-helper) for Queryable
+Encryption collections. If these collections are present and non-empty, the server generated `__safeContent__` field may
+differ. `__safeContent__` includes a count of the number of instances of the given value. To do exact matching on
+`__safeContent__` the test runner is required to drop these collections.
+
 <span id="rationale_observeSensitiveCommands"></span>
 
 ### Why can't `observeSensitiveCommands` be true when authentication is enabled?
@@ -3554,6 +3579,11 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-04-25: Drop `_enxcol` collections.
+
+- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format and schema 1.20+ as they
+    were omitted in error.
 
 - 2025-01-21: **Schema version 1.23.**
 
