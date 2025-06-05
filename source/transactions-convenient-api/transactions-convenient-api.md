@@ -142,7 +142,6 @@ This method should perform the following sequence of actions:
         MaxTimeMSExpired and the elapsed time of `withTransaction` is less than 120 seconds, jump back to step eight.
         We will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
         [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
-        
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label and the elapsed time of
         `withTransaction` is less than 120 seconds, jump back to step two.

@@ -1,9 +1,14 @@
 # Atlas Serverless Tests
 
-- Status: Accepted
+- Status: Obsolete
 - Minimum Server Version: N/A
 
 ______________________________________________________________________
+
+## Obsolescence Notice
+
+This document is obsolete and there is no longer a requirement for drivers to test against Atlas Serverless. The
+specification is preserved for historical purposes only.
 
 ## Introduction
 

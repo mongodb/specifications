@@ -337,9 +337,10 @@ The structure of this object is as follows:
     Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded cluster behind a load balancer implicitly
     uses replica sets for its shards.
 
-- `serverless`: Optional string. Whether or not the test should be run on Atlas Serverless instances. Valid values are
-    "require", "forbid", and "allow". If "require", the test MUST only be run on Atlas Serverless instances. If
-    "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted or "allow", this option has no effect.
+- `serverless` (deprecated): Optional string. Whether or not the test should be run on Atlas Serverless instances. Valid
+    values are "require", "forbid", and "allow". If "require", the test MUST only be run on Atlas Serverless instances.
+    If "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted or "allow", this option has no
+    effect.
 
     The test runner MUST be informed whether or not Atlas Serverless is being used in order to determine if this
     requirement is met (e.g. through an environment variable or configuration option).
@@ -347,6 +348,9 @@ The structure of this object is as follows:
     Note: the Atlas Serverless proxy imitates mongos, so the test runner is not capable of determining if Atlas Serverless
     is in use by issuing commands such as `buildInfo` or `hello`. Furthermore, connections to Atlas Serverless use a
     load balancer, so the topology will appear as "load-balanced".
+
+    Note: serverless testing is no longer required, and drivers that no longer support serverless testing MAY omit
+    implementation of this requirement and instantly skip all tests that use `serverless: require`.
 
 - `serverParameters`: Optional object of server parameters to check against. To check server parameters, drivers send a
     `{ getParameter: 1, <parameter>: 1 }` command to the server using an internal MongoClient. Drivers MAY also choose
@@ -1307,7 +1311,6 @@ The structure of each object is as follows:
     When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
     that the failure has been redacted according to the rules defined for error redaction in the
     [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
-    
 
     When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 
@@ -3579,6 +3582,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-06-04: Deprecate the `serverless` runOnRequirement
 
 - 2025-04-25: Drop `_enxcol` collections.
 
