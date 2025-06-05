@@ -314,7 +314,6 @@ Drivers MUST then retry the operation as many times as necessary until any one o
 
 - CSOT is enabled and the operation times out per
     [Client Side Operations Timeout: Retryability](../client-side-operations-timeout/client-side-operations-timeout.md#retryability).
-    
 
 - CSOT is not enabled and one retry was attempted.
 
