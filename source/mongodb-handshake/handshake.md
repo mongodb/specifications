@@ -405,11 +405,19 @@ class DriverInfoOptions {
 }
 ```
 
-Note that how these options are provided to a driver is left up to the implementer.
+Note that how these options are provided to a driver during `MongoClient` initialization is left up to the implementer.
 
 ### Metadata updates after MongoClient initialization
 
-Drivers MUST provide an API that allows appending `DriverInfoOptions` to a `MongoClient` instance after initialization.
+Drivers MUST provide an API that allows appending `DriverInfoOptions` to a `MongoClient` instance after initialization,
+adhering to the pattern described below while following idioms of the language of the driver:
+
+```java
+interface MongoClient { 
+  void appendMetadata(DriverInfoOptions driverInfoOptions);
+  // other existing members of MongoClient
+}
+```
 
 After client metadata update, drivers MUST apply updated metadata to newly created connections. Drivers MUST NOT apply
 updated metadata to already established connections, create new connections, or close existing connections solely for
