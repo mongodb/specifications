@@ -213,18 +213,9 @@ Before each test case, perform the setup.
 Drivers should verify that appending metadata after `MongoClient` initialization does **not** close existing
 connections, and that no new `hello` command is sent.
 
-1. Create a `MongoClient` instance with wrapping library metadata:
+1. Create a `MongoClient` instance.
 
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
-
-2. Send a `ping` command to the server and verify:
-
-    - The command succeeds.
-    - The wrapping library metadata is appended to the respective `client.driver` fields of the `hello` command.
+2. Send a `ping` command to the server and verify that the command succeeds.
 
 3. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
