@@ -333,8 +333,6 @@ tests:
                     "subType": "00"}, "$binary": {"base64": "2gseKlG5Le12fS/vj4eaED4lturF16kAgJ1TpW3HxEE=",
                     "subType": "00"}, "$binary": {"base64": "7Cvg0Y3j/5i2F1TeXxlMmU7xwif5dCmwkZAOrVC5K2Y=",
                     "subType": "00"}]}
-        collectionName: &collection_name "default"
-        databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:

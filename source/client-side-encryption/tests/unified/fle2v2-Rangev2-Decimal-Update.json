@@ -1747,9 +1747,7 @@
                 }
               ]
             }
-          ],
-          "collectionName": "default",
-          "databaseName": "default"
+          ]
         }
       ],
       "expectEvents": [
