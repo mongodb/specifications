@@ -99,13 +99,14 @@ tests:
             - *doc0
             - {_id: 2, encrypted_string: "string1"}
         object: "coll"
-    outcome:
-      - documents:
+      - name: find
+        object: coll_unencrypted
+        arguments:
+          filter: {}
+        expectResult:
           - *doc0_encrypted
           - &doc1_encrypted {_id: 2, encrypted_string: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAACDdw4KFz3ZLquhsbt7RmDjD0N67n0uSXx7IGnQNCLeIKvot6s/ouI21Eo84IOtb6lhwUNPlSEBNY0/hbszWAKJg==',
                 'subType': '06'}}}
-        collectionName: *collection_name
-        databaseName: *database_name
     expectEvents:
       - client: "client0"
         events:
