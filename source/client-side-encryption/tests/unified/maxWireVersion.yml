@@ -12,7 +12,7 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: {}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
         extraOptions:
           mongocryptdBypassSpawn: true # mongocryptd probably won't be on the path. mongocryptd was introduced in server 4.2.
   - database:

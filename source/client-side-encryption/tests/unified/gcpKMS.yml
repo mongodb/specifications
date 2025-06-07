@@ -8,7 +8,7 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          gcp: {}
+          gcp: { email: { $$placeholder: 1 }, privateKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
