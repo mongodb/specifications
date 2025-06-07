@@ -43,17 +43,16 @@ tests:
         arguments:
           document: &doc0 {_id: 1, encrypted_objectId: {"$oid": "AAAAAAAAAAAAAAAAAAAAAAAA"}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc0
+        expectResult: [*doc0]
     outcome:
       - documents:
           - &doc0_encrypted {_id: 1, encrypted_objectId: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAHmkTPqvzfHMWpvS1mEsrjOxVQ2dyihEgIFWD5E0eNEsiMBQsC0GuvjdqYRL5DHLFI1vKuGek7EYYp0Qyii/tHqA==',
                 'subType': '06'}}}
         collectionName: &collection_name "default"
-
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
@@ -85,11 +84,11 @@ tests:
         arguments:
           document: &doc1 {_id: 1, encrypted_symbol: {"$symbol": "test"}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc1
+        expectResult: [*doc1]
     outcome:
       - documents:
           - &doc1_encrypted {_id: 1, encrypted_symbol: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAOOmvDmWjcuKsSCO7U/7t9HJ8eI73B6wduyMbdkvn7n7V4uTJes/j+BTtneSdyG2JHKHGkevWAJSIU2XoO66BSXw==',
@@ -126,11 +125,11 @@ tests:
         arguments:
           document: &doc2 {_id: 1, encrypted_int: {"$numberInt": "123"}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc2
+        expectResult: [*doc2]
     outcome:
       - documents:
           - &doc2_encrypted {_id: 1, encrypted_int: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAQPNXJVXMEjGZnftMuf2INKufXCtQIRHdw5wTgn6QYt3ejcoAXyiwI4XIUizkpsob494qpt2in4tWeiO7b9zkA8Q==',
@@ -194,11 +193,11 @@ tests:
           document: &doc6 {_id: 1, encrypted_binData: {"$binary": {base64: "AAAA",
                 subType: "00"}}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc6
+        expectResult: [*doc6]
     outcome:
       - documents:
           - &doc6_encrypted {_id: 1, encrypted_binData: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAFB/KHZQHaHHo8fctcl7v6kR+sLkJoTRx2cPSSck9ya+nbGROSeFhdhDRHaCzhV78fDEqnMDSVPNi+ZkbaIh46GQ==',
@@ -235,11 +234,11 @@ tests:
         arguments:
           document: &doc7 {_id: 1, encrypted_javascript: {"$code": "var x = 1;"}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc7
+        expectResult: [*doc7]
     outcome:
       - documents:
           - &doc7_encrypted {_id: 1, encrypted_javascript: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAANrvMgJkTKWGMc9wt3E2RBR2Hu5gL9p+vIIdHe9FcOm99t1W480/oX1Gnd87ON3B399DuFaxi/aaIiQSo7gTX6Lw==',
@@ -303,11 +302,11 @@ tests:
         arguments:
           document: &doc10 {_id: 1, encrypted_timestamp: {$timestamp: {t: 123, i: 456}}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc10
+        expectResult: [*doc10]
     outcome:
       - documents:
           - &doc10_encrypted {_id: 1, encrypted_timestamp: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAARJHaM4Gq3MpDTdBasBsEolQaOmxJQU1wsZVaSFAOLpEh1QihDglXI95xemePFMKhg+KNpFg7lw1ChCs2Wn/c26Q==',
@@ -345,11 +344,11 @@ tests:
           document: &doc11 {_id: 1, encrypted_regex: {$regularExpression: {pattern: "test",
                 options: ""}}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc11
+        expectResult: [*doc11]
     outcome:
       - documents:
           - &doc11_encrypted {_id: 1, encrypted_regex: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAALVnxM4UqGhqf5eXw6nsS08am3YJrTf1EvjKitT8tyyMAbHsICIU3GUjuC7EBofCHbusvgo7pDyaClGostFz44nA==',
@@ -386,11 +385,11 @@ tests:
         arguments:
           document: &doc13 {_id: 1, encrypted_date: {$date: {$numberLong: "123"}}}
         object: "coll"
-      - name: findOne
+      - name: find
+        object: coll
         arguments:
           filter: {_id: 1}
-        object: "coll"
-        expectResult: *doc13
+        expectResult: [*doc13]
     outcome:
       - documents:
           - &doc13_encrypted {_id: 1, encrypted_date: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAJ5sN7u6l97+DswfKTqZAijSTSOo5htinGKQKUD7pHNJYlLXGOkB4glrCu7ibu0g3344RHQ5yUp4YxMEa8GD+Snw==',

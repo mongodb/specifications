@@ -128,19 +128,21 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_objectId": {
-              "$oid": "AAAAAAAAAAAAAAAAAAAAAAAA"
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_objectId": {
+                "$oid": "AAAAAAAAAAAAAAAAAAAAAAAA"
+              }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -248,19 +250,21 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_symbol": {
-              "$symbol": "test"
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_symbol": {
+                "$symbol": "test"
+              }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -368,19 +372,21 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_int": {
-              "$numberInt": "123"
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_int": {
+                "$numberInt": "123"
+              }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -531,22 +537,24 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_binData": {
-              "$binary": {
-                "base64": "AAAA",
-                "subType": "00"
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_binData": {
+                "$binary": {
+                  "base64": "AAAA",
+                  "subType": "00"
+                }
               }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -654,19 +662,21 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_javascript": {
-              "$code": "var x = 1;"
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_javascript": {
+                "$code": "var x = 1;"
+              }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -816,22 +826,24 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_timestamp": {
-              "$timestamp": {
-                "t": 123,
-                "i": 456
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_timestamp": {
+                "$timestamp": {
+                  "t": 123,
+                  "i": 456
+                }
               }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -942,22 +954,24 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_regex": {
-              "$regularExpression": {
-                "pattern": "test",
-                "options": ""
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_regex": {
+                "$regularExpression": {
+                  "pattern": "test",
+                  "options": ""
+                }
               }
             }
-          }
+          ]
         }
       ],
       "outcome": [
@@ -1067,21 +1081,23 @@
           "object": "coll"
         },
         {
-          "name": "findOne",
+          "name": "find",
+          "object": "coll",
           "arguments": {
             "filter": {
               "_id": 1
             }
           },
-          "object": "coll",
-          "expectResult": {
-            "_id": 1,
-            "encrypted_date": {
-              "$date": {
-                "$numberLong": "123"
+          "expectResult": [
+            {
+              "_id": 1,
+              "encrypted_date": {
+                "$date": {
+                  "$numberLong": "123"
+                }
               }
             }
-          }
+          ]
         }
       ],
       "outcome": [
