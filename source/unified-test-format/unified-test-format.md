@@ -1311,7 +1311,6 @@ The structure of each object is as follows:
     When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
     that the failure has been redacted according to the rules defined for error redaction in the
     [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
-    
 
     When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 

@@ -11,7 +11,7 @@ createEntities:
         - connectionClosedEvent
         - connectionCreatedEvent
   - database:
-      id: &database
+      id: &database database
       client: *client
       databaseName: test
 tests:
@@ -26,7 +26,7 @@ tests:
             ping: 1
         expectResult:
           ok: 1
-      - name: appendClientMetadata
+      - name: appendMetadata
         object: *client
         arguments:
           driverInfoOptions:

@@ -28,7 +28,7 @@
   ],
   "tests": [
     {
-     "description": "metadata append does not create new connections or close existing ones and no hello command is sent",
+      "description": "metadata append does not create new connections or close existing ones and no hello command is sent",
       "operations": [
         {
           "name": "runCommand",
@@ -43,7 +43,7 @@
           }
         },
         {
-          "name": "appendClientMetadata",
+          "name": "appendMetadata",
           "object": "client",
           "arguments": {
             "driverInfoOptions": {
@@ -96,4 +96,3 @@
     }
   ]
 }
-
