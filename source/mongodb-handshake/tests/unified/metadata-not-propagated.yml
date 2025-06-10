@@ -1,4 +1,4 @@
-description: client metadata is not transferred
+description: client metadata is not propagated to the server
 schemaVersion: '1.9'
 runOnRequirements:
   - minServerVersion: '6.0'
