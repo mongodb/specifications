@@ -3597,7 +3597,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
-- 2025-06-09: Add `appendClientMetadata` operation.
+- 2025-06-09: Add `appendMetadata` operation.
 
 - 2025-06-04: Deprecate the `serverless` runOnRequirement
 
