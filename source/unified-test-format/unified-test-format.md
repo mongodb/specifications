@@ -1311,6 +1311,7 @@ The structure of each object is as follows:
     When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
     that the failure has been redacted according to the rules defined for error redaction in the
     [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
+    
 
     When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 
@@ -1490,6 +1491,19 @@ NOT specify any operations for a client entity or any entity descended from it f
 driver behavior when an operation is attempted on a closed client or one of its descendant objects is not consistent.
 
 <span id="client_createChangeStream"></span>
+
+#### appendMetadata
+
+Appends client metadata to the client.
+
+The following arguments are supported:
+
+- `driverInfoOptions`: Required object with the following fields:
+    - `name`: Required string. The name of the wrapping library or framework.
+    - `version`: Optional string. The version of the wrapping library or framework.
+    - `platform`: Optional string. The platform of the wrapping library or framework.
+
+See [handshake](../mongodb-handshake/handshake.md#metadata-updates-after-mongoclient-initialization).
 
 #### createChangeStream
 
