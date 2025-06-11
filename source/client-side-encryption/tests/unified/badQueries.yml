@@ -19,6 +19,10 @@ createEntities:
       id: "coll"
       database: "db"
       collectionName: default
+  - collection:
+      id: coll_with_encrypted_id
+      database: db
+      collectionName: coll_with_encrypted_id
 initialData:
   - databaseName: default
     collectionName: default
@@ -38,6 +42,12 @@ initialData:
             'encrypted_string_equivalent': {'encrypt': {'keyId': ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
                         'subType': '04'}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}},
           'bsonType': 'object'}
+  - databaseName: default
+    collectionName: coll_with_encrypted_id
+    documents: []
+    createOptions:
+      validator:
+        $jsonSchema: {'properties': {'_id': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}}
   - databaseName: keyvault
     collectionName: datakeys
     documents: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
@@ -499,7 +509,7 @@ tests:
       - name: insertOne
         arguments:
           document: {_id: 1}
-        object: "coll"
+        object: "coll_with_encrypted_id"
         expectError:
           errorContains: "Invalid schema containing the 'encrypt' keyword."
   - description: "an insert with an array value for an encrypted field fails"
