@@ -1,5 +1,5 @@
 description: fle2v2-CreateCollection-OldServer
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "6.0.0"
     maxServerVersion: "6.3.99"
@@ -11,10 +11,19 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
         encryptedFieldsMap:
-          default.encryptedCollection: {"fields": [{"path": "firstName", "bsonType": "string",
-                  "keyId": {"$binary": {"base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04"}}}]}
+          default.encryptedCollection:
+            {
+              "fields":
+                [
+                  {
+                    "path": "firstName",
+                    "bsonType": "string",
+                    "keyId": { "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } },
+                  },
+                ],
+            }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -26,8 +35,7 @@ createEntities:
       database: "db"
       collectionName: default
 tests:
-  - description: "driver returns an error if creating a QEv2 collection on unsupported
-      server"
+  - description: "driver returns an error if creating a QEv2 collection on unsupported server"
 
     operations:
       # Do an initial drop to remove collections that may exist from previous test runs.
@@ -40,8 +48,9 @@ tests:
         arguments:
           collection: "encryptedCollection"
         expectError:
-          errorContains: "Driver support of Queryable Encryption is incompatible with
-            server. Upgrade server to use Queryable Encryption."
+          errorContains:
+            "Driver support of Queryable Encryption is incompatible with server. Upgrade server to use Queryable
+            Encryption."
       # Assert no collections were created.
       - name: assertCollectionNotExists
         object: testRunner

@@ -1,5 +1,5 @@
 description: fle2v2-EncryptedFieldsMap-defaults
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "7.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
@@ -13,7 +13,7 @@ createEntities:
         kmsProviders:
           local:
             key: Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
-        encryptedFieldsMap: {"default.default": {"fields": []}}
+        encryptedFieldsMap: { "default.default": { "fields": [] } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -33,8 +33,18 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1, foo: {"$binary": {"base64": "BYkAAAAFZAAgAAAAAE8KGPgq7h3n9nH5lfHcia8wtOTLwGkZNLBesb6PULqbBXMAIAAAAACq0558QyD3c3jkR5k0Zc9UpQK8ByhXhtn2d1xVQnuJ3AVjACAAAAAA1003zUWGwD4zVZ0KeihnZOthS3V6CEHUfnJZcIYHefISY20AAAAAAAAAAAAA",
-                "subType": "06"}}}
+          document:
+            &doc0 {
+              _id: 1,
+              foo:
+                {
+                  "$binary":
+                    {
+                      "base64": "BYkAAAAFZAAgAAAAAE8KGPgq7h3n9nH5lfHcia8wtOTLwGkZNLBesb6PULqbBXMAIAAAAACq0558QyD3c3jkR5k0Zc9UpQK8ByhXhtn2d1xVQnuJ3AVjACAAAAAA1003zUWGwD4zVZ0KeihnZOthS3V6CEHUfnJZcIYHefISY20AAAAAAAAAAAAA",
+                      "subType": "06",
+                    },
+                },
+            }
         object: "coll"
     outcome:
       - documents:
@@ -49,8 +59,18 @@ tests:
                 insert: *collection_name
                 documents:
                   - *doc0
-                encryptionInformation: {"type": {"$numberInt": "1"}, "schema": {"default.default": {
-                      "escCollection": "enxcol_.default.esc", "ecocCollection": "enxcol_.default.ecoc",
-                      "fields": []}}}
+                encryptionInformation:
+                  {
+                    "type": { "$numberInt": "1" },
+                    "schema":
+                      {
+                        "default.default":
+                          {
+                            "escCollection": "enxcol_.default.esc",
+                            "ecocCollection": "enxcol_.default.ecoc",
+                            "fields": [],
+                          },
+                      },
+                  }
                 ordered: true
               commandName: insert

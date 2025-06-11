@@ -1,5 +1,5 @@
 description: fle2v2-DecryptExistingData
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "7.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
@@ -26,23 +26,48 @@ createEntities:
 initialData:
   - databaseName: default
     collectionName: default
-    documents: [{"_id": 1, "encryptedUnindexed": {"$binary": {"base64": "BqvN76sSNJh2EjQSNFZ4kBICTQaVZPWgXp41I7mPV1rLFTtw1tXzjcdSEyxpKKqujlko5TeizkB9hHQ009dVY1+fgIiDcefh+eQrm3CkhQ==",
-              "subType": "06"}}}]
+    documents:
+      [
+        {
+          "_id": 1,
+          "encryptedUnindexed":
+            {
+              "$binary":
+                {
+                  "base64": "BqvN76sSNJh2EjQSNFZ4kBICTQaVZPWgXp41I7mPV1rLFTtw1tXzjcdSEyxpKKqujlko5TeizkB9hHQ009dVY1+fgIiDcefh+eQrm3CkhQ==",
+                  "subType": "06",
+                },
+            },
+        },
+      ]
   - databaseName: keyvault
     collectionName: datakeys
-    documents: [{'_id': {'$binary': {'base64': 'q83vqxI0mHYSNBI0VniQEg==', 'subType': '04'}},
-          'keyMaterial': {'$binary': {'base64': 'HBk9BWihXExNDvTp1lUxOuxuZK2Pe2ZdVdlsxPEBkiO1bS4mG5NNDsQ7zVxJAH8BtdOYp72Ku4Y3nwc0BUpIKsvAKX4eYXtlhv5zUQxWdeNFhg9qK7qb8nqhnnLeT0f25jFSqzWJoT379hfwDeu0bebJHr35QrJ8myZdPMTEDYF08QYQ48ShRBli0S+QzBHHAQiM2iJNr4svg2WR8JSeWQ==',
-              'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1648914851981'}},
-          'updateDate': {'$date': {'$numberLong': '1648914851981'}}, 'status': {'$numberInt': '0'},
-          'masterKey': {'provider': 'local'}}]
+    documents:
+      [
+        {
+          "_id": { "$binary": { "base64": "q83vqxI0mHYSNBI0VniQEg==", "subType": "04" } },
+          "keyMaterial":
+            {
+              "$binary":
+                {
+                  "base64": "HBk9BWihXExNDvTp1lUxOuxuZK2Pe2ZdVdlsxPEBkiO1bS4mG5NNDsQ7zVxJAH8BtdOYp72Ku4Y3nwc0BUpIKsvAKX4eYXtlhv5zUQxWdeNFhg9qK7qb8nqhnnLeT0f25jFSqzWJoT379hfwDeu0bebJHr35QrJ8myZdPMTEDYF08QYQ48ShRBli0S+QzBHHAQiM2iJNr4svg2WR8JSeWQ==",
+                  "subType": "00",
+                },
+            },
+          "creationDate": { "$date": { "$numberLong": "1648914851981" } },
+          "updateDate": { "$date": { "$numberLong": "1648914851981" } },
+          "status": { "$numberInt": "0" },
+          "masterKey": { "provider": "local" },
+        },
+      ]
 tests:
   - description: "FLE2 decrypt of existing data succeeds"
     operations:
       - name: find
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         object: "coll"
-        expectResult: [{"_id": 1, "encryptedUnindexed": "value123"}]
+        expectResult: [{ "_id": 1, "encryptedUnindexed": "value123" }]
     expectEvents:
       - client: "client0"
         events:
@@ -55,13 +80,19 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {"_id": 1}
+                filter: { "_id": 1 }
               commandName: find
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'q83vqxI0mHYSNBI0VniQEg==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "q83vqxI0mHYSNBI0VniQEg==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find

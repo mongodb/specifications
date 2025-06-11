@@ -1,5 +1,5 @@
 description: types
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "4.1.10"
 # Create separate client entities for each tested type to isolate encryption schemas. mongocryptd/crypt_shared returns an error on schemas for unsupported types (e.g. double).
@@ -9,12 +9,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_objectId': {'encrypt': {'keyId': [
-                     '$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}],
-                  'bsonType': 'objectId', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}},
-            'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_objectId":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }],
+                          "bsonType": "objectId",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -30,9 +42,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_symbol': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'symbol', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_symbol":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "symbol",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -48,9 +75,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_int': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'int', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_int":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "int",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -66,9 +108,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_double': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'double', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_double":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "double",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -84,9 +141,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_decimal': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'decimal', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_decimal":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "decimal",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -102,9 +174,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_binData': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'binData', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_binData":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "binData",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -120,9 +207,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_javascript': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'javascript', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_javascript":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "javascript",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -138,9 +240,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_javascriptWithScope': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'javascriptWithScope', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_javascriptWithScope":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "javascriptWithScope",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -156,9 +273,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_object': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'object', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_object":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "object",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -174,9 +306,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_timestamp': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'timestamp', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_timestamp":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "timestamp",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -192,9 +339,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_regex': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'regex', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_regex":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "regex",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -210,9 +372,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_date': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'date', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_date":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "date",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -228,9 +405,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_minKey': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'minKey', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_minKey":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "minKey",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -246,9 +438,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_maxKey': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'maxKey', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_maxKey":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "maxKey",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -264,9 +471,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_undefined': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'undefined', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_undefined":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "undefined",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -282,9 +504,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_array': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'array', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_array":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "array",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -300,9 +537,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_bool': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'bool', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_bool":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "bool",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -318,9 +570,24 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         schemaMap:
-          "default.default": {'properties': {'encrypted_null': {'encrypt': {'keyId': [{'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==', 'subType': '04'}}], 'bsonType': 'null', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+          "default.default":
+            {
+              "properties":
+                {
+                  "encrypted_null":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": [{ "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } }],
+                          "bsonType": "null",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -337,41 +604,74 @@ initialData:
     documents: []
   - databaseName: keyvault
     collectionName: datakeys
-    documents: [{'status': 1, '_id': {'$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-              'subType': '04'}}, 'masterKey': {'provider': 'aws', 'key': 'arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0',
-            'region': 'us-east-1'}, 'updateDate': {'$date': {'$numberLong': '1552949630483'}},
-          'keyMaterial': {'$binary': {'base64': 'AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEqnsxXlR51T5EbEVezUqqKAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDHa4jo6yp0Z18KgbUgIBEIB74sKxWtV8/YHje5lv5THTl0HIbhSwM6EqRlmBiFFatmEWaeMk4tO4xBX65eq670I5TWPSLMzpp8ncGHMmvHqRajNBnmFtbYxN3E3/WjxmdbOOe+OXpnGJPcGsftc7cB2shRfA4lICPnE26+oVNXT6p0Lo20nY5XC7jyCO',
-              'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
-          'keyAltNames': ['altname', 'another_altname']}]
+    documents:
+      [
+        {
+          "status": 1,
+          "_id": { "$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" } },
+          "masterKey":
+            {
+              "provider": "aws",
+              "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+              "region": "us-east-1",
+            },
+          "updateDate": { "$date": { "$numberLong": "1552949630483" } },
+          "keyMaterial":
+            {
+              "$binary":
+                {
+                  "base64": "AQICAHhQNmWG2CzOm1dq3kWLM+iDUZhEqnhJwH9wZVpuZ94A8gEqnsxXlR51T5EbEVezUqqKAAAAwjCBvwYJKoZIhvcNAQcGoIGxMIGuAgEAMIGoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDHa4jo6yp0Z18KgbUgIBEIB74sKxWtV8/YHje5lv5THTl0HIbhSwM6EqRlmBiFFatmEWaeMk4tO4xBX65eq670I5TWPSLMzpp8ncGHMmvHqRajNBnmFtbYxN3E3/WjxmdbOOe+OXpnGJPcGsftc7cB2shRfA4lICPnE26+oVNXT6p0Lo20nY5XC7jyCO",
+                  "subType": "00",
+                },
+            },
+          "creationDate": { "$date": { "$numberLong": "1552949630483" } },
+          "keyAltNames": ["altname", "another_altname"],
+        },
+      ]
 tests:
   - description: "type=objectId"
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1, encrypted_objectId: {"$oid": "AAAAAAAAAAAAAAAAAAAAAAAA"}}
+          document: &doc0 { _id: 1, encrypted_objectId: { "$oid": "AAAAAAAAAAAAAAAAAAAAAAAA" } }
         object: "coll0"
       - name: find
         object: coll0
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc0]
     outcome:
       - documents:
-          - &doc0_encrypted {_id: 1, encrypted_objectId: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAHmkTPqvzfHMWpvS1mEsrjOxVQ2dyihEgIFWD5E0eNEsiMBQsC0GuvjdqYRL5DHLFI1vKuGek7EYYp0Qyii/tHqA==',
-                'subType': '06'}}}
+          - &doc0_encrypted {
+              _id: 1,
+              encrypted_objectId:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAAHmkTPqvzfHMWpvS1mEsrjOxVQ2dyihEgIFWD5E0eNEsiMBQsC0GuvjdqYRL5DHLFI1vKuGek7EYYp0Qyii/tHqA==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: &collection_name "default"
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -383,36 +683,51 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=symbol"
     operations:
       - name: insertOne
         arguments:
-          document: &doc1 {_id: 1, encrypted_symbol: {"$symbol": "test"}}
+          document: &doc1 { _id: 1, encrypted_symbol: { "$symbol": "test" } }
         object: "coll1"
       - name: find
         object: coll1
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc1]
     outcome:
       - documents:
-          - &doc1_encrypted {_id: 1, encrypted_symbol: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAOOmvDmWjcuKsSCO7U/7t9HJ8eI73B6wduyMbdkvn7n7V4uTJes/j+BTtneSdyG2JHKHGkevWAJSIU2XoO66BSXw==',
-                'subType': '06'}}}
+          - &doc1_encrypted {
+              _id: 1,
+              encrypted_symbol:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAAOOmvDmWjcuKsSCO7U/7t9HJ8eI73B6wduyMbdkvn7n7V4uTJes/j+BTtneSdyG2JHKHGkevWAJSIU2XoO66BSXw==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client1"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -424,36 +739,51 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=int"
     operations:
       - name: insertOne
         arguments:
-          document: &doc2 {_id: 1, encrypted_int: {"$numberInt": "123"}}
+          document: &doc2 { _id: 1, encrypted_int: { "$numberInt": "123" } }
         object: "coll2"
       - name: find
         object: coll2
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc2]
     outcome:
       - documents:
-          - &doc2_encrypted {_id: 1, encrypted_int: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAQPNXJVXMEjGZnftMuf2INKufXCtQIRHdw5wTgn6QYt3ejcoAXyiwI4XIUizkpsob494qpt2in4tWeiO7b9zkA8Q==',
-                'subType': '06'}}}
+          - &doc2_encrypted {
+              _id: 1,
+              encrypted_int:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAAQPNXJVXMEjGZnftMuf2INKufXCtQIRHdw5wTgn6QYt3ejcoAXyiwI4XIUizkpsob494qpt2in4tWeiO7b9zkA8Q==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client2"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -465,63 +795,77 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=double"
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_double: {"$numberDouble": "1.23"}}
+          document: { _id: 1, encrypted_double: { "$numberDouble": "1.23" } }
         object: "coll3"
         expectError:
-            # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
-            # "Cannot use deterministic encryption for element of type: double"
-            # After it is:
-            # "Cannot encrypt element of type: double"
-            # Only check for the common suffix.
+          # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
+          # "Cannot use deterministic encryption for element of type: double"
+          # After it is:
+          # "Cannot encrypt element of type: double"
+          # Only check for the common suffix.
           errorContains: "element of type: double"
   - description: "type=decimal"
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_decimal: {"$numberDecimal": "1.23"}}
+          document: { _id: 1, encrypted_decimal: { "$numberDecimal": "1.23" } }
         object: "coll4"
         expectError:
-            # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
-            # "Cannot use deterministic encryption for element of type: decimal"
-            # After it is:
-            # "Cannot encrypt element of type: decimal"
-            # Only check for the common suffix.
+          # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
+          # "Cannot use deterministic encryption for element of type: decimal"
+          # After it is:
+          # "Cannot encrypt element of type: decimal"
+          # Only check for the common suffix.
           errorContains: "element of type: decimal"
   - description: "type=binData"
     operations:
       - name: insertOne
         arguments:
-          document: &doc6 {_id: 1, encrypted_binData: {"$binary": {base64: "AAAA",
-                subType: "00"}}}
+          document: &doc6 { _id: 1, encrypted_binData: { "$binary": { base64: "AAAA", subType: "00" } } }
         object: "coll5"
       - name: find
         object: coll5
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc6]
     outcome:
       - documents:
-          - &doc6_encrypted {_id: 1, encrypted_binData: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAFB/KHZQHaHHo8fctcl7v6kR+sLkJoTRx2cPSSck9ya+nbGROSeFhdhDRHaCzhV78fDEqnMDSVPNi+ZkbaIh46GQ==',
-                'subType': '06'}}}
+          - &doc6_encrypted {
+              _id: 1,
+              encrypted_binData:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAAFB/KHZQHaHHo8fctcl7v6kR+sLkJoTRx2cPSSck9ya+nbGROSeFhdhDRHaCzhV78fDEqnMDSVPNi+ZkbaIh46GQ==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client5"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -533,36 +877,51 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=javascript"
     operations:
       - name: insertOne
         arguments:
-          document: &doc7 {_id: 1, encrypted_javascript: {"$code": "var x = 1;"}}
+          document: &doc7 { _id: 1, encrypted_javascript: { "$code": "var x = 1;" } }
         object: "coll6"
       - name: find
         object: coll6
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc7]
     outcome:
       - documents:
-          - &doc7_encrypted {_id: 1, encrypted_javascript: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAANrvMgJkTKWGMc9wt3E2RBR2Hu5gL9p+vIIdHe9FcOm99t1W480/oX1Gnd87ON3B399DuFaxi/aaIiQSo7gTX6Lw==',
-                'subType': '06'}}}
+          - &doc7_encrypted {
+              _id: 1,
+              encrypted_javascript:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAANrvMgJkTKWGMc9wt3E2RBR2Hu5gL9p+vIIdHe9FcOm99t1W480/oX1Gnd87ON3B399DuFaxi/aaIiQSo7gTX6Lw==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client6"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -574,14 +933,13 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=javascriptWithScope"
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_javascriptWithScope: {"$code": "var x = 1;",
-              "$scope": {}}}
+          document: { _id: 1, encrypted_javascriptWithScope: { "$code": "var x = 1;", "$scope": {} } }
         object: "coll7"
         expectError:
           # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
@@ -594,7 +952,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_object: {}}
+          document: { _id: 1, encrypted_object: {} }
         object: "coll8"
         expectError:
           # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
@@ -607,30 +965,45 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc10 {_id: 1, encrypted_timestamp: {$timestamp: {t: 123, i: 456}}}
+          document: &doc10 { _id: 1, encrypted_timestamp: { $timestamp: { t: 123, i: 456 } } }
         object: "coll9"
       - name: find
         object: coll9
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc10]
     outcome:
       - documents:
-          - &doc10_encrypted {_id: 1, encrypted_timestamp: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAARJHaM4Gq3MpDTdBasBsEolQaOmxJQU1wsZVaSFAOLpEh1QihDglXI95xemePFMKhg+KNpFg7lw1ChCs2Wn/c26Q==',
-                'subType': '06'}}}
+          - &doc10_encrypted {
+              _id: 1,
+              encrypted_timestamp:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAARJHaM4Gq3MpDTdBasBsEolQaOmxJQU1wsZVaSFAOLpEh1QihDglXI95xemePFMKhg+KNpFg7lw1ChCs2Wn/c26Q==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client9"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -642,37 +1015,51 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=regex"
     operations:
       - name: insertOne
         arguments:
-          document: &doc11 {_id: 1, encrypted_regex: {$regularExpression: {pattern: "test",
-                options: ""}}}
+          document: &doc11 { _id: 1, encrypted_regex: { $regularExpression: { pattern: "test", options: "" } } }
         object: "coll10"
       - name: find
         object: coll10
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc11]
     outcome:
       - documents:
-          - &doc11_encrypted {_id: 1, encrypted_regex: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAALVnxM4UqGhqf5eXw6nsS08am3YJrTf1EvjKitT8tyyMAbHsICIU3GUjuC7EBofCHbusvgo7pDyaClGostFz44nA==',
-                'subType': '06'}}}
+          - &doc11_encrypted {
+              _id: 1,
+              encrypted_regex:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAALVnxM4UqGhqf5eXw6nsS08am3YJrTf1EvjKitT8tyyMAbHsICIU3GUjuC7EBofCHbusvgo7pDyaClGostFz44nA==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client10"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -684,36 +1071,51 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=date"
     operations:
       - name: insertOne
         arguments:
-          document: &doc13 {_id: 1, encrypted_date: {$date: {$numberLong: "123"}}}
+          document: &doc13 { _id: 1, encrypted_date: { $date: { $numberLong: "123" } } }
         object: "coll11"
       - name: find
         object: coll11
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         expectResult: [*doc13]
     outcome:
       - documents:
-          - &doc13_encrypted {_id: 1, encrypted_date: {'$binary': {'base64': 'AQAAAAAAAAAAAAAAAAAAAAAJ5sN7u6l97+DswfKTqZAijSTSOo5htinGKQKUD7pHNJYlLXGOkB4glrCu7ibu0g3344RHQ5yUp4YxMEa8GD+Snw==',
-                'subType': '06'}}}
+          - &doc13_encrypted {
+              _id: 1,
+              encrypted_date:
+                {
+                  "$binary":
+                    {
+                      "base64": "AQAAAAAAAAAAAAAAAAAAAAAJ5sN7u6l97+DswfKTqZAijSTSOo5htinGKQKUD7pHNJYlLXGOkB4glrCu7ibu0g3344RHQ5yUp4YxMEa8GD+Snw==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: *collection_name
         databaseName: *database_name
     expectEvents:
       - client: "client11"
         events:
-      # Then key is fetched from the key vault.
+          # Then key is fetched from the key vault.
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -725,13 +1127,13 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find
   - description: "type=minKey"
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_minKey: {$minKey: 1}}
+          document: { _id: 1, encrypted_minKey: { $minKey: 1 } }
         object: "coll12"
         expectError:
           errorContains: "Cannot encrypt element of type: minKey"
@@ -739,7 +1141,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_maxKey: {$maxKey: 1}}
+          document: { _id: 1, encrypted_maxKey: { $maxKey: 1 } }
         object: "coll13"
         expectError:
           errorContains: "Cannot encrypt element of type: maxKey"
@@ -747,7 +1149,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_undefined: {$undefined: true}}
+          document: { _id: 1, encrypted_undefined: { $undefined: true } }
         object: "coll14"
         expectError:
           errorContains: "Cannot encrypt element of type: undefined"
@@ -755,7 +1157,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_array: []}
+          document: { _id: 1, encrypted_array: [] }
         object: "coll15"
         expectError:
           # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
@@ -768,7 +1170,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_bool: true}
+          document: { _id: 1, encrypted_bool: true }
         object: "coll16"
         expectError:
           # DRIVERS-2272: The expected error message changed in mongocryptd 6.0. Before it was:
@@ -781,7 +1183,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encrypted_null: true}
+          document: { _id: 1, encrypted_null: true }
         object: "coll17"
         expectError:
           errorContains: "Cannot encrypt element of type: null"

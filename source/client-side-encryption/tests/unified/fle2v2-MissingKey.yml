@@ -1,5 +1,5 @@
 description: fle2v2-MissingKey
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "7.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
@@ -26,14 +26,35 @@ createEntities:
 initialData:
   - databaseName: default
     collectionName: default
-    documents: ["encryptedUnindexed": {"$binary": {"base64": "BqvN76sSNJh2EjQSNFZ4kBICTQaVZPWgXp41I7mPV1rLFTtw1tXzjcdSEyxpKKqujlko5TeizkB9hHQ009dVY1+fgIiDcefh+eQrm3CkhQ==",
-              "subType": "06"}}]
+    documents:
+      [
+        "encryptedUnindexed":
+          {
+            "$binary":
+              {
+                "base64": "BqvN76sSNJh2EjQSNFZ4kBICTQaVZPWgXp41I7mPV1rLFTtw1tXzjcdSEyxpKKqujlko5TeizkB9hHQ009dVY1+fgIiDcefh+eQrm3CkhQ==",
+                "subType": "06",
+              },
+          },
+      ]
     createOptions:
-      encryptedFields: {'fields': [{'keyId': {'$binary': {'base64': 'EjRWeBI0mHYSNBI0VniQEg==',
-                  'subType': '04'}}, 'path': 'encryptedIndexed', 'bsonType': 'string',
-              'queries': {'queryType': 'equality', 'contention': {'$numberLong': '0'}}},
-           {'keyId': {'$binary': {'base64': 'q83vqxI0mHYSNBI0VniQEg==', 'subType': '04'}},
-              'path': 'encryptedUnindexed', 'bsonType': 'string'}]}
+      encryptedFields:
+        {
+          "fields":
+            [
+              {
+                "keyId": { "$binary": { "base64": "EjRWeBI0mHYSNBI0VniQEg==", "subType": "04" } },
+                "path": "encryptedIndexed",
+                "bsonType": "string",
+                "queries": { "queryType": "equality", "contention": { "$numberLong": "0" } },
+              },
+              {
+                "keyId": { "$binary": { "base64": "q83vqxI0mHYSNBI0VniQEg==", "subType": "04" } },
+                "path": "encryptedUnindexed",
+                "bsonType": "string",
+              },
+            ],
+        }
   - databaseName: keyvault
     collectionName: datakeys
     documents: []
@@ -42,7 +63,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: {_id: 1, encryptedIndexed: "123"}
+          document: { _id: 1, encryptedIndexed: "123" }
         object: "coll"
         expectError:
           errorContains: "not all keys requested were satisfied"

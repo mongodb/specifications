@@ -1,5 +1,5 @@
 description: validatorAndPartialFieldExpression
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   # Require server version 6.0.0 to get behavior added in SERVER-64911.
   - minServerVersion: "6.0.0"
@@ -13,15 +13,49 @@ createEntities:
           local:
             key: Mng0NCt4ZHVUYUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk
         schemaMap:
-          "default.encryptedCollection": {'properties': {'encrypted_w_altname': {
-                'encrypt': {'keyId': '/altname', 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}},
-              'encrypted_string': {'encrypt': {'keyId': ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                          'subType': '04'}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}},
-              'random': {'encrypt': {'keyId': ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                          'subType': '04'}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Random'}},
-              'encrypted_string_equivalent': {'encrypt': {'keyId': ['$binary': {'base64': 'AAAAAAAAAAAAAAAAAAAAAA==',
-                          'subType': '04'}], 'bsonType': 'string', 'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}},
-            'bsonType': 'object'}
+          "default.encryptedCollection":
+            {
+              "properties":
+                {
+                  "encrypted_w_altname":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": "/altname",
+                          "bsonType": "string",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+                        },
+                    },
+                  "encrypted_string":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }],
+                          "bsonType": "string",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                  "random":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }],
+                          "bsonType": "string",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
+                        },
+                    },
+                  "encrypted_string_equivalent":
+                    {
+                      "encrypt":
+                        {
+                          "keyId": ["$binary": { "base64": "AAAAAAAAAAAAAAAAAAAAAA==", "subType": "04" }],
+                          "bsonType": "string",
+                          "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        },
+                    },
+                },
+              "bsonType": "object",
+            }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -39,7 +73,7 @@ initialData:
 tests:
   - description: "create with a validator on an unencrypted field is OK"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -57,7 +91,7 @@ tests:
           collectionName: "encryptedCollection"
   - description: "create with a validator on an encrypted field is an error"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -72,7 +106,7 @@ tests:
           errorContains: "Comparison to encrypted fields not supported"
   - description: "collMod with a validator on an unencrypted field is OK"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -91,7 +125,7 @@ tests:
               unencrypted_string: "foo"
   - description: "collMod with a validator on an encrypted field is an error"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -110,10 +144,9 @@ tests:
               encrypted_string: "foo"
         expectError:
           errorContains: "Comparison to encrypted fields not supported"
-  - description: "createIndexes with a partialFilterExpression on an unencrypted field
-      is OK"
+  - description: "createIndexes with a partialFilterExpression on an unencrypted field is OK"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -130,7 +163,7 @@ tests:
             createIndexes: "encryptedCollection"
             indexes:
               - name: "name"
-                key: {name: 1}
+                key: { name: 1 }
                 partialFilterExpression:
                   unencrypted_string: "foo"
       - name: assertIndexExists
@@ -139,10 +172,9 @@ tests:
           databaseName: *database_name
           collectionName: "encryptedCollection"
           indexName: name
-  - description: "createIndexes with a partialFilterExpression on an encrypted field
-      is an error"
+  - description: "createIndexes with a partialFilterExpression on an encrypted field is an error"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -159,7 +191,7 @@ tests:
             createIndexes: "encryptedCollection"
             indexes:
               - name: "name"
-                key: {name: 1}
+                key: { name: 1 }
                 partialFilterExpression:
                   encrypted_string: "foo"
         expectError:

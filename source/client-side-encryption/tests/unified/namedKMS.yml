@@ -1,5 +1,5 @@
 description: namedKMS
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "4.1.10"
 createEntities:
@@ -9,7 +9,7 @@ createEntities:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
           local:name2:
-            key: 'local+name2+YUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk'
+            key: "local+name2+YUJCa1kxNkVyNUR1QURhZ2h2UzR2d2RrZzh0cFBwM3R6NmdWMDFBMUN3YkQ5aXRRMkhGRGdQV09wOGVNYUMxT2k3NjZKelhaQmRCZGJkTXVyZG9uSjFk"
       observeEvents:
         - commandStartedEvent
   - database:
@@ -26,38 +26,73 @@ initialData:
     documents: []
     createOptions:
       validator:
-        $jsonSchema: {'properties': {'encrypted_string': {'encrypt': {'keyId': ['$binary': {
-                        'base64': 'local+name2+AAAAAAAAAA==', 'subType': '04'}], 'bsonType': 'string',
-                'algorithm': 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'}}}, 'bsonType': 'object'}
+        $jsonSchema:
+          {
+            "properties":
+              {
+                "encrypted_string":
+                  {
+                    "encrypt":
+                      {
+                        "keyId": ["$binary": { "base64": "local+name2+AAAAAAAAAA==", "subType": "04" }],
+                        "bsonType": "string",
+                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                      },
+                  },
+              },
+            "bsonType": "object",
+          }
   - databaseName: keyvault
     collectionName: datakeys
-    documents: [{'_id': {'$binary': {'base64': 'local+name2+AAAAAAAAAA==', 'subType': '04'}},
-          'keyMaterial': {'$binary': {'base64': 'DX3iUuOlBsx6wBX9UZ3v/qXk1HNeBace2J+h/JwsDdF/vmSXLZ1l1VmZYIcpVFy6ODhdbzLjd4pNgg9wcm4etYig62KNkmtZ0/s1tAL5VsuW/s7/3PYnYGznZTFhLjIVcOH/RNoRj2eQb/sRTyivL85wePEpAU/JzuBj6qO9Y5txQgs1k0J3aNy10R9aQ8kC1NuSSpLAIXwE6DlNDDJXhw==',
-              'subType': '00'}}, 'creationDate': {'$date': {'$numberLong': '1552949630483'}},
-          'updateDate': {'$date': {'$numberLong': '1552949630483'}}, 'status': {'$numberInt': '0'},
-          'masterKey': {'provider': 'local:name2'}}]
+    documents:
+      [
+        {
+          "_id": { "$binary": { "base64": "local+name2+AAAAAAAAAA==", "subType": "04" } },
+          "keyMaterial":
+            {
+              "$binary":
+                {
+                  "base64": "DX3iUuOlBsx6wBX9UZ3v/qXk1HNeBace2J+h/JwsDdF/vmSXLZ1l1VmZYIcpVFy6ODhdbzLjd4pNgg9wcm4etYig62KNkmtZ0/s1tAL5VsuW/s7/3PYnYGznZTFhLjIVcOH/RNoRj2eQb/sRTyivL85wePEpAU/JzuBj6qO9Y5txQgs1k0J3aNy10R9aQ8kC1NuSSpLAIXwE6DlNDDJXhw==",
+                  "subType": "00",
+                },
+            },
+          "creationDate": { "$date": { "$numberLong": "1552949630483" } },
+          "updateDate": { "$date": { "$numberLong": "1552949630483" } },
+          "status": { "$numberInt": "0" },
+          "masterKey": { "provider": "local:name2" },
+        },
+      ]
 tests:
   - description: "Automatically encrypt and decrypt with a named KMS provider"
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1, encrypted_string: "string0"}
+          document: &doc0 { _id: 1, encrypted_string: "string0" }
         object: "coll"
       - name: find
         arguments:
-          filter: {_id: 1}
+          filter: { _id: 1 }
         object: "coll"
         expectResult: [*doc0]
     outcome:
       - documents:
-          - &doc0_encrypted {_id: 1, encrypted_string: {'$binary': {'base64': 'AZaHGpfp2pntvgAAAAAAAAAC07sFvTQ0I4O2U49hpr4HezaK44Ivluzv5ntQBTYHDlAJMLyRMyB6Dl+UGHBgqhHe/Xw+pcT9XdiUoOJYAx9g+w==',
-                'subType': '06'}}}
+          - &doc0_encrypted {
+              _id: 1,
+              encrypted_string:
+                {
+                  "$binary":
+                    {
+                      "base64": "AZaHGpfp2pntvgAAAAAAAAAC07sFvTQ0I4O2U49hpr4HezaK44Ivluzv5ntQBTYHDlAJMLyRMyB6Dl+UGHBgqhHe/Xw+pcT9XdiUoOJYAx9g+w==",
+                      "subType": "06",
+                    },
+                },
+            }
         collectionName: &collection_name "default"
         databaseName: &database_name "default"
     expectEvents:
       - client: "client0"
         events:
-      # Auto encryption will request the collection info.
+          # Auto encryption will request the collection info.
           - commandStartedEvent:
               command:
                 listCollections: 1
@@ -67,10 +102,16 @@ tests:
           - commandStartedEvent:
               command:
                 find: datakeys
-                filter: {"$or": ["_id": {"$in": ['$binary': {'base64': 'local+name2+AAAAAAAAAA==',
-                                  'subType': '04'}]}, "keyAltNames": {"$in": []}]}
+                filter:
+                  {
+                    "$or":
+                      [
+                        "_id": { "$in": ["$binary": { "base64": "local+name2+AAAAAAAAAA==", "subType": "04" }] },
+                        "keyAltNames": { "$in": [] },
+                      ],
+                  }
                 $db: keyvault
-                readConcern: {level: "majority"}
+                readConcern: { level: "majority" }
               commandName: find
           - commandStartedEvent:
               command:
@@ -82,5 +123,5 @@ tests:
           - commandStartedEvent:
               command:
                 find: *collection_name
-                filter: {_id: 1}
+                filter: { _id: 1 }
               commandName: find

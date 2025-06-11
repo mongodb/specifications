@@ -1,5 +1,5 @@
 description: fle2v2-NoEncryption
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "7.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
@@ -28,13 +28,13 @@ initialData:
     collectionName: default
     documents: []
     createOptions:
-      encryptedFields: {"fields": []}
+      encryptedFields: { "fields": [] }
 tests:
   - description: "insert with no encryption succeeds"
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1, foo: "bar"}
+          document: &doc0 { _id: 1, foo: "bar" }
         object: "coll"
     outcome:
       - documents:

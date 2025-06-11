@@ -1,5 +1,5 @@
 description: create-and-createIndexes
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "4.1.10"
 createEntities:
@@ -27,7 +27,7 @@ initialData:
 tests:
   - description: "create is OK"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:
@@ -45,7 +45,7 @@ tests:
           collectionName: "unencryptedCollection"
   - description: "createIndexes is OK"
     operations:
-    # Drop to remove a collection that may exist from previous test runs.
+      # Drop to remove a collection that may exist from previous test runs.
       - name: dropCollection
         object: "db"
         arguments:

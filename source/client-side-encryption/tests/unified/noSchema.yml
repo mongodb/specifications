@@ -1,5 +1,5 @@
 description: noSchema
-schemaVersion: '1.23'
+schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "4.1.10"
 createEntities:
@@ -8,7 +8,7 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 }}
+          aws: { accessKeyId: { $$placeholder: 1 }, secretAccessKey: { $$placeholder: 1 } }
       observeEvents:
         - commandStartedEvent
   - database:
@@ -28,7 +28,7 @@ tests:
     operations:
       - name: insertOne
         arguments:
-          document: &doc0 {_id: 1}
+          document: &doc0 { _id: 1 }
         object: "coll"
     outcome:
       - documents:
@@ -38,7 +38,7 @@ tests:
     expectEvents:
       - client: "client0"
         events:
-      # Auto encryption will request the collection info.
+          # Auto encryption will request the collection info.
           - commandStartedEvent:
               command:
                 listCollections: 1
