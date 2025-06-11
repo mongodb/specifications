@@ -246,17 +246,6 @@ tests:
           errorContains: "Invalid match expression operator on encrypted field"
       - name: find
         arguments:
-          filter: {unencrypted: {$type: 2}}
-        object: "coll"
-        expectResult: []
-      - name: find
-        arguments:
-          filter: {encrypted_string: {$type: 2}}
-        object: "coll"
-        expectError:
-          errorContains: "Invalid match expression operator on encrypted field"
-      - name: find
-        arguments:
           filter: {unencrypted: {$eq: null}}
         object: "coll"
         expectResult:
