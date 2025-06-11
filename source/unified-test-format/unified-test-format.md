@@ -337,9 +337,10 @@ The structure of this object is as follows:
     Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded cluster behind a load balancer implicitly
     uses replica sets for its shards.
 
-- `serverless`: Optional string. Whether or not the test should be run on Atlas Serverless instances. Valid values are
-    "require", "forbid", and "allow". If "require", the test MUST only be run on Atlas Serverless instances. If
-    "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted or "allow", this option has no effect.
+- `serverless` (deprecated): Optional string. Whether or not the test should be run on Atlas Serverless instances. Valid
+    values are "require", "forbid", and "allow". If "require", the test MUST only be run on Atlas Serverless instances.
+    If "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted or "allow", this option has no
+    effect.
 
     The test runner MUST be informed whether or not Atlas Serverless is being used in order to determine if this
     requirement is met (e.g. through an environment variable or configuration option).
@@ -347,6 +348,9 @@ The structure of this object is as follows:
     Note: the Atlas Serverless proxy imitates mongos, so the test runner is not capable of determining if Atlas Serverless
     is in use by issuing commands such as `buildInfo` or `hello`. Furthermore, connections to Atlas Serverless use a
     load balancer, so the topology will appear as "load-balanced".
+
+    Note: serverless testing is no longer required, and drivers that no longer support serverless testing MAY omit
+    implementation of this requirement and instantly skip all tests that use `serverless: require`.
 
 - `serverParameters`: Optional object of server parameters to check against. To check server parameters, drivers send a
     `{ getParameter: 1, <parameter>: 1 }` command to the server using an internal MongoClient. Drivers MAY also choose
@@ -485,6 +489,8 @@ The structure of this object is as follows:
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
         - [serverHeartbeatFailedEvent](#expectedEvent_serverHeartbeatFailedEvent)
         - [topologyDescriptionChangedEvent](#expectedEvent_topologyDescriptionChangedEvent)
+        - [topologyOpeningEvent](#expectedEvent_topologyOpeningEvent)
+        - [topologyClosedEvent](#expectedEvent_topologyClosedEvent)
 
     <span id="entity_client_ignoreCommandMonitoringEvents"></span>
 
@@ -1231,6 +1237,18 @@ The structure of this object is as follows:
         Test runners SHOULD ignore any other fields present on the `previousDescription` and `newDescription` fields of the
         captured `topologyDescriptionChangedEvent`.
 
+<span id="expectedEvent_topologyOpeningEvent"></span>
+
+- `topologyOpeningEvent`: Optional object. Assertions for one
+    [topologyOpeningEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
+
+<span id="expectedEvent_topologyClosedEvent"></span>
+
+- `topologyClosedEvent`: Optional object. Assertions for one
+    [topologyClosedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
+
 ##### hasServiceId
 
 This field is an optional boolean that specifies whether or not the `serviceId` field of an event is set. If true, test
@@ -1293,7 +1311,6 @@ The structure of each object is as follows:
     When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
     that the failure has been redacted according to the rules defined for error redaction in the
     [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
-    
 
     When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 
@@ -1320,6 +1337,8 @@ The structure of this object is as follows:
 
 - `readConcern`: Optional object. See [commonOptions_readConcern](#commonOptions_readConcern).
 - `readPreference`: Optional object. See [commonOptions_readPreference](#commonOptions_readPreference).
+- `timeoutMS`: Optional integer. See
+    [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms).
 - `writeConcern`: Optional object. See [commonOptions_writeConcern](#commonOptions_writeConcern).
 
 ### Common Options
@@ -3121,7 +3140,8 @@ If [test.runOnRequirements](#test_runOnRequirements) is specified, the test runn
 
 If [initialData](#initialData) is specified, for each [collectionData](#collectiondata) therein the test runner MUST set
 up the collection. All setup operations MUST use the internal MongoClient and a "majority" write concern. The test
-runner MUST first drop the collection. If a `createOptions` document is present, the test runner MUST execute a `create`
+runner MUST first drop the collection. The test runner must also drop the collections `_enxcol.<collectionName>.esc` and
+`_enxcol.<collectionName>.ecoc`. If a `createOptions` document is present, the test runner MUST execute a `create`
 command to create the collection with the specified options. The test runner MUST then insert the specified documents
 (if any). If no documents are present and `createOptions` is not set, the test runner MUST create the collection. If the
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
@@ -3492,6 +3512,16 @@ ignored in order to test the test runner implementation (e.g. defining entities 
 The specification does prefer "MUST" in other contexts, such as discussing parts of the test file format that *are*
 enforceable by the JSON schema or the test runner implementation.
 
+<span id="rationale_dropping_metadata"></span>
+
+### Why are `_enxcol` collections dropped?
+
+The collections `_enxcol.<collectionName>.esc` and `_enxcol.<collectionName>.ecoc` are
+[automatically created](../client-side-encryption/client-side-encryption.md#create-collection-helper) for Queryable
+Encryption collections. If these collections are present and non-empty, the server generated `__safeContent__` field may
+differ. `__safeContent__` includes a count of the number of instances of the given value. To do exact matching on
+`__safeContent__` the test runner is required to drop these collections.
+
 <span id="rationale_observeSensitiveCommands"></span>
 
 ### Why can't `observeSensitiveCommands` be true when authentication is enabled?
@@ -3552,6 +3582,13 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-06-04: Deprecate the `serverless` runOnRequirement
+
+- 2025-04-25: Drop `_enxcol` collections.
+
+- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format and schema 1.20+ as they
+    were omitted in error.
 
 - 2025-01-21: **Schema version 1.23.**
 
@@ -3673,7 +3710,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 - 2022-04-27: **Schema version 1.9.**
 
     Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field in `collectionOrDatabaseOptions`, and
-    added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation.
+    added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation and `$$lte`
+    operator.
 
 - 2022-04-27: **Schema version 1.8.**
 

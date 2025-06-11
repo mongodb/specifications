@@ -139,7 +139,7 @@ class ChangeStreamDocument {
 
   /**
    * Only present for ops of type 'rename', 'create', 'modify', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
-   * Only present when the `showExpandedEvents` change stream option is enabled.
+   * Prior to server version 8.2.0, only present when the `showExpandedEvents` change stream option is enabled.
    *
    * A description of the operation.
    * 
@@ -202,7 +202,7 @@ class ChangeStreamDocument {
   /**
    * The `ui` field from the oplog entry corresponding to the change event.
    * 
-   * Only present when the `showExpandedEvents` change stream option is enabled and for the following events
+   * Only present for the following events:
    *  - 'insert'
    *  - 'update'
    *  - 'delete'
@@ -214,6 +214,7 @@ class ChangeStreamDocument {
    *  - 'shardCollection'
    *  - 'reshardCollection'
    *  - 'refineCollectionShardKey'
+   * Prior to server versions 8.2, only present when the `showExpandedEvents` change stream option is enabled.
    *  
    * This field is a value of binary subtype 4 (UUID).
    *  
@@ -1015,6 +1016,8 @@ There should be no backwards compatibility concerns.
 - RUBY (RUBY-1228)
 
 ## Changelog
+
+- 2025-03-31: Update for expanded field visibility in server 8.2+
 
 - 2025-02-24: Make `nsType` `Optional` to match other optional fields in the change stream spec.
 

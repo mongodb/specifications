@@ -188,6 +188,46 @@
             },
             "observeSensitiveCommands": {
               "type": "boolean"
+            },
+            "autoEncryptOpts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "keyVaultNamespace",
+                "kmsProviders"
+              ],
+              "properties": {
+                "keyVaultNamespace": {
+                  "type": "string"
+                },
+                "bypassAutoEncryption": {
+                  "type": "boolean"
+                },
+                "kmsProviders": {
+                  "$ref": "#/definitions/kmsProviders"
+                },
+                "schemaMap": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                },
+                "extraOptions": {
+                  "type": "object"
+                },
+                "encryptedFieldsMap": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                },
+                "bypassQueryAnalysis": {
+                  "type": "boolean"
+                },
+                "keyExpirationMS": {
+                  "type": "integer"
+                }
+              }
             }
           }
         },
@@ -345,6 +385,9 @@
         },
         "kmsProviders": {
           "$ref": "#/definitions/kmsProviders"
+        },
+        "keyExpirationMS": {
+          "type": "integer"
         }
       }
     },
@@ -1050,13 +1093,13 @@
           }
         },
         "writeErrors": {
-            "type": "object"
+          "type": "object"
         },
         "writeConcernErrors": {
-            "type": "array",
-            "items": {
-                "type": "object"
-            }
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         },
         "errorResponse": {
           "type": "object"
