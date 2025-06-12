@@ -34,6 +34,7 @@
           "name": "runCommand",
           "object": "database",
           "arguments": {
+            "commandName": "ping",
             "command": {
               "ping": 1
             }
@@ -57,6 +58,7 @@
           "name": "runCommand",
           "object": "database",
           "arguments": {
+            "commandName": "ping",
             "command": {
               "ping": 1
             }

@@ -22,6 +22,7 @@ tests:
       - name: runCommand
         object: *database
         arguments:
+          commandName: ping
           command:
             ping: 1
         expectResult:
@@ -36,6 +37,7 @@ tests:
       - name: runCommand
         object: *database
         arguments:
+          commandName: ping
           command:
             ping: 1
         expectResult:
