@@ -3401,8 +3401,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2025-06-10: **Schema version 1.24.**
 
-    Remove `storeEventsAsEntities` option for client entities and `loop` operation as part of sunsetting Drivers Atlas
-    Testing (Astrolabe).
+    Deprecate `storeEventsAsEntities` option for client entities and `loop` operation in the schema and remove them from
+    this spec.
 
 - 2025-06-04: Deprecate the `serverless` runOnRequirement
 
