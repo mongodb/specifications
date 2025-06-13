@@ -1502,7 +1502,7 @@ The following arguments are supported:
     - `version`: Optional string. The version of the wrapping library or framework.
     - `platform`: Optional string. The platform of the wrapping library or framework.
 
-See [handshake](../mongodb-handshake/handshake.md#metadata-updates-after-mongoclient-initialization).
+See the [handshake spec](../mongodb-handshake/handshake.md#metadata-updates-after-mongoclient-initialization) for more details.
 
 #### createChangeStream
 
