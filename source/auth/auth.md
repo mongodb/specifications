@@ -2190,6 +2190,8 @@ practice to avoid this. (See
 
 ## Changelog
 
+- 2025-xx-yy: Add support for AWS EKS Pod Identity.
+
 - 2025-01-29: Add support for custom AWS credential providers.
 
 - 2024-10-02: Add Kubernetes built-in OIDC provider integration.
