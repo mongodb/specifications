@@ -987,6 +987,11 @@ those credentials will be used by default if AWS auth environment variables are 
 application. Alternatively, you can create an AWS profile specifically for your MongoDB credentials and set the
 `AWS_PROFILE` environment variable to that profile name."
 
+For drivers that have a built-in, non-SDK support for AWS, they MUST clearly delineate which features are supported in
+the core driver and state that the rest are deferred to the optional SDK support. For example, if authentication using
+EKS Pod Identity is not supported in the core driver, the driver MUST document this behavior AND ensure that it is still
+tested using the optional SDK.
+
 ##### Custom Credential Providers
 
 Drivers that choose to use the AWS SDK to fetch credentials MAY also allow users to provide a custom credential provider
