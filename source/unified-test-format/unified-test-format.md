@@ -1421,6 +1421,20 @@ driver behavior when an operation is attempted on a closed client or one of its 
 
 <span id="client_createChangeStream"></span>
 
+#### appendMetadata
+
+Appends client metadata to the client.
+
+The following arguments are supported:
+
+- `driverInfoOptions`: Required object with the following fields:
+    - `name`: Required string. The name of the wrapping library or framework.
+    - `version`: Optional string. The version of the wrapping library or framework.
+    - `platform`: Optional string. The platform of the wrapping library or framework.
+
+See the [handshake spec](../mongodb-handshake/handshake.md#metadata-updates-after-mongoclient-initialization) for more
+details.
+
 #### createChangeStream
 
 Creates a cluster-level change stream and ensures that the server-side cursor has been created.
@@ -3403,6 +3417,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
     Deprecate `storeEventsAsEntities` option for client entities and `loop` operation in the schema and remove them from
     this spec.
+
+- 2025-06-09: Add `appendMetadata` operation.
 
 - 2025-06-04: Deprecate the `serverless` runOnRequirement
 

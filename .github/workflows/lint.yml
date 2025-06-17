@@ -8,6 +8,7 @@ on:
 jobs:
   # Run "pre-commit run --all-files"
   pre-commit:
+    name: Run pre-commit checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -20,6 +21,7 @@ jobs:
           pre-commit run --all-files --hook-stage manual || (git diff; false)
 
   mkdocs:
+    name: Check docs
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
