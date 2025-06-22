@@ -261,6 +261,8 @@ See the [README](tests/README.md) for tests.
 
 ## Changelog
 
+- 2025-06-23: In PACKED_BIT vectors, ignored bits MAY be zero for backwards-compatibility. Prose tests added.
+
 - 2025-04-08: In PACKED_BIT vectors, ignored bits must be zero.
 
 - 2025-03-07: Update tests to use Extended JSON representation of +/-Infinity. (DRIVERS-3095)
