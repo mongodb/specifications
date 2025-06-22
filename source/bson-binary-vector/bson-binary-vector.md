@@ -35,10 +35,10 @@ Each vector can take one of multiple data types (dtypes). The following table li
 | ---------------- | ---------- | ----------------------- | ----------------------------------------------------------------------------------------- |
 | `0x03`           | INT8       | 8                       | INT8                                                                                      |
 | `0x27`           | FLOAT32    | 32                      | FLOAT                                                                                     |
-| `0x10`           | PACKED_BIT | 1     `*`               | BOOL                                                                                      |
+| `0x10`           | PACKED_BIT | 1 `*`                   | BOOL                                                                                      |
 
 `*` A Binary Quantized (PACKED_BIT) Vector is a vector of 0s and 1s (bits), but it is represented in memory as a list of
-integers in \[0, 255\]. So, for example, the vector `[0, 255]` would be shorthand for the 16-bit vector
+integers in [0, 255]. So, for example, the vector `[0, 255]` would be shorthand for the 16-bit vector
 `[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]`. The idea is that each number (a uint8) can be stored as a single byte. Of course,
 some languages, Python for one, do not have an uint8 type, so must be represented as an int in memory, but not on disk.
 
@@ -181,7 +181,7 @@ End Function
 #### Validation
 
 Drivers MUST validate vector metadata and raise an error if any invariant is violated:
-
+ 
 - When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and
     padding MUST be a multiple of 4 bytes.
 - Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within \[0, 7\] for PACKED_BIT.
@@ -192,7 +192,6 @@ Drivers MUST validate vector metadata and raise an error if any invariant is vio
     - When decoding, drivers SHOULD raise an error if decoding non-zero ignored bits,
         but drivers MAY choose not to for backwards compatibility.
     - Drivers SHOULD use the next major release to conform to ignored bits being zero. 
-
 
 Drivers MUST perform this validation when a numeric vector and padding are provided through the API, and when unpacking
 binary data (BSON or similar) into a Vector structure.

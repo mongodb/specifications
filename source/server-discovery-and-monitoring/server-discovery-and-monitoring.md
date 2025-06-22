@@ -240,7 +240,6 @@ Fields:
     Default null. (Only mongos and shard servers record this field when monitoring config servers as replica sets, at
     least until
     [drivers allow applications to use readConcern "afterOptime".](../max-staleness/max-staleness.md#future-feature-to-support-readconcern-afteroptime))
-    
 
 - (=) `type`: a [ServerType](#servertype) enum value. Default Unknown.
 
@@ -611,7 +610,7 @@ ServerDescription in TopologyDescription.servers MUST be replaced with the new S
 A ServerDescription which is not Unknown is incompatible if:
 
 - `minWireVersion` > `clientMaxWireVersion`, or
-- `maxWireVersion` \< `clientMinWireVersion`
+- `maxWireVersion` < `clientMinWireVersion`
 
 If any ServerDescription is incompatible, the client MUST set the TopologyDescription's "compatible" field to false and
 fill out the TopologyDescription's "compatibilityError" field like so:
@@ -621,7 +620,7 @@ fill out the TopologyDescription's "compatibilityError" field like so:
     "Server at `host`:`port` requires wire version `minWireVersion`, but this version of `driverName` only supports up to
     `clientMaxWireVersion`."
 
-- if `ServerDescription.maxWireVersion` \< `clientMinWireVersion`:
+- if `ServerDescription.maxWireVersion` < `clientMinWireVersion`:
 
     "Server at `host`:`port` reports wire version `maxWireVersion`, but this version of `driverName` requires at least
     `clientMinWireVersion` (MongoDB `mongoVersion`)."
@@ -1246,7 +1245,7 @@ The following subset of "node is recovering" errors is defined to be "node is sh
 | ShutdownInProgress    | 91         |
 
 When handling a "not writable primary" or "node is recovering" error, the client MUST clear the server's connection pool
-if and only if the error is "node is shutting down" or the error originated from server version \< 4.2.
+if and only if the error is "node is shutting down" or the error originated from server version < 4.2.
 
 (See
 [when does a client see "not writable primary" or "node is recovering"?](#when-does-a-client-see-not-writable-primary-or-node-is-recovering),
