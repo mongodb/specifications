@@ -55,6 +55,41 @@ MUST assert that the input float array is the same after encoding and decoding.
 - if the canonical_bson field is present, raise an exception when attempting to deserialize it into the corresponding
     numeric values, as the field contains corrupted data.
 
+## Prose Tests
+
+### Treatment of non-zero ignored bits
+
+Drivers SHOULD test this behavior, whether an error is thrown or bits are preserved,
+according to their design and version.
+For drivers that haven't been completed, raise an exception.
+For those that have, update to this behavior according to semantic versioning rules.
+
+A vector of length 1 with non-zero ignored bits provides a good example to use.
+
+#### 1. Encoding
+```python
+v = Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
+```
+
+### 2. Decoding
+
+```python
+    clxn.insert_one({"_id": "1", "v": Binary(b'\x10\x07\xff', subtype=9)})
+    Binary.as_vector(clxn.find_one({"_id": 1}["v"]))
+```
+
+### 3. Comparison
+
+Here is an example that shows that in pymongo < 5.0, one can decode non-zero ignored
+bits, but though these vectors are equivalent after ignoring the last 7 bits, we
+cannot compare their binary representations directly.
+
+```python
+b1 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7)  
+b2 = Binary(b'\x10\x07\xff', subtype=9)
+assert b1 != b2
+```
+
 ## FAQ
 
 - What MongoDB Server version does this apply to?
