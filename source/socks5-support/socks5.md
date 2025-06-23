@@ -47,18 +47,18 @@ the level of a `MongoClient`. Drivers MUST error if this option was specified an
 #### proxyUsername
 
 To specify to the driver to connect using a SOCKS5 proxy requiring username/password authentication, a connection string
-option of `proxyUsername=username` MUST be added to the connection string or passed through an equivalent
-`MongoClient` option. This option specifies a string of non-zero length. Drivers MUST ignore this option if it specifies
-a zero-length string. Drivers MUST error if this option was specified and `proxyHost` was not specified or
-`proxyPassword` was not specified.
+option of `proxyUsername=username` MUST be added to the connection string or passed through an equivalent `MongoClient`
+option. This option specifies a string of non-zero length. Drivers MUST ignore this option if it specifies a zero-length
+string. Drivers MUST error if this option was specified and `proxyHost` was not specified or `proxyPassword` was not
+specified.
 
 #### proxyPassword
 
 To specify to the driver to connect using a SOCKS5 proxy requiring username/password authentication, a connection string
-option of `proxyPassword=password` MUST be added to the connection string or passed through an equivalent
-`MongoClient` option. This option specifies a string of non-zero length. Drivers MUST ignore this option if it specifies
-a zero-length string. Drivers MUST error if this option was specified and `proxyHost` was not specified or
-`proxyUsername` was not specified.
+option of `proxyPassword=password` MUST be added to the connection string or passed through an equivalent `MongoClient`
+option. This option specifies a string of non-zero length. Drivers MUST ignore this option if it specifies a zero-length
+string. Drivers MUST error if this option was specified and `proxyHost` was not specified or `proxyUsername` was not
+specified.
 
 ### Connection Pooling
 
@@ -82,8 +82,8 @@ When establishing a new outgoing TCP connection, drivers MUST perform the follow
 Drivers MUST use the SOCKS5 proxy for connections to MongoDB services and
 [client-side field-level encryption KMS servers](../client-side-encryption/client-side-encryption.md#kms-provider).
 
-Drivers MUST NOT use the SOCKS5 proxy for connections to `mongocryptd` processes spawned for automatic
-client-side field-level encryption.
+Drivers MUST NOT use the SOCKS5 proxy for connections to `mongocryptd` processes spawned for automatic client-side
+field-level encryption.
 
 Drivers MUST treat a connection failure when connecting to the SOCKS5 proxy or a SOCKS5 handshake or authentication
 failure the same as a network error (e.g. `ECONNREFUSED`).
@@ -91,8 +91,8 @@ failure the same as a network error (e.g. `ECONNREFUSED`).
 ### Events
 
 SOCKS5 proxies are fully transparent to connection monitoring events. In particular, in `CommandStartedEvent`,
-`CommandSucceededEvent`, and `CommandFailedEvent`, the driver SHOULD NOT reference the SOCKS5 proxy as part of
-the `connectionId` field or other fields.
+`CommandSucceededEvent`, and `CommandFailedEvent`, the driver SHOULD NOT reference the SOCKS5 proxy as part of the
+`connectionId` field or other fields.
 
 ### Q&A
 
