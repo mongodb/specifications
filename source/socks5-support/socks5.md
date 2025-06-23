@@ -128,6 +128,6 @@ with enabling other authentication methods.
 
 ## Changelog
 
-- 2025-06-23: Removed artifacts from conversion to Markdown
+- 2025-06-23: Removed artifacts from conversion to Markdown.
 - 2024-09-04: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter
