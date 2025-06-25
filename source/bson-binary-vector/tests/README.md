@@ -59,23 +59,36 @@ MUST assert that the input float array is the same after encoding and decoding.
 
 ### Treatment of non-zero ignored bits
 
-Drivers SHOULD test this behavior, whether an error is thrown or bits are preserved, according to their design and
-version. For drivers that haven't been completed, raise an exception. For those that have, update to this behavior
-according to semantic versioning rules.
+All drivers MUST test encoding and decoding behavior according to their design and version. For drivers that haven't
+been completed, raise exceptions in both cases. For those that have, update to this behavior according to semantic
+versioning rules, and update tests accordingly.
 
-A vector of length 1 with non-zero ignored bits provides a good example to use.
+In both cases, [255], a single byte PACKED_BIT vector of length 1 (hence padding of 7) provides a good example to use,
+as all of its bits are ones.
 
 #### 1. Encoding
 
+- Test that an exception is raised when one attempts to encode a vector with non-zero ignored bits.
+
 ```python
-v = Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
+with pytest.raises(ValueError):
+    Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
 ```
 
 ### 2. Decoding
 
+- Test that one can manually create a BSON Binary object following the vector structure (dtype + padding + data).
+- Test that this can be inserted and found
+- Test the behaviour of your driver when one attempts to decode from binary to vector.
+    - e.g. As of pymongo 4.14, a warning is raised. From 5.0, it will be an exception.
+
 ```python
-    clxn.insert_one({"_id": "1", "v": Binary(b'\x10\x07\xff', subtype=9)})
-    Binary.as_vector(clxn.find_one({"_id": 1}["v"]))
+v = Binary(b'\x10\x07\xff', subtype=9)
+clxn.insert_one({"v": v})
+found = clxn.find_one({"v": v})["v"]
+assert isinstance(found, Binary)
+with pytest.warns():
+    Binary.as_vector(found)
 ```
 
 ### 3. Comparison

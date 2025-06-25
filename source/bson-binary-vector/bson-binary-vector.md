@@ -187,8 +187,8 @@ Drivers MUST validate vector metadata and raise an error if any invariant is vio
 - Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within [0, 7] for PACKED_BIT.
 - A PACKED_BIT vector MUST NOT be empty if padding is in the range [1, 7].
     - For a PACKED_BIT vector with non-zero padding, ignored bits SHOULD be zero.
-        - When encoding, if ignored bits aren't zero, drivers SHOULD zero out or raise an exception, but drivers MAY leave
-            them as-is if backwards-compatibility is a concern.
+        - When encoding, if ignored bits aren't zero, drivers SHOULD raise an exception, but drivers MAY leave them as-is if
+            backwards-compatibility is a concern.
         - When decoding, drivers SHOULD raise an error if decoding non-zero ignored bits, but drivers MAY choose not to for
             backwards compatibility.
         - Drivers SHOULD use the next major release to conform to ignored bits being zero.
@@ -254,7 +254,7 @@ See the [README](tests/README.md) for tests.
         example in Python, see
         [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).
 
-- In PACKED_BIT, why are ignored bits required to be zero?
+- In PACKED_BIT, why are ignored bits recommended to be zero?
 
     - To ensure the same data representation has the same encoding. For drivers supporting comparison operations, this
         avoids comparing different unused bits.
