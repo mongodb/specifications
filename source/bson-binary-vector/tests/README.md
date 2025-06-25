@@ -1,3 +1,5 @@
+from xmlrpc.client import Binary
+
 # Testing Binary subtype 9: Vector
 
 The JSON files in this directory tree are platform-independent tests that drivers can use to prove their conformance to
@@ -93,13 +95,25 @@ with pytest.warns():
 
 ### 3. Comparison
 
-Here is an example that shows that in pymongo < 5.0, one can decode non-zero ignored bits, but though these vectors are
-equivalent after ignoring the last 7 bits, we cannot compare their binary representations directly.
+Once we can guarantee that all ignored bits are non-zero, then equality can be tested on the binary subtype. Until then,
+equality is ambiguous, and depends on whether one compares by bits (uint1), or uint8. Drivers SHOULD test equality
+behavior according to their design and version.
+
+For example, in `pymongo < 5.0`, we define equality of a BinaryVector by matching padding, dtype, and integer. This
+means that two single bit vectors in which 7 bits are ignored do not match unless all bits match. This mirrors what the
+server does.
 
 ```python
-b1 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7)  
-b2 = Binary(b'\x10\x07\xff', subtype=9)
-assert b1 != b2
+b1 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7)
+assert b1 == Binary(b'\x10\x07\x80', subtype=9) # This is effectively a roundtrip.
+v1 = Binary.as_vector(b1)
+
+b2 = Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
+assert b2 == Binary(b'\x10\x07\xff', subtype=9)
+v2 = Binary.as_vector(b2)
+
+assert b1 != b2  # Unequal at naive Binary level 
+assert v2 !=v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
 ```
 
 ## FAQ
