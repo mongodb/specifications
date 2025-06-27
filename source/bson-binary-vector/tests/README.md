@@ -110,7 +110,7 @@ assert b2 == Binary(b'\x10\x07\xff', subtype=9)
 v2 = Binary.as_vector(b2)
 
 assert b1 != b2  # Unequal at naive Binary level 
-assert v2 !=v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
+assert v2 != v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
 ```
 
 Drivers MAY skip this test if they choose not to implement a `Vector` type.
