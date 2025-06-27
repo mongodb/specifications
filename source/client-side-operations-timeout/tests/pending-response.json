@@ -223,9 +223,6 @@
             "filter": {
               "_id": 1
             }
-          },
-          "expectError": {
-            "isTimeoutError": true
           }
         }
       ],
@@ -241,6 +238,11 @@
             {
               "commandFailedEvent": {
                 "commandName": "insert"
+              }
+            },
+            {
+              "commandSucceededEvent": {
+                "commandName": "find"
               }
             }
           ]
@@ -273,6 +275,12 @@
               "connectionClosedEvent": {
                 "reason": "error"
               }
+            },
+            {
+              "connectionCheckedOutEvent": {}
+            },
+            {
+              "connectionCheckedInEvent": {}
             }
           ]
         }
