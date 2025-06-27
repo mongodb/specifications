@@ -595,22 +595,25 @@ response data is drained and discarded either by explicit reads or, in push-base
 by consuming buffered data.
 
 1. **Persist and update timestamp**: The connection must record the current time immediately after the original socket
-timeout. This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or
-consumed while explicitly awaiting the pending response as part of checking out the connection.
+    timeout. This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or
+    consumed while explicitly awaiting the pending response as part of checking out the connection.
 2. **Aliveness check**: If the connection remains idle (i.e. no data is read or received) for more than 3 seconds since
-the start of the "pending response" state or since the last successful read/receive, the driver MUST attempt to verify
-the connection’s health by either performing a non-blocking read or using the minimal possible timeout to check if at
-least one byte can be read/received.
+    the start of the "pending response" state or since the last successful read/receive, the driver MUST attempt to
+    verify the connection’s health by either performing a non-blocking read or using the minimal possible timeout to
+    check if at least one byte can be read/received. If at least one byte can be read the connection should be returned 
+    to the pool for reuse and a retryable error should be propagated to the operation layer. If no bytes can be read,
+    the connection MUST be closed.
 3. **User-provided timeout**: If a user-provided timeout is specified for the "pending response" drain, the driver MUST
-use the minimum of (a) the remaining time before the 3 second "pending response" window elapses and (b) the
-user-provided timeout as the effective timeout for the read/drain operation.
+    use the minimum of (a) the remaining time before the 3 second "pending response" window elapses and (b) the
+    user-provided timeout as the effective timeout for the read/drain operation.
 4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining
-3 second "pending response" window and (b) the `socketTimeoutMS` (if supported by the driver) as the effective timeout
-for the read/drain operation.
+    3 second "pending response" window and (b) the `socketTimeoutMS` (if supported by the driver) as the effective timeout
+    for the read/drain operation.
 5. **Error or over-age**: If reading from the socket (or draining buffered data) results in an error that is not a
-timeout, or if the connection exceeds the 3 second pending-response window, the driver MUST close the connection.
+    timeout, or if the connection exceeds the 3 second pending-response window, the driver MUST close the connection.
 6. **Clear pending state on success**: If the pending response is fully drained and successfully discarded, and the
-connection remains healthy, the pending state may be cleared and the connection MAY be returned to the pool for reuse.
+    connection remains healthy, the pending state may be cleared and the connection MAY be returned to the pool for
+    reuse.
 
 ```mermaid
 sequenceDiagram

@@ -27,45 +27,54 @@ If a connection with a pending response is idle for > 3 seconds, then drivers ar
 by attempting a non-blocking read of 1 byte from the inbound TCP buffer. The following two cases test both a successful
 read and a failed one.
 
+Due to the complexity of managing a proxy layer, the following tests should only be run for non-ssl, non-auth, and 
+non-compression connections.
+
 #### Connection Aliveness Check Fails
 
-1. Initialize a TCP listener to simulate the server-side behavior. The listener should write at least 5 bytes to the
-    connection to prevent size-related errors (e.g. `0x01, 0x02, 0x03, 0x04, 0x05, 0xFF`). The response should be
-    delayed by 2x the size of the socket timeout.
-2. Implement a monitoring mechanism to capture the `ConnectionPendingResponseStarted`,
-    `ConnectionPendingResponseFailed`, and `ConnectionClosed` events.
-3. Instantiate a connection pool using the mock listener’s address, ensuring readiness without error. Attach the event
-    monitor to observe the connection’s state.
-4. Check out a connection from the pool and initiate a read operation with an appropriate socket timeout (e.g, 10ms)
-    that will trigger a timeout due to the artificial delay of 2x the socket timeout (step 1). Ensure that the read
-    operation returns a timeout error.
-5. Check the connection back into the pool and sleep for 3 seconds so that the pending response state timestamp exceeds
-    the pending response timeout, forcing an aliveness check.
-6. Check the connection out. The aliveness check should fail since no additional bytes were added after the delay in
-    step 1.
-7. Verify that one event for each `ConnectionPendingResponseStarted` and `ConnectionPendingResponseFailed` was emitted.
-    Also verify that the fields were correctly set for each event. Verify that a `ConnectionClosed` event was emitted.
+1. Create a direct connection with `maxPoolSize=1` to the [proxy server](https://github.com/mongodb-labs/drivers-evergreen-tools/pull/662/files) which defaults to 
+    port 28017. See the associated  README.md file for more information. Subscribe to the following CMAP events:
+      - `PendingResponseStarted`
+      - `PendingResponseSucceeded`
+      - `PendingResponseFailed`
+      - `ConnectionClosed`
+2. Use `db.RunCommand` to `insert` a record into the database with a timeout of 200 milliseconds. Include the following
+    option to be intercepted by the proxy server: `{"proxyTest":{"actions":[{"delayMs":400},{"sendBytes":0}]}}`. This
+    will instruct the proxy to:
+      1. Delay the response by 400ms, causing a timeout.
+      2. Withhold the response bytes indefinitely, forcing the aliveness check to fail on a subsequent operation.
+3. Verify that `db.RunCommand` returns a timeout error.
+4. Sleep for 3 seconds to ensure there is no time remaining in the pending response state, creating the necessary 
+    condition to force an aliveness check.
+5. Run an `insertOne` command and verify there it does not return an error.
+6. Verify that we've recieved the following events from the `insertOne` step:
+    - 1x`ConnectionPendingResponseStarted` 
+    - 1x`ConnectionPendingResponseFailed`
+    - 0x`ConnectionPendingResponseSucceeded` 
+    - 1x`ConnectionClosed`
 
 #### Connection Aliveness Check Succeeds
 
-1. Initialize a TCP listener to simulate the server-side behavior. The listener should write at least 5 bytes to the
-     connection to prevent size-related errors (e.g. `0x01, 0x02, 0x03, 0x04, 0x05, 0xFF`). The response should be delayed
-     by 2x the size of the socket timeout. Write at least 1 additional byte after the delay so that the aliveness
-     check succeeds (e.g. `0xAA`).
-2. Implement a monitoring mechanism to capture the `ConnectionPendingResponseStarted`,
-    `ConnectionPendingResponseSucceeded`, and `ConnectionClosed` events.
-3. Instantiate a connection pool using the mock listener’s address, ensuring readiness without error. Attach the event
-    monitor to observe the connection’s state.
-4. Check out a connection from the pool and initiate a read operation with an appropriate socket timeout (e.g, 10ms)
-    that will trigger a timeout due to the artificial delay of 2x the socket timeout (step 1). Ensure that the read
-    operation returns a timeout error.
-5. Check the connection back into the pool and sleep for 3 seconds so that the pending response state timestamp exceeds
-    the pending response timeout, forcing an aliveness check.
-6. Check the connection out. The aliveness check should succeed since no additional bytes were added after the delay in
-    step 1.
-7. Verify that one event for each `ConnectionPendingResponseStarted` and `ConnectionPendingResponseSucceeded` was
-    emitted. Also verify that the fields were correctly set for each event. Verify that a `ConnectionClosed` event was
-    not emitted.
+1. Create a direct connection with `maxPoolSize=1` to the [proxy server](https://github.com/mongodb-labs/drivers-evergreen-tools/pull/662/files) which defaults to 
+    port 28017. See the associated  README.md file for more information. Subscribe to the following CMAP events:
+      - `PendingResponseStarted`
+      - `PendingResponseSucceeded`
+      - `PendingResponseFailed`
+      - `ConnectionClosed`
+2. Use `db.RunCommand` to `insert` a record into the database with a timeout of 200 milliseconds. Include the following
+    option to be intercepted by the proxy server: `{"proxyTest":{"actions":[{"delayMs":400},{"sendAll":true}]}}`. This
+    will instruct the proxy to:
+      1. Delay the response by 400ms, causing a timeout.
+      2. Send all bytes in the response, allowing the aliveness check to succeed on a subsequent operation.
+3. Verify that `db.RunCommand` returns a timeout error.
+4. Sleep for 3 seconds to ensure there is no time remaining in the pending response state, creating the necessary 
+    condition to force an aliveness check.
+5. Run an `insertOne` command and verify there it does not return an error.
+6. Verify that we've recieved the following events from the `insertOne` step:
+    - 2x`ConnectionPendingResponseStarted` (one for the aliveness check, one for the retry)
+    - 1x`ConnectionPendingResponseFailed` (the aliveness check is a failure to drain the connection due to a timeout)
+    - 1x`ConnectionPendingResponseSucceeded` 
+    - 1x`ConnectionClosed`
 
 #### Exhaust Cursors 
 
