@@ -1,5 +1,3 @@
-from xmlrpc.client import Binary
-
 # Testing Binary subtype 9: Vector
 
 The JSON files in this directory tree are platform-independent tests that drivers can use to prove their conformance to
@@ -70,7 +68,9 @@ as all of its bits are ones.
 
 #### 1. Encoding
 
-- Test that an exception is raised when one attempts to encode a vector with non-zero ignored bits.
+- Test encoding with non-zero ignored bits. Use the driver API that validates vector metadata.
+- If the driver validates ignored bits are zero (preferred), expect an error. Otherwise expect the ignored bits are
+    preserved.
 
 ```python
 with pytest.raises(ValueError):
@@ -79,19 +79,16 @@ with pytest.raises(ValueError):
 
 ### 2. Decoding
 
-- Test that one can manually create a BSON Binary object following the vector structure (dtype + padding + data).
-- Test that this can be inserted and found
 - Test the behaviour of your driver when one attempts to decode from binary to vector.
     - e.g. As of pymongo 4.14, a warning is raised. From 5.0, it will be an exception.
 
 ```python
-v = Binary(b'\x10\x07\xff', subtype=9)
-clxn.insert_one({"v": v})
-found = clxn.find_one({"v": v})["v"]
-assert isinstance(found, Binary)
+b = Binary(b'\x10\x07\xff', subtype=9)
 with pytest.warns():
-    Binary.as_vector(found)
+    Binary.as_vector(b)
 ```
+
+Drivers MAY skip this test if they choose not to implement a `Vector` type.
 
 ### 3. Comparison
 
@@ -115,6 +112,8 @@ v2 = Binary.as_vector(b2)
 assert b1 != b2  # Unequal at naive Binary level 
 assert v2 !=v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
 ```
+
+Drivers MAY skip this test if they choose not to implement a `Vector` type.
 
 ## FAQ
 

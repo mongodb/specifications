@@ -180,7 +180,7 @@ End Function
 
 #### Validation
 
-Drivers MUST validate vector metadata and raise an error if any invariant is violated:
+Drivers MUST validate vector metadata and raise an exception if any invariant is violated:
 
 - When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and
     padding MUST be a multiple of 4 bytes.
@@ -189,8 +189,8 @@ Drivers MUST validate vector metadata and raise an error if any invariant is vio
     - For a PACKED_BIT vector with non-zero padding, ignored bits SHOULD be zero.
         - When encoding, if ignored bits aren't zero, drivers SHOULD raise an exception, but drivers MAY leave them as-is if
             backwards-compatibility is a concern.
-        - When decoding, drivers SHOULD raise an error if decoding non-zero ignored bits, but drivers MAY choose not to for
-            backwards compatibility.
+        - When decoding, drivers SHOULD raise an exception if decoding non-zero ignored bits, but drivers MAY choose not to
+            for backwards compatibility.
         - Drivers SHOULD use the next major release to conform to ignored bits being zero.
 
 Drivers MUST perform this validation when a numeric vector and padding are provided through the API, and when unpacking
