@@ -27,8 +27,8 @@ If a connection with a pending response is idle for > 3 seconds, then drivers ar
 by attempting a non-blocking read of 1 byte from the inbound TCP buffer. The following two cases test both a successful
 read and a failed one.
 
-Due to the complexity of managing a proxy layer, the following tests should only be run for non-ssl, non-auth, and 
-non-compression connections.
+Due to the complexity of managing a proxy layer, the following qualifying tests should only be run for non-ssl, 
+non-auth, and non-compression connections.
 
 #### Connection Aliveness Check Fails
 
@@ -46,7 +46,7 @@ non-compression connections.
 3. Verify that `db.RunCommand` returns a timeout error.
 4. Sleep for 3 seconds to ensure there is no time remaining in the pending response state, creating the necessary 
     condition to force an aliveness check.
-5. Run an `insertOne` command and verify there it does not return an error.
+5. Run an `insertOne` command and verify that it does not return an error.
 6. Verify that we've recieved the following events from the `insertOne` step:
     - 1x`ConnectionPendingResponseStarted` 
     - 1x`ConnectionPendingResponseFailed`
@@ -69,7 +69,7 @@ non-compression connections.
 3. Verify that `db.RunCommand` returns a timeout error.
 4. Sleep for 3 seconds to ensure there is no time remaining in the pending response state, creating the necessary 
     condition to force an aliveness check.
-5. Run an `insertOne` command and verify there it does not return an error.
+5. Run an `insertOne` command and verify that it does not return an error.
 6. Verify that we've recieved the following events from the `insertOne` step:
     - 2x`ConnectionPendingResponseStarted` (one for the aliveness check, one for the retry)
     - 1x`ConnectionPendingResponseFailed` (the aliveness check is a failure to drain the connection due to a timeout)
