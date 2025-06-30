@@ -55,6 +55,66 @@ MUST assert that the input float array is the same after encoding and decoding.
 - if the canonical_bson field is present, raise an exception when attempting to deserialize it into the corresponding
     numeric values, as the field contains corrupted data.
 
+## Prose Tests
+
+### Treatment of non-zero ignored bits
+
+All drivers MUST test encoding and decoding behavior according to their design and version. For drivers that haven't
+been completed, raise exceptions in both cases. For those that have, update to this behavior according to semantic
+versioning rules, and update tests accordingly.
+
+In both cases, [255], a single byte PACKED_BIT vector of length 1 (hence padding of 7) provides a good example to use,
+as all of its bits are ones.
+
+#### 1. Encoding
+
+- Test encoding with non-zero ignored bits. Use the driver API that validates vector metadata.
+- If the driver validates ignored bits are zero (preferred), expect an error. Otherwise expect the ignored bits are
+    preserved.
+
+```python
+with pytest.raises(ValueError):
+    Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
+```
+
+### 2. Decoding
+
+- Test the behaviour of your driver when one attempts to decode from binary to vector.
+    - e.g. As of pymongo 4.14, a warning is raised. From 5.0, it will be an exception.
+
+```python
+b = Binary(b'\x10\x07\xff', subtype=9)
+with pytest.warns():
+    Binary.as_vector(b)
+```
+
+Drivers MAY skip this test if they choose not to implement a `Vector` type.
+
+### 3. Comparison
+
+Once we can guarantee that all ignored bits are non-zero, then equality can be tested on the binary subtype. Until then,
+equality is ambiguous, and depends on whether one compares by bits (uint1), or uint8. Drivers SHOULD test equality
+behavior according to their design and version.
+
+For example, in `pymongo < 5.0`, we define equality of a BinaryVector by matching padding, dtype, and integer. This
+means that two single bit vectors in which 7 bits are ignored do not match unless all bits match. This mirrors what the
+server does.
+
+```python
+b1 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7)
+assert b1 == Binary(b'\x10\x07\x80', subtype=9) # This is effectively a roundtrip.
+v1 = Binary.as_vector(b1)
+
+b2 = Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
+assert b2 == Binary(b'\x10\x07\xff', subtype=9)
+v2 = Binary.as_vector(b2)
+
+assert b1 != b2  # Unequal at naive Binary level 
+assert v2 != v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
+```
+
+Drivers MAY skip this test if they choose not to implement a `Vector` type.
+
 ## FAQ
 
 - What MongoDB Server version does this apply to?
