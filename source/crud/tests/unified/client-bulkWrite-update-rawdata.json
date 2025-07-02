@@ -171,15 +171,15 @@
                       },
                       "multi": true
                     }
-                  ]
-                },
-                "nsInfo": [
-                  {
-                    "ns": "crud-tests.coll0"
+                  ],
+                  "nsInfo": [
+                    {
+                      "ns": "crud-tests.coll0"
+                    }
+                  ],
+                  "rawData": {
+                    "$$exists": false
                   }
-                ],
-                "rawData": {
-                  "$$exists": false
                 }
               }
             }

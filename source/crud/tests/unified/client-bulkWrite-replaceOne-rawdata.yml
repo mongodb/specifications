@@ -86,7 +86,7 @@ tests:
                       $$unsetOrMatches: false
                     upsert:
                       $$unsetOrMatches: false
-              nsInfo:
-                - ns: *namespace
-              rawData:
-                $$exists: false
+                nsInfo:
+                  - ns: *namespace
+                rawData:
+                  $$exists: false
