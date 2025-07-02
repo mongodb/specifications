@@ -146,7 +146,7 @@
                         "$$unsetOrMatches": false
                       }
                     }
-                 ]
+                  ]
                 },
                 "nsInfo": [
                   {
