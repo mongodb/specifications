@@ -310,6 +310,15 @@ class BulkWriteOptions {
     comment: Optional<BSON value>;
 
     /**
+     * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+     *
+     * @note This option will not be sent when connected to pre-9.0 servers.
+     *
+     * @since MongoDB 8.2
+     */
+    rawData: Optional<Boolean>;
+
+    /**
      * Whether detailed results for each successful operation should be included in the returned
      * BulkWriteResult.
      *
@@ -538,6 +547,7 @@ The `bulkWrite` server command has the following format:
     "bypassDocumentValidation": Optional<Boolean>,
     "comment": Optional<BSON value>,
     "let": Optional<Document>,
+    "rawData": Optional<Boolean>,
     ...additional operation-agnostic fields
 }
 ```
@@ -916,6 +926,8 @@ The requirement has since been removed. Checking size limits complicates some dr
 error in this specific situation does not seem helpful enough to require size checks.
 
 ## **Changelog**
+
+- 2025-06-27: Added `rawData` option.
 
 - 2024-11-05: Updated the requirements regarding the size validation.
 

@@ -44,7 +44,7 @@
                 "deleteOne": {
                   "namespace": "crud-tests.coll0",
                   "filter": {}
-               }
+                }
               },
               {
                 "deleteMany": {
