@@ -97,7 +97,7 @@ tests:
                     filter: *filter
                     updateMods: *update
                     multi: true
-              nsInfo:
-                - ns: *namespace
-              rawData:
-                $$exists: false
+                nsInfo:
+                  - ns: *namespace
+                rawData:
+                  $$exists: false
