@@ -178,8 +178,7 @@ The RetryableWriteError label might be added to an error in a variety of ways:
 
 - When the driver encounters a network error checking out a connection, it MUST add a RetryableWriteError label to that
     error if the MongoClient performing the operation has the retryWrites configuration option set to true. For example,
-    a network error encountered when checking out a connection that must attempt to discard a pending response from the
-    server.
+    a network error encountered when reading a pending response during connection check out.
 
 - When the driver encounters a network error communicating with any server version that supports retryable writes, it
     MUST add a RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
