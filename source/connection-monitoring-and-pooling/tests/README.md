@@ -27,59 +27,77 @@ If a connection with a pending response is idle for > 3 seconds, then drivers ar
 by attempting a non-blocking read of 1 byte from the inbound TCP buffer. The following two cases test both a successful
 read and a failed one.
 
-Due to the complexity of managing a proxy layer, the following qualifying tests should only be run for non-ssl, 
+Due to the complexity of managing a proxy layer, the following qualifying tests should only be run for non-ssl,
 non-auth, and non-compression connections.
 
-#### Connection Aliveness Check Fails
+#### Recover Partial Header Response
 
-1. Create a direct connection with `maxPoolSize=1` to the [proxy server](https://github.com/mongodb-labs/drivers-evergreen-tools/pull/662/files) which defaults to 
-    port 28017. See the associated  README.md file for more information. Subscribe to the following CMAP events:
-      - `PendingResponseStarted`
-      - `PendingResponseSucceeded`
-      - `PendingResponseFailed`
-      - `ConnectionClosed`
-2. Use `db.RunCommand` to `insert` a record into the database with a timeout of 200 milliseconds. Include the following
-    option to be intercepted by the proxy server: `{"proxyTest":{"actions":[{"delayMs":400},{"sendBytes":0}]}}`. This
-    will instruct the proxy to:
-      1. Delay the response by 400ms, causing a timeout.
-      2. Withhold the response bytes indefinitely, forcing the aliveness check to fail on a subsequent operation.
-3. Verify that `db.RunCommand` returns a timeout error.
-4. Sleep for 3 seconds to ensure there is no time remaining in the pending response state, creating the necessary 
-    condition to force an aliveness check.
-5. Run an `insertOne` command and verify that it does not return an error.
-6. Verify that we've recieved the following events from the `insertOne` step:
-    - 1x`ConnectionPendingResponseStarted` 
+This test verifies that if only part of a response header arrives before a socket timeout, the driver can drain the rest
+of the response and reuse the connection for the next operation.
+
+1. Connect to the proxy server with `maxPoolSize=1` and `direct=true`, subscribing to the following CMAP events:
+    - `PendingResponseStarted`
+    - `PendingResponseSucceeded`
+    - `PendingResponseFailed`
+    - `ConnectionClosed`
+2. Send a command (e.g. an insert) with a 200 millisecond timeout and the following `proxyTest` actions:
+    - `sendBytes`: any value between 1 and 3
+    - `delayMS`: 400 ( to exceed the 200 ms timeout)
+    - `sendAll`: `true`
+3. Issue any follow-up operation and assert that it does not return an error.
+5. Verify that we've recieved the following events from the `insertOne` step:
+    - 1x`ConnectionPendingResponseStarted`
+    - 0x`ConnectionPendingResponseFailed`
+    - 1x`ConnectionPendingResponseSucceeded`
+    - 0x`ConnectionClosed`
+
+#### Recover Partial Body Response
+
+This test verifies that if only part of a response body arrives before a socket timeout, the driver can drain the rest
+of the response and reuse the connection for the next operation.
+
+1. Connect to the proxy server with `maxPoolSize=1` and `direct=true`, subscribing to the following CMAP events:
+    - `PendingResponseStarted`
+    - `PendingResponseSucceeded`
+    - `PendingResponseFailed`
+    - `ConnectionClosed`
+2. Send a command (e.g. an insert) with a 200 millisecond timeout and the following `proxyTest` actions:
+    - `sendBytes`: Any value > 16
+    - `delayMS`: 400 ( to exceed the 200 ms timeout)
+    - `sendAll`: `true`
+3. Issue any follow-up operation and assert that it does not return an error.
+5. Verify that we've recieved the following events from the `insertOne` step:
+    - 1x`ConnectionPendingResponseStarted`
+    - 0x`ConnectionPendingResponseFailed`
+    - 1x`ConnectionPendingResponseSucceeded`
+    - 0x`ConnectionClosed`
+
+#### Non-destructive Aliveness Check
+
+This test verifies that if a connection idles past the driver's aliveness window (3 seconds) after a partial header, the
+aliveness check does not attempt to discard bytes from the TCP stream.
+
+1. Connect to the proxy server with `maxPoolSize=1` and `direct=true`, subscribing to the following CMAP events:
+    - `PendingResponseStarted`
+    - `PendingResponseSucceeded`
+    - `PendingResponseFailed`
+    - `ConnectionClosed`
+2. Send a command (e.g. an insert) with a 200 millisecond timeout and the following `proxyTest` actions:
+    - `sendBytes`: any value between 1 and 3
+    - `delayMS`: 400 ( to exceed the 200 ms timeout)
+    - `sendAll`: `true`
+3. Sleep for 3 seconds
+3. Issue any follow-up operation and assert that it does not return an error.
+5. Verify that we've recieved the following events from the `insertOne` step:
+    - 2x`ConnectionPendingResponseStarted`
     - 1x`ConnectionPendingResponseFailed`
-    - 0x`ConnectionPendingResponseSucceeded` 
-    - 1x`ConnectionClosed`
+    - 1x`ConnectionPendingResponseSucceeded`
+    - 0x`ConnectionClosed`
 
-#### Connection Aliveness Check Succeeds
+#### Exhaust Cursors
 
-1. Create a direct connection with `maxPoolSize=1` to the [proxy server](https://github.com/mongodb-labs/drivers-evergreen-tools/pull/662/files) which defaults to 
-    port 28017. See the associated  README.md file for more information. Subscribe to the following CMAP events:
-      - `PendingResponseStarted`
-      - `PendingResponseSucceeded`
-      - `PendingResponseFailed`
-      - `ConnectionClosed`
-2. Use `db.RunCommand` to `insert` a record into the database with a timeout of 200 milliseconds. Include the following
-    option to be intercepted by the proxy server: `{"proxyTest":{"actions":[{"delayMs":400},{"sendAll":true}]}}`. This
-    will instruct the proxy to:
-      1. Delay the response by 400ms, causing a timeout.
-      2. Send all bytes in the response, allowing the aliveness check to succeed on a subsequent operation.
-3. Verify that `db.RunCommand` returns a timeout error.
-4. Sleep for 3 seconds to ensure there is no time remaining in the pending response state, creating the necessary 
-    condition to force an aliveness check.
-5. Run an `insertOne` command and verify that it does not return an error.
-6. Verify that we've recieved the following events from the `insertOne` step:
-    - 2x`ConnectionPendingResponseStarted` (one for the aliveness check, one for the retry)
-    - 1x`ConnectionPendingResponseFailed` (the aliveness check is a failure to drain the connection due to a timeout)
-    - 1x`ConnectionPendingResponseSucceeded` 
-    - 1x`ConnectionClosed`
-
-#### Exhaust Cursors 
-
-Drivers that support the `exhaustAllowed` `OP_MSG` bit flag must ensure that responses which contain `moreToCome` will 
-not result in a connection being put into a "pending response" state. Drivers that don't support this behavior can 
+Drivers that support the `exhaustAllowed` `OP_MSG` bit flag must ensure that responses which contain `moreToCome` will
+not result in a connection being put into a "pending response" state. Drivers that don't support this behavior can
 skip this prose test.
 
 1. Configure a failpoint to block `getMore` for 500ms.
