@@ -321,9 +321,10 @@ class AggregateOptions {
   let: Optional<Document>;
 
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -382,9 +383,10 @@ class CountOptions {
   comment: Optional<any>;
 
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -415,9 +417,10 @@ class EstimatedDocumentCountOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -468,9 +471,10 @@ class DistinctOptions {
   hint: Optional<(String | Document)>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -751,9 +755,10 @@ class FindOptions {
   let: Optional<Document>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -1032,9 +1037,10 @@ class BulkWriteOptions {
   let: Optional<Document>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -1063,9 +1069,10 @@ class InsertOneOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -1101,9 +1108,10 @@ class InsertManyOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -1201,9 +1209,10 @@ class UpdateOptions {
   sort: Optional<Document>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -1289,9 +1298,10 @@ class ReplaceOptions {
   sort: Optional<Document>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -1348,9 +1358,10 @@ class DeleteOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -2110,9 +2121,10 @@ class FindOneAndDeleteOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -2227,9 +2239,10 @@ class FindOneAndReplaceOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -2353,9 +2366,10 @@ class FindOneAndUpdateOptions {
   comment: Optional<any>;
   
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */

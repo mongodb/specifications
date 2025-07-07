@@ -215,9 +215,10 @@ interface CreateIndexOptions {
   maxTimeMS: Optional<Int64>;
 
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -247,9 +248,10 @@ interface DropIndexOptions {
   maxTimeMS: Optional<Int64>;
 
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
@@ -823,9 +825,10 @@ interface ListIndexesOptions {
   batchSize: Optional<Int32>;
 
   /**
-   * This option allows operations to function on the bucket-level data while accessing the primary namespace (not system.buckets).
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
-   * @note This option will not be sent when connected to pre-9.0 servers.
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
