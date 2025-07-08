@@ -176,6 +176,10 @@ The RetryableWriteError label might be added to an error in a variety of ways:
     RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
     configuration option set to true.
 
+- When the driver encounters a network error checking out a connection, it MUST add a RetryableWriteError label to that
+    error if the MongoClient performing the operation has the retryWrites configuration option set to true. For example,
+    a network error encountered when reading a pending response during connection check out.
+
 - When the driver encounters a network error communicating with any server version that supports retryable writes, it
     MUST add a RetryableWriteError label to that error if the MongoClient performing the operation has the retryWrites
     configuration option set to true.
@@ -679,6 +683,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2025-06-05: Include connection checkout in the transient network error retryability criteria.
 
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 
