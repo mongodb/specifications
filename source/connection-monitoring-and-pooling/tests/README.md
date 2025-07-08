@@ -45,7 +45,7 @@ of the response and reuse the connection for the next operation.
     - `delayMS`: 400 ( to exceed the 200 ms timeout)
     - `sendAll`: `true`
 3. Issue any follow-up operation and assert that it does not return an error.
-5. Verify that we've recieved the following events from the `insertOne` step:
+5. Verify that we've received the following events from the `insertOne` step:
     - 1x`ConnectionPendingResponseStarted`
     - 0x`ConnectionPendingResponseFailed`
     - 1x`ConnectionPendingResponseSucceeded`
@@ -66,7 +66,7 @@ of the response and reuse the connection for the next operation.
     - `delayMS`: 400 ( to exceed the 200 ms timeout)
     - `sendAll`: `true`
 3. Issue any follow-up operation and assert that it does not return an error.
-5. Verify that we've recieved the following events from the `insertOne` step:
+5. Verify that we've received the following events from the `insertOne` step:
     - 1x`ConnectionPendingResponseStarted`
     - 0x`ConnectionPendingResponseFailed`
     - 1x`ConnectionPendingResponseSucceeded`
@@ -88,7 +88,7 @@ aliveness check does not attempt to discard bytes from the TCP stream.
     - `sendAll`: `true`
 3. Sleep for 3 seconds
 3. Issue any follow-up operation and assert that it does not return an error.
-5. Verify that we've recieved the following events from the `insertOne` step:
+5. Verify that we've received the following events from the `insertOne` step:
     - 2x`ConnectionPendingResponseStarted`
     - 1x`ConnectionPendingResponseFailed`
     - 1x`ConnectionPendingResponseSucceeded`
