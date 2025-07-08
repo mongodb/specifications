@@ -25,6 +25,10 @@
       }
     }
   ],
+  "_yamlAnchors": {
+    "namespace": "crud-tests.coll0",
+    "filter": {}
+  },
   "tests": [
     {
       "description": "client bulk write delete with rawData option",

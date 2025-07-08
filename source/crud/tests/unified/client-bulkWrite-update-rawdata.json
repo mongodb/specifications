@@ -25,6 +25,13 @@
       }
     }
   ],
+  "_yamlAnchors": {
+    "namespace": "crud-tests.coll0",
+    "filter": {},
+    "update": {
+      "$set": {}
+    }
+  },
   "tests": [
     {
       "description": "client bulk write update with rawData option",
