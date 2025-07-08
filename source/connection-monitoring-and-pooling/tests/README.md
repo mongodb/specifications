@@ -45,7 +45,7 @@ of the response and reuse the connection for the next operation.
     - `delayMS`: 400 ( to exceed the 200 ms timeout)
     - `sendAll`: `true`
 3. Issue any follow-up operation and assert that it does not return an error.
-5. Verify that we've received the following events from the `insertOne` step:
+4. Verify that we've received the following events from the `insertOne` step:
     - 1x`ConnectionPendingResponseStarted`
     - 0x`ConnectionPendingResponseFailed`
     - 1x`ConnectionPendingResponseSucceeded`
@@ -66,7 +66,7 @@ of the response and reuse the connection for the next operation.
     - `delayMS`: 400 ( to exceed the 200 ms timeout)
     - `sendAll`: `true`
 3. Issue any follow-up operation and assert that it does not return an error.
-5. Verify that we've received the following events from the `insertOne` step:
+4. Verify that we've received the following events from the `insertOne` step:
     - 1x`ConnectionPendingResponseStarted`
     - 0x`ConnectionPendingResponseFailed`
     - 1x`ConnectionPendingResponseSucceeded`
@@ -87,7 +87,7 @@ aliveness check does not attempt to discard bytes from the TCP stream.
     - `delayMS`: 400 ( to exceed the 200 ms timeout)
     - `sendAll`: `true`
 3. Sleep for 3 seconds
-3. Issue any follow-up operation and assert that it does not return an error.
+4. Issue any follow-up operation and assert that it does not return an error.
 5. Verify that we've received the following events from the `insertOne` step:
     - 2x`ConnectionPendingResponseStarted`
     - 1x`ConnectionPendingResponseFailed`
@@ -97,14 +97,14 @@ aliveness check does not attempt to discard bytes from the TCP stream.
 #### Exhaust Cursors
 
 Drivers that support the `exhaustAllowed` `OP_MSG` bit flag must ensure that responses which contain `moreToCome` will
-not result in a connection being put into a "pending response" state. Drivers that don't support this behavior can
-skip this prose test.
+not result in a connection being put into a "pending response" state. Drivers that don't support this behavior can skip
+this prose test.
 
 1. Configure a failpoint to block `getMore` for 500ms.
 2. Insert > 2 records into the collection.
-2. Create an exhaust cursor using `find` and iterate one `getMore` using `batchSize=1`.
-3. Call a subsequent `getMore` on the exhaust cursor with a client-side timeout of 100ms.
-4. Ensure that the `ConnectionClosed` event is emitted due to timeout.
+3. Create an exhaust cursor using `find` and iterate one `getMore` using `batchSize=1`.
+4. Call a subsequent `getMore` on the exhaust cursor with a client-side timeout of 100ms.
+5. Ensure that the `ConnectionClosed` event is emitted due to timeout.
 
 ## Logging Tests
 
