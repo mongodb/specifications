@@ -1,4 +1,4 @@
-SCHEMA=../schema-1.24.json
+SCHEMA=../schema-1.25.json
 
 .PHONY: all \
 	atlas-data-lake \

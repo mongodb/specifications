@@ -1,6 +1,6 @@
 description: "connection-logging"
 
-schemaVersion: "1.24"
+schemaVersion: "1.25"
 
 runOnRequirements:
   - topologies:
@@ -66,7 +66,7 @@ tests:
         expectError:
           isTimeoutError: true
 
-      # Execute a subsequent operation which should time out during the 
+      # Execute a subsequent operation which should time out during the
       # pending response read attempt.
       - name: findOne
         object: *collection
@@ -201,7 +201,7 @@ tests:
               requestId: { $$type: [int, long] }
               reason: "timeout"
 
-          # Second Find 
+          # Second Find
           - level: debug
             component: connection
             data:
