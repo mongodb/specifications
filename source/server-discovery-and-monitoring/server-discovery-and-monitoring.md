@@ -240,7 +240,6 @@ Fields:
     Default null. (Only mongos and shard servers record this field when monitoring config servers as replica sets, at
     least until
     [drivers allow applications to use readConcern "afterOptime".](../max-staleness/max-staleness.md#future-feature-to-support-readconcern-afteroptime))
-    
 
 - (=) `type`: a [ServerType](#servertype) enum value. Default Unknown.
 
@@ -898,7 +897,7 @@ else:
         ):
             # Stale primary.
             # The error field MUST include the substring "primary marked stale due to electionId/setVersion mismatch"
-            replace serverDescription with a default ServerDescription of type "Unknown" 
+            replace serverDescription with a default ServerDescription of type "Unknown"
             checkIfHasPrimary()
             return
 
