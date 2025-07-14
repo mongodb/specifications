@@ -251,8 +251,6 @@ Then for each element in `tests`:
                 This MAY be configured system-wide.
             - `tlsCertificateKeyFile` (or equivalent) set to
                 [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-                
-
             The method of passing TLS options for KMIP TLS connections is driver dependent.
     2. If `autoEncryptOpts` does not include `keyVaultNamespace`, default it to `keyvault.datakeys`.
 
@@ -427,7 +425,6 @@ First, perform the setup.
         This MAY be configured system-wide.
     - `tlsCertificateKeyFile` (or equivalent) set to
         [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-        
 
     The method of passing TLS options for KMIP TLS connections is driver dependent.
 
@@ -684,7 +681,6 @@ binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtyp
         This MAY be configured system-wide.
     - `tlsCertificateKeyFile` (or equivalent) set to
         [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-        
 
     The method of passing TLS options for KMIP TLS connections is driver dependent.
 
@@ -1447,7 +1443,6 @@ Four mock KMS server processes must be running:
 
 1. The mock
     [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-    
 
     Run on port 9000 with
     [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
@@ -1463,7 +1458,6 @@ Four mock KMS server processes must be running:
 
 2. The mock
     [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-    
 
     Run on port 9001 with
     [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
@@ -1479,7 +1473,6 @@ Four mock KMS server processes must be running:
 
 3. The mock
     [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-    
 
     Run on port 9002 with
     [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
