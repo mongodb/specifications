@@ -251,8 +251,8 @@ Then for each element in `tests`:
                 This MAY be configured system-wide.
             - `tlsCertificateKeyFile` (or equivalent) set to
                 [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-            The method of passing TLS options for KMIP TLS connections is driver dependent.
 
+            The method of passing TLS options for KMIP TLS connections is driver dependent.
     2. If `autoEncryptOpts` does not include `keyVaultNamespace`, default it to `keyvault.datakeys`.
 
 7. For each element in `operations`:
