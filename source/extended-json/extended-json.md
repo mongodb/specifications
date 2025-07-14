@@ -722,6 +722,7 @@ parsed as a normal document and not reported as an error.
 
     - Changed BSON binary type wrapper to
         `{"$binary": {"base64": <base64-encoded payload as a *string*>, "subType": <BSON binary type as a one- or two-character *hex string*>}}`
+        
 
     - Added "Restrictions and limitations" section.
 
