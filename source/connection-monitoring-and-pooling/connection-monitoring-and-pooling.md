@@ -585,14 +585,14 @@ If an operation times out the socket while awaiting a server response and CSOT i
 the command:
 
 - **Non-exhaust commands**: If the command was not sent with the `exhaustAllowed` OP_MSG bit flag, the driver MUST:
-    1. Put the connection into a "pending response" state.
-    2. Record the current time in a way that can be updated while awaiting a pending response.
+  1. Put the connection into a "pending response" state.
+  2. Record the current time in a way that can be updated while awaiting a pending response.
 - **Exhaust commands**: If the command was sent with the `exhaustAllowed` bit, the driver MUST NOT transition the
-    connection to a "pending response" state and MUST instead immediately close the connection.
+connection to a "pending response" state and MUST instead immediately close the connection.
 
 The next time connection in the "pending response" state is checked out, the driver MUST ensure that any remaining
-response data is drained and discarded either by explicit reads or, in push-based I/O implementations (e.g. Node.JS), by
-consuming buffered data.
+response data is drained and discarded either by explicit reads or, in push-based I/O implementations (e.g. Node.JS),
+by consuming buffered data.
 
 1. **Persist and update timestamp**: The connection must record the current time immediately after the original socket
     timeout. This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or
@@ -600,15 +600,15 @@ consuming buffered data.
 2. **Aliveness check**: If the connection remains idle (i.e. no data is read or received) for more than 3 seconds since
     the start of the "pending response" state or since the last successful read/receive, the driver MUST attempt to
     verify the connection’s health by either performing a non-blocking read or using the minimal possible timeout to
-    check if at least one byte can be read/received. If at least one byte can be read the connection should be returned
+    check if at least one byte can be read/received. If at least one byte can be read the connection should be returned 
     to the pool for reuse and a retryable error should be propagated to the operation layer. If no bytes can be read,
     the connection MUST be closed.
 3. **User-provided timeout**: If a user-provided timeout is specified for the "pending response" drain, the driver MUST
     use the minimum of (a) the remaining time before the 3 second "pending response" window elapses and (b) the
     user-provided timeout as the effective timeout for the read/drain operation.
-4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining 3
-    second "pending response" window and (b) the `socketTimeoutMS` (if supported by the driver) as the effective
-    timeout for the read/drain operation.
+4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining
+    3 second "pending response" window and (b) the `socketTimeoutMS` (if supported by the driver) as the effective timeout
+    for the read/drain operation.
 5. **Error or over-age**: If reading from the socket (or draining buffered data) results in an error that is not a
     timeout, or if the connection exceeds the 3 second pending-response window, the driver MUST close the connection.
 6. **Clear pending state on success**: If the pending response is fully drained and successfully discarded, and the
@@ -690,7 +690,7 @@ def await_pending_response(timeout, conn):
         raise error  
 ```
 
-##### Pseudocode
+##### Pseudocode 
 
 This subsection outlines the pseudocode steps for acquiring a connection from the pool.
 
@@ -1420,8 +1420,8 @@ In addition to the common fields defined above, this message MUST contain the fo
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
-> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
-> ID={{requestId}}
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, 
+> request ID={{requestId}}
 
 #### Connection Pending Response Succeeded
 
@@ -1432,13 +1432,13 @@ In addition to the common fields defined above, this message MUST contain the fo
 | message            | string             | "Pending response succeeded"                                         |
 | driverConnectionId | int64              | The driver-generated ID for the connection.                          |
 | requestId          | int64              | The driver-generated request ID associated with the network timeout. |
-| durationMS         | Int32/Int64/Double | `PendingResponseSucceeded.duration` converted to milliseconds.       |
+| durationMS         | Int32/Int64/Double | `PendingResponseSucceeded.duration` converted to milliseconds.         |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
-> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
-> ID={{requestId}}, duration={{durationMS}} ms
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
+> request ID={{requestId}}, duration={{durationMS}} ms
 
 #### Connection Pending Response Failed
 
@@ -1450,13 +1450,13 @@ In addition to the common fields defined above, this message MUST contain the fo
 | driverConnectionId | int64              | The driver-generated ID for the connection                          |
 | requestId          | int64              | The driver-generated request ID associated with the network timeout |
 | reason             | string             | The reason for why the pending response read failed                 |
-| durationMS         | Int32/Int64/Double | `PendingResponseFailed.duration` converted to milliseconds.         |
+| durationMS         | Int32/Int64/Double | `PendingResponseFailed.duration` converted to milliseconds.           |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
-> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
-> ID={{requestId}}, reason={{reason}}, duration={{durationMS}} ms
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}},
+> request ID={{requestId}}, reason={{reason}}, duration={{durationMS}} ms
 
 ### Connection Pool Errors
 
@@ -1619,12 +1619,12 @@ always reconsider this in the future.
 
 ### Why does the pending response timeout include the time the connection is idle in the pool?
 
-The pending response timeout includes idle time in the pool so that stale or unusable connections (e.g., if the socket
-is dead) are detected and closed promptly instead of incurring an additional 3-second wait upon checkout. By tracking
-the timeout during idle periods, we ensure that the driver can quickly determine if the connection should be closed with
-a fast, non-blocking check as soon as it's checked out, avoiding introducing unnecessary latency while still protecting
-connection availability. This approach maintains a balance between minimizing connection churn and ensuring users don't
-encounter avoidable delays.
+The pending response timeout includes idle time in the pool so that stale or unusable connections (e.g., if the
+socket is dead) are detected and closed promptly instead of incurring an additional 3-second wait upon checkout. By
+tracking the timeout during idle periods, we ensure that the driver can quickly determine if the connection should be
+closed with a fast, non-blocking check as soon as it's checked out, avoiding introducing unnecessary latency while still
+protecting connection availability. This approach maintains a balance between minimizing connection churn and ensuring
+users don't encounter avoidable delays.
 
 ### Why do we refresh the pending response timeout each time we successfully drain bytes from the TCP stream?
 
@@ -1636,7 +1636,7 @@ since there is no reason to believe that a new connection would reduce latency.
 
 Exhaust cursors are incompatible with the "pending response" connection state due to the non-deterministic nature of the
 connection's completion, which occurs only when `moreToCome=0` is received. Consequently, discarding one of these
-responses does not restore the connection to a reusable state.
+responses does not restore the connection to a reusable state. 
 
 ## Backwards Compatibility
 

@@ -182,7 +182,6 @@ Then for each element in `tests`:
 7. When testing against a sharded cluster run a `distinct` command on the newly created collection on all mongoses. For
     an explanation see,
     [Why do tests that run distinct sometimes fail with StaleDbVersion?](#why-do-tests-that-run-distinct-sometimes-fail-with-staledbversion)
-    
 
 8. If `failPoint` is specified, its value is a configureFailPoint command. Run the command on the admin database to
     enable the fail point.
