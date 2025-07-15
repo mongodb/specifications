@@ -551,6 +551,10 @@ The structure of this object is as follows:
         - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
         - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
         - `extraOptions`: Optional object. Configuration options for the encryption library.
+            - If `extraOptions` is not present or omits `cryptSharedLibPath`, test runners MAY set `cryptSharedLibPath`
+              to the path of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) being
+              tested. This can avoid test errors loading
+              [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) from different paths.
         - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
         - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
@@ -3582,6 +3586,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-07-15: Clarify test runner may apply a default `cryptSharedLibPath`.
 
 - 2025-06-04: Deprecate the `serverless` runOnRequirement
 
