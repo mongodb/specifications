@@ -89,7 +89,9 @@
                       "$$matchAsRoot" : {
                         "insert" : "test",
                         "ordered" : true,
-                        "txnNumber" : 1,
+                        "txnNumber" : {
+                          "$$unsetOrMatches" : 1
+                        },
                         "$db" : "operation-insert",
                         "documents" : [
                           {

@@ -1,6 +1,21 @@
 {
   "description" : "transaction spans",
   "schemaVersion" : "1.9",
+  "runOnRequirements": [
+    {
+      "minServerVersion": "4.0",
+      "topologies": [
+        "replicaset"
+      ]
+    },
+    {
+      "minServerVersion": "4.1.8",
+      "topologies": [
+        "sharded",
+        "load-balanced"
+      ]
+    }
+  ],
   "createEntities" : [
     {
       "client" : {
