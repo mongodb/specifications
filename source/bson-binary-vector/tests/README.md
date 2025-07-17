@@ -113,7 +113,7 @@ assert b1 != b2  # Unequal at naive Binary level
 assert v2 != v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
 ```
 
-Drivers MAY skip this test if they choose not to implement a `Vector` type.
+Drivers MAY skip this test if they choose not to implement a `Vector` type, or the type does not support comparison.
 
 ## FAQ
 
