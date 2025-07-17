@@ -103,12 +103,16 @@ server does.
 ```python
 b1 = Binary(b'\x10\x07\x80', subtype=9) # 1-bit vector with all 0 ignored bits.
 b2 = Binary(b'\x10\x07\xff', subtype=9) # 1-bit vector with all 1 ignored bits.
+b3 = Binary(b'\x10\x07\x80', subtype=9) # Same data as b1.
 
 v1 = Binary.as_vector(b1)
 v2 = Binary.as_vector(b2)
+v3 = Binary.as_vector(b3)
 
 assert b1 != b2  # Unequal at naive Binary level 
 assert v2 != v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
+assert b1 == b3  # Equal at naive Binary level
+assert v1 == v3  # Equal at the BinaryVector level
 ```
 
 Drivers MAY skip this test if they choose not to implement a `Vector` type, or the type does not support comparison.
