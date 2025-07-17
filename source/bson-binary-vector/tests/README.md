@@ -115,7 +115,8 @@ assert b1 == b3  # Equal at naive Binary level
 assert v1 == v3  # Equal at the BinaryVector level
 ```
 
-Drivers MAY skip this test if they choose not to implement a `Vector` type, or the type does not support comparison.
+Drivers MAY skip this test if they choose not to implement a `Vector` type, or the type does not support comparison, or
+the type cannot be constructed with non-zero ignored bits.
 
 ## FAQ
 
