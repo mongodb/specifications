@@ -15,6 +15,7 @@ tests:
   - description: "listCollections with rawData option"
     runOnRequirements:
       - minServerVersion: "8.2.0"
+        auth: false
     operations:
       - name: listCollections
         object: *database0
@@ -26,11 +27,12 @@ tests:
           - commandStartedEvent:
               command:
                 listCollections: 1
-                filter: {}
+                filter: { $$unsetOrMatches: {} }
                 rawData: *rawdata
   - description: "listCollections with rawData option on less than 8.2.0 - ignore argument"
     runOnRequirements:
       - maxServerVersion: "8.1.99"
+        auth: false
     operations:
       - name: listCollections
         object: *database0
@@ -42,6 +44,6 @@ tests:
           - commandStartedEvent:
               command:
                 listCollections: 1
-                filter: {}
+                filter: { $$unsetOrMatches: {} }
                 rawData:
                   $$exists: false

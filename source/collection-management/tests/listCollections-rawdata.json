@@ -23,7 +23,8 @@
       "description": "listCollections with rawData option",
       "runOnRequirements": [
         {
-          "minServerVersion": "8.2.0"
+          "minServerVersion": "8.2.0",
+          "auth": false
         }
       ],
       "operations": [
@@ -43,7 +44,9 @@
               "commandStartedEvent": {
                 "command": {
                   "listCollections": 1,
-                  "filter": {},
+                  "filter": {
+                    "$$unsetOrMatches": {}
+                  },
                   "rawData": true
                 }
               }
@@ -56,7 +59,8 @@
       "description": "listCollections with rawData option on less than 8.2.0 - ignore argument",
       "runOnRequirements": [
         {
-          "maxServerVersion": "8.1.99"
+          "maxServerVersion": "8.1.99",
+          "auth": false
         }
       ],
       "operations": [
@@ -76,7 +80,9 @@
               "commandStartedEvent": {
                 "command": {
                   "listCollections": 1,
-                  "filter": {},
+                  "filter": {
+                    "$$unsetOrMatches": {}
+                  },
                   "rawData": {
                     "$$exists": false
                   }
