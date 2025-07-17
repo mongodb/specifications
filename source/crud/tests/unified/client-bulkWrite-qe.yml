@@ -5,6 +5,7 @@ schemaVersion: "1.23"
 runOnRequirements:
   - minServerVersion: "8.0"
     serverless: forbid # Serverless does not support bulkWrite: CLOUDP-256344.
+    csfle: true
 
 createEntities:
   - client:
