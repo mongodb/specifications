@@ -101,8 +101,8 @@ means that two single bit vectors in which 7 bits are ignored do not match unles
 server does.
 
 ```python
-b1 = Binary(b'\x10\x07\x80', subtype=9)
-b2 = Binary(b'\x10\x07\xff', subtype=9)
+b1 = Binary(b'\x10\x07\x80', subtype=9) # 1-bit vector with all 0 ignored bits.
+b2 = Binary(b'\x10\x07\xff', subtype=9) # 1-bit vector with all 1 ignored bits.
 
 v1 = Binary.as_vector(b1)
 v2 = Binary.as_vector(b2)
