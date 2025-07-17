@@ -103,7 +103,7 @@ server does.
 ```python
 b1 = Binary(b'\x10\x07\x80', subtype=9) # 1-bit vector with all 0 ignored bits.
 b2 = Binary(b'\x10\x07\xff', subtype=9) # 1-bit vector with all 1 ignored bits.
-b3 = Binary(b'\x10\x07\x80', subtype=9) # Same data as b1.
+b3 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7) # Same data as b1.
 
 v1 = Binary.as_vector(b1)
 v2 = Binary.as_vector(b2)
