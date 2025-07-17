@@ -101,12 +101,10 @@ means that two single bit vectors in which 7 bits are ignored do not match unles
 server does.
 
 ```python
-b1 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7)
-assert b1 == Binary(b'\x10\x07\x80', subtype=9) # This is effectively a roundtrip.
-v1 = Binary.as_vector(b1)
+b1 = Binary(b'\x10\x07\x80', subtype=9)
+b2 = Binary(b'\x10\x07\xff', subtype=9)
 
-b2 = Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
-assert b2 == Binary(b'\x10\x07\xff', subtype=9)
+v1 = Binary.as_vector(b1)
 v2 = Binary.as_vector(b2)
 
 assert b1 != b2  # Unequal at naive Binary level 
