@@ -52,11 +52,9 @@
         "ignoreExtraSpans" : false,
         "spans" : [
           {
-            "name" : "mixedbulkwriteoperation operation-insert.test",
+            "name" : "insert",
             "tags" : {
-              "db.system" : "mongodb",
-              "db.collection.name" : "test",
-              "db.namespace" : "operation-insert"
+              "db.system" : "mongodb"
             },
             "nested" : [
               {

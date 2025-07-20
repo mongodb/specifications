@@ -92,13 +92,14 @@
         "spans" : [
           {
             "name" : "transaction",
+            "tags" : {
+              "db.system" : "mongodb"
+            },
             "nested" : [
               {
-                "name" : "mixedbulkwriteoperation transaction-tests.test",
+                "name" : "insert",
                 "tags" : {
-                  "db.system" : "mongodb",
-                  "db.collection.name" : "test",
-                  "db.namespace" : "transaction-tests"
+                  "db.system" : "mongodb"
                 },
                 "nested" : [
                   {
@@ -155,6 +156,9 @@
               },
               {
                 "name" : "commitTransaction",
+                "tags" : {
+                  "db.system" : "mongodb"
+                },
                 "nested" : [
                   {
                     "name" : "command commitTransaction",
@@ -167,9 +171,7 @@
             ]
           },
           {
-            "name" : "find transaction-tests.test",
-            "tags" : {
-            },
+            "name" : "find",
             "nested" : [
               {
                 "name" : "command find",
