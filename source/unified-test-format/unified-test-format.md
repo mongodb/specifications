@@ -366,8 +366,8 @@ The structure of this object is as follows:
     [authenticationMechanisms](https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms)
     server parameter. If this field is omitted, there is no authentication mechanism requirement.
 
-- `csfle`: Optional boolean. If true, the tests MUST only run if the driver and server support Client-Side Field Level
-    Encryption. CSFLE is supported when all of the following are true:
+- `csfle`: Optional object or boolean. If not false, tests MUST only run if the driver and server support Client-Side
+    Field Level Encryption. CSFLE is supported when all of the following are true:
 
     - Server version is 4.2.0 or higher
     - Driver has libmongocrypt enabled
@@ -375,6 +375,12 @@ The structure of this object is as follows:
         [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) is available
 
     If false, tests MUST NOT run if CSFLE is supported. If this field is omitted, there is no CSFLE requirement.
+
+    The structure of the `csfle` object is as follows:
+
+    - `minLibmongocryptVersion`: Optional string. The minimum libmongocrypt (inclusive) required to successfully run the
+        tests. If this field is omitted, there is no lower bound on the required libmongocrypt version. The format of this
+        string is defined in [Version String](#version-string).
 
 Test runners MAY evaluate these conditions in any order. For example, it may be more efficient to evaluate `serverless`
 or `auth` before communicating with a server to check its version.
