@@ -97,7 +97,21 @@
           "type": "string"
         },
         "csfle": {
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "additionalProperties": false,
+                "minProperties": 1,
+                "minLibmongocryptVersion": {
+                  "$ref": "#/definitions/version"
+                }
+              }
+            }
+          ]
         }
       }
     },
