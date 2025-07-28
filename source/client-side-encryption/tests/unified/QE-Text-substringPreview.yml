@@ -1,4 +1,4 @@
-description: QE-Text-suffixPreview
+description: QE-Text-substringPreview
 schemaVersion: "1.25"
 runOnRequirements:
   - minServerVersion: "8.2.0" # Server 8.2.0 adds preview support for QE text queries.
