@@ -3424,7 +3424,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2025-07-28: **Schema version 1.25.**
 
-    Add alternate form of `csfle`. Previously it was only a bool. Now to can also be an object containing
+    Add alternate form of `csfle`. Previously it was only a bool. Now it can also be an object containing
     `minLibmongocryptVersion`.
 
 - 2025-07-15: Clarify test runner may apply a default `cryptSharedLibPath`.
