@@ -299,7 +299,7 @@ The top-level fields of a test file are as follows:
 
 #### runOnRequirement
 
-A combination of server version and/or topology requirements for running the test(s).
+A combination of server version, topology, and/or dependency requirements for running the test(s).
 
 The format of server version strings is defined in [Version String](#version-string). When comparing server version
 strings, each component SHALL be compared numerically. For example, "4.0.10" is greater than "4.0.9" and "3.6" and less
