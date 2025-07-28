@@ -1256,6 +1256,7 @@ class EncryptOpts {
    contentionFactor: Optional<Int64>,
    queryType: Optional<String>
    rangeOpts: Optional<RangeOpts>
+   textOpts: Optional<TextOpts>
 }
 
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
@@ -1273,6 +1274,48 @@ class RangeOpts {
    // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
 }
+
+// TextOpts specifies options for a Queryable Encryption field supporting "textPreview" queries.
+// NOTE: TextOpts is currently unstable API and subject to backwards breaking changes.
+class TextOpts {
+   // substring contains further options to support substring queries.
+   substring: Optional<SubstringOpts>,
+   // prefix contains further options to support prefix queries.
+   prefix: Optional<PrefixOpts>,
+   // suffix contains further options to support suffix queries.
+   suffix: Optional<SuffixOpts>,
+   // caseSensitive determines whether text indexes for this field are case sensitive.
+   caseSensitive: bool,
+   // diacriticSensitive determines whether text indexes for this field are diacritic sensitive.
+   diacriticSensitive: bool
+}
+
+// NOTE: SubstringOpts is currently unstable API and subject to backwards breaking changes.
+class SubstringOpts {
+   // strMaxLength is the maximum allowed length to insert. Inserting longer strings will error.
+   strMaxLength: Int32,
+   // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
+   strMinQueryLength: Int32,
+   // strMaxQueryLength is the maximum allowed query length. Querying with a longer string will error.
+   strMaxQueryLength: Int32,
+}
+
+// NOTE: PrefixOpts is currently unstable API and subject to backwards breaking changes.
+class PrefixOpts {
+   // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
+   strMinQueryLength: Int32,
+   // strMaxQueryLength is the maximum allowed query length. Querying with a longer string will error.
+   strMaxQueryLength: Int32,
+}
+
+// NOTE: SuffixOpts is currently unstable API and subject to backwards breaking changes.
+class SuffixOpts {
+   // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
+   strMinQueryLength: Int32,
+   // strMaxQueryLength is the maximum allowed query length. Querying with a longer string will error.
+   strMaxQueryLength: Int32,
+}
+
 ```
 
 Explicit encryption requires a key and algorithm. Keys are either identified by `_id` or by alternate name. Exactly one
