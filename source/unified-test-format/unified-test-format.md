@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.19.0
+- Current Schema Version: 1.25.0
 
 ______________________________________________________________________
 
