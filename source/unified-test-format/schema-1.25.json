@@ -103,9 +103,9 @@
             },
             {
               "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
               "properties": {
-                "additionalProperties": false,
-                "minProperties": 1,
                 "minLibmongocryptVersion": {
                   "$ref": "#/definitions/version"
                 }
