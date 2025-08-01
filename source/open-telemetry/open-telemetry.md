@@ -70,7 +70,8 @@ Drivers SHOULD support configuring OpenTelemetry on multiple levels.
 
 - **MongoClient Level**: Drivers SHOULD provide a configuration option for `MongoClient`'s Configuration/Settings that
     enables or disables tracing for operations and commands executed with this client. This option MUST override
-    settings on higher levels.
+    settings on higher levels. This configuration can be implemented with a `MongoClient` option, for example,
+    `tracing.enabled`.
 - **Driver Level**: Drivers SHOULD provide a global setting that enables or disables OpenTelemetry for all `MongoClient`
     instances (excluding those that explicitly override the setting). This configuration can be implemented with an
     environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_ENABLED`. Drivers MAY provide other means to globally
@@ -95,6 +96,14 @@ If a driver creates a Tracer using OpenTelemetry API, drivers MUST use the follo
 When a user calls the driver's public API, the driver MUST create a span for every driver operation. Drivers MUST start
 the span as soon as possible so that the span’s duration reflects all activities made by the driver, such as server
 selection and serialization/deserialization.
+
+The span for the operation MUST be created within the current span of the host application, with the exceptions listed
+below.
+
+##### Cursors
+
+If the driver operation returns a cursor, spans for all the subsequent operations on the cursor SHOULD be nested into
+the operation span. This includes operations such as `getMore`, `next`, `close`.
 
 ##### `withTransaction`
 
@@ -146,7 +155,8 @@ Drivers MUST create a span for every server command sent to the server as a resu
 sensitive commands as listed in the command logging and monitoring specification.
 
 Spans for commands MUST be nested to the span for the corresponding driver operation span. If the command is being
-retried, the driver MUST create a separate span for each retry.
+retried, the driver MUST create a separate span for each retry; all the retries MUST be nested to the same operation
+span.
 
 ##### Span Name
 
@@ -188,13 +198,17 @@ specific; a driver decides what best describes the error.
 
 ##### db.query.text
 
-This attribute contains the full database command executed serialized to extended JSON. If not truncated, the content of
-this attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command
+This attribute contains the full database command executed serialized to JSON. If not truncated, the content of this
+attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command monitoring excluding
+the following fields: `lsid`, `$db`, `$clusterTime`, `signature`.
 
 Drivers MUST NOT add this attribute by default. Drivers MUST provide a toggle to enable this attribute. This
 configuration can be implemented with an environment variable
 `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH` set to a positive integer value. The attribute will be
 added and truncated to the provided value (similar to the Logging specification).
+
+On the `MongoClient` level this configuration can be implemented with a `MongoClient` option, for example,
+`tracing.query_text_max_length`.
 
 ##### db.mongodb.cursor_id
 
@@ -202,7 +216,7 @@ If the command returns a cursor, or uses a cursor, the `cursor_id` attribute SHO
 
 ##### Exception Handling
 
-Exceptions SHOULD be added to the parent span of the command span, which is the driver operation span.
+Exceptions MUST be added to the parent span of the command span, which is the driver operation span.
 
 ## Motivation for Change
 
