@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.19.0
+- Current Schema Version: 1.25.0
 
 ______________________________________________________________________
 
@@ -299,7 +299,7 @@ The top-level fields of a test file are as follows:
 
 #### runOnRequirement
 
-A combination of server version and/or topology requirements for running the test(s).
+A combination of server version, topology, and/or dependency requirements for running the test(s).
 
 The format of server version strings is defined in [Version String](#version-string). When comparing server version
 strings, each component SHALL be compared numerically. For example, "4.0.10" is greater than "4.0.9" and "3.6" and less
@@ -366,8 +366,8 @@ The structure of this object is as follows:
     [authenticationMechanisms](https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms)
     server parameter. If this field is omitted, there is no authentication mechanism requirement.
 
-- `csfle`: Optional boolean. If true, the tests MUST only run if the driver and server support Client-Side Field Level
-    Encryption. CSFLE is supported when all of the following are true:
+- `csfle`: Optional object or boolean. If not false, tests MUST only run if the driver and server support Client-Side
+    Field Level Encryption. CSFLE is supported when all of the following are true:
 
     - Server version is 4.2.0 or higher
     - Driver has libmongocrypt enabled
@@ -375,6 +375,12 @@ The structure of this object is as follows:
         [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) is available
 
     If false, tests MUST NOT run if CSFLE is supported. If this field is omitted, there is no CSFLE requirement.
+
+    The structure of the `csfle` object is as follows:
+
+    - `minLibmongocryptVersion`: Optional string. The minimum libmongocrypt (inclusive) required to successfully run the
+        tests. If this field is omitted, there is no lower bound on the required libmongocrypt version. The format of this
+        string is defined in [Version String](#version-string).
 
 Test runners MAY evaluate these conditions in any order. For example, it may be more efficient to evaluate `serverless`
 or `auth` before communicating with a server to check its version.
@@ -3415,6 +3421,11 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-07-28: **Schema version 1.25.**
+
+    Add alternate form of `csfle`. Previously it was only a bool. Now it can also be an object containing
+    `minLibmongocryptVersion`.
 
 - 2025-07-15: Clarify test runner may apply a default `cryptSharedLibPath`.
 
