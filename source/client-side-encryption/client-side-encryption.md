@@ -48,6 +48,8 @@ QEv1 and QEv2 are incompatible.
 MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
 ([SPM-3583](https://jira.mongodb.org/browse/SPM-3583)).
 
+MongoDB 8.2 added unstable support for QE text queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -2505,6 +2507,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2025-08-06: Add `TextPreview` algorithm.
 
 - 2024-02-19: Add custom options AWS credential provider.
 
