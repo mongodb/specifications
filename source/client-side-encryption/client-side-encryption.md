@@ -1342,8 +1342,8 @@ One of the strings:
 - "Range"
 - "TextPreview"
 
-The result of explicit encryption with the "Indexed", "Range", or "TextPreview" algorithm must be processed by the server to insert or
-query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed", "Range", or "TextPreview" algorithm must be processed by the
+server to insert or query. Drivers MUST document the following behavior:
 
 > To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
@@ -1351,8 +1351,8 @@ query. Drivers MUST document the following behavior:
 
 #### contentionFactor
 
-contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt
-returns an error if contentionFactor is set for a non-applicable algorithm.
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "TextPreview".
+libmongocrypt returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
 
@@ -1364,8 +1364,8 @@ One of the strings:
 - "suffixPreview"
 - "substringPreview"
 
-queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if queryType is set for a
-non-applicable queryType.
+queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
+queryType is set for a non-applicable queryType.
 
 #### rangeOpts
 
@@ -1374,7 +1374,8 @@ non-applicable algorithm.
 
 #### textOpts
 
-textOpts only applies when algorithm is "TextPreview". libmongocrypt returns an error if textOpts is set for a non-applicable algorithm.
+textOpts only applies when algorithm is "TextPreview". libmongocrypt returns an error if textOpts is set for a
+non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
 
