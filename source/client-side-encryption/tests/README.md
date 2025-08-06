@@ -3764,3 +3764,110 @@ class AutoEncryptionOpts {
 ```
 
 Assert that an error is thrown.
+
+### 27. Text Explicit Encryption
+
+The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server
+8.2.0+ and libmongocrypt 1.15.0+. The tests must not run against a standalone.
+
+Before running each of the following test cases, perform the following Test Setup.
+
+#### Test Setup
+
+Load the file `encryptedFields-text.json` as `encryptedFields`.
+
+Load the file
+[key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
+as `key1Document`.
+
+Read the `"_id"` field of `key1Document` as `key1ID`.
+
+Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+
+Drop and create the collection `keyvault.datakeys`.
+
+Insert `key1Document` in `keyvault.datakeys` with majority write concern.
+
+Create a MongoClient named `keyVaultClient`.
+
+Create a ClientEncryption object named `clientEncryption` with these options:
+
+```typescript
+class ClientEncryptionOpts {
+   keyVaultClient: <keyVaultClient>,
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+}
+```
+
+Create a MongoClient named `encryptedClient` with these `AutoEncryptionOpts`:
+
+```typescript
+class AutoEncryptionOpts {
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+   bypassQueryAnalysis: true,
+}
+```
+
+The remaining tasks require setting `TextOpts`. [Test Setup: TextOpts](#test-setup-textopts) lists the values to use
+for `RangeOpts` for each of the supported data types.
+
+#### Test Setup: TextOpts
+
+This section lists the values to use for `TextOpts` for each query type.
+
+1. Prefix
+
+    ```typescript
+    class PrefixOpts {
+       strMaxQueryLength: 3,
+       strMinQueryLength: 1,
+    }
+    ```
+
+2. Suffix
+
+    ```typescript
+    class SuffixOpts {
+       strMaxQueryLength: 3,
+       strMinQueryLength: 1,
+    }
+    ```
+
+3. Substring
+
+    ```typescript
+    class SubstringOpts {
+       strMaxLength: 10,
+       strMaxQueryLength: 3,
+       strMinQueryLength: 1,
+    }
+    ```
+
+Use `clientEncryption` to encrypt the string "foobarbaz". Ensure the type matches that of the encrypted field.
+For example, if the encrypted field is `encryptedDoubleNoPrecision` encrypt the value 6.0.
+
+Encrypt using the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      prefix: <PrefixOpts>,
+      suffix: <SuffixOpts>
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.explicit_encryption`:
+
+```javascript
+{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
+```
+
