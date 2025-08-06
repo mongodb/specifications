@@ -1340,17 +1340,18 @@ One of the strings:
 - "Indexed"
 - "Unindexed"
 - "Range"
+- "TextPreview"
 
-The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
+The result of explicit encryption with the "Indexed", "Range", or "TextPreview" algorithm must be processed by the server to insert or
 query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
 #### contentionFactor
 
-contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt
 returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
@@ -1359,14 +1360,21 @@ One of the strings:
 
 - "equality"
 - "range"
+- "prefixPreview"
+- "suffixPreview"
+- "substringPreview"
 
-queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
+queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if queryType is set for a
 non-applicable queryType.
 
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
+
+#### textOpts
+
+textOpts only applies when algorithm is "TextPreview". libmongocrypt returns an error if textOpts is set for a non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
 
