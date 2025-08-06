@@ -1277,7 +1277,7 @@ class RangeOpts {
    precision: Optional<Int32>
 }
 
-// TextOpts specifies options for a Queryable Encryption field supporting "textPreview" queries.
+// TextOpts specifies options for a Queryable Encryption field supporting text queries.
 // NOTE: TextOpts is currently unstable API and subject to backwards breaking changes.
 class TextOpts {
    // substring contains further options to support substring queries.
