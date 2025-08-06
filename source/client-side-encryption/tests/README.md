@@ -3846,8 +3846,7 @@ This section lists the values to use for `TextOpts` for each query type.
     }
     ```
 
-Use `clientEncryption` to encrypt the string "foobarbaz". Ensure the type matches that of the encrypted field.
-For example, if the encrypted field is `encryptedDoubleNoPrecision` encrypt the value 6.0.
+Use `clientEncryption` to encrypt the string "foobarbaz".
 
 Encrypt using the following `EncryptOpts`:
 
@@ -3871,3 +3870,58 @@ Use `encryptedClient` to insert the following document into `db.explicit_encrypt
 { "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
 ```
 
+#### Case 1: can find a document by prefix
+
+Use `clientEncryption.encryptExpression()` to encrypt this query:
+```javascript
+{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": "foo"}, } }
+```
+
+Store the result in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+
+Assert the following document is returned:
+
+```javascript
+{ "_id": 0, "encryptedText": "foobarbaz" }
+```
+
+#### Case 2: can find a document by suffix
+
+Use `clientEncryption.encryptExpression()` to encrypt this query:
+```javascript
+{ "$expr": { "$encStrEndsWith": {"input": "encryptedText", "suffix": "baz"}, } }
+```
+
+Store the result in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+
+Assert the following document is returned:
+
+```javascript
+{ "_id": 0, "encryptedText": "foobarbaz" }
+```
+
+#### Case 3: assert no document found by prefix
+
+Use `clientEncryption.encryptExpression()` to encrypt this query:
+```javascript
+{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": "baz"}, } }
+```
+
+Store the result in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+
+Assert that no documents are returned.
+
+#### Case 4: assert no document found by suffix
+
+Use `clientEncryption.encryptExpression()` to encrypt this query:
+```javascript
+{ "$expr": { "$encStrEndsWith": {"input": "encryptedText", "suffix": "baz"}, } }
+```
+
+Store the result in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+
+Assert that no documents are returned.
