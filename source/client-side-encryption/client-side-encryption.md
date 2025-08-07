@@ -48,6 +48,8 @@ QEv1 and QEv2 are incompatible.
 MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
 ([SPM-3583](https://jira.mongodb.org/browse/SPM-3583)).
 
+MongoDB 8.2 added unstable support for QE text queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -1256,6 +1258,7 @@ class EncryptOpts {
    contentionFactor: Optional<Int64>,
    queryType: Optional<String>
    rangeOpts: Optional<RangeOpts>
+   textOpts: Optional<TextOpts>
 }
 
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
@@ -1273,6 +1276,48 @@ class RangeOpts {
    // precision determines the number of significant digits after the decimal point. May only be set for double or decimal128.
    precision: Optional<Int32>
 }
+
+// TextOpts specifies options for a Queryable Encryption field supporting text queries.
+// NOTE: TextOpts is currently unstable API and subject to backwards breaking changes.
+class TextOpts {
+   // substring contains further options to support substring queries.
+   substring: Optional<SubstringOpts>,
+   // prefix contains further options to support prefix queries.
+   prefix: Optional<PrefixOpts>,
+   // suffix contains further options to support suffix queries.
+   suffix: Optional<SuffixOpts>,
+   // caseSensitive determines whether text indexes for this field are case sensitive.
+   caseSensitive: bool,
+   // diacriticSensitive determines whether text indexes for this field are diacritic sensitive.
+   diacriticSensitive: bool
+}
+
+// NOTE: SubstringOpts is currently unstable API and subject to backwards breaking changes.
+class SubstringOpts {
+   // strMaxLength is the maximum allowed length to insert. Inserting longer strings will error.
+   strMaxLength: Int32,
+   // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
+   strMinQueryLength: Int32,
+   // strMaxQueryLength is the maximum allowed query length. Querying with a longer string will error.
+   strMaxQueryLength: Int32,
+}
+
+// NOTE: PrefixOpts is currently unstable API and subject to backwards breaking changes.
+class PrefixOpts {
+   // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
+   strMinQueryLength: Int32,
+   // strMaxQueryLength is the maximum allowed query length. Querying with a longer string will error.
+   strMaxQueryLength: Int32,
+}
+
+// NOTE: SuffixOpts is currently unstable API and subject to backwards breaking changes.
+class SuffixOpts {
+   // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
+   strMinQueryLength: Int32,
+   // strMaxQueryLength is the maximum allowed query length. Querying with a longer string will error.
+   strMaxQueryLength: Int32,
+}
+
 ```
 
 Explicit encryption requires a key and algorithm. Keys are either identified by `_id` or by alternate name. Exactly one
@@ -1295,18 +1340,19 @@ One of the strings:
 - "Indexed"
 - "Unindexed"
 - "Range"
+- "TextPreview"
 
-The result of explicit encryption with the "Indexed" or "Range" algorithm must be processed by the server to insert or
-query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed", "Range", or "TextPreview" algorithm must be processed by the
+server to insert or query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed" or "Range" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
 
 #### contentionFactor
 
-contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed" or "Range". libmongocrypt
-returns an error if contentionFactor is set for a non-applicable algorithm.
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "TextPreview".
+libmongocrypt returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
 
@@ -1314,13 +1360,21 @@ One of the strings:
 
 - "equality"
 - "range"
+- "prefixPreview"
+- "suffixPreview"
+- "substringPreview"
 
-queryType only applies when algorithm is "Indexed" or "Range". libmongocrypt returns an error if queryType is set for a
-non-applicable queryType.
+queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
+queryType is set for a non-applicable queryType.
 
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
+non-applicable algorithm.
+
+#### textOpts
+
+textOpts only applies when algorithm is "TextPreview". libmongocrypt returns an error if textOpts is set for a
 non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
@@ -2462,6 +2516,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2025-08-06: Add `TextPreview` algorithm.
 
 - 2024-02-19: Add custom options AWS credential provider.
 
