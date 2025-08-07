@@ -241,6 +241,17 @@ follows:
 | AWS_SECRET_ACCESS_KEY         | Assume role automatically sets this |
 | AWS_SESSION_TOKEN             | Assume role automatically sets this |
 
+The value for `LAMBDA_AWS_ROLE_ARN` MUST be stored in Evergreen project settings. The value can be found in the
+`drivers/atlas-qa` vault.
+
+The values for `DRIVERS_ATLAS_PUBLIC_API_KEY`, `DRIVERS_ATLAS_PRIVATE_API_KEY`, `DRIVERS_ATLAS_LAMBDA_USER`,
+`DRIVERS_ATLAS_LAMBDA_PASSWORD` and `DRIVERS_ATLAS_GROUP_ID` can be obtained programmatically from the
+`drivers/atlas-qa` vault.
+
+See
+[Secrets Handling README](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/secrets_handling/README.md)
+for details on how to access the secrets.
+
 Supported Evergreen variants that have the AWS SAM CLI installed:
 
 - ubuntu2204
@@ -322,6 +333,7 @@ Description of the behaviour of run-deployed-lambda-aws-tests.sh:
 
 ## Changelog
 
+- 2025-08-07: Added instructions for accessing secrets from the vault.
 - 2024-02-27: Migrated from reStructuredText to Markdown.
 - 2023-08-21: Drivers MUST assert that the streaming protocol is disabled in the Lambda function.
 - 2023-08-17: Fixed URI typo, added host note, increase assume role duration.
