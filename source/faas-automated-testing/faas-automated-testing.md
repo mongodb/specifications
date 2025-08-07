@@ -241,7 +241,7 @@ follows:
 | AWS_SECRET_ACCESS_KEY         | Assume role automatically sets this |
 | AWS_SESSION_TOKEN             | Assume role automatically sets this |
 
-The value for `LAMBDA_AWS_ROLE_ARN` must be stored in Evergreen project settings. The value can be found in the
+The value for `LAMBDA_AWS_ROLE_ARN` MUST be stored in Evergreen project settings. The value can be found in the
 `drivers/atlas-qa` vault.
 
 The values for `DRIVERS_ATLAS_PUBLIC_API_KEY`, `DRIVERS_ATLAS_PRIVATE_API_KEY`, `DRIVERS_ATLAS_LAMBDA_USER`,
