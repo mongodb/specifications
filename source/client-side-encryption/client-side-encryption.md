@@ -2517,6 +2517,8 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 ## Changelog
 
+- 2025-08-06: Add `TextPreview` prose tests.
+
 - 2025-08-06: Add `TextPreview` algorithm.
 
 - 2024-02-19: Add custom options AWS credential provider.
