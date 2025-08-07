@@ -3767,8 +3767,8 @@ Assert that an error is thrown.
 
 ### 27. Text Explicit Encryption
 
-The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server
-8.2.0+ and libmongocrypt 1.15.0+. The tests must not run against a standalone.
+The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server 8.2.0+
+and libmongocrypt 1.15.0+. The tests must not run against a standalone.
 
 Before running each of the following test cases, perform the following Test Setup.
 
@@ -3811,8 +3811,8 @@ class AutoEncryptionOpts {
 }
 ```
 
-The remaining tasks require setting `TextOpts`. [Test Setup: TextOpts](#test-setup-textopts) lists the values to use
-for `TextOpts` for each of the supported data types.
+The remaining tasks require setting `TextOpts`. [Test Setup: TextOpts](#test-setup-textopts) lists the values to use for
+`TextOpts` for each of the supported data types.
 
 #### Test Setup: TextOpts
 
@@ -3889,10 +3889,13 @@ Use `encryptedClient` to insert the following document into `db.explicit_encrypt
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"`:
 
 Store this query in `findPayload`.
+
 ```javascript
 { "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "foo">}, } }
 ```
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
+`findPayload`.
 
 Assert the following document is returned:
 
@@ -3905,12 +3908,13 @@ Assert the following document is returned:
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"`:
 
 Store this query in `findPayload`.
+
 ```javascript
 { "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "baz">}, } }
 ```
 
-Store the result in `findPayload`.
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
+collection with the filter `findPayload`.
 
 Assert the following document is returned:
 
@@ -3923,12 +3927,13 @@ Assert the following document is returned:
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"`:
 
 Store this query in `findPayload`.
+
 ```javascript
 { "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "baz">}, } }
 ```
 
-Store the result in `findPayload`.
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
+collection with the filter `findPayload`.
 
 Assert that no documents are returned.
 
@@ -3937,16 +3942,18 @@ Assert that no documents are returned.
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"`:
 
 Store this query in `findPayload`.
+
 ```javascript
 { "$expr": { "$encStrStartsWith": {"input": "encryptedText", "suffix": <encrypted "foo">}, } }
 ```
 
-Store the result in `findPayload`.
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
+collection with the filter `findPayload`.
 
 Assert that no documents are returned.
 
 #### Substring test setup
+
 Load the file `encryptedFields-substring.json` as `encryptedFields`.
 
 Load the file
@@ -3979,15 +3986,17 @@ Use `encryptedClient` to insert the following document into `db.explicit_encrypt
 ```
 
 #### Case 5: can find a document by substring
+
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"`:
 
 Store this query in `findPayload`.
+
 ```javascript
 { "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "bar">}, } }
 ```
 
-Store the result in `findPayload`.
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
+collection with the filter `findPayload`.
 
 Assert the following document is returned:
 
@@ -4000,11 +4009,12 @@ Assert the following document is returned:
 Use `clientEncryption.encrypt()` to encrypt the string `"qux"`:
 
 Store this query in `findPayload`.
+
 ```javascript
 { "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "qux">}, } }
 ```
 
-Store the result in `findPayload`.
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter `findPayload`.
+Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
+collection with the filter `findPayload`.
 
 Assert that no documents are returned.
