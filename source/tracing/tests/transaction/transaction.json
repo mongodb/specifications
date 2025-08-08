@@ -56,7 +56,7 @@
   ],
   "tests": [
     {
-      "description": "tracing around transaction",
+      "description": "observeTracingMessages around transaction",
       "operations": [
         {
           "object": "session0",

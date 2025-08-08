@@ -1,19 +1,19 @@
 {
-  "description": "entity-client-observeTracingMessages-additionalPropertyType",
+  "description": "entity-client-observeTracingMessages-additionalProperties",
   "schemaVersion": "1.26",
   "createEntities": [
     {
       "client": {
         "id": "client0",
         "observeTracingMessages": {
-          "enableCommandPayload": 0
+          "foo": "bar"
         }
       }
     }
   ],
   "tests": [
     {
-      "description": "observeTracingMessages enableCommandPayload must be boolean",
+      "description": "observeTracingMessages must not have additional properties'",
       "operations": []
     }
   ]

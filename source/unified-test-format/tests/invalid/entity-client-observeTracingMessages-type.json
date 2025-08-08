@@ -1,5 +1,5 @@
 {
-  "description": "entity-client-expectTracingMessages-type",
+  "description": "entity-client-observeTracingMessages-type",
   "schemaVersion": "1.26",
   "createEntities": [
     {
@@ -11,7 +11,7 @@
   ],
   "tests": [
     {
-      "description": "expectTracingMessages must be an object",
+      "description": "observeTracingMessages must be an object",
       "operations": []
     }
   ]
