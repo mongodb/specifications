@@ -3892,7 +3892,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"`:
 Store this query in `findPayload`.
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "foo">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "foo">}, } }
 ```
 
 Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
@@ -3911,7 +3911,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"`:
 Store this query in `findPayload`.
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "baz">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "baz">}, } }
 ```
 
 Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
@@ -3930,7 +3930,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"`:
 Store this query in `findPayload`.
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "baz">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "baz">}, } }
 ```
 
 Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
@@ -3945,7 +3945,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"`:
 Store this query in `findPayload`.
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "suffix": <encrypted "foo">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "suffix": <encrypted "foo">}, } }
 ```
 
 Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
@@ -3993,7 +3993,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"`:
 Store this query in `findPayload`.
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "bar">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "bar">}, } }
 ```
 
 Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
@@ -4012,7 +4012,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"`:
 Store this query in `findPayload`.
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "encryptedText", "prefix": <encrypted "qux">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "qux">}, } }
 ```
 
 Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
