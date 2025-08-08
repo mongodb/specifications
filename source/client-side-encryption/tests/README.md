@@ -3774,7 +3774,9 @@ Before running each of the following test cases, perform the following Test Setu
 
 #### Test Setup
 
-Load the file `encryptedFields-prefix-suffix.json` as `encryptedFields`.
+Load the file `encryptedFields-prefix-suffix.json` as `encryptedFields-prefix-suffix`.
+
+Load the file `encryptedFields-substring.json` as `encryptedFields-substring`.
 
 Load the file
 [key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
@@ -3782,7 +3784,10 @@ as `key1Document`.
 
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
-Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
+Drop and create the collection `db.prefix-suffix` using `encryptedFields-prefix-suffix` as an option. See
+[QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+
+Drop and create the collection `db.substring` using `encryptedFields-substring` as an option. See
 [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
@@ -3829,7 +3834,30 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.explicit_encryption`:
+Use `encryptedClient` to insert the following document into `db.prefix-suffix`:
+
+```javascript
+{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
+```
+
+Use `clientEncryption` to encrypt the string `"foobarbaz"`.
+
+Encrypt using the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      substring: <SubstringOpts>
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.substring`:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
@@ -3887,16 +3915,13 @@ class EncryptOpts {
 
 #### Case 1: can find a document by prefix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`:
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
 
-Store this query in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "foo">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
 ```
-
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
-`findPayload`.
 
 Assert the following document is returned:
 
@@ -3906,16 +3931,13 @@ Assert the following document is returned:
 
 #### Case 2: can find a document by suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"baz"`:
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
 
-Store this query in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "baz">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
 ```
-
-Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
-collection with the filter `findPayload`.
 
 Assert the following document is returned:
 
@@ -3925,79 +3947,37 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"baz"`:
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
 
-Store this query in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "baz">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
 ```
-
-Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
-collection with the filter `findPayload`.
 
 Assert that no documents are returned.
 
 #### Case 4: assert no document found by suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`:
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
 
-Store this query in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "suffix": <encrypted "foo">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "suffix": <findPayload>}, } }
 ```
-
-Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
-collection with the filter `findPayload`.
 
 Assert that no documents are returned.
 
-#### Substring test setup
-
-Load the file `encryptedFields-substring.json` as `encryptedFields`.
-
-Load the file
-[key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
-as `key1Document`.
-
-Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option.
-
-Use `clientEncryption` to encrypt the string `"foobarbaz"`.
-
-Encrypt using the following `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: true,
-      diacriticSensitive: true,
-      substring: <SubstringOpts>
-   },
-}
-```
-
-Use `encryptedClient` to insert the following document into `db.explicit_encryption`:
-
-```javascript
-{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
-```
-
 #### Case 5: can find a document by substring
 
-Use `clientEncryption.encrypt()` to encrypt the string `"bar"`:
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
 
-Store this query in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "bar">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
 ```
-
-Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
-collection with the filter `findPayload`.
 
 Assert the following document is returned:
 
@@ -4007,15 +3987,12 @@ Assert the following document is returned:
 
 #### Case 6: assert no document found by substring
 
-Use `clientEncryption.encrypt()` to encrypt the string `"qux"`:
+Use `clientEncryption.encrypt()` to encrypt the string `"qux"`. Store the resulting payload in `findPayload`.
 
-Store this query in `findPayload`.
+Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <encrypted "qux">}, } }
+{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
 ```
-
-Store the result in `findPayload`. Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption`
-collection with the filter `findPayload`.
 
 Assert that no documents are returned.
