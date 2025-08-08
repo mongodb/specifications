@@ -3783,7 +3783,7 @@ as `key1Document`.
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
-[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+[QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
 
@@ -3811,6 +3811,30 @@ class AutoEncryptionOpts {
 }
 ```
 
+Use `clientEncryption` to encrypt the string `"foobarbaz"`.
+
+Encrypt using the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      prefix: <PrefixOpts>,
+      suffix: <SuffixOpts>
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.explicit_encryption`:
+
+```javascript
+{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
+```
+
 The remaining tasks require setting `TextOpts`. [Test Setup: TextOpts](#test-setup-textopts) lists the values to use for
 `TextOpts` for each of the supported data types.
 
@@ -3823,6 +3847,7 @@ This section lists the values to use for `TextOpts` for each query type. Include
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
+   queryType: "<prefix/suffix/substring>Preview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -3859,30 +3884,6 @@ class EncryptOpts {
        strMinQueryLength: 2,
     }
     ```
-
-Use `clientEncryption` to encrypt the string `"foobarbaz"`.
-
-Encrypt using the following `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: true,
-      diacriticSensitive: true,
-      prefix: <PrefixOpts>,
-      suffix: <SuffixOpts>
-   },
-}
-```
-
-Use `encryptedClient` to insert the following document into `db.explicit_encryption`:
-
-```javascript
-{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
-```
 
 #### Case 1: can find a document by prefix
 

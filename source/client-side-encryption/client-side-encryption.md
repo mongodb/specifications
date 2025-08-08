@@ -1348,6 +1348,9 @@ server to insert or query. Drivers MUST document the following behavior:
 > To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
 > must be false.
+> The "TextPreview" algorithm is in preview and should be used for experimental workloads only. These features are
+> unstable and their security is not guaranteed until released as Generally Available (GA). The GA version of these
+> features may not be backwards compatible with the preview version.
 
 #### contentionFactor
 
@@ -1365,7 +1368,7 @@ One of the strings:
 - "substringPreview"
 
 queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
-queryType is set for a non-applicable queryType.
+queryType is set for a non-applicable algorithm.
 
 #### rangeOpts
 
@@ -2516,8 +2519,6 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
-
-- 2025-08-06: Add `TextPreview` prose tests.
 
 - 2025-08-06: Add `TextPreview` algorithm.
 
