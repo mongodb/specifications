@@ -1347,10 +1347,9 @@ server to insert or query. Drivers MUST document the following behavior:
 
 > To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
-> must be false.
-> The "TextPreview" algorithm is in preview and should be used for experimental workloads only. These features are
-> unstable and their security is not guaranteed until released as Generally Available (GA). The GA version of these
-> features may not be backwards compatible with the preview version.
+> must be false. The "TextPreview" algorithm is in preview and should be used for experimental workloads only. These
+> features are unstable and their security is not guaranteed until released as Generally Available (GA). The GA version
+> of these features may not be backwards compatible with the preview version.
 
 #### contentionFactor
 
