@@ -1,5 +1,5 @@
 description: operation find
-schemaVersion: '1.9'
+schemaVersion: '1.26'
 createEntities:
   - client:
       id: client0

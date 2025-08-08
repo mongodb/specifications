@@ -182,6 +182,7 @@
           },
           {
             "name": "find transaction-tests.test",
+            "tags": {},
             "nested": [
               {
                 "name": "command find",
