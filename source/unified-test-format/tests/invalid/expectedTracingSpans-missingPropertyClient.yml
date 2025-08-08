@@ -1,0 +1,13 @@
+description: "expectedTracingSpans-missingPropertyClient"
+
+schemaVersion: "1.26"
+
+createEntities:
+  - client:
+      id: &client0 "client0"
+
+tests:
+  - description: "missing required property client"
+    operations: []
+    expectTracingMessages:
+      spans: [{}]
