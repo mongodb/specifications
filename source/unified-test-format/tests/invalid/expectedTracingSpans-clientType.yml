@@ -1,0 +1,14 @@
+description: "expectedTracingSpans-clientType"
+
+schemaVersion: "1.26"
+
+createEntities:
+  - client:
+      id: &client0 "client0"
+
+tests:
+  - description: "client type must be string"
+    operations: []
+    expectTracingSpans:
+      client: 0
+      spans: [{}]
