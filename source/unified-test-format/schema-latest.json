@@ -198,6 +198,15 @@
                 }
               }
             },
+            "observeTracingMessages": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enableCommandPayload": {
+                  "type": "boolean"
+                }
+              }
+            },
             "serverApi": {
               "$ref": "#/definitions/serverApi"
             },
@@ -368,6 +377,28 @@
         "serverSelection",
         "connection"
       ]
+    },
+    "spanComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "tags"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "object"
+        },
+        "nested": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/spanComponent"
+          }
+        }
+      }
     },
     "logSeverityLevel": {
       "type": "string",
@@ -1162,6 +1193,29 @@
           "minItems": 1,
           "items": {
             "$ref": "#/definitions/expectedLogMessagesForClient"
+          }
+        },
+        "expectTracingMessages": {
+          "additionalProperties" : false,
+          "type": "object",
+          "required": [
+            "client",
+            "spans"
+          ],
+          "properties": {
+            "client": {
+              "type": "string"
+            },
+            "ignoreExtraSpans": {
+              "type": "boolean"
+            },
+            "spans": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions/spanComponent"
+              }
+            }
           }
         },
         "outcome": {
