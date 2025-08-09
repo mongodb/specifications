@@ -523,24 +523,32 @@ The structure of this object is as follows:
         Messages for unspecified components and/or with lower severity levels than those specified MUST be ignored by this
         client's log collector(s) and SHOULD NOT be included in [test.expectLogMessages](#test_expectLogMessages) for this
         client.
-    - `serverApi`: Optional [serverApi](#serverapi) object.
 
-    <span id="entity_client_autoEncryptOpts"></span>
+    - `observeTracingMessages`: Optional object that configures tracing behavior for the client. The structure of this
+        object is as follows:
 
-    - `autoEncryptOpts`: Optional object corresponding to
-        [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following
-        fields:
-        - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
-        - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
-        - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
-        - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
-        - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
-        - `extraOptions`: Optional object. Configuration options for the encryption library.
-            - If `extraOptions` is not present or omits `cryptSharedLibPath`, test runners MAY set `cryptSharedLibPath` to the
-                path of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) being tested. This
-                can avoid test errors loading crypt_shared from different paths.
-        - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
-        - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
+        - `enableCommandPayload`: Optional boolean. When set to `true`, enables capturing of command payload details in
+            tracing spans.
+            - If `true`, the test runner SHOULD capture detailed command payload information in tracing spans.
+            - If `false` or omitted, the test runner SHOULD exclude command payload details.
+        - `serverApi`: Optional [serverApi](#serverapi) object.
+
+        <span id="entity_client_autoEncryptOpts"></span>
+
+        - `autoEncryptOpts`: Optional object corresponding to
+            [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following
+            fields:
+            - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
+            - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
+            - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
+            - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
+            - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
+            - `extraOptions`: Optional object. Configuration options for the encryption library.
+                - If `extraOptions` is not present or omits `cryptSharedLibPath`, test runners MAY set `cryptSharedLibPath` to
+                    the path of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) being tested.
+                    This can avoid test errors loading crypt_shared from different paths.
+            - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
+            - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
 <span id="entity_clientEncryption"></span>
 
@@ -763,6 +771,24 @@ The structure of this object is as follows:
 
     Tests SHOULD NOT specify multiple [expectedLogMessagesForClient](#expectedlogmessagesforclient) objects for a single
     client entity.
+
+- `expectTracingMessages`: Optional object that defines expected tracing
+    [spans](../open-telemetry/open-telemetry.md#span) for a test. The structure of this object is as follows:
+
+    - `client`: Required string. The ID of the client entity associated with these tracing spans.
+
+    - `ignoreExtraSpans`: Optional boolean.
+
+        - If `true`, additional unexpected spans are allowed.
+        - If `false` or omitted, the test runner MUST fail if any unexpected spans are detected.
+
+    - `spans`: Required array of span objects. Each span describes an expected tracing event.
+
+        Span object properties:
+
+        - `name`: Required string. The name of the tracing span.
+        - `tags`: Required object. Key-value pairs describing span metadata.
+        - `nested`: Optional array of nested span objects, following the same structure.
 
 <span id="test_outcome"></span>
 
@@ -3421,6 +3447,16 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-08-09: **Schema version 1.26.**
+
+    Add `observeTracingMessages` configuration for clients and `expectTracingMessages` for test expectations. This allows
+    capturing and validating detailed tracing information during test execution.
+
+- 2025-08-09: **Schema version 1.26.**
+
+    Add `observeTracingMessages` configuration for clients and `expectTracingMessages` for test expectations. This allows
+    capturing and validating detailed tracing information during test execution.
 
 - 2025-07-28: **Schema version 1.25.**
 
