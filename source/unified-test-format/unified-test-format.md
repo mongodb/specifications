@@ -531,24 +531,25 @@ The structure of this object is as follows:
             tracing spans.
             - If `true`, the test runner SHOULD capture detailed command payload information in tracing spans.
             - If `false` or omitted, the test runner SHOULD exclude command payload details.
-        - `serverApi`: Optional [serverApi](#serverapi) object.
 
-        <span id="entity_client_autoEncryptOpts"></span>
+    - `serverApi`: Optional [serverApi](#serverapi) object.
 
-        - `autoEncryptOpts`: Optional object corresponding to
-            [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following
-            fields:
-            - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
-            - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
-            - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
-            - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
-            - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
-            - `extraOptions`: Optional object. Configuration options for the encryption library.
-                - If `extraOptions` is not present or omits `cryptSharedLibPath`, test runners MAY set `cryptSharedLibPath` to
-                    the path of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) being tested.
-                    This can avoid test errors loading crypt_shared from different paths.
-            - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
-            - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
+    <span id="entity_client_autoEncryptOpts"></span>
+
+    - `autoEncryptOpts`: Optional object corresponding to
+        [AutoEncryptionOpts](../client-side-encryption/client-side-encryption.md#mongoclient-changes) with the following
+        fields:
+        - `kmsProviders`: The same as in [`clientEncryption`](#entity_clientEncryption).
+        - `keyVaultNamespace`: The same as in [`clientEncryption`](#entity_clientEncryption).
+        - `bypassAutoEncryption`: Optional, a boolean to indicate whether or not auto encryption should be bypassed.
+        - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
+        - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
+        - `extraOptions`: Optional object. Configuration options for the encryption library.
+            - If `extraOptions` is not present or omits `cryptSharedLibPath`, test runners MAY set `cryptSharedLibPath` to the
+                path of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) being tested. This
+                can avoid test errors loading crypt_shared from different paths.
+        - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
+        - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
 <span id="entity_clientEncryption"></span>
 
@@ -771,6 +772,8 @@ The structure of this object is as follows:
 
     Tests SHOULD NOT specify multiple [expectedLogMessagesForClient](#expectedlogmessagesforclient) objects for a single
     client entity.
+
+<span id="expectTracingMessages"></span>
 
 - `expectTracingMessages`: Optional object that defines expected tracing
     [spans](../open-telemetry/open-telemetry.md#span) for a test. The structure of this object is as follows:
@@ -3447,11 +3450,6 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
-
-- 2025-08-09: **Schema version 1.26.**
-
-    Add `observeTracingMessages` configuration for clients and `expectTracingMessages` for test expectations. This allows
-    capturing and validating detailed tracing information during test execution.
 
 - 2025-08-09: **Schema version 1.26.**
 
