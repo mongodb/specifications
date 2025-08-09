@@ -25,8 +25,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 An application that uses the MongoDB driver.
 
-<span id="span"></span>
-**Span**
+#### Span
 
 A Span represents a single operation within a trace. Spans can be nested to form a trace tree. Each trace contains a
 root span, which typically describes the entire operation and, optionally, one or more sub-spans for its sub-operations.
@@ -44,7 +43,7 @@ Spans encapsulate:
 - A list of timestamped Events
 - A Status.
 
-**Tracer**
+#### Tracer
 
 A Tracer is responsible for creating spans, and using a tracer is the only way to create a span. A Tracer is not
 responsible for configuration; this should be the responsibility of the TracerProvider instead.
