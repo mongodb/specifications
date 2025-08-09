@@ -523,6 +523,11 @@ The structure of this object is as follows:
         Messages for unspecified components and/or with lower severity levels than those specified MUST be ignored by this
         client's log collector(s) and SHOULD NOT be included in [test.expectLogMessages](#test_expectLogMessages) for this
         client.
+  
+    - `observeTracingMessages`: Optional object that configures tracing behavior for the client. The structure of this object is as follows:
+        - `enableCommandPayload`: Optional boolean. When set to `true`, enables capturing of command payload details in tracing spans.
+            - If `true`, the test runner SHOULD capture detailed command payload information in tracing spans.
+            - If `false` or omitted, the test runner SHOULD exclude command payload details.
     - `serverApi`: Optional [serverApi](#serverapi) object.
 
     <span id="entity_client_autoEncryptOpts"></span>
@@ -764,6 +769,20 @@ The structure of this object is as follows:
     Tests SHOULD NOT specify multiple [expectedLogMessagesForClient](#expectedlogmessagesforclient) objects for a single
     client entity.
 
+- `expectTracingMessages`: Optional object that defines expected
+  tracing [spans](../open-telemetry/open-telemetry.md#span) for a test. The structure of this object is as
+  follows:
+    - `client`: Required string. The ID of the client entity associated with these tracing spans.
+    - `ignoreExtraSpans`: Optional boolean.
+        - If `true`, additional unexpected spans are allowed.
+        - If `false` or omitted, the test runner MUST fail if any unexpected spans are detected.
+    - `spans`: Required array of span objects. Each span describes an expected tracing event.
+
+      Span object properties:
+        - `name`: Required string. The name of the tracing span.
+        - `tags`: Required object. Key-value pairs describing span metadata.
+        - `nested`: Optional array of nested span objects, following the same structure.
+      
 <span id="test_outcome"></span>
 
 - `outcome`: Optional array of one or more [collectionData](#collectiondata) objects. Data that is expected to exist in
@@ -3421,6 +3440,11 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-08-09: **Schema version 1.26.**
+
+    Add `observeTracingMessages` configuration for clients and `expectTracingMessages` for test expectations.
+  This allows capturing and validating detailed tracing information during test execution.
 
 - 2025-07-28: **Schema version 1.25.**
 

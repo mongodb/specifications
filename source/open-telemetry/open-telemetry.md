@@ -25,6 +25,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 An application that uses the MongoDB driver.
 
+<span id="span"></span>
 **Span**
 
 A Span represents a single operation within a trace. Spans can be nested to form a trace tree. Each trace contains a
