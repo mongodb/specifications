@@ -3768,7 +3768,7 @@ Assert that an error is thrown.
 ### 27. Text Explicit Encryption
 
 The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server 8.2.0+
-and libmongocrypt 1.15.0+. The tests must not run against a standalone.
+and libmongocrypt 1.15.1+. The tests must not run against a standalone.
 
 Before running each of the following test cases, perform the following Test Setup.
 
