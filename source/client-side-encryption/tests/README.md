@@ -3834,6 +3834,36 @@ class EncryptOpts {
 }
 ```
 
+Where prefix, suffix, or substring options are required, use the following:
+
+1. Prefix
+
+    ```typescript
+    class PrefixOpts {
+       strMaxQueryLength: 10,
+       strMinQueryLength: 2,
+    }
+    ```
+
+2. Suffix
+
+    ```typescript
+    class SuffixOpts {
+       strMaxQueryLength: 10,
+       strMinQueryLength: 2,
+    }
+    ```
+
+3. Substring
+
+    ```typescript
+    class SubstringOpts {
+       strMaxLength: 10,
+       strMaxQueryLength: 10,
+       strMinQueryLength: 2,
+    }
+    ```
+
 Use `encryptedClient` to insert the following document into `db.prefix-suffix`:
 
 ```javascript
@@ -3885,34 +3915,6 @@ class EncryptOpts {
 }
 ```
 
-1. Prefix
-
-    ```typescript
-    class PrefixOpts {
-       strMaxQueryLength: 10,
-       strMinQueryLength: 2,
-    }
-    ```
-
-2. Suffix
-
-    ```typescript
-    class SuffixOpts {
-       strMaxQueryLength: 10,
-       strMinQueryLength: 2,
-    }
-    ```
-
-3. Substring
-
-    ```typescript
-    class SubstringOpts {
-       strMaxLength: 10,
-       strMaxQueryLength: 10,
-       strMinQueryLength: 2,
-    }
-    ```
-
 #### Case 1: can find a document by prefix
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
@@ -3920,7 +3922,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the result
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <findPayload>}, } }
 ```
 
 Assert the following document is returned:
@@ -3931,12 +3933,12 @@ Assert the following document is returned:
 
 #### Case 2: can find a document by suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"`. Store the resulting payload in `findPayload`.
 
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <findPayload>}, } }
 ```
 
 Assert the following document is returned:
@@ -3947,12 +3949,12 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"`. Store the resulting payload in `findPayload`.
 
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <findPayload>}, } }
 ```
 
 Assert that no documents are returned.
@@ -3964,7 +3966,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the result
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "suffix": <findPayload>}, } }
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <findPayload>}, } }
 ```
 
 Assert that no documents are returned.
@@ -3976,7 +3978,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the result
 Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <findPayload>}, } }
 ```
 
 Assert the following document is returned:
@@ -3992,7 +3994,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"`. Store the result
 Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ "$expr": { "$encStrStartsWith": {"input": "$encryptedText", "prefix": <findPayload>}, } }
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <findPayload>}, } }
 ```
 
 Assert that no documents are returned.
