@@ -3846,9 +3846,7 @@ Where prefix, suffix, or substring options are required, use the following:
     }
     ```
 
-Use `clientEncryption` to encrypt the string `"foobarbaz"`.
-
-Encrypt using the following `EncryptOpts`:
+Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
@@ -3870,9 +3868,7 @@ Use `encryptedClient` to insert the following document into `db.prefix-suffix`:
 { "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
 ```
 
-Use `clientEncryption` to encrypt the string `"foobarbaz"`.
-
-Encrypt using the following `EncryptOpts`:
+Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
