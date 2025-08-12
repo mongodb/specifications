@@ -3839,7 +3839,7 @@ class EncryptOpts {
 Use `encryptedClient` to insert the following document into `db.prefix-suffix`:
 
 ```javascript
-{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
+{ "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
 ```
 
 Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
@@ -3864,29 +3864,7 @@ class EncryptOpts {
 Use `encryptedClient` to insert the following document into `db.substring`:
 
 ```javascript
-{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
-```
-
-The remaining tasks require setting `TextOpts`. [Test Setup: TextOpts](#test-setup-textopts) lists the values to use for
-`TextOpts` for each of the supported data types.
-
-#### Test Setup: TextOpts
-
-This section lists the values to use for `TextOpts` for each query type. Include the matching options in the following
-`EncryptOpts` for each query:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "<prefix/suffix/substring>Preview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: true,
-      diacriticSensitive: true,
-      <prefix/suffix/substring>: <matching opts>
-   },
-}
+{ "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
 ```
 
 #### Case 1: can find a document by prefix
