@@ -159,6 +159,8 @@ strict JSON with an encoded length of approximately X bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `small-document` source file (X bytes) times
 10,000 operations, which equals X,XXX,XXX bytes or X MB.
 
+This benchmark uses the same dataset as the driver `small doc insertOne` benchmark, allowing for direct comparisons.
+
 | Phase       | Description                                                                            |
 | ----------- | -------------------------------------------------------------------------------------- |
 | Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object.             |
@@ -239,6 +241,8 @@ strict JSON with an encoded length of approximately X bytes.
 
 Dataset size: For scoring purposes, the dataset size is the size of the `large-document` source file (X bytes) times
 10,000 operations, which equals X,XXX,XXX bytes or X MB.
+
+This benchmark uses the same dataset as the driver `large doc insertOne` benchmark, allowing for direct comparisons.
 
 | Phase       | Description                                                                               |
 | ----------- | ----------------------------------------------------------------------------------------- |
