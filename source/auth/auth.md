@@ -1830,6 +1830,8 @@ def auth(connection):
       if e.code == 18:
         invalidate(access_token)
         access_token, _ = get_access_token()
+      else:
+        raise e # Raise other errors.
 
   connection.oidc_cache.access_token = access_token
   sasl_start(connection, payload={"jwt": access_token})
