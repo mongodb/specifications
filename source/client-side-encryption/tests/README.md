@@ -3774,9 +3774,13 @@ Before running each of the following test cases, perform the following Test Setu
 
 #### Test Setup
 
-Using [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper), drop and create the following collections:
-- `db.prefix-suffix` using the `encryptedFields` option set to the contents of [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json)
-- `db.substring` using the `encryptedFields` option set to the contents of [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
+Using [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper), drop and
+create the following collections:
+
+- `db.prefix-suffix` using the `encryptedFields` option set to the contents of
+    [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json)
+- `db.substring` using the `encryptedFields` option set to the contents of
+    [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
 
 Load the file
 [key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
@@ -4072,3 +4076,26 @@ Use `encryptedClient` to run a "find" operation on the `db.substring` collection
 ```
 
 Assert that no documents are returned.
+
+#### Case 7: assert `contentionFactor` is required
+
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "prefixPreview",
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
+algorithm".
