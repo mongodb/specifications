@@ -3775,7 +3775,7 @@ Before running each of the following test cases, perform the following Test Setu
 #### Test Setup
 
 Using [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper), drop and
-create the following collections:
+create the following collections with majority write concern:
 
 - `db.prefix-suffix` using the `encryptedFields` option set to the contents of
     [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json)
@@ -3836,7 +3836,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.prefix-suffix`:
+Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -3861,7 +3861,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.substring`:
+Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
