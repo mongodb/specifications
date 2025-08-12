@@ -3774,21 +3774,15 @@ Before running each of the following test cases, perform the following Test Setu
 
 #### Test Setup
 
-Load the file `encryptedFields-prefix-suffix.json` as `encryptedFields-prefix-suffix`.
-
-Load the file `encryptedFields-substring.json` as `encryptedFields-substring`.
+Using [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper), drop and create the following collections:
+- `db.prefix-suffix` using the `encryptedFields` option set to the contents of [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json)
+- `db.substring` using the `encryptedFields` option set to the contents of [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
 
 Load the file
 [key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
 as `key1Document`.
 
 Read the `"_id"` field of `key1Document` as `key1ID`.
-
-Drop and create the collection `db.prefix-suffix` using `encryptedFields-prefix-suffix` as an option. See
-[QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
-
-Drop and create the collection `db.substring` using `encryptedFields-substring` as an option. See
-[QE CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
 Drop and create the collection `keyvault.datakeys`.
 
@@ -3816,36 +3810,6 @@ class AutoEncryptionOpts {
 }
 ```
 
-Where prefix, suffix, or substring options are required, use the following:
-
-1. Prefix
-
-    ```typescript
-    class PrefixOpts {
-       strMaxQueryLength: 10,
-       strMinQueryLength: 2,
-    }
-    ```
-
-2. Suffix
-
-    ```typescript
-    class SuffixOpts {
-       strMaxQueryLength: 10,
-       strMinQueryLength: 2,
-    }
-    ```
-
-3. Substring
-
-    ```typescript
-    class SubstringOpts {
-       strMaxLength: 10,
-       strMaxQueryLength: 10,
-       strMinQueryLength: 2,
-    }
-    ```
-
 Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
 
 ```typescript
@@ -3856,8 +3820,14 @@ class EncryptOpts {
    textOpts: TextOpts {
       caseSensitive: true,
       diacriticSensitive: true,
-      prefix: <PrefixOpts>,
-      suffix: <SuffixOpts>
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
    },
 }
 ```
@@ -3878,7 +3848,11 @@ class EncryptOpts {
    textOpts: TextOpts {
       caseSensitive: true,
       diacriticSensitive: true,
-      substring: <SubstringOpts>
+      substring: SubstringOpts {
+       strMaxLength: 10,
+       strMaxQueryLength: 10,
+       strMinQueryLength: 2,
+      }
    },
 }
 ```
@@ -3913,12 +3887,29 @@ class EncryptOpts {
 
 #### Case 1: can find a document by prefix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "prefixPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
 
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <findPayload>} } }
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'foo'>} } }
 ```
 
 Assert the following document is returned:
@@ -3929,12 +3920,29 @@ Assert the following document is returned:
 
 #### Case 2: can find a document by suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"baz"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "suffixPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
 
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <findPayload>} } }
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
 ```
 
 Assert the following document is returned:
@@ -3945,36 +3953,88 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"baz"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "prefixPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
 
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <findPayload>} } }
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'baz'>} } }
 ```
 
 Assert that no documents are returned.
 
 #### Case 4: assert no document found by suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "suffixPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
 
 Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <findPayload>} } }
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'foo'>} } }
 ```
 
 Assert that no documents are returned.
 
 #### Case 5: can find a document by substring
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "substringPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      substring: SubstringOpts {
+       strMaxLength: 10,
+       strMaxQueryLength: 10,
+       strMinQueryLength: 2,
+      }
+   },
+}
+```
 
 Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrContains: {input: '$encryptedText', substring: <findPayload>} } }
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
 ```
 
 Assert the following document is returned:
@@ -3985,12 +4045,30 @@ Assert the following document is returned:
 
 #### Case 6: assert no document found by substring
 
-Use `clientEncryption.encrypt()` to encrypt the string `"qux"`. Store the resulting payload in `findPayload`.
+Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "substringPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      substring: SubstringOpts {
+       strMaxLength: 10,
+       strMaxQueryLength: 10,
+       strMinQueryLength: 2,
+      }
+   },
+}
+```
 
 Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrContains: {input: '$encryptedText', substring: <findPayload>} } }
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'qux'>} } }
 ```
 
 Assert that no documents are returned.
