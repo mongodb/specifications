@@ -3384,9 +3384,6 @@
           "arguments": {
             "timeoutMS": 1000,
             "name": "x_1"
-          },
-          "expectError": {
-            "isTimeoutError": false
           }
         }
       ],
@@ -3442,9 +3439,6 @@
           "arguments": {
             "timeoutMS": 0,
             "name": "x_1"
-          },
-          "expectError": {
-            "isTimeoutError": false
           }
         }
       ],

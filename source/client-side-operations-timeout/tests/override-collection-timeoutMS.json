@@ -3256,10 +3256,6 @@
           "object": "collection",
           "arguments": {
             "name": "x_1"
-          },
-          "expectError": {
-            "isClientError": false,
-            "isTimeoutError": false
           }
         }
       ],
@@ -3332,10 +3328,6 @@
           "object": "collection",
           "arguments": {
             "name": "x_1"
-          },
-          "expectError": {
-            "isClientError": false,
-            "isTimeoutError": false
           }
         }
       ],

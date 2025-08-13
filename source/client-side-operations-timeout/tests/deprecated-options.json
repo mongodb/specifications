@@ -6756,10 +6756,6 @@
           "arguments": {
             "timeoutMS": 100000,
             "name": "x_1"
-          },
-          "expectError": {
-            "isClientError": false,
-            "isTimeoutError": false
           }
         }
       ]
@@ -6821,10 +6817,6 @@
           "arguments": {
             "timeoutMS": 100000,
             "name": "x_1"
-          },
-          "expectError": {
-            "isClientError": false,
-            "isTimeoutError": false
           }
         }
       ],
@@ -6910,10 +6902,6 @@
             "timeoutMS": 1000,
             "maxTimeMS": 5000,
             "name": "x_1"
-          },
-          "expectError": {
-            "isClientError": false,
-            "isTimeoutError": false
           }
         }
       ],
