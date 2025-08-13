@@ -75,13 +75,13 @@
                   "db.response.status_code": {
                     "$$exists": false
                   },
-                  "error.message": {
+                  "exception.message": {
                     "$$exists": false
                   },
-                  "error.type": {
+                  "exception.type": {
                     "$$exists": false
                   },
-                  "error.stacktrace": {
+                  "exception.stacktrace": {
                     "$$exists": false
                   },
                   "server.address": {
@@ -118,15 +118,6 @@
                     "$$type": [
                       "string"
                     ]
-                  },
-                  "exception.message": {
-                    "$$exists": false
-                  },
-                  "exception.type": {
-                    "$$exists": false
-                  },
-                  "exception.stacktrace": {
-                    "$$exists": false
                   }
                 }
               }
