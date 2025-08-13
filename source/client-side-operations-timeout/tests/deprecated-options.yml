@@ -3747,6 +3747,7 @@ tests:
         object: *collection
         arguments:
           keys: { x: 1 }
+          timeoutMS: 100000
           name: "x_1"
       - name: dropIndex
         object: *collection
@@ -3785,6 +3786,7 @@ tests:
         object: *collection
         arguments:
           keys: { x: 1 }
+          timeoutMS: 100000
           name: "x_1"
       - name: dropIndex
         object: *collection
