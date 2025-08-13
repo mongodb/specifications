@@ -3133,6 +3133,10 @@ tests:
       - client: *client
         events:
           - commandStartedEvent:
+              commandName: createIndexes
+              databaseName: *databaseName
+
+          - commandStartedEvent:
               commandName: dropIndexes
               databaseName: *databaseName
               command:

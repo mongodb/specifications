@@ -4378,6 +4378,12 @@
           "events": [
             {
               "commandStartedEvent": {
+                "commandName": "createIndexes",
+                "databaseName": "test"
+              }
+            },
+            {
+              "commandStartedEvent": {
                 "commandName": "dropIndexes",
                 "databaseName": "test",
                 "command": {
@@ -4465,6 +4471,12 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "createIndexes",
+                "databaseName": "test"
+              }
+            },
             {
               "commandStartedEvent": {
                 "commandName": "dropIndexes",

@@ -1758,6 +1758,10 @@ tests:
       - client: *client
         events:
           - commandStartedEvent:
+              commandName: createIndexes
+              databaseName: *databaseName
+
+          - commandStartedEvent:
               commandName: dropIndexes
               databaseName: *databaseName
               command:
@@ -1798,6 +1802,10 @@ tests:
     expectEvents:
       - client: *client
         events:
+          - commandStartedEvent:
+              commandName: createIndexes
+              databaseName: *databaseName
+
           - commandStartedEvent:
               commandName: dropIndexes
               databaseName: *databaseName

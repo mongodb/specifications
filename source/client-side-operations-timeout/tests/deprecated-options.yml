@@ -3743,6 +3743,11 @@ tests:
               failCommands: ["dropIndexes"]
               blockConnection: true
               blockTimeMS: 5
+      - name: createIndex 
+        object: *collection
+        arguments:
+          keys: { x: 1 }
+          name: "x_1"
       - name: dropIndex
         object: *collection
         arguments:
@@ -3776,7 +3781,7 @@ tests:
             - session:
                 id: &session session
                 client: *client
-      - name: createIndex 
+      - name: createIndex
         object: *collection
         arguments:
           keys: { x: 1 }
@@ -3789,6 +3794,10 @@ tests:
     expectEvents:
       - client: *client
         events:
+          - commandStartedEvent:
+              commandName: createIndexes
+              databaseName: *databaseName
+
           - commandStartedEvent:
               commandName: dropIndexes
               databaseName: *databaseName
@@ -3838,6 +3847,10 @@ tests:
     expectEvents:
       - client: *client
         events:
+          - commandStartedEvent:
+              commandName: createIndexes
+              databaseName: *databaseName
+
           - commandStartedEvent:
               commandName: dropIndexes
               databaseName: *databaseName

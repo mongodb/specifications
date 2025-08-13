@@ -6751,6 +6751,16 @@
           }
         },
         {
+          "name": "createIndex",
+          "object": "collection",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
+          }
+        },
+        {
           "name": "dropIndex",
           "object": "collection",
           "arguments": {
@@ -6834,6 +6844,12 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "createIndexes",
+                "databaseName": "test"
+              }
+            },
             {
               "commandStartedEvent": {
                 "commandName": "dropIndexes",
@@ -6929,6 +6945,12 @@
         {
           "client": "client",
           "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "createIndexes",
+                "databaseName": "test"
+              }
+            },
             {
               "commandStartedEvent": {
                 "commandName": "dropIndexes",
