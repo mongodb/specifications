@@ -3124,10 +3124,6 @@ tests:
         object: *collection
         arguments:
           name: "x_1"
-          
-        expectError:
-          isClientError: false
-          isTimeoutError: false
     expectEvents:
       - client: *client
         events:

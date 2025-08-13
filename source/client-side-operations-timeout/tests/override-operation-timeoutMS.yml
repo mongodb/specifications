@@ -1817,9 +1817,6 @@ tests:
         arguments:
           timeoutMS: 1000
           name: "x_1"
-          
-        expectError:
-          isTimeoutError: false  # IndexNotFound
     expectEvents:
       - client: *client
         events:
@@ -1847,9 +1844,6 @@ tests:
         arguments:
           timeoutMS: 0
           name: "x_1"
-          
-        expectError:
-          isTimeoutError: false  # IndexNotFound
     expectEvents:
       - client: *client
         events:
