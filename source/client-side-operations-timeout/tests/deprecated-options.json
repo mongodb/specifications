@@ -6812,6 +6812,16 @@
           }
         },
         {
+          "name": "createIndex",
+          "object": "collection",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
+          }
+        },
+        {
           "name": "dropIndex",
           "object": "collection",
           "arguments": {
@@ -6893,6 +6903,16 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "name": "createIndex",
+          "object": "collection",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
           }
         },
         {
@@ -6989,6 +7009,16 @@
                 "blockTimeMS": 5
               }
             }
+          }
+        },
+        {
+          "name": "createIndex",
+          "object": "collection",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
           }
         },
         {

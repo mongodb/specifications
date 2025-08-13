@@ -4355,6 +4355,16 @@
           }
         },
         {
+          "name": "createIndex",
+          "object": "collection",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
+          }
+        },
+        {
           "name": "dropIndex",
           "object": "collection",
           "arguments": {
@@ -4431,6 +4441,16 @@
                 "blockTimeMS": 15
               }
             }
+          }
+        },
+        {
+          "name": "createIndex",
+          "object": "collection",
+          "arguments": {
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
           }
         },
         {

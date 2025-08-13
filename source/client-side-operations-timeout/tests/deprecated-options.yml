@@ -3776,6 +3776,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
+      - name: createIndex 
+        object: *collection
+        arguments:
+          keys: { x: 1 }
+          name: "x_1"
       - name: dropIndex
         object: *collection
         arguments:
@@ -3819,6 +3824,11 @@ tests:
             - session:
                 id: &session session
                 client: *client
+      - name: createIndex 
+        object: *collection
+        arguments:
+          keys: { x: 1 }
+          name: "x_1"
       - name: dropIndex
         object: *collection
         arguments:
@@ -3871,6 +3881,11 @@ tests:
               failCommands: ["dropIndexes"]
               blockConnection: true
               blockTimeMS: 5
+      - name: createIndex 
+        object: *collection
+        arguments:
+          keys: { x: 1 }
+          name: "x_1"
       - name: dropIndexes
         object: *collection
         arguments:
