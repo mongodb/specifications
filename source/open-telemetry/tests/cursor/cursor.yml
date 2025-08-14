@@ -2,17 +2,17 @@ description: cursor retrieval
 schemaVersion: '1.26'
 createEntities:
   - client:
-      id: client0
+      id: &client0 client0
       useMultipleMongoses: false
       observeTracingMessages:
         enableCommandPayload: true
   - database:
-      id: database0
-      client: client0
+      id: &database0 database0
+      client: *client0
       databaseName: cursor
   - collection:
-      id: collection0
-      database: database0
+      id: &collection0 collection0
+      database: *database0
       collectionName: test
 initialData:
   - collectionName: test
@@ -28,7 +28,7 @@ tests:
   - description: find with a cursor
     operations:
       - name: find
-        object: collection0
+        object: *collection0
         arguments:
           filter: { _id: { $gt: 1 } }
           batchSize: 2
@@ -39,7 +39,7 @@ tests:
           - { _id: 5 }
           - { _id: 6 }
     expectTracingMessages:
-      client: client0
+      client: *client0
       ignoreExtraSpans: false
       spans:
         - name: find cursor.test

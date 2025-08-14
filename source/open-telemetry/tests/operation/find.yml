@@ -2,16 +2,16 @@ description: operation find
 schemaVersion: '1.26'
 createEntities:
   - client:
-      id: client0
+      id: &client0 client0
       useMultipleMongoses: false
       observeTracingMessages:
         enableCommandPayload: true
   - database:
-      id: database0
-      client: client0
+      id: &database0 database0
+      client: *client0
       databaseName: operation-find
   - collection:
-      id: collection0
+      id: &collection0 collection0
       database: database0
       collectionName: test
 initialData:
@@ -22,12 +22,12 @@ tests:
   - description: find an element
     operations:
       - name: find
-        object: collection0
+        object: *collection0
         arguments:
           filter:
             x: 1
     expectTracingMessages:
-      client: client0
+      client: *client0
       ignoreExtraSpans: false
       spans:
         - name: find operation-find.test

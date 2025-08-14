@@ -2,17 +2,17 @@ description: operation insert
 schemaVersion: '1.26'
 createEntities:
   - client:
-      id: client0
+      id: &client0 client0
       useMultipleMongoses: false
       observeTracingMessages:
         enableCommandPayload: true
   - database:
-      id: database0
-      client: client0
+      id: &database0 database0
+      client: *client0
       databaseName: operation-insert
   - collection:
-      id: collection0
-      database: database0
+      id: &collection0 collection0
+      database: *database0
       collectionName: test
 initialData:
   - collectionName: test
@@ -21,13 +21,13 @@ initialData:
 tests:
   - description: insert one element
     operations:
-      - object: collection0
+      - object: *collection0
         name: insertOne
         arguments:
           document:
             _id: 1
     expectTracingMessages:
-      client: client0
+      client: *client0
       ignoreExtraSpans: false
       spans:
         - name: insert operation-insert.test

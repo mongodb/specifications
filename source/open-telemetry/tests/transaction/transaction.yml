@@ -10,20 +10,20 @@ runOnRequirements:
       - load-balanced
 createEntities:
   - client:
-      id: client0
+      id: &client0 client0
       useMultipleMongoses: false
       observeTracingMessages:
         enableCommandPayload: true
   - database:
-      id: database0
-      client: client0
+      id: &database0 database0
+      client: *client0
       databaseName: transaction-tests
   - collection:
-      id: collection0
-      database: database0
+      id: &collection0 collection0
+      database: *database0
       collectionName: test
   - session:
-      id: session0
+      id: &session0 session0
       client: client0
 initialData:
   - collectionName: test
@@ -32,23 +32,23 @@ initialData:
 tests:
   - description: observeTracingMessages around transaction
     operations:
-      - object: session0
+      - object: *session0
         name: startTransaction
-      - object: collection0
+      - object: *collection0
         name: insertOne
         arguments:
-          session: session0
+          session: *session0
           document:
             _id: 1
-      - object: session0
+      - object: *session0
         name: commitTransaction
       - name: find
-        object: collection0
+        object: *collection0
         arguments:
           filter:
             x: 1
     expectTracingMessages:
-      client: client0
+      client: *client0
       ignoreExtraSpans: false
       spans:
         - name: transaction
