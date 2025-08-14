@@ -48,7 +48,7 @@ tests:
         expectError:
           isClientError: true
 
-  - description: "error if maxAwaitTimeMS is greater than timeoutMS"
+  - description: "error on find if maxAwaitTimeMS is greater than timeoutMS"
     operations:
       - name: find
         object: *collection
@@ -59,8 +59,33 @@ tests:
           maxAwaitTimeMS: 10
         expectError:
           isClientError: true
+          isTimeoutError: false
 
-  - description: "error if maxAwaitTimeMS is equal to timeoutMS"
+  - description: "error on aggregate if maxAwaitTimeMS is greater than timeoutMS"
+    operations:
+      - name: aggregate
+        object: *collection
+        arguments:
+          pipeline: []
+          timeoutMS: 5
+          maxAwaitTimeMS: 10
+        expectError:
+          isClientError: true
+          isTimeoutError: false
+
+  - description: "error on watch if maxAwaitTimeMS is greater than timeoutMS"
+    operations:
+      - name: createChangeStream
+        object: *collection
+        arguments:
+          pipeline: []
+          timeoutMS: 5
+          maxAwaitTimeMS: 10
+        expectError:
+          isClientError: true
+          isTimeoutError: false
+
+  - description: "error on find if maxAwaitTimeMS is equal to timeoutMS"
     operations:
       - name: find
         object: *collection
@@ -71,6 +96,31 @@ tests:
           maxAwaitTimeMS: 5
         expectError:
           isClientError: true
+          isTimeoutError: false
+
+  - description: "error on aggregate if maxAwaitTimeMS is equal to timeoutMS"
+    operations:
+      - name: aggregate
+        object: *collection
+        arguments:
+          pipeline: []
+          timeoutMS: 5
+          maxAwaitTimeMS: 5
+        expectError:
+          isClientError: true
+          isTimeoutError: false
+
+  - description: "error on watch if maxAwaitTimeMS is equal to timeoutMS"
+    operations:
+      - name: createChangeStream
+        object: *collection
+        arguments:
+          pipeline: []
+          timeoutMS: 5
+          maxAwaitTimeMS: 5
+        expectError:
+          isClientError: true
+          isTimeoutError: false
 
   - description: "timeoutMS applied to find"
     operations:
@@ -103,7 +153,7 @@ tests:
                 tailable: true
                 awaitData: true
                 maxTimeMS: { $$exists: true }
-  
+
   # If maxAwaitTimeMS is not set, timeoutMS should be refreshed for the getMore and the getMore should not have a
   # maxTimeMS field.
   - description: "timeoutMS is refreshed for getMore if maxAwaitTimeMS is not set"
@@ -271,7 +321,7 @@ tests:
         saveResultAsEntity: &tailableCursor tailableCursor
       - name: iterateOnce
         object: *tailableCursor
-      - name: iterateUntilDocumentOrError 
+      - name: iterateUntilDocumentOrError
         object: *tailableCursor
         expectError:
           isTimeoutError: true
@@ -283,12 +333,12 @@ tests:
               commandName: find
               databaseName: *databaseName
           - commandStartedEvent:
-              commandName: getMore 
+              commandName: getMore
               databaseName: *databaseName
               command:
                 maxTimeMS: { $$lte: 100 }
           - commandStartedEvent:
-              commandName: getMore 
+              commandName: getMore
               databaseName: *databaseName
               command:
                 maxTimeMS: { $$lte: 70 }
@@ -316,7 +366,8 @@ tests:
               commandName: find
               databaseName: *databaseName
           - commandStartedEvent:
-              commandName: getMore 
+              commandName: getMore
               databaseName: *databaseName
               command:
                 maxTimeMS: { $$lte: 100 }
+
