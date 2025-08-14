@@ -310,6 +310,16 @@ class BulkWriteOptions {
     comment: Optional<BSON value>;
 
     /**
+     * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+     * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+     *
+     * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+     *
+     * @since MongoDB 8.2
+     */
+    rawData: Optional<Boolean>;
+
+    /**
      * Whether detailed results for each successful operation should be included in the returned
      * BulkWriteResult.
      *
@@ -538,6 +548,7 @@ The `bulkWrite` server command has the following format:
     "bypassDocumentValidation": Optional<Boolean>,
     "comment": Optional<BSON value>,
     "let": Optional<Document>,
+    "rawData": Optional<Boolean>,
     ...additional operation-agnostic fields
 }
 ```
@@ -926,7 +937,9 @@ error in this specific situation does not seem helpful enough to require size ch
 
 ## **Changelog**
 
-- 2025-04-23: Removed the requirement to error when QE is enabled.
+- 2025-08-13: Removed the requirement to error when QE is enabled.
+
+- 2025-06-27: Added `rawData` option.
 
 - 2024-11-05: Updated the requirements regarding the size validation.
 

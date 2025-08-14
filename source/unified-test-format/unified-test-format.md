@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.19.0
+- Current Schema Version: 1.25.0
 
 ______________________________________________________________________
 
@@ -214,10 +214,6 @@ Test runners MUST support the following types of entities:
 
     See [Cursor Operations](#cursor-operations) for a list of operations.
 
-- Event list. See [storeEventsAsEntities](#entity_client_storeEventsAsEntities). The event list MUST store BSON
-    documents. The type of the list itself is not prescribed by this specification. Test runner MAY use a BSON array or
-    a thread-safe list data structure to implement the event list.
-
 - All known BSON types and/or equivalent language types for the target driver. For the present version of the spec, the
     following BSON types are known: 0x01-0x13, 0x7F, 0xFF.
 
@@ -303,7 +299,7 @@ The top-level fields of a test file are as follows:
 
 #### runOnRequirement
 
-A combination of server version and/or topology requirements for running the test(s).
+A combination of server version, topology, and/or dependency requirements for running the test(s).
 
 The format of server version strings is defined in [Version String](#version-string). When comparing server version
 strings, each component SHALL be compared numerically. For example, "4.0.10" is greater than "4.0.9" and "3.6" and less
@@ -337,9 +333,10 @@ The structure of this object is as follows:
     Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded cluster behind a load balancer implicitly
     uses replica sets for its shards.
 
-- `serverless`: Optional string. Whether or not the test should be run on Atlas Serverless instances. Valid values are
-    "require", "forbid", and "allow". If "require", the test MUST only be run on Atlas Serverless instances. If
-    "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted or "allow", this option has no effect.
+- `serverless` (deprecated): Optional string. Whether or not the test should be run on Atlas Serverless instances. Valid
+    values are "require", "forbid", and "allow". If "require", the test MUST only be run on Atlas Serverless instances.
+    If "forbid", the test MUST NOT be run on Atlas Serverless instances. If omitted or "allow", this option has no
+    effect.
 
     The test runner MUST be informed whether or not Atlas Serverless is being used in order to determine if this
     requirement is met (e.g. through an environment variable or configuration option).
@@ -347,6 +344,9 @@ The structure of this object is as follows:
     Note: the Atlas Serverless proxy imitates mongos, so the test runner is not capable of determining if Atlas Serverless
     is in use by issuing commands such as `buildInfo` or `hello`. Furthermore, connections to Atlas Serverless use a
     load balancer, so the topology will appear as "load-balanced".
+
+    Note: serverless testing is no longer required, and drivers that no longer support serverless testing MAY omit
+    implementation of this requirement and instantly skip all tests that use `serverless: require`.
 
 - `serverParameters`: Optional object of server parameters to check against. To check server parameters, drivers send a
     `{ getParameter: 1, <parameter>: 1 }` command to the server using an internal MongoClient. Drivers MAY also choose
@@ -366,8 +366,8 @@ The structure of this object is as follows:
     [authenticationMechanisms](https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.authenticationMechanisms)
     server parameter. If this field is omitted, there is no authentication mechanism requirement.
 
-- `csfle`: Optional boolean. If true, the tests MUST only run if the driver and server support Client-Side Field Level
-    Encryption. CSFLE is supported when all of the following are true:
+- `csfle`: Optional object or boolean. If not false, tests MUST only run if the driver and server support Client-Side
+    Field Level Encryption. CSFLE is supported when all of the following are true:
 
     - Server version is 4.2.0 or higher
     - Driver has libmongocrypt enabled
@@ -375,6 +375,12 @@ The structure of this object is as follows:
         [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) is available
 
     If false, tests MUST NOT run if CSFLE is supported. If this field is omitted, there is no CSFLE requirement.
+
+    The structure of the `csfle` object is as follows:
+
+    - `minLibmongocryptVersion`: Optional string. The minimum libmongocrypt (inclusive) required to successfully run the
+        tests. If this field is omitted, there is no lower bound on the required libmongocrypt version. The format of this
+        string is defined in [Version String](#version-string).
 
 Test runners MAY evaluate these conditions in any order. For example, it may be more efficient to evaluate `serverless`
 or `auth` before communicating with a server to check its version.
@@ -485,6 +491,8 @@ The structure of this object is as follows:
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
         - [serverHeartbeatFailedEvent](#expectedEvent_serverHeartbeatFailedEvent)
         - [topologyDescriptionChangedEvent](#expectedEvent_topologyDescriptionChangedEvent)
+        - [topologyOpeningEvent](#expectedEvent_topologyOpeningEvent)
+        - [topologyClosedEvent](#expectedEvent_topologyClosedEvent)
 
     <span id="entity_client_ignoreCommandMonitoringEvents"></span>
 
@@ -507,23 +515,6 @@ The structure of this object is as follows:
         be false for each `runOnRequirement`. See
         [rationale_observeSensitiveCommands](#rationale_observeSensitiveCommands).
 
-    <span id="entity_client_storeEventsAsEntities"></span>
-
-    - `storeEventsAsEntities`: Optional array of one or more [storeEventsAsEntity](#storeeventsasentity) objects. Each
-        object denotes an entity name and one or more events to be collected and stored in that entity. See
-        [storeEventsAsEntity](#storeeventsasentity) for implementation details.
-
-        Note: the implementation of `storeEventsAsEntities` is wholly independent from `observeEvents` and
-        `ignoreCommandMonitoringEvents`.
-
-        Example option value:
-
-        ```yaml
-        storeEventsAsEntities:
-          - id: client0_events
-            events: [PoolCreatedEvent, ConnectionCreatedEvent, CommandStartedEvent]
-        ```
-
     <span id="entity_client_observeLogMessages"></span>
 
     - `observeLogMessages`: Optional object where the key names are log [components](../logging/logging.md#components) and
@@ -545,6 +536,9 @@ The structure of this object is as follows:
         - `schemaMap`: Optional object. Maps namespaces to CSFLE schemas.
         - `encryptedFieldsMap`: Optional object. Maps namespaces to QE schemas.
         - `extraOptions`: Optional object. Configuration options for the encryption library.
+            - If `extraOptions` is not present or omits `cryptSharedLibPath`, test runners MAY set `cryptSharedLibPath` to the
+                path of [crypt_shared](../client-side-encryption/client-side-encryption.md#crypt_shared) being tested. This
+                can avoid test errors loading crypt_shared from different paths.
         - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
         - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
@@ -680,55 +674,6 @@ The structure of this object is as follows:
 
     - `id`: Required string. Unique name for this entity. The YAML file SHOULD define a
         [node anchor](https://yaml.org/spec/1.2/spec.html#id2785586) for this field (e.g. `id: &thread0 thread0`).
-
-#### storeEventsAsEntity
-
-A list of one or more events that will be observed on a client and collectively stored within an entity. This object is
-used within [storeEventsAsEntities](#entity_client_storeEventsAsEntities).
-
-The structure of this object is as follows:
-
-- `id`: Required string. Unique name for this entity.
-- `events`: Required array of one or more strings, which denote the events to be collected. Currently, only the
-    following [CMAP](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md) and
-    [command monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) events MUST be supported:
-    - PoolCreatedEvent
-    - PoolReadyEvent
-    - PoolClearedEvent
-    - PoolClosedEvent
-    - ConnectionCreatedEvent
-    - ConnectionReadyEvent
-    - ConnectionClosedEvent
-    - ConnectionCheckOutStartedEvent
-    - ConnectionCheckOutFailedEvent
-    - ConnectionCheckedOutEvent
-    - ConnectionCheckedInEvent
-    - CommandStartedEvent
-    - CommandSucceededEvent
-    - CommandFailedEvent
-
-For the specified entity name, the test runner MUST create the respective entity with a type of "event list", as
-described in [Supported Entity Types](#supported-entity-types). If the entity already exists (such as from a previous
-[storeEventsAsEntity](#storeeventsasentity) object) the test runner MUST raise an error.
-
-The test runner MUST set up an event subscriber for each event named. The event subscriber MUST serialize the events it
-receives into a document, using the documented properties of the event as field names, and append the document to the
-list stored in the specified entity. Additionally, the following fields MUST be stored with each event document:
-
-- `name`: The name of the event (e.g. `PoolCreatedEvent`). The name of the event MUST be the name used in the respective
-    specification that defines the event in question.
-- `observedAt`: The time, as the floating-point number of seconds since the Unix epoch, when the event was observed by
-    the test runner.
-
-The test runner MAY omit the `command` field for CommandStartedEvent and `reply` field for CommandSucceededEvent.
-
-If an event field in the driver is of a type that does not directly map to a BSON type (e.g. `Exception` for the
-`failure` field of CommandFailedEvent) the test runner MUST convert values of that field to one of the BSON types. For
-example, a test runner MAY store the exception's error message string as the `failure` field of CommandFailedEvent.
-
-If the specification defining an event permits deviation in field names, such as `connectionId` field for
-CommandStartedEvent, the test runner SHOULD use the field names used in the specification when serializing events to
-documents even if the respective field name is different in the driver's event object.
 
 #### serverApi
 
@@ -1231,6 +1176,18 @@ The structure of this object is as follows:
         Test runners SHOULD ignore any other fields present on the `previousDescription` and `newDescription` fields of the
         captured `topologyDescriptionChangedEvent`.
 
+<span id="expectedEvent_topologyOpeningEvent"></span>
+
+- `topologyOpeningEvent`: Optional object. Assertions for one
+    [topologyOpeningEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
+
+<span id="expectedEvent_topologyClosedEvent"></span>
+
+- `topologyClosedEvent`: Optional object. Assertions for one
+    [topologyClosedEvent](../server-discovery-and-monitoring/server-discovery-and-monitoring-logging-and-monitoring.md#events-api)
+    object.
+
 ##### hasServiceId
 
 This field is an optional boolean that specifies whether or not the `serviceId` field of an event is set. If true, test
@@ -1293,7 +1250,6 @@ The structure of each object is as follows:
     When `failureIsRedacted` is present and its value is `true`, the test runner MUST assert that a failure is present and
     that the failure has been redacted according to the rules defined for error redaction in the
     [command logging and monitoring specification](../command-logging-and-monitoring/command-logging-and-monitoring.md#security).
-    
 
     When `false`, the test runner MUST assert that a failure is present and that the failure has NOT been redacted.
 
@@ -1320,6 +1276,8 @@ The structure of this object is as follows:
 
 - `readConcern`: Optional object. See [commonOptions_readConcern](#commonOptions_readConcern).
 - `readPreference`: Optional object. See [commonOptions_readPreference](#commonOptions_readPreference).
+- `timeoutMS`: Optional integer. See
+    [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms).
 - `writeConcern`: Optional object. See [commonOptions_writeConcern](#commonOptions_writeConcern).
 
 ### Common Options
@@ -1471,6 +1429,20 @@ NOT specify any operations for a client entity or any entity descended from it f
 driver behavior when an operation is attempted on a closed client or one of its descendant objects is not consistent.
 
 <span id="client_createChangeStream"></span>
+
+#### appendMetadata
+
+Appends client metadata to the client.
+
+The following arguments are supported:
+
+- `driverInfoOptions`: Required object with the following fields:
+    - `name`: Required string. The name of the wrapping library or framework.
+    - `version`: Optional string. The version of the wrapping library or framework.
+    - `platform`: Optional string. The platform of the wrapping library or framework.
+
+See the [handshake spec](../mongodb-handshake/handshake.md#metadata-updates-after-mongoclient-initialization) for more
+details.
 
 #### createChangeStream
 
@@ -2313,120 +2285,6 @@ An example of this operation follows:
           databaseName: &database0Name test
 ```
 
-#### loop
-
-The `loop` operation executes sub-operations in a loop.
-
-The following arguments are supported:
-
-- `operations`: Required array of [operation](#operation) objects. List of operations (henceforth referred to as
-    sub-operations) to run on each loop iteration. Each sub-operation must be a valid operation as described in
-    [Entity Test Operations](#entity-test-operations).
-
-    Sub-operations SHOULD NOT include the `loop` operation.
-
-    If, in the course of executing sub-operations, a sub-operation yields an error or failure, the test runner MUST NOT
-    execute subsequent sub-operations in the same loop iteration. If `storeErrorsAsEntity` and/or
-    `storeFailuresAsEntity` options are specified, the loop MUST store the error/failure accordingly and continue to the
-    next iteration (i.e. the error/failure will not interrupt the test). If neither `storeErrorsAsEntity` nor
-    `storeFailuresAsEntity` are specified, the loop MUST terminate and raise the error/failure (i.e. the error/failure
-    will interrupt the test).
-
-- `storeErrorsAsEntity`: Optional string. If specified, the runner MUST capture errors arising during sub-operation
-    execution and append a document with error information to the array stored in the specified entity.
-
-    If this option is specified, the test runner MUST check the existence and the type of the entity with the specified
-    name before executing the loop. If the entity does not exist, the test runner MUST create it with the type of BSON
-    array. If the entity exists and is of type BSON array, the test runner MUST do nothing. If the entity exists and is
-    of a different type, the test runner MUST raise an error.
-
-    If this option is specified and `storeFailuresAsEntity` is not, failures MUST also be captured and appended to the
-    array.
-
-    Documents appended to the array MUST contain the following fields:
-
-    - `error`: the textual description of the error encountered.
-    - `time`: the number of (floating-point) seconds since the Unix epoch when the error was encountered.
-
-- `storeFailuresAsEntity`: Optional string. If specified, the runner MUST capture failures arising during sub-operation
-    execution and append a document with failure information to the array stored in the specified entity.
-
-    If this option is specified, the test runner MUST check the existence and the type of the entity with the specified
-    name before executing the loop. If the entity does not exist, the test runner MUST create it with the type of BSON
-    array. If the entity exists and is of type BSON array, the test runner MUST do nothing. If the entity exists and is
-    of a different type, the test runner MUST raise an error.
-
-    If this option is specified and `storeErrorsAsEntity` is not, errors MUST also be captured and appended to the array.
-
-    Documents appended to the array MUST contain the following fields:
-
-    - `error`: the textual description of the failure encountered.
-    - `time`: the number of (floating-point) seconds since the Unix epoch when the failure was encountered.
-
-- `storeSuccessesAsEntity`: Optional string. If specified, the runner MUST keep track of the number of sub-operations
-    that completed successfully, and store that number in the specified entity. For example, if the loop contains two
-    sub-operations, and they complete successfully, each loop execution would increment the number of successes by two.
-
-    If the entity of the specified name already exists, the test runner MUST raise an error.
-
-- `storeIterationsAsEntity`: Optional string. If specified, the runner MUST keep track of the number of iterations of
-    the loop performed, and store that number in the specified entity. The number of loop iterations is counted
-    irrespective of whether sub-operations within the iteration succeed or fail.
-
-    If the entity of the specified name already exists, the test runner MUST raise an error.
-
-A *failure* is when the result or outcome of an operation executed by the test runner differs from its expected outcome.
-For example, an `expectResult` assertion failing to match a BSON document or an `expectError` assertion failing to match
-an error message would be considered a failure. An *error* is any other type of error raised by the test runner. For
-example, an unsupported operation or inability to resolve an entity name would be considered an error.
-
-This specification permits the test runner to report some failures as errors and some errors as failures. When the test
-runner stores errors and failures as entities it MAY classify conditions as errors and failures in the same way as it
-would when used in the driver's test suite. This includes reporting all errors as failures or all failures as errors.
-
-If the test runner does not distinguish errors and failures in its reporting, it MAY report both conditions under either
-category, but it MUST report any given condition in at most one category.
-
-The following termination behavior MUST be implemented by the test runner:
-
-- The test runner MUST provide a way to request termination of loops. This request will be made by the
-    [Atlas testing workload executor](https://mongodb-labs.github.io/drivers-atlas-testing/spec-workload-executor.html)
-    in response to receiving the termination signal from Astrolabe.
-- When the termination request is received, the test runner MUST stop looping. If the test runner is looping when the
-    termination request is received, the current loop iteration MUST complete to its natural conclusion (success or
-    failure). If the test runner is not looping when the termination request is received, it MUST NOT start any new loop
-    iterations in either the current test or subsequent tests for the lifetime of the test runner.
-- The termination request MUST NOT affect non-loop operations, including any operations after the loop. The tests SHOULD
-    NOT be written in such a way that the success or failure of operations that follow loops depends on how many loop
-    iterations were performed.
-- Receiving the termination request MUST NOT by itself be considered an error or a failure by the test runner.
-
-The exact mechanism by which the workload executor requests termination of the loop in the test runner, including the
-respective API, is left to the driver.
-
-Tests SHOULD NOT include multiple loop operations (nested or sequential).
-
-An example of this operation follows:
-
-```yaml
-- name: loop
-  object: testRunner
-  arguments:
-    storeErrorsAsEntity: errors
-    storeFailuresAsEntity: failures
-    storeSuccessesAsEntity: successes
-    storeIterationsAsEntity: iterations
-    operations:
-      - name: find
-        object: *collection0
-        arguments:
-          filter: { _id: { $gt: 1 }}
-          sort: { _id: 1 }
-        expectResult:
-          - _id: 2, x: 22
-          - _id: 3, x: 33
-```
-
 #### assertNumberConnectionsCheckedOut
 
 The `assertNumberConnectionsCheckedOut` operation instructs the test runner to assert that the given number of
@@ -3121,7 +2979,8 @@ If [test.runOnRequirements](#test_runOnRequirements) is specified, the test runn
 
 If [initialData](#initialData) is specified, for each [collectionData](#collectiondata) therein the test runner MUST set
 up the collection. All setup operations MUST use the internal MongoClient and a "majority" write concern. The test
-runner MUST first drop the collection. If a `createOptions` document is present, the test runner MUST execute a `create`
+runner MUST first drop the collection. The test runner must also drop the collections `_enxcol.<collectionName>.esc` and
+`_enxcol.<collectionName>.ecoc`. If a `createOptions` document is present, the test runner MUST execute a `create`
 command to create the collection with the specified options. The test runner MUST then insert the specified documents
 (if any). If no documents are present and `createOptions` is not set, the test runner MUST create the collection. If the
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
@@ -3492,6 +3351,16 @@ ignored in order to test the test runner implementation (e.g. defining entities 
 The specification does prefer "MUST" in other contexts, such as discussing parts of the test file format that *are*
 enforceable by the JSON schema or the test runner implementation.
 
+<span id="rationale_dropping_metadata"></span>
+
+### Why are `_enxcol` collections dropped?
+
+The collections `_enxcol.<collectionName>.esc` and `_enxcol.<collectionName>.ecoc` are
+[automatically created](../client-side-encryption/client-side-encryption.md#create-collection-helper) for Queryable
+Encryption collections. If these collections are present and non-empty, the server generated `__safeContent__` field may
+differ. `__safeContent__` includes a count of the number of instances of the given value. To do exact matching on
+`__safeContent__` the test runner is required to drop these collections.
+
 <span id="rationale_observeSensitiveCommands"></span>
 
 ### Why can't `observeSensitiveCommands` be true when authentication is enabled?
@@ -3552,6 +3421,27 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-07-28: **Schema version 1.25.**
+
+    Add alternate form of `csfle`. Previously it was only a bool. Now it can also be an object containing
+    `minLibmongocryptVersion`.
+
+- 2025-07-15: Clarify test runner may apply a default `cryptSharedLibPath`.
+
+- 2025-06-10: **Schema version 1.24.**
+
+    Deprecate `storeEventsAsEntities` option for client entities and `loop` operation in the schema and remove them from
+    this spec.
+
+- 2025-06-09: Add `appendMetadata` operation.
+
+- 2025-06-04: Deprecate the `serverless` runOnRequirement
+
+- 2025-04-25: Drop `_enxcol` collections.
+
+- 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format and schema 1.20+ as they
+    were omitted in error.
 
 - 2025-01-21: **Schema version 1.23.**
 
@@ -3673,7 +3563,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 - 2022-04-27: **Schema version 1.9.**
 
     Added `createOptions` field to `initialData`, introduced a new `timeoutMS` field in `collectionOrDatabaseOptions`, and
-    added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation.
+    added an `isTimeoutError` field to `expectedError`. Also introduced the `createEntities` operation and `$$lte`
+    operator.
 
 - 2022-04-27: **Schema version 1.8.**
 

@@ -389,7 +389,7 @@ The streaming protocol MUST be disabled when either:
 
 - the client is configured with serverMonitoringMode=poll, or
 - the client is configured with serverMonitoringMode=auto and a FaaS platform is detected, or
-- the server does not support streaming (eg MongoDB \< 4.4).
+- the server does not support streaming (eg MongoDB < 4.4).
 
 When the streaming protocol is disabled the client MUST use the [polling protocol](#polling-protocol) and MUST NOT start
 an extra thread or connection for [Measuring RTT](#measuring-rtt).
@@ -473,9 +473,8 @@ clients MUST cancel the hello or legacy hello check on that server and close the
 
 ### Polling Protocol
 
-The polling protocol is used to monitor MongoDB \< 4.4 servers or when streaming is disabled. The client
-[checks](#check) a server with a hello or legacy hello command and then sleeps for heartbeatFrequencyMS before running
-another check.
+The polling protocol is used to monitor MongoDB < 4.4 servers or when streaming is disabled. The client [checks](#check)
+a server with a hello or legacy hello command and then sleeps for heartbeatFrequencyMS before running another check.
 
 ### Marking the connection pool as ready (CMAP only)
 
@@ -502,7 +501,6 @@ the client MUST follow these steps:
     [Why synchronize clearing a server's pool with updating the topology?](server-discovery-and-monitoring.md#why-synchronize-clearing-a-servers-pool-with-updating-the-topology)).
     If this was a network timeout error, then the pool MUST be cleared with interruptInUseConnections = true (see
     [Why does the pool need to support closing in use connections as part of its clear logic?](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#why-does-the-pool-need-to-support-interrupting-in-use-connections-as-part-of-its-clear-logic))
-    
 
 4. If this was a network error and the server was in a known state before the error, the client MUST NOT sleep and MUST
     begin the next check immediately. (See

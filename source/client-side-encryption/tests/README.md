@@ -251,7 +251,6 @@ Then for each element in `tests`:
                 This MAY be configured system-wide.
             - `tlsCertificateKeyFile` (or equivalent) set to
                 [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-                
 
             The method of passing TLS options for KMIP TLS connections is driver dependent.
     2. If `autoEncryptOpts` does not include `keyVaultNamespace`, default it to `keyvault.datakeys`.
@@ -317,7 +316,7 @@ mongocryptd is released alongside the server. mongocryptd is available in versio
 Drivers MUST run all tests with mongocryptd on at least one platform for all tested server versions.
 
 Drivers MUST run all tests with [crypt_shared](../client-side-encryption.md#crypt_shared) on at least one platform for
-all tested server versions. For server versions \< 6.0, drivers MUST test with the latest major release of
+all tested server versions. For server versions < 6.0, drivers MUST test with the latest major release of
 [crypt_shared](../client-side-encryption.md#crypt_shared). Using the latest major release of
 [crypt_shared](../client-side-encryption.md#crypt_shared) is supported with older server versions.
 
@@ -427,7 +426,6 @@ First, perform the setup.
         This MAY be configured system-wide.
     - `tlsCertificateKeyFile` (or equivalent) set to
         [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-        
 
     The method of passing TLS options for KMIP TLS connections is driver dependent.
 
@@ -708,7 +706,6 @@ binary subtype 4 (or standard UUID), which MUST be decoded and encoded as subtyp
         This MAY be configured system-wide.
     - `tlsCertificateKeyFile` (or equivalent) set to
         [drivers-evergreen-tools/.evergreen/x509gen/client.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/client.pem).
-        
 
     The method of passing TLS options for KMIP TLS connections is driver dependent.
 
@@ -835,7 +832,7 @@ Configure with KMS providers as follows:
          "endpoint": "doesnotexist.invalid:443"
       },
       "kmip": {
-         "endpoint": "doesnotexist.local:5698"
+         "endpoint": "doesnotexist.invalid:5698"
       }
 }
 ```
@@ -890,13 +887,12 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
     Expect this to succeed. Use the returned UUID of the key to explicitly encrypt and decrypt the string "test" to
     validate it works.
 
-4. Call `client_encryption.createDataKey()` with "aws" as the provider and the following masterKey:
+4. Call `client_encryption.createDataKey()` with "kmip" as the provider and the following masterKey:
 
     ```javascript
     {
-      region: "us-east-1",
-      key: "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-      endpoint: "kms.us-east-1.amazonaws.com:12345"
+      "keyId": "1",
+      "endpoint": "localhost:12345"
     }
     ```
 
@@ -985,7 +981,7 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
     validate it works.
 
     Call `client_encryption_invalid.createDataKey()` with the same masterKey. Expect this to fail with a network
-    exception indicating failure to resolve "doesnotexist.local".
+    exception indicating failure to resolve "doesnotexist.invalid".
 
 11. Call `client_encryption.createDataKey()` with "kmip" as the provider and the following masterKey:
 
@@ -1004,11 +1000,11 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
     ```javascript
     {
       "keyId": "1",
-      "endpoint": "doesnotexist.local:5698"
+      "endpoint": "doesnotexist.invalid:5698"
     }
     ```
 
-    Expect this to fail with a network exception indicating failure to resolve "doesnotexist.local".
+    Expect this to fail with a network exception indicating failure to resolve "doesnotexist.invalid".
 
 ### 8. Bypass Spawning mongocryptd
 
@@ -1472,7 +1468,6 @@ Four mock KMS server processes must be running:
 
 1. The mock
     [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-    
 
     Run on port 9000 with
     [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
@@ -1488,7 +1483,6 @@ Four mock KMS server processes must be running:
 
 2. The mock
     [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-    
 
     Run on port 9001 with
     [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
@@ -1504,7 +1498,6 @@ Four mock KMS server processes must be running:
 
 3. The mock
     [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-    
 
     Run on port 9002 with
     [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
@@ -1770,7 +1763,7 @@ Expect an error indicating TLS handshake failed due to an invalid hostname.
 Call `client_encryption_no_client_cert.createDataKey()` with "azure" as the provider and the following masterKey:
 
 ```javascript
-{ 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+{ 'keyVaultEndpoint': 'doesnotexist.invalid', 'keyName': 'foo' }
 ```
 
 Expect an error indicating TLS handshake failed.
@@ -1882,7 +1875,7 @@ Call `client_encryption_with_names.createDataKey()` with "azure:no_client_cert" 
 masterKey:
 
 ```javascript
-{ 'keyVaultEndpoint': 'doesnotexist.local', 'keyName': 'foo' }
+{ 'keyVaultEndpoint': 'doesnotexist.invalid', 'keyName': 'foo' }
 ```
 
 Expect an error indicating TLS handshake failed.
@@ -3795,3 +3788,110 @@ class AutoEncryptionOpts {
 ```
 
 Assert that an error is thrown.
+
+### 27. Text Explicit Encryption
+
+The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server
+8.2.0+ and libmongocrypt 1.15.0+. The tests must not run against a standalone.
+
+Before running each of the following test cases, perform the following Test Setup.
+
+#### Test Setup
+
+Load the file `encryptedFields-text.json` as `encryptedFields`.
+
+Load the file
+[key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
+as `key1Document`.
+
+Read the `"_id"` field of `key1Document` as `key1ID`.
+
+Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+
+Drop and create the collection `keyvault.datakeys`.
+
+Insert `key1Document` in `keyvault.datakeys` with majority write concern.
+
+Create a MongoClient named `keyVaultClient`.
+
+Create a ClientEncryption object named `clientEncryption` with these options:
+
+```typescript
+class ClientEncryptionOpts {
+   keyVaultClient: <keyVaultClient>,
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+}
+```
+
+Create a MongoClient named `encryptedClient` with these `AutoEncryptionOpts`:
+
+```typescript
+class AutoEncryptionOpts {
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+   bypassQueryAnalysis: true,
+}
+```
+
+The remaining tasks require setting `TextOpts`. [Test Setup: TextOpts](#test-setup-textopts) lists the values to use
+for `RangeOpts` for each of the supported data types.
+
+#### Test Setup: TextOpts
+
+This section lists the values to use for `TextOpts` for each query type.
+
+1. Prefix
+
+    ```typescript
+    class PrefixOpts {
+       strMaxQueryLength: 3,
+       strMinQueryLength: 1,
+    }
+    ```
+
+2. Suffix
+
+    ```typescript
+    class SuffixOpts {
+       strMaxQueryLength: 3,
+       strMinQueryLength: 1,
+    }
+    ```
+
+3. Substring
+
+    ```typescript
+    class SubstringOpts {
+       strMaxLength: 10,
+       strMaxQueryLength: 3,
+       strMinQueryLength: 1,
+    }
+    ```
+
+Use `clientEncryption` to encrypt the string "foobarbaz". Ensure the type matches that of the encrypted field.
+For example, if the encrypted field is `encryptedDoubleNoPrecision` encrypt the value 6.0.
+
+Encrypt using the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: true,
+      prefix: <PrefixOpts>,
+      suffix: <SuffixOpts>
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.explicit_encryption`:
+
+```javascript
+{ "_id": 0, "encryptedText": <encrypted "foobarbaz"> }
+```
+

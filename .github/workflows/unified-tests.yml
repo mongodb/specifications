@@ -1,0 +1,66 @@
+name: Unified Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request: ~
+
+jobs:
+  schema-check:
+    name: Check unified test format files against schema
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Set up npm
+        uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: |
+          npm install -g ajv-cli js-yaml
+      - name: Check unified format test files against schema
+        working-directory: source/unified-test-format/tests
+        run: make
+      - name: Check all unified tests schema version is valid
+        run: bash .github/workflows/check_schema_version.sh
+      - name: Check schema-latest.json has been updated
+        run: bash .github/workflows/check-schema-latest.sh
+
+  json-check:
+    name: Check if all JSON test files are up-to-date
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Set up npm
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Install dependencies
+        run: |
+          npm install -g js-yaml
+          pip3 install pymongo pyyaml jinja2
+      - name: Regenerate JSON test files
+        run: |
+          python3 ./source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py
+          python3 ./source/client-side-encryption/etc/generate-corpus.py ./source/client-side-encryption/corpus
+          python3 ./source/client-side-encryption/etc/generate-test.py ./source/client-side-encryption/etc/test-templates/*.template ./source/client-side-encryption/tests/legacy
+          python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests
+          python3 ./source/etc/generate-handshakeError-tests.py
+          cd source && make -B
+
+      - name: "Commit the changes"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update generated files"

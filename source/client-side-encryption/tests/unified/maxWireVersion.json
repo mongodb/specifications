@@ -3,7 +3,8 @@
   "schemaVersion": "1.23",
   "runOnRequirements": [
     {
-      "maxServerVersion": "4.0.99"
+      "maxServerVersion": "4.0.99",
+      "csfle": true
     }
   ],
   "createEntities": [

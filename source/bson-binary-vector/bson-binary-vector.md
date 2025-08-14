@@ -35,10 +35,10 @@ Each vector can take one of multiple data types (dtypes). The following table li
 | ---------------- | ---------- | ----------------------- | ----------------------------------------------------------------------------------------- |
 | `0x03`           | INT8       | 8                       | INT8                                                                                      |
 | `0x27`           | FLOAT32    | 32                      | FLOAT                                                                                     |
-| `0x10`           | PACKED_BIT | 1     `*`               | BOOL                                                                                      |
+| `0x10`           | PACKED_BIT | 1 `*`                   | BOOL                                                                                      |
 
 `*` A Binary Quantized (PACKED_BIT) Vector is a vector of 0s and 1s (bits), but it is represented in memory as a list of
-integers in \[0, 255\]. So, for example, the vector `[0, 255]` would be shorthand for the 16-bit vector
+integers in [0, 255]. So, for example, the vector `[0, 255]` would be shorthand for the 16-bit vector
 `[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]`. The idea is that each number (a uint8) can be stored as a single byte. Of course,
 some languages, Python for one, do not have an uint8 type, so must be represented as an int in memory, but not on disk.
 
@@ -180,12 +180,18 @@ End Function
 
 #### Validation
 
-Drivers MUST validate vector metadata and raise an error if any invariant is violated:
+Drivers MUST validate vector metadata and raise an exception if any invariant is violated:
 
-- Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within \[0, 7\] for PACKED_BIT.
-- A PACKED_BIT vector MUST NOT be empty if padding is in the range \[1, 7\].
 - When unpacking binary data into a FLOAT32 Vector structure, the length of the binary data following the dtype and
     padding MUST be a multiple of 4 bytes.
+- Padding MUST be 0 for all dtypes where padding doesn’t apply, and MUST be within [0, 7] for PACKED_BIT.
+- A PACKED_BIT vector MUST NOT be empty if padding is in the range [1, 7].
+    - For a PACKED_BIT vector with non-zero padding, ignored bits SHOULD be zero.
+        - When encoding, if ignored bits aren't zero, drivers SHOULD raise an exception, but drivers MAY leave them as-is if
+            backwards-compatibility is a concern.
+        - When decoding, drivers SHOULD raise an exception if decoding non-zero ignored bits, but drivers MAY choose not to
+            for backwards compatibility.
+        - Drivers SHOULD use the next major release to conform to ignored bits being zero.
 
 Drivers MUST perform this validation when a numeric vector and padding are provided through the API, and when unpacking
 binary data (BSON or similar) into a Vector structure.
@@ -237,15 +243,27 @@ See the [README](tests/README.md) for tests.
 ## FAQ
 
 - What MongoDB Server version does this apply to?
+
     - Files in the "specifications" repository have no version scheme. They are not tied to a MongoDB server version.
+
 - In PACKED_BIT, why would one choose to use integers in \[0, 256)?
+
     - This follows a well-established precedent for packing binary-valued arrays into bytes (8 bits), This technique is
         widely used across different fields, such as data compression, communication protocols, and file formats, where
         you want to store or transmit binary data more efficiently by grouping 8 bits into a single byte (uint8). For an
         example in Python, see
         [numpy.unpackbits](https://numpy.org/doc/2.0/reference/generated/numpy.unpackbits.html#numpy.unpackbits).
 
+- In PACKED_BIT, why are ignored bits recommended to be zero?
+
+    - To ensure the same data representation has the same encoding. For drivers supporting comparison operations, this
+        avoids comparing different unused bits.
+
 ## Changelog
+
+- 2025-06-23: In PACKED_BIT vectors, ignored bits MAY be zero for backwards-compatibility. Prose tests added.
+
+- 2025-04-08: In PACKED_BIT vectors, ignored bits must be zero.
 
 - 2025-03-07: Update tests to use Extended JSON representation of +/-Infinity. (DRIVERS-3095)
 

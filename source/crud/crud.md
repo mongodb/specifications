@@ -319,6 +319,16 @@ class AggregateOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/aggregate/
    */
   let: Optional<Document>;
+
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class CountOptions {
@@ -371,6 +381,16 @@ class CountOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class EstimatedDocumentCountOptions {
@@ -395,6 +415,16 @@ class EstimatedDocumentCountOptions {
    * comment may result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class DistinctOptions {
@@ -439,6 +469,16 @@ class DistinctOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   hint: Optional<(String | Document)>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 enum CursorType {
@@ -713,6 +753,16 @@ class FindOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   let: Optional<Document>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 type FindOneOptions = Omit<FindOptions, 'batchSize' | 'cursorType' | 'limit' | 'noCursorTimeout'>;
@@ -985,6 +1035,16 @@ class BulkWriteOptions {
    * The value of let will be passed to all update and delete, but not insert, commands.
    */
   let: Optional<Document>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class InsertOneOptions {
@@ -1007,6 +1067,16 @@ class InsertOneOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class InsertManyOptions {
@@ -1036,6 +1106,16 @@ class InsertManyOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class UpdateOptions {
@@ -1127,6 +1207,16 @@ class UpdateOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   sort: Optional<Document>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class ReplaceOptions {
@@ -1206,6 +1296,16 @@ class ReplaceOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   sort: Optional<Document>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class DeleteOptions {
@@ -1256,6 +1356,16 @@ class DeleteOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 ```
 
@@ -2009,6 +2119,16 @@ class FindOneAndDeleteOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class FindOneAndReplaceOptions {
@@ -2117,6 +2237,16 @@ class FindOneAndReplaceOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 
 class FindOneAndUpdateOptions {
@@ -2234,6 +2364,16 @@ class FindOneAndUpdateOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
+  
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 ```
 
@@ -2274,8 +2414,8 @@ a read preference for the operation. As of `featureCompatibilityVersion` 4.4, se
 `$out` or `$merge`. Since drivers do not track `featureCompatibilityVersion`, the decision to consider a read preference
 for such a pipeline will depend on the wire version(s) of the server(s) to which the driver is connected.
 
-If there are one or more available servers and one or more of those servers is pre-5.0 (i.e. wire version \< 13),
-drivers MUST NOT use the available read preference and MUST instead select a server using a primary read preference.
+If there are one or more available servers and one or more of those servers is pre-5.0 (i.e. wire version < 13), drivers
+MUST NOT use the available read preference and MUST instead select a server using a primary read preference.
 
 Otherwise, if there are either no available servers, all available servers are 5.0+ (i.e. wire version >= 13), or the
 topology type is LoadBalanced (we can assume the backing mongos is 5.0+), drivers MUST use the available read
@@ -2438,11 +2578,10 @@ able to be used as this change is non-backwards breaking. Any driver which imple
 deprecate it and drivers that have not built it should not do so.
 
 Q: Should drivers offer explain helpers?\
-Originally, it was determined that explain should not be exposed via
-specialized APIs in drivers because it it was deemed to be an unusual use-case for a driver. We'd like users to use the
-shell for this purpose. However, explain is still possible from a driver. Some drivers have historically provided
-explain helpers and continue to do so. Drivers that do not offer explain helpers can run explain commands using the
-runCommand API.
+Originally, it was determined that explain should not be exposed via specialized APIs in drivers because it it was
+deemed to be an unusual use-case for a driver. We'd like users to use the shell for this purpose. However, explain is
+still possible from a driver. Some drivers have historically provided explain helpers and continue to do so. Drivers
+that do not offer explain helpers can run explain commands using the runCommand API.
 
 Q: What about explain?
 
@@ -2482,7 +2621,7 @@ release.
 Q: Where is `singleBatch` in FindOptions?
 
 Drivers have historically allowed users to request a single batch of results (after which the cursor is closed) by
-specifying a negative value for the `limit` option. For servers \< 3.2, a single batch may be requested by specifying a
+specifying a negative value for the `limit` option. For servers < 3.2, a single batch may be requested by specifying a
 negative value in the `numberToReturn` wire protocol field. For servers >= 3.2, the `find` command defines `limit` as a
 non-negative integer option but introduces a `singleBatch` boolean option. Rather than introduce a `singleBatch` option
 to FindOptions, the spec preserves the existing API for `limit` and instructs drivers to convert negative values
@@ -2512,6 +2651,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2025-06-27: Added `rawData` options.
 
 - 2024-11-13: Define `findOne` operation as optional, and add guidance on `limit` and `batchSize` for `find` operations.
 
@@ -2575,7 +2716,7 @@ aforementioned allowance in the SemVer spec.
 
 - 2020-01-10: Clarify client-side error reporting for unsupported options
 
-- 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers \< 4.2
+- 2020-01-10: Error if hint specified for unacknowledged update using OP_UPDATE or OP_MSG for servers < 4.2
 
 - 2019-10-28: Removed link to old language examples.
 

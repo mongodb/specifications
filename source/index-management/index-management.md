@@ -215,6 +215,16 @@ interface CreateIndexOptions {
   maxTimeMS: Optional<Int64>;
 
   /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
+ 
+  /**
    * Enables users to specify an arbitrary comment to help trace the operation through
    * the database profiler, currentOp and logs. The default is to not send a value.
    *
@@ -238,6 +248,16 @@ interface DropIndexOptions {
   maxTimeMS: Optional<Int64>;
 
   /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
+
+/**
    * Enables users to specify an arbitrary comment to help trace the operation through
    * the database profiler, currentOp and logs. The default is to not send a value.
    *
@@ -803,6 +823,16 @@ interface ListIndexesOptions {
    * @note drivers MAY chose to support batchSize on the ListIndexesOptions.
    */
   batchSize: Optional<Int32>;
+
+  /**
+   * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+   *
+   * @since MongoDB 8.2
+   */
+  rawData: Optional<Boolean>;
 }
 ```
 
@@ -1146,6 +1176,8 @@ internally by the server on those versions, and its value could have adverse eff
 from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 #### Changelog
+
+- 2025-06-27: Added `rawData` option to CreateIndexOptions, DropIndexOptions and ListIndexesOptions.
 
 - 2024-09-05: Moved options in SearchIndexModel to SearchIndexOptions for consistency with IndexModel and IndexOptions.
 
