@@ -553,9 +553,9 @@ The `bulkWrite` server command has the following format:
 }
 ```
 
-If auto-encryption is not enabled, drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.md) payload type 1) for
-the `ops` and `nsInfo` fields. If auto-encryption is enabled, drivers MUST NOT use document sequences and MUST append the
-`ops` and `nsInfo` fields to the `bulkWrite` command document.
+If auto-encryption is not enabled, drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.md) payload type 1)
+for the `ops` and `nsInfo` fields. If auto-encryption is enabled, drivers MUST NOT use document sequences and MUST
+append the `ops` and `nsInfo` fields to the `bulkWrite` command document.
 
 The `bulkWrite` command is executed on the "admin" database.
 
@@ -727,8 +727,8 @@ Drivers MUST return an error if there is not room to add at least one operation 
 #### Auto-encrypted bulk writes
 
 Drivers MUST use the reduced size limit defined in
-[Size limits for Write Commands](../client-side-encryption/client-side-encryption.md#size-limits-for-write-commands)
-for the size of the `bulkWrite` command document when auto-encryption is enabled.
+[Size limits for Write Commands](../client-side-encryption/client-side-encryption.md#size-limits-for-write-commands) for
+the size of the `bulkWrite` command document when auto-encryption is enabled.
 
 ## Handling the `bulkWrite` Server Response
 
