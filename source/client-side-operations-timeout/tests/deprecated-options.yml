@@ -3743,6 +3743,8 @@ tests:
               failCommands: ["dropIndexes"]
               blockConnection: true
               blockTimeMS: 5
+      # Create the index first so dropIndex doesn't return IndexNotFound on
+      # servers prior to 8.3.
       - name: createIndex 
         object: *collection
         arguments:
@@ -3782,6 +3784,8 @@ tests:
             - session:
                 id: &session session
                 client: *client
+      # Create the index first so dropIndex doesn't return IndexNotFound on
+      # servers prior to 8.3.
       - name: createIndex
         object: *collection
         arguments:
@@ -3835,6 +3839,8 @@ tests:
             - session:
                 id: &session session
                 client: *client
+      # Create the index first so dropIndex doesn't return IndexNotFound on
+      # servers prior to 8.3.
       - name: createIndex 
         object: *collection
         arguments:
@@ -3896,6 +3902,8 @@ tests:
               failCommands: ["dropIndexes"]
               blockConnection: true
               blockTimeMS: 5
+      # Create the index first so dropIndex doesn't return IndexNotFound on
+      # servers prior to 8.3.
       - name: createIndex 
         object: *collection
         arguments:
