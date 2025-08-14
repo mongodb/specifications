@@ -27,7 +27,7 @@
           "commandStartedEvent"
         ],
         "uriOptions": {
-          "timeoutMS": 50
+          "timeoutMS": 500
         }
       }
     },
@@ -178,7 +178,7 @@
                   "listCollections"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 60
+                "blockTimeMS": 600
               }
             }
           }
@@ -242,7 +242,7 @@
                   "find"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 30
+                "blockTimeMS": 300
               }
             }
           }

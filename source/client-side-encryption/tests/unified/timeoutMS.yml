@@ -12,7 +12,7 @@ createEntities:
       observeEvents:
         - commandStartedEvent
       uriOptions:
-        timeoutMS: 50
+        timeoutMS: 500
   - client:
       id: "client1"
       observeEvents:
@@ -115,7 +115,7 @@ tests:
               failCommands:
                 - listCollections
               blockConnection: true
-              blockTimeMS: 60
+              blockTimeMS: 600
       - name: insertOne
         arguments:
           document: &doc0 { _id: 1, encrypted_string: "string0", random: "abc" }
@@ -149,7 +149,7 @@ tests:
                 - listCollections
                 - find
               blockConnection: true
-              blockTimeMS: 30
+              blockTimeMS: 300
       - name: insertOne
         arguments:
           document: *doc0
