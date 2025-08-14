@@ -622,6 +622,9 @@ Using `client_encrypted` perform the following operations:
 
     Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
 
+> [!NOTE]
+> MongoDB 8.0+ is required for MongoClient.bulkWrite
+
 7. Use MongoClient.bulkWrite to insert the following into `coll2`:
 
     - `{ "_id": "over_2mib_3", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
