@@ -39,7 +39,7 @@ Spans encapsulate:
 - A start timestamp
 - An end timestamp
 - Attributes
-- A list of Links to other Spans
+- A list of links to other Spans
 - A list of timestamped Events
 - A Status.
 
