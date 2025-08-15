@@ -17,8 +17,7 @@
         "spans": [
           {
             "name": "foo",
-            "tags": [],
-            "nested": []
+            "tags": []
           }
         ]
       }
