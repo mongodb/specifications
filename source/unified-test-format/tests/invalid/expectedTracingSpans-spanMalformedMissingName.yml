@@ -10,7 +10,7 @@ tests:
   - description: "missing required span name"
     operations: []
     expectTracingMessages:
-      client: client0
+      client: *client0
       spans:
         - tags:
             db.system: mongodb
