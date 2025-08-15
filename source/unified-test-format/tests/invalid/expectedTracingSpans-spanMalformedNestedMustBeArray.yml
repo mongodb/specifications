@@ -10,7 +10,7 @@ tests:
   - description: "nested spans must be an array"
     operations: []
     expectTracingMessages:
-      client: client0
+      client: *client0
       spans:
         - name: "foo"
           tags: {}
