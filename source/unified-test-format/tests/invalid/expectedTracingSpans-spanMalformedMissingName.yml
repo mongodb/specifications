@@ -12,5 +12,5 @@ tests:
     expectTracingMessages:
       client: *client0
       spans:
-        - tags:
+        - tags: {}
             db.system: mongodb
