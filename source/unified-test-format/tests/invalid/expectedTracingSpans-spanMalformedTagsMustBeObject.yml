@@ -10,7 +10,7 @@ tests:
   - description: "span tags must be an object"
     operations: []
     expectTracingMessages:
-      client: client0
+      client: *client0
       spans:
         - name: "foo"
           tags: []
