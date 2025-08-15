@@ -23,13 +23,12 @@ outlier behavior that can be optimized away.
 
 ### Task Hierarchy
 
-The benchmark suite consists of multiple groups of small, independent benchmarks. This allows us to better isolate areas
+The benchmark suite consists of two groups of small, independent benchmarks. This allows us to better isolate areas
 within ODMs that are faster or slower.
 
 - Flat models -- reading and writing flat models of various sizes, to explore basic operation efficiency
 - Nested models -- reading and writing nested models of various sizes, to explore basic operation efficiency for complex
     data
-- Joins -- performing operations that involve joins (if supported), to explore $lookup efficiency
 
 ### Measurement
 
@@ -43,9 +42,9 @@ be the median score of the iterations. A range of percentiles will also be recor
 
 ### Data sets
 
-Data sets will vary by task. In some cases, they will be synthetically generated models inserted repeatedly to construct
-an overall corpus of models. In other cases, data sets will be synthetic line-delimited JSON files or mock binary files
-to be constructed by the ODM into the appropriate model.
+Data sets will vary by task. In most cases, data sets will be synthetic line-delimited JSON files or mock binary files
+to be constructed by the ODM into the appropriate model. Some tasks will require additional modifications to these
+constructed models.
 
 ### Versioning
 
@@ -70,13 +69,12 @@ extreme forms of measurement:
 
 Therefore, we choose a middle ground:
 
-- measuring the same 1000 insertions over 100 iterations -- each timing run includes enough operations that insertion
-    code dominates timing code; unusual system events are likely to affect only a fraction of the 100 timing
-    measurements
+- measuring the same 10000 insertions over 10 iterations -- each timing run includes enough operations that insertion
+    code dominates timing code; unusual system events are likely to affect only a fraction of the 10 timing measurements
 
-With 100 timings of inserting the same 1000 models, we build up a statistical distribution of the operation timing,
+With 10 timings of inserting the same 10000 models, we build up a statistical distribution of the operation timing,
 allowing a more robust estimate of performance than a single measurement. (In practice, the number of iterations could
-exceed 100, but 100 is a reasonable minimum goal.)
+exceed 10, but 10 is a reasonable minimum goal.)
 
 Because a timing distribution is bounded by zero on one side, taking the mean would allow large positive outlier
 measurements to skew the result substantially. Therefore, for the benchmark score, we use the median timing measurement,
@@ -85,12 +83,12 @@ which is robust in the face of outliers.
 Each benchmark is structured into discrete setup/execute/teardown phases. Phases are as follows, with specific details
 given in a subsequent section:
 
-- setup -- (ONCE PER TASK) something to do once before any benchmarking, e.g. construct a client object, load test data,
+- setup -- (ONCE PER TASK) something to do once before any benchmarking, e.g. construct a model object, load test data,
     insert data into a collection, etc.
 - before operation -- (ONCE PER ITERATION) something to do before every task iteration, e.g. drop a collection, or
     reload test data (if the test run modifies it), etc.
-- do operation -- (ONCE PER ITERATION) smallest amount of code necessary to execute the task; e.g. insert 1000 models
-    one by one into the database, or retrieve 1000 models of test data from the database, etc.
+- do operation -- (ONCE PER ITERATION) smallest amount of code necessary to execute the task; e.g. insert 10000 models
+    one by one into the database, or retrieve 10000 models of test data from the database, etc.
 - after operation -- (ONCE PER ITERATION) something to do after every task iteration (if necessary)
 - teardown -- (ONCE PER TASK) something done once after all benchmarking is complete (if necessary); e.g. drop the test
     database
@@ -102,7 +100,7 @@ monotonic timer (or best language approximation).
 Unless otherwise specified, the number of iterations to measure per task is variable:
 
 - iterations should loop for at least 1 minute cumulative execution time
-- iterations should stop after 100 iterations or 5 minutes cumulative execution time, whichever is shorter
+- iterations should stop after 10 iterations or 5 minutes cumulative execution time, whichever is shorter
 
 This balances measurement stability with a timing cap to ensure all tasks can complete in a reasonable time.
 
@@ -183,7 +181,7 @@ operations, which equals 2,250,000 bytes or 2.5 MB.
 | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. Save 10,000 instances into the database. |
 | Before task | n/a.                                                                                                                |
-| Do task     | Update the `FIELD_NAME` field for each instance of the model in an ODM-appropriate manner.                          |
+| Do task     | Update the `field1` field for each instance of the model to equal `updated_value` in an ODM-appropriate manner.     |
 | After task  | Drop the collection associated with the SMALL_DOC model.                                                            |
 | Teardown    | n/a.                                                                                                                |
 
@@ -199,9 +197,9 @@ operations, which equals 2,250,000 bytes or 2.5 MB.
 
 | Phase       | Description                                                                                                                                                                |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the inserted \_id field for each into a list. |
+| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the inserted `id` field for each into a list. |
 | Before task | n/a.                                                                                                                                                                       |
-| Do task     | For each of the 10,000 \_id values, perform a filter operation to search for the corresponding model document.                                                             |
+| Do task     | For each of the 10,000 `id` values, perform a filter operation to find the corresponding SMALL_DOC model.                                                                  |
 | After task  | n/a.                                                                                                                                                                       |
 | Teardown    | Drop the collection associated with the SMALL_DOC model.                                                                                                                   |
 
@@ -210,20 +208,20 @@ operations, which equals 2,250,000 bytes or 2.5 MB.
 Summary: This benchmark tests ODM performance finding documents by foreign keys. This benchmark must only be run by ODMs
 that support join ($lookup) operations.
 
-Dataset: The dataset (SMALL_DOC_FK) is contained within `small_doc-foreign-key.json` and consists of two sample
-documents, both stored as strict JSON: the main document with an encoded length of approximately X bytes, and the
-associated foreign key document with an encoded length of approximately Y bytes.
+Dataset: The dataset (SMALL_DOC) is contained within `small_doc.json` and consists of a sample document stored as strict
+JSON with an encoded length of approximately 250 bytes. An additional model (FOREIGN_KEY) representing the foreign key,
+consisting of only a string field called `name`, must also be created.
 
-Dataset size: For scoring purposes, the dataset size is the size of the `small_doc-foreign-key.json` source file (X + Y
-bytes) times 10,000 operations, which equals X,XXX,XXX bytes or X + Y MB.
+Dataset size: For scoring purposes, the dataset size is the size of the `small_doc` source file (250 bytes) times 10,000
+operations, which equals 2,250,000 bytes or 2.5 MB.
 
-| Phase       | Description                                                                                                                                                                                                                                                          |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Load the SMALL_DOC_FK dataset into memory as two ODM-appropriate model objects: one for the main model, and one for the foreign key model. Insert 10,000 instances of each into the database, saving the inserted \_id field for each foreign key model into a list. |
-| Before task | n/a.                                                                                                                                                                                                                                                                 |
-| Do task     | For each of the 10,000 foreign key \_id values, perform a filter operation on the main model.                                                                                                                                                                        |
-| After task  | n/a.                                                                                                                                                                                                                                                                 |
-| Teardown    | Drop the collection associated with the SMALL_DOC_FK model.                                                                                                                                                                                                          |
+| Phase       | Description                                                                                                                                                                                                                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. For each SMALL_DOC model, create and assign a FOREIGN_KEY instance to the `field_fk` field. Insert 10,000 instances of both models into the database, saving the inserted `id` field for each FOREIGN_KEY into a list. |
+| Before task | n/a.                                                                                                                                                                                                                                                                                              |
+| Do task     | For each of the 10,000 FOREIGN_KEY `id` values, perform a filter operation to find the corresponding SMALL_DOC model.                                                                                                                                                                             |
+| After task  | n/a.                                                                                                                                                                                                                                                                                              |
+| Teardown    | Drop the collections associated with the SMALL_DOC and FOREIGN_KEY models.                                                                                                                                                                                                                        |
 
 #### Large model creation
 
@@ -235,13 +233,13 @@ JSON with an encoded length of approximately 8,000 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (X bytes) times 10,000
 operations, which equals 80,000,000 bytes or 80 MB.
 
-| Phase       | Description                                                                               |
-| ----------- | ----------------------------------------------------------------------------------------- |
-| Setup       | Load the LARGE_DOC dataset into memory as an ODM-appropriate model object.                |
-| Before task | Drop the collection associated with the LARGE_DOC model.                                  |
-| Do task     | Save the document to the database in an ODM-appropriate manner. Repeat this 10,000 times. |
-| After task  | n/a                                                                                       |
-| Teardown    | n/a.                                                                                      |
+| Phase       | Description                                                                                      |
+| ----------- | ------------------------------------------------------------------------------------------------ |
+| Setup       | Load the LARGE_DOC dataset into memory as an ODM-appropriate model object.                       |
+| Before task | Drop the collection associated with the LARGE_DOC model.                                         |
+| Do task     | Save the LARGE_DOC model to the database in an ODM-appropriate manner. Repeat this 10,000 times. |
+| After task  | n/a                                                                                              |
+| Teardown    | n/a.                                                                                             |
 
 #### Large model update
 
@@ -257,7 +255,7 @@ operations, which equals 80,000,000 bytes or 80 MB.
 | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the LARGE_DOC dataset into memory as an ODM-appropriate model object. Save 10,000 instances into the database. |
 | Before task | n/a.                                                                                                                |
-| Do task     | Update the `FIELD_NAME` field for each instance of the model in an ODM-appropriate manner.                          |
+| Do task     | Update the `field1` field for each instance of the model to `updated_value` in an ODM-appropriate manner.           |
 | After task  | Drop the collection associated with the LARGE_DOC model.                                                            |
 | Teardown    | n/a.                                                                                                                |
 
@@ -324,13 +322,13 @@ stored as strict JSON with an encoded length of approximately 8,000 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `large_doc_nested` source file (8,000 bytes)
 times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 
-| Phase       | Description                                                                                                                                                                                                                          |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the unique_id field for each model's `embedded_str_doc_1` nested model into a list. |
-| Before task | n/a.                                                                                                                                                                                                                                 |
-| Do task     | For each of the 10,000 unique_id values, perform a filter operation to search for the corresponding parent model.                                                                                                                    |
-| After task  | n/a.                                                                                                                                                                                                                                 |
-| Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                      |
+| Phase       | Description                                                                                                                                                                                                                            |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the `unique_id` field for each model's `embedded_str_doc_1` nested model into a list. |
+| Before task | n/a.                                                                                                                                                                                                                                   |
+| Do task     | For each of the 10,000 `unique_id` values, perform a filter operation to search for the corresponding parent model.                                                                                                                    |
+| After task  | n/a.                                                                                                                                                                                                                                   |
+| Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                        |
 
 #### Large nested model find array by filter
 
