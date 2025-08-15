@@ -10,7 +10,7 @@ tests:
   - description: "Span must not have additional properties"
     operations: []
     expectTracingMessages:
-      client: client0
+      client: *client0
       spans:
         - name: "foo"
           tags: {}
