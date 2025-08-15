@@ -130,7 +130,7 @@ line-delimited JSON use CRLF delimiters, but this benchmark uses only LF.)
 
 ### Flat models
 
-Datasets are in the `flat-models` tarball.
+Datasets are in the `flat_models` tarball.
 
 Flat model tests focus on flatly-structured model reads and writes across data sizes. They are designed to give insights
 into the efficiency of the ODM's implementation of basic data operations.
@@ -174,8 +174,8 @@ Summary: This benchmark tests ODM performance updating fields on a single small 
 Dataset: The dataset (SMALL_DOC) is contained within `small_doc.json` and consists of a sample document stored as strict
 JSON with an encoded length of approximately 250 bytes.
 
-Dataset size: For scoring purposes, the dataset size is the size of the `small_doc` source file (250 bytes) times 10,000
-operations, which equals 2,250,000 bytes or 2.5 MB.
+Dataset size: For scoring purposes, the dataset size is the size of the `updated_value` string file (13 bytes) times
+10,000 operations, which equals 130,000 bytes or 130 KB.
 
 | Phase       | Description                                                                                                         |
 | ----------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -230,8 +230,8 @@ Summary: This benchmark tests ODM performance creating a single large model.
 Dataset: The dataset (LARGE_DOC) is contained within `large_doc.json` and consists of a sample document stored as strict
 JSON with an encoded length of approximately 8,000 bytes.
 
-Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (X bytes) times 10,000
-operations, which equals 80,000,000 bytes or 80 MB.
+Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (8,000 bytes) times
+10,000 operations, which equals 80,000,000 bytes or 80 MB.
 
 | Phase       | Description                                                                                      |
 | ----------- | ------------------------------------------------------------------------------------------------ |
@@ -248,8 +248,8 @@ Summary: This benchmark tests ODM performance updating fields on a single large 
 Dataset: The dataset (LARGE_DOC) is contained within `large_doc.json` and consists of a sample document stored as strict
 JSON with an encoded length of approximately 8,000 bytes.
 
-Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (X bytes) times 10,000
-operations, which equals 80,000,000 bytes or 80 MB.
+Dataset size: For scoring purposes, the dataset size is the size of the `updated_value` string file (13 bytes) times
+10,000 operations, which equals 130,000 bytes or 130 KB.
 
 | Phase       | Description                                                                                                         |
 | ----------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -261,7 +261,7 @@ operations, which equals 80,000,000 bytes or 80 MB.
 
 ### Nested models
 
-Datasets are in the `nested-models` tarball.
+Datasets are in the `nested_models` tarball.
 
 Nested model tests focus performing reads and writes on models containing nested (embedded) documents. They are designed
 to give insights into the efficiency of the ODM's implementation of a core advantage of the document model.
@@ -294,25 +294,25 @@ times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 | After task  | n/a                                                                                    |
 | Teardown    | n/a.                                                                                   |
 
-#### Large model update
+#### Large model update nested
 
 Summary: This benchmark tests ODM performance updating nested fields on a single large model.
 
 Dataset: The dataset (LARGE_DOC_NESTED) is contained within `large_doc_nested.json` and consists of a sample document
 stored as strict JSON with an encoded length of approximately 8,000 bytes.
 
-Dataset size: For scoring purposes, the dataset size is the size of the `large_doc_nested` source file (8,000 bytes)
-times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
+Dataset size: For scoring purposes, the dataset size is the size of the `updated_value` string file (13 bytes) times
+10,000 operations, which equals 130,000 bytes or 130 KB.
 
-| Phase       | Description                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Save 10,000 instances into the database. |
-| Before task | n/a.                                                                                                                       |
-| Do task     | Update the `NESTED_FIELD_NAME` field for each instance of the model in an ODM-appropriate manner.                          |
-| After task  | Drop the collection associated with the LARGE_DOC_NESTED model.                                                            |
-| Teardown    | n/a.                                                                                                                       |
+| Phase       | Description                                                                                                                               |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Save 10,000 instances into the database.                |
+| Before task | n/a.                                                                                                                                      |
+| Do task     | Update the value of the `embedded_str_doc_1.field1` field to `updated_value` for each instance of the model in an ODM-appropriate manner. |
+| After task  | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                           |
+| Teardown    | n/a.                                                                                                                                      |
 
-#### Large nested model find by filter
+#### Large nested model find nested by filter
 
 Summary: This benchmark tests ODM performance finding nested documents using a basic filter.
 
@@ -326,11 +326,11 @@ times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the `unique_id` field for each model's `embedded_str_doc_1` nested model into a list. |
 | Before task | n/a.                                                                                                                                                                                                                                   |
-| Do task     | For each of the 10,000 `unique_id` values, perform a filter operation to search for the corresponding parent model.                                                                                                                    |
+| Do task     | For each of the 10,000 `embedded_str_doc_1.unique_id` values, perform a filter operation to search for the corresponding parent model.                                                                                                 |
 | After task  | n/a.                                                                                                                                                                                                                                   |
 | Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                        |
 
-#### Large nested model find array by filter
+#### Large nested model find nested array by filter
 
 Summary: This benchmark tests ODM performance finding nested document arrays using a basic filter.
 
@@ -340,26 +340,30 @@ stored as strict JSON with an encoded length of approximately 8,000 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `large_doc_nested` source file (8,000 bytes)
 times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 
-| Phase       | Description                                                                                                                                                                                                                                                |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the unique_id field for the first item in each model's `embedded_str_doc_array` nested model into a list. |
-| Before task | n/a.                                                                                                                                                                                                                                                       |
-| Do task     | For each of the 10,000 unique_id values, perform a filter operation to search for the corresponding parent model.                                                                                                                                          |
-| After task  | n/a.                                                                                                                                                                                                                                                       |
-| Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                                            |
+| Phase       | Description                                                                                                                                                                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the `unique_id` field for the first item in each model's `embedded_str_doc_array` nested model into a list. |
+| Before task | n/a.                                                                                                                                                                                                                                                         |
+| Do task     | For each of the 10,000 `unique_id` values, perform a filter operation to search for the corresponding parent model.                                                                                                                                          |
+| After task  | n/a.                                                                                                                                                                                                                                                         |
+| Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                                              |
 
 ## Benchmark platform, configuration and environments
 
 ### Benchmark Client
 
-Benchmarks should be run with the most recent stable version of the ODM and the newest version of the driver it
+The benchmarks should be run with the most recent stable version of the ODM and the newest version of the driver it
 supports.
-
-All operations must be run with write concern "w:1".
 
 ### Benchmark Server
 
-TBD: spec Amazon instance size; describe configuration (e.g. no auth, journal, pre-alloc sizes?, WT with compression to
-minimize disk I/O impact?); same AWS zone as client
+The MongoDB ODM Performance Benchmark must be run against a standalone MongoDB server running the latest database
+version without authentication or SSL enabled.
+
+### Benchmark Placement
+
+The MongoDB ODM Performance Benchmark should be placed within the ODM's test directory as an independent test suite. Due
+to the relatively long runtime of the benchmarks, including them as part of an automated suite that runs against every
+PR is not recommended.
 
 ## Changelog
