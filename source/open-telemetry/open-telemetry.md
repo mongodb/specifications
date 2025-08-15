@@ -51,8 +51,8 @@ responsible for configuration; this should be the responsibility of the TracerPr
 **OpenTelemetry API and SDK**
 
 OpenTelemetry offers two components for implementing instrumentation – API and SDK. The OpenTelemetry API provides all
-the necessary types and method signatures. If there is no OpenTelemetry SDK available at runtime, API methods are no-ops.
-OpenTelemetry SDK is an actual implementation of the API. If the SDK is available, API methods do work.
+the necessary types and method signatures. If there is no OpenTelemetry SDK available at runtime, API methods are
+no-ops. OpenTelemetry SDK is an actual implementation of the API. If the SDK is available, API methods do work.
 
 ### Implementation Requirements
 
