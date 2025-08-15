@@ -10,6 +10,6 @@ tests:
   - description: "missing required span tags"
     operations: []
     expectTracingMessages:
-      client: client0
+      client: *client0
       spans:
         - name: "foo"
