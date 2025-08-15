@@ -10,4 +10,4 @@ tests:
   - description: "missing required property spans"
     operations: []
     expectTracingMessages:
-      client: client0
+      client: *client0
