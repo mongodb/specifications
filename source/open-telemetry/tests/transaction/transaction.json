@@ -129,10 +129,6 @@
                           "$$matchAsRoot": {
                             "insert": "test",
                             "ordered": true,
-                            "$db": "transaction-tests",
-                            "lsid": {
-                              "$$sessionLsid": "session0"
-                            },
                             "txnNumber": 1,
                             "startTransaction": true,
                             "autocommit": false,
@@ -165,10 +161,6 @@
                         "$$matchAsDocument": {
                           "$$matchAsRoot": {
                             "commitTransaction": 1,
-                            "$db": "admin",
-                            "lsid": {
-                              "$$sessionLsid": "session0"
-                            },
                             "txnNumber": 1,
                             "autocommit": false
                           }

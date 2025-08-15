@@ -15,7 +15,12 @@
       "expectTracingMessages": {
         "client": 0,
         "spans": [
-          {}
+          {
+            "name": "command",
+            "tags": {
+              "db.system": "mongodb"
+            }
+          }
         ]
       }
     }

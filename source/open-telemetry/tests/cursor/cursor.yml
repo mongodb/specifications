@@ -63,7 +63,7 @@ tests:
                 exception.type: { $$exists: false }
                 exception.stacktrace: { $$exists: false }
                 server.address: { $$type: string }
-                server.port: { $$type: [ 'long', 'string' ] }
+                server.port: { $$type: ['int', 'long'] }
                 server.type: { $$type: string }
                 db.query.summary: find
                 db.query.text:
@@ -72,11 +72,10 @@ tests:
                       find: test
                       filter: { _id: { $gt: 1 } }
                       batchSize: 2
-                      $db: cursor
                 db.mongodb.server_connection_id:
-                  $$type: [ 'long', 'string' ]
+                  $$type: [ 'int', 'long' ]
                 db.mongodb.driver_connection_id:
-                  $$type: [ 'string' ]
+                  $$type: [ 'int', 'long' ]
 
             - name: command getMore
               tags:
@@ -85,13 +84,13 @@ tests:
                 db.collection.name: cursor.$cmd
                 db.command.name: getMore
                 network.transport: tcp
-                db.mongodb.cursor_id: { $$type: string }
+                db.mongodb.cursor_id: { $$type: [ 'int', 'long' ] }
                 db.response.status_code: { $$exists: false }
                 exception.message: { $$exists: false }
                 exception.type: { $$exists: false }
                 exception.stacktrace: { $$exists: false }
                 server.address: { $$type: string }
-                server.port: { $$type: [ 'long', 'string' ] }
+                server.port: { $$type: ['int', 'long'] }
                 server.type: { $$type: string }
                 db.query.summary: getMore
                 db.query.text:
@@ -100,11 +99,10 @@ tests:
                       getMore: { $$type: long }
                       collection: test
                       batchSize: 2
-                      $db: cursor
                 db.mongodb.server_connection_id:
-                  $$type: [ 'long', 'string' ]
+                  $$type: [ 'int', 'long' ]
                 db.mongodb.driver_connection_id:
-                  $$type: [ 'string' ]
+                  $$type: [ 'int', 'long' ]
             - name: command getMore
               tags:
                 db.system: mongodb
@@ -112,13 +110,13 @@ tests:
                 db.collection.name: cursor.$cmd
                 db.command.name: getMore
                 network.transport: tcp
-                db.mongodb.cursor_id: { $$type: string }
+                db.mongodb.cursor_id: { $$type: [ 'int', 'long' ] }
                 db.response.status_code: { $$exists: false }
                 exception.message: { $$exists: false }
                 exception.type: { $$exists: false }
                 exception.stacktrace: { $$exists: false }
                 server.address: { $$type: string }
-                server.port: { $$type: [ 'long', 'string' ] }
+                server.port: { $$type: ['int', 'long'] }
                 server.type: { $$type: string }
                 db.query.summary: getMore
                 db.query.text:
@@ -127,9 +125,7 @@ tests:
                       getMore: { $$type: long }
                       collection: test
                       batchSize: 2
-                      $db: cursor
                 db.mongodb.server_connection_id:
-                  $$type: [ 'long', 'string' ]
+                  $$type: [ 'int', 'long' ]
                 db.mongodb.driver_connection_id:
-                  $$type: [ 'string' ]
-
+                  $$type: [ 'int', 'long' ]

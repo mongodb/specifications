@@ -17,15 +17,14 @@ createEntities:
 initialData:
   - collectionName: test
     databaseName: operation-insert
-    documents: []
+    documents: [ ]
 tests:
   - description: insert one element
     operations:
       - object: *collection0
         name: insertOne
-        arguments:
-          document:
-            _id: 1
+        arguments: { document: { _id: 1 } }
+
     expectTracingMessages:
       client: *client0
       ignoreExtraSpans: false
@@ -51,8 +50,7 @@ tests:
                     $$matchAsRoot:
                       insert: test
                       ordered: true
-                      txnNumber: { $$unsetOrMatches: 1 }
-                      $db: operation-insert
+                      txnNumber: 1
                       documents:
                         - _id: 1
 

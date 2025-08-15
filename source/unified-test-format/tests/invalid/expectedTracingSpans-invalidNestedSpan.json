@@ -1,5 +1,5 @@
 {
-  "description": "expectedTracingSpans-missingPropertyClient",
+  "description": "expectedTracingSpans-invalidNestedSpan",
   "schemaVersion": "1.26",
   "createEntities": [
     {
@@ -10,15 +10,19 @@
   ],
   "tests": [
     {
-      "description": "missing required property client",
+      "description": "nested span must have required property name",
       "operations": [],
       "expectTracingMessages": {
+        "client": "client0",
         "spans": [
           {
             "name": "command",
             "tags": {
               "db.system": "mongodb"
-            }
+            },
+            "nested": [
+              {}
+            ]
           }
         ]
       }

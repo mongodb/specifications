@@ -11,4 +11,4 @@ tests:
     operations: []
     expectTracingMessages:
       client: 0
-      spans: [{}]
+      spans: [ { name: "command", tags: { db.system: mongodb } } ]

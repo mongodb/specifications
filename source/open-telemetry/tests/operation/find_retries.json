@@ -125,20 +125,20 @@
                         "find": "test",
                         "filter": {
                           "x": 1
-                        },
-                        "$db": "operation-find-retries"
+                        }
                       }
                     }
                   },
                   "db.mongodb.server_connection_id": {
                     "$$type": [
-                      "long",
-                      "string"
+                      "int",
+                      "long"
                     ]
                   },
                   "db.mongodb.driver_connection_id": {
                     "$$type": [
-                      "string"
+                      "int",
+                      "long"
                     ]
                   }
                 }
@@ -171,8 +171,8 @@
                   },
                   "server.port": {
                     "$$type": [
-                      "long",
-                      "string"
+                      "int",
+                      "long"
                     ]
                   },
                   "server.type": {
@@ -185,20 +185,20 @@
                         "find": "test",
                         "filter": {
                           "x": 1
-                        },
-                        "$db": "operation-find-retries"
+                        }
                       }
                     }
                   },
                   "db.mongodb.server_connection_id": {
                     "$$type": [
-                      "long",
-                      "string"
+                      "int",
+                      "long"
                     ]
                   },
                   "db.mongodb.driver_connection_id": {
                     "$$type": [
-                      "string"
+                      "int",
+                      "long"
                     ]
                   }
                 }
@@ -206,14 +206,7 @@
             ]
           }
         ]
-      },
-      "outcome": [
-        {
-          "collectionName": "test",
-          "databaseName": "operation-find-retries",
-          "documents": []
-        }
-      ]
+      }
     }
   ]
 }

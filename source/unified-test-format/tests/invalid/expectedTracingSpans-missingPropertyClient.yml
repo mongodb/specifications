@@ -10,4 +10,4 @@ tests:
   - description: "missing required property client"
     operations: []
     expectTracingMessages:
-      spans: [{}]
+      spans: [ { name: "command", tags: { db.system: mongodb } } ]

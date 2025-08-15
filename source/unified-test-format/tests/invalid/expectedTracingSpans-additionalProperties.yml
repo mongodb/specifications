@@ -12,5 +12,5 @@ tests:
     expectTracingMessages:
       client: *client0
       ignoreExtraSpans: false
-      spans: [{}]
+      spans: [ { name: "command", tags: { db.system: mongodb } } ]
       foo: 0

@@ -44,9 +44,8 @@ tests:
         name: commitTransaction
       - name: find
         object: *collection0
-        arguments:
-          filter:
-            x: 1
+        arguments: { filter: { x: 1 } }
+
     expectTracingMessages:
       client: *client0
       ignoreExtraSpans: false
@@ -76,14 +75,12 @@ tests:
                         $$matchAsRoot:
                           insert: test
                           ordered: true
-                          $db: transaction-tests
-                          lsid: { $$sessionLsid: session0 }
                           txnNumber: 1
                           startTransaction: true
                           autocommit: false
                           documents:
                             - _id: 1
-                    db.mongodb.lsid: { $$sessionLsid: session0 }
+                    db.mongodb.lsid: { $$sessionLsid: *session0 }
             - name: commitTransaction admin.$cmd
               tags:
                 db.system: mongodb
@@ -95,8 +92,6 @@ tests:
                       $$matchAsDocument:
                         $$matchAsRoot:
                             commitTransaction: 1
-                            $db: admin
-                            lsid: { $$sessionLsid: session0 }
                             txnNumber: 1
                             autocommit: false
         - name: find transaction-tests.test

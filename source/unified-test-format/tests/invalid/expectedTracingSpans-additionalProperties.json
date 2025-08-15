@@ -16,7 +16,12 @@
         "client": "client0",
         "ignoreExtraSpans": false,
         "spans": [
-          {}
+          {
+            "name": "command",
+            "tags": {
+              "db.system": "mongodb"
+            }
+          }
         ],
         "foo": 0
       }
