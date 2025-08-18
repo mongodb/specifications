@@ -5,8 +5,8 @@
 
 ## Abstract
 
-This document describes a standard benchmarking suite for MongoDB ODMs (Object Document Mappers). Much of the structure
-is taken from the existing MongoDB driver benchmarking suite for consistency and readability.
+This document describes a standard benchmarking suite for MongoDB ODMs (Object Document Mappers). Much of this
+document's structure and content is taken from the existing MongoDB driver benchmarking suite for consistency.
 
 ## Overview
 
@@ -30,21 +30,27 @@ within ODMs that are faster or slower.
 - Nested models -- reading and writing nested models of various sizes, to explore basic operation efficiency for complex
     data
 
+The suite is intentionally kept small for several reasons. One, ODM feature sets vary significantly across libraries.
+This limits the number of benchmarks that can be run across the entire collection of extant ODMs. Two, several popular
+MongoDB ODMs are actively maintained by third-parties, such as Mongoose. By limiting the benchmarking suite to a minimal
+set of representative tests that are easy to implement, we encourage adoption of the suite by these third-party
+maintainers.
+
 ### Measurement
 
 In addition to latency data, all benchmark tasks will be measured in terms of "megabytes/second" (MB/s) of documents
 processed, with higher scores being better. (In this document, "megabyte" refers to the SI decimal unit, i.e. 1,000,000
 bytes.) This makes cross-benchmark comparisons easier.
 
-To avoid various types of measurement skew, tasks will be measured over numerous iterations. Each iteration will have a
+To avoid various types of measurement skew, tasks will be measured over several iterations. Each iteration will have a
 number of operations performed per iteration that depends on the task being benchmarked. The final score for a task will
 be the median score of the iterations. A range of percentiles will also be recorded for diagnostic analysis.
 
 ### Data sets
 
-Data sets will vary by task. In most cases, data sets will be synthetic line-delimited JSON files or mock binary files
-to be constructed by the ODM into the appropriate model. Some tasks will require additional modifications to these
-constructed models.
+Data sets will vary by task. In most cases, data sets will be synthetic line-delimited JSON files to be constructed by
+the ODM being benchmarked into the appropriate model. Some tasks will require additional modifications to these
+constructed models, such as adding generated ObjectIds.
 
 ### Versioning
 
@@ -69,10 +75,10 @@ extreme forms of measurement:
 
 Therefore, we choose a middle ground:
 
-- measuring the same 10000 insertions over 10 iterations -- each timing run includes enough operations that insertion
+- measuring the same 10,000 insertions over 10 iterations -- each timing run includes enough operations that insertion
     code dominates timing code; unusual system events are likely to affect only a fraction of the 10 timing measurements
 
-With 10 timings of inserting the same 10000 models, we build up a statistical distribution of the operation timing,
+With 10 timings of inserting the same 10,000 models, we build up a statistical distribution of the operation timing,
 allowing a more robust estimate of performance than a single measurement. (In practice, the number of iterations could
 exceed 10, but 10 is a reasonable minimum goal.)
 
@@ -87,8 +93,8 @@ given in a subsequent section:
     insert data into a collection, etc.
 - before operation -- (ONCE PER ITERATION) something to do before every task iteration, e.g. drop a collection, or
     reload test data (if the test run modifies it), etc.
-- do operation -- (ONCE PER ITERATION) smallest amount of code necessary to execute the task; e.g. insert 10000 models
-    one by one into the database, or retrieve 10000 models of test data from the database, etc.
+- do operation -- (ONCE PER ITERATION) smallest amount of code necessary to execute the task; e.g. insert 10,000 models
+    one by one into the database, or retrieve 10,000 models of test data from the database, etc.
 - after operation -- (ONCE PER ITERATION) something to do after every task iteration (if necessary)
 - teardown -- (ONCE PER TASK) something done once after all benchmarking is complete (if necessary); e.g. drop the test
     database
@@ -99,8 +105,8 @@ monotonic timer (or best language approximation).
 
 Unless otherwise specified, the number of iterations to measure per task is variable:
 
-- iterations should loop for at least 1 minute cumulative execution time
-- iterations should stop after 10 iterations or 5 minutes cumulative execution time, whichever is shorter
+- iterations should loop for at least 30 seconds cumulative execution time
+- iterations should stop after 10 iterations or 1 minute cumulative execution time, whichever is shorter
 
 This balances measurement stability with a timing cap to ensure all tasks can complete in a reasonable time.
 
@@ -117,8 +123,9 @@ its utter simplicity given that it needs to be implemented identically across a 
 The 50th percentile (i.e. the median) will be used for score composition. Other percentiles will be stored for
 visualizations and analysis.
 
-Each task will have defined for it an associated size in megabytes (MB). The benchmarking score for each task will be
-the task size in MB divided by the median wall clock time.
+Each task will have defined for it an associated size in megabytes (MB). This size will be calculated using the task's
+dataset size and the number of documents processed per iteration. The benchmarking score for each task will be the task
+size in MB divided by the median wall clock time.
 
 ## Benchmark task definitions
 
@@ -136,7 +143,7 @@ Flat model tests focus on flatly-structured model reads and writes across data s
 into the efficiency of the ODM's implementation of basic data operations.
 
 The data will be stored as strict JSON with no extended types. These JSON representations must be converted into
-equivalent models as part of the benchmark's setup.
+equivalent models as part of each benchmark task.
 
 Flat model benchmark tasks include:s
 
@@ -157,15 +164,15 @@ JSON with an encoded length of approximately 250 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `small_doc` source file (250 bytes) times 10,000
 operations, which equals 2,250,000 bytes or 2.5 MB.
 
-This benchmark uses the same dataset as the driver `small doc insertOne` benchmark, allowing for direct comparisons.
+This benchmark uses a comparable dataset to the driver `small doc insertOne` benchmark, allowing for direct comparisons.
 
-| Phase       | Description                                                                            |
-| ----------- | -------------------------------------------------------------------------------------- |
-| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object.             |
-| Before task | Drop the collection associated with the SMALL_DOC model.                               |
-| Do task     | Save the model to the database in an ODM-appropriate manner. Repeat this 10,000 times. |
-| After task  | n/a                                                                                    |
-| Teardown    | n/a.                                                                                   |
+| Phase       | Description                                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the SMALL_DOC dataset into memory.                                                                                    |
+| Before task | n/a.                                                                                                                       |
+| Do task     | Create an ODM-appropriate model instance for the SMALL_DOC document and save it to the database. Repeat this 10,000 times. |
+| After task  | Drop the collection associated with the SMALL_DOC model.                                                                   |
+| Teardown    | n/a.                                                                                                                       |
 
 #### Small model update
 
@@ -219,7 +226,7 @@ operations, which equals 2,250,000 bytes or 2.5 MB.
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. For each SMALL_DOC model, create and assign a FOREIGN_KEY instance to the `field_fk` field. Insert 10,000 instances of both models into the database, saving the inserted `id` field for each FOREIGN_KEY into a list. |
 | Before task | n/a.                                                                                                                                                                                                                                                                                              |
-| Do task     | For each of the 10,000 FOREIGN_KEY `id` values, perform a filter operation to find the corresponding SMALL_DOC model.                                                                                                                                                                             |
+| Do task     | For each of the 10,000 FOREIGN_KEY `id` values, perform a filter operation in an ODM-appropriate manner to find the corresponding SMALL_DOC model.                                                                                                                                                |
 | After task  | n/a.                                                                                                                                                                                                                                                                                              |
 | Teardown    | Drop the collections associated with the SMALL_DOC and FOREIGN_KEY models.                                                                                                                                                                                                                        |
 
@@ -233,13 +240,13 @@ JSON with an encoded length of approximately 8,000 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (8,000 bytes) times
 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 
-| Phase       | Description                                                                                      |
-| ----------- | ------------------------------------------------------------------------------------------------ |
-| Setup       | Load the LARGE_DOC dataset into memory as an ODM-appropriate model object.                       |
-| Before task | Drop the collection associated with the LARGE_DOC model.                                         |
-| Do task     | Save the LARGE_DOC model to the database in an ODM-appropriate manner. Repeat this 10,000 times. |
-| After task  | n/a                                                                                              |
-| Teardown    | n/a.                                                                                             |
+| Phase       | Description                                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the LARGE_DOC dataset into memory.                                                                                    |
+| Before task | n/a.                                                                                                                       |
+| Do task     | Create an ODM-appropriate model instance for the LARGE_DOC document and save it to the database. Repeat this 10,000 times. |
+| After task  | Drop the collection associated with the LARGE_DOC model.                                                                   |
+| Teardown    | n/a.                                                                                                                       |
 
 #### Large model update
 
@@ -264,10 +271,10 @@ Dataset size: For scoring purposes, the dataset size is the size of the `updated
 Datasets are in the `nested_models` tarball.
 
 Nested model tests focus performing reads and writes on models containing nested (embedded) documents. They are designed
-to give insights into the efficiency of the ODM's implementation of a core advantage of the document model.
+to give insights into the efficiency of operations on the more complex data structures enabled by the document model.
 
 The data will be stored as strict JSON with no extended types. These JSON representations must be converted into
-equivalent models as part of the benchmark's setup.
+equivalent ODM models as part of each benchmark task.
 
 Nested model benchmark tasks include:s
 
@@ -286,13 +293,13 @@ stored as strict JSON with an encoded length of approximately 8,000 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `large_doc_nested` source file (8,000 bytes)
 times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 
-| Phase       | Description                                                                            |
-| ----------- | -------------------------------------------------------------------------------------- |
-| Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object.      |
-| Before task | Drop the collection associated with the LARGE_DOC model.                               |
-| Do task     | Save the model to the database in an ODM-appropriate manner. Repeat this 10,000 times. |
-| After task  | n/a                                                                                    |
-| Teardown    | n/a.                                                                                   |
+| Phase       | Description                                                                                                                       |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the LARGE_DOC_NESTED dataset into memory.                                                                                    |
+| Before task | n/a.                                                                                                                              |
+| Do task     | Create an ODM-appropriate model instance for the LARGE_DOC_NESTED document and save it to the database. Repeat this 10,000 times. |
+| After task  | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                   |
+| Teardown    | n/a.                                                                                                                              |
 
 #### Large model update nested
 
@@ -308,7 +315,7 @@ Dataset size: For scoring purposes, the dataset size is the size of the `updated
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Save 10,000 instances into the database.                |
 | Before task | n/a.                                                                                                                                      |
-| Do task     | Update the value of the `embedded_str_doc_1.field1` field to `updated_value` for each instance of the model in an ODM-appropriate manner. |
+| Do task     | Update the value of the `embedded_str_doc_1.field1` field to `updated_value` in an ODM-appropriate manner for each instance of the model. |
 | After task  | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                           |
 | Teardown    | n/a.                                                                                                                                      |
 
@@ -326,7 +333,7 @@ times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the `unique_id` field for each model's `embedded_str_doc_1` nested model into a list. |
 | Before task | n/a.                                                                                                                                                                                                                                   |
-| Do task     | For each of the 10,000 `embedded_str_doc_1.unique_id` values, perform a filter operation to search for the corresponding parent model.                                                                                                 |
+| Do task     | For each of the 10,000 `embedded_str_doc_1.unique_id` values, perform a filter operation to search for the parent LARGE_DOC_NESTED model.                                                                                              |
 | After task  | n/a.                                                                                                                                                                                                                                   |
 | Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                        |
 
@@ -344,7 +351,7 @@ times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Setup       | Load the LARGE_DOC_NESTED dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the value of the `unique_id` field for the first item in each model's `embedded_str_doc_array` nested model into a list. |
 | Before task | n/a.                                                                                                                                                                                                                                                         |
-| Do task     | For each of the 10,000 `unique_id` values, perform a filter operation to search for the corresponding parent model.                                                                                                                                          |
+| Do task     | For each of the 10,000 `unique_id` values, perform a filter operation to search for the parent LARGE_DOC_NESTED model.                                                                                                                                       |
 | After task  | n/a.                                                                                                                                                                                                                                                         |
 | Teardown    | Drop the collection associated with the LARGE_DOC_NESTED model.                                                                                                                                                                                              |
 
@@ -357,13 +364,14 @@ supports.
 
 ### Benchmark Server
 
-The MongoDB ODM Performance Benchmark must be run against a standalone MongoDB server running the latest database
+The MongoDB ODM Performance Benchmark must be run against a standalone MongoDB server running the latest stable database
 version without authentication or SSL enabled.
 
-### Benchmark Placement
+### Benchmark placement and scheduling
 
 The MongoDB ODM Performance Benchmark should be placed within the ODM's test directory as an independent test suite. Due
 to the relatively long runtime of the benchmarks, including them as part of an automated suite that runs against every
-PR is not recommended.
+PR is not recommended. Instead, scheduling benchmark runs on a regular cadence is the recommended method of automating
+this suite of tests.
 
 ## Changelog
