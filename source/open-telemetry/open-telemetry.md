@@ -198,7 +198,7 @@ specific; a driver decides what best describes the error.
 
 ##### db.query.text
 
-This attribute contains the full database command executed serialized to JSON. If not truncated, the content of this
+This attribute contains the full database command executed serialized to extended JSON. If not truncated, the content of this
 attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command monitoring excluding
 the following fields: `lsid`, `$db`, `$clusterTime`, `signature`.
 
