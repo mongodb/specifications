@@ -73,7 +73,7 @@ Drivers SHOULD support configuring OpenTelemetry on multiple levels.
     settings on higher levels. This configuration can be implemented with a `MongoClient` option, for example,
     `tracing.enabled`.
 - **Driver Level**: Drivers SHOULD provide a global setting that enables or disables OpenTelemetry for all `MongoClient`
-    instances (excluding those that explicitly override the setting). This configuration can be implemented with an
+    instances (excluding those that explicitly override the setting). This configuration SHOULD be implemented with an
     environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_ENABLED`. Drivers MAY provide other means to globally
     disable OpenTelemetry that are more suitable for their language ecosystem. This option MUST override settings on the
     higher level.
