@@ -1,5 +1,5 @@
 description: fle2v2-DecryptExistingData
-schemaVersion: "1.25"
+schemaVersion: "1.26"
 runOnRequirements:
   - minServerVersion: "7.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.

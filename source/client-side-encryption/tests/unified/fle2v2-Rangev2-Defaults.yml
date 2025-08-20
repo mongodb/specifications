@@ -1,5 +1,5 @@
 description: fle2v2-Rangev2-Defaults
-schemaVersion: "1.25"
+schemaVersion: "1.26"
 runOnRequirements:
   - minServerVersion: "8.0.0" # Requires 8.0.0-rc14 for SERVER-91889.
     topologies: ["replicaset", "sharded", "load-balanced"] # Exclude "standalone". QE collections are not supported on standalone.

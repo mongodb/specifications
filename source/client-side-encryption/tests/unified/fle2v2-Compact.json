@@ -1,6 +1,6 @@
 {
   "description": "fle2v2-Compact",
-  "schemaVersion": "1.25",
+  "schemaVersion": "1.26",
   "runOnRequirements": [
     {
       "minServerVersion": "7.0.0",

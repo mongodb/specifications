@@ -1,5 +1,5 @@
 description: types
-schemaVersion: "1.25"
+schemaVersion: "1.26"
 runOnRequirements:
   - minServerVersion: "4.1.10"
     # Create separate client entities for each tested type to isolate encryption schemas. mongocryptd/crypt_shared returns an error on schemas for unsupported types (e.g. double).

@@ -1,6 +1,6 @@
 {
   "description": "fle2v2-Rangev2-DoublePrecision-Update",
-  "schemaVersion": "1.25",
+  "schemaVersion": "1.26",
   "runOnRequirements": [
     {
       "minServerVersion": "8.0.0",

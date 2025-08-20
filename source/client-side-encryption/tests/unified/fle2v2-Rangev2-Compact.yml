@@ -1,5 +1,5 @@
 description: fle2v2-Rangev2-Compact
-schemaVersion: "1.25"
+schemaVersion: "1.26"
 runOnRequirements:
   - minServerVersion: "8.0.0" # Require range v2 support on server.
     # FLE 2 Encrypted collections are not supported on standalone.

@@ -1,6 +1,6 @@
 {
   "description": "noSchema",
-  "schemaVersion": "1.25",
+  "schemaVersion": "1.26",
   "runOnRequirements": [
     {
       "minServerVersion": "4.1.10",

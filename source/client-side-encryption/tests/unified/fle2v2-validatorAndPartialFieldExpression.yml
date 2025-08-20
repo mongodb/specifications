@@ -1,5 +1,5 @@
 description: fle2v2-validatorAndPartialFieldExpression
-schemaVersion: "1.25"
+schemaVersion: "1.26"
 runOnRequirements:
   # Require server version 6.0.0 to get behavior added in SERVER-64911.
   - minServerVersion:
