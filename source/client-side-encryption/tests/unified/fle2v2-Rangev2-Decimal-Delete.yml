@@ -1,11 +1,12 @@
 description: fle2v2-Rangev2-Decimal-Delete
-schemaVersion: "1.23"
+schemaVersion: "1.25"
 runOnRequirements:
   - minServerVersion: "8.0.0" # Requires 8.0.0-rc14 for SERVER-91889.
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
     # FLE 2 Encrypted collections are not supported on standalone.
     # Tests for Decimal (without precision) must only run against a replica set. Decimal (without precision) queries are expected to take a long time and may exceed the default mongos timeout.
     topologies: ["replicaset"]
+    minLibmongocryptVersion: "1.15.1"
 createEntities:
   - client:
       id: "client0"

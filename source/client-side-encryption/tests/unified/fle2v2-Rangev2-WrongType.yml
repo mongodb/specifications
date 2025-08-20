@@ -1,11 +1,12 @@
 description: fle2v2-Rangev2-WrongType
-schemaVersion: "1.23"
+schemaVersion: "1.25"
 runOnRequirements:
   - minServerVersion: "8.0.0"
     # Skip QEv2 (also referred to as FLE2v2) tests on Serverless. Unskip once Serverless enables the QEv2 protocol.
     # FLE 2 Encrypted collections are not supported on standalone.
     maxServerVersion: "8.99.99"
     topologies: ["replicaset", "sharded", "load-balanced"]
+    minLibmongocryptVersion: "1.15.1"
 createEntities:
   - client:
       id: "client0"

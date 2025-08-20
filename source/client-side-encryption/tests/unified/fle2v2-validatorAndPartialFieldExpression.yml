@@ -1,5 +1,5 @@
 description: fle2v2-validatorAndPartialFieldExpression
-schemaVersion: "1.23"
+schemaVersion: "1.25"
 runOnRequirements:
   # Require server version 6.0.0 to get behavior added in SERVER-64911.
   - minServerVersion:
@@ -8,6 +8,7 @@ runOnRequirements:
       # FLE 2 Encrypted collections are not supported on standalone.
     topologies: ["replicaset", "sharded", "load-balanced"]
 
+    minLibmongocryptVersion: "1.15.1"
 createEntities:
   - client:
       id: "client0"

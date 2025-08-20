@@ -1,9 +1,10 @@
 {
   "description": "timeoutMS",
-  "schemaVersion": "1.23",
+  "schemaVersion": "1.25",
   "runOnRequirements": [
     {
-      "minServerVersion": "4.4"
+      "minServerVersion": "4.4",
+      "minLibmongocryptVersion": "1.15.1"
     }
   ],
   "createEntities": [

@@ -1,8 +1,9 @@
 description: types
-schemaVersion: "1.23"
+schemaVersion: "1.25"
 runOnRequirements:
   - minServerVersion: "4.1.10"
-# Create separate client entities for each tested type to isolate encryption schemas. mongocryptd/crypt_shared returns an error on schemas for unsupported types (e.g. double).
+    # Create separate client entities for each tested type to isolate encryption schemas. mongocryptd/crypt_shared returns an error on schemas for unsupported types (e.g. double).
+    minLibmongocryptVersion: "1.15.1"
 createEntities:
   - client:
       id: "client0"

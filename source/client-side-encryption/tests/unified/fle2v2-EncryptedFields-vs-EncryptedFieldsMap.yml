@@ -1,6 +1,6 @@
 description: fle2v2-EncryptedFields-vs-EncryptedFieldsMap
 
-schemaVersion: "1.23"
+schemaVersion: "1.25"
 
 runOnRequirements:
   - minServerVersion: "7.0.0"
@@ -10,6 +10,7 @@ runOnRequirements:
     csfle: true
     topologies: ["replicaset", "sharded", "load-balanced"]
 
+    minLibmongocryptVersion: "1.15.1"
 createEntities:
   - client:
       id: &client0 client0

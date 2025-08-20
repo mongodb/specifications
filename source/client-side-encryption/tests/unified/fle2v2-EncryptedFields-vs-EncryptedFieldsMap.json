@@ -1,6 +1,6 @@
 {
   "description": "fle2v2-EncryptedFields-vs-EncryptedFieldsMap",
-  "schemaVersion": "1.23",
+  "schemaVersion": "1.25",
   "runOnRequirements": [
     {
       "minServerVersion": "7.0.0",
@@ -10,7 +10,8 @@
         "replicaset",
         "sharded",
         "load-balanced"
-      ]
+      ],
+      "minLibmongocryptVersion": "1.15.1"
     }
   ],
   "createEntities": [

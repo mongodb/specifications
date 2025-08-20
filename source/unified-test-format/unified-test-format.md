@@ -315,6 +315,10 @@ The structure of this object is as follows:
     successfully. If this field is omitted, there is no upper bound on the required server version. The format of this
     string is defined in [Version String](#version-string).
 
+- `minLibmongocryptVersion`: Optional string. The minimum libmongocrypt version (inclusive) required to successfully run
+    the tests. If this field is omitted, there is no lower bound on the required libmongocrypt version. The format of
+    this string is defined in [Version String](#version-string).
+
 - `topologies`: Optional array of one or more strings. Server topologies against which the tests can be run
     successfully. Valid topologies are "single", "replicaset", "sharded", "load-balanced", and "sharded-replicaset"
     (i.e. sharded cluster backed by replica sets). If this field is omitted, there is no topology requirement for the
@@ -3415,6 +3419,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-08-20: **Schema version 1.25.**
+
+    Add `minLibmongocryptVersion` to `runOnRequirement`.
 
 - 2025-07-15: Clarify test runner may apply a default `cryptSharedLibPath`.
 
