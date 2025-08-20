@@ -63,7 +63,7 @@ COLLECTION_OPERATIONS = COLLECTION_READ_OPERATIONS + COLLECTION_WRITE_OPERATIONS
 # operations. Individual generation functions can choose to include them if needed.
 OPERATIONS = CLIENT_OPERATIONS + DB_OPERATIONS + COLLECTION_OPERATIONS
 
-RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in 
+RETRYABLE_WRITE_OPERATIONS = [op for op in OPERATIONS if op.operation_name in
     ['insertOne', 'updateOne', 'deleteOne', 'replaceOne', 'findOneAndDelete', 'findOneAndUpdate', 'findOneAndReplace', 'insertMany', 'bulkWrite']
 ]
 
@@ -102,28 +102,33 @@ def generate(name, operations):
     }
     write_yaml(name, template, injections)
 
-def generate_global_timeout_tests():
-    generate('global-timeoutMS', OPERATIONS)
-
-def generate_override_db():
-    generate('override-database-timeoutMS', DB_OPERATIONS + COLLECTION_OPERATIONS)
-
-def generate_override_coll():
-    generate('override-collection-timeoutMS', COLLECTION_OPERATIONS)
-
-def generate_override_operation():
-    generate('override-operation-timeoutMS', OPERATIONS)
+# TODO(DRIVERS-3266): Investigate dropping generator script for index-related
+# timeoutMS tests
+#def generate_global_timeout_tests():
+#    generate('global-timeoutMS', OPERATIONS)
+#
+#def generate_override_db():
+#    generate('override-database-timeoutMS', DB_OPERATIONS + COLLECTION_OPERATIONS)
+#
+#def generate_override_coll():
+#    generate('override-collection-timeoutMS', COLLECTION_OPERATIONS)
+#
+#def generate_override_operation():
+#    generate('override-operation-timeoutMS', OPERATIONS)
+#
+#def generate_deprecated():
+#    generate('deprecated-options', OPERATIONS)
 
 def generate_retryable():
     generate('retryability-timeoutMS', RETRYABLE_WRITE_OPERATIONS + RETRYABLE_READ_OPERATIONS)
     generate('retryability-legacy-timeouts', RETRYABLE_WRITE_OPERATIONS + RETRYABLE_READ_OPERATIONS)
 
-def generate_deprecated():
-    generate('deprecated-options', OPERATIONS)
+# TODO(DRIVERS-3266): Investigate dropping generator script for index-related
+# timeoutMS tests
+#generate_global_timeout_tests()
+#generate_override_db()
+#generate_override_coll()
+#generate_override_operation()
+#generate_deprecated()
 
-generate_global_timeout_tests()
-generate_override_db()
-generate_override_coll()
-generate_override_operation()
 generate_retryable()
-generate_deprecated()
