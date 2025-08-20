@@ -198,9 +198,9 @@ specific; a driver decides what best describes the error.
 
 ##### db.query.text
 
-This attribute contains the full database command executed serialized to extended JSON. If not truncated, the content of this
-attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command monitoring excluding
-the following fields: `lsid`, `$db`, `$clusterTime`, `signature`.
+This attribute contains the full database command executed serialized to extended JSON. If not truncated, the content of
+this attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command monitoring
+excluding the following fields: `lsid`, `$db`, `$clusterTime`, `signature`.
 
 Drivers MUST NOT add this attribute by default. Drivers MUST provide a toggle to enable this attribute. This
 configuration can be implemented with an environment variable
@@ -233,7 +233,38 @@ of drivers for our internal teams, and improve our documentation around troubles
 
 ## Test Plan
 
-TODO
+See [OpenTelemetry Tests](tests/README.md) for the test plan.
+
+## Covered operations
+
+The OpenTelemetry specification covers the following operations:
+
+| Operation                | Test                                                                                 |
+| :----------------------- | :----------------------------------------------------------------------------------- |
+| `aggregate`              | [tests/transaction/aggregate.yml](tests/operation/aggregate.yml)                     |
+| `findAndModify`          | [tests/transaction/find_one_and_update.yml](tests/operation/find_one_and_update.yml) |
+| `bulkWrite`              | [tests/transaction/bulk_write.yml](tests/operation/bulk_write.yml)                   |
+| `commitTransaction`      | [tests/transaction/transaction.yml](tests/transaction/transaction.yml)               |
+| `abortTransaction`       | [tests/transaction/transaction.yml](tests/transaction/transaction.yml)               |
+| `createCollection`       | [tests/transaction/create_collection.yml](tests/operation/create_collection.yml)     |
+| `createIndexes`          | [tests/transaction/create_indexes.yml](tests/operation/create_indexes.yml)           |
+| `createView`             | [tests/transaction/create_view.yml](tests/operation/create_view.yml)                 |
+| `distinct`               | [tests/transaction/distinct.yml](tests/operation/distinct.yml)                       |
+| `dropCollection`         | [tests/transaction/drop_collection.yml](tests/operation/drop_collection.yml)         |
+| `dropIndexes`            | [tests/transaction/drop_indexes.yml](tests/operation/drop_indexes.yml)               |
+| `find`                   | [tests/transaction/find.yml](tests/operation/find.yml)                               |
+| `listCollections`        | [tests/transaction/list_collections.yml](tests/operation/list_collections.yml)       |
+| `listDatabases`          | [tests/transaction/list_databases.yml](tests/operation/list_databases.yml)           |
+| `listIndexes`            | [tests/transaction/list_indexes.yml](tests/operation/list_indexes.yml)               |
+| `mapReduce`              | [tests/transaction/map_reduce.yml](tests/operation/map_reduce.yml)                   |
+| `estimatedDocumentCount` | [tests/transaction/count.yml](tests/operation/count.yml)                             |
+| `insert`                 | [tests/transaction/insert.yml](tests/operation/insert.yml)                           |
+| `delete`                 | [tests/transaction/delete.yml](tests/operation/delete.yml)                           |
+| `update`                 | [tests/transaction/update.yml](tests/operation/update.yml)                           |
+| `createSearchIndexes`    | [tests/transaction/atlas_search.yml](tests/operation/atlas_search.yml)               |
+| `dropSearchIndex`        | [tests/transaction/atlas_search.yml](tests/operation/atlas_search.yml)               |
+| `updateSearchIndex`      | [tests/transaction/delete.yml](tests/operation/delete.yml)                           |
+| `delete`                 | [tests/transaction/atlas_search.yml](tests/operation/atlas_search.yml)               |
 
 ## Backwards Compatibility
 
