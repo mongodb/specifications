@@ -1,0 +1,57 @@
+description: operation create collection
+schemaVersion: '1.26'
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: false
+      observeTracingMessages:
+        enableCommandPayload: true
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: operation-create-collection
+tests:
+  - description: create collection
+    operations:
+      - object: *database0
+        name: createCollection
+        arguments:
+          collection: newlyCreatedCollection
+
+    expectTracingMessages:
+      client: *client0
+      ignoreExtraSpans: false
+      spans:
+        - name: createCollection operation-create-collection.newlyCreatedCollection
+          tags:
+            db.system: mongodb
+            db.namespace: operation-create-collection
+            db.collection.name: newlyCreatedCollection
+            db.operation.name: createCollection
+            db.operation.summary: createCollection operation-create-collection.newlyCreatedCollection
+          nested:
+            - name: command create
+              tags:
+                db.system: mongodb
+                db.namespace: operation-create-collection
+                db.collection.name: operation-create-collection.$cmd
+                db.command.name: create
+                network.transport: tcp
+                db.mongodb.cursor_id: { $$exists: false }
+                db.response.status_code: { $$exists: false }
+                exception.message: { $$exists: false }
+                exception.type: { $$exists: false }
+                exception.stacktrace: { $$exists: false }
+                server.address: { $$type: string }
+                server.port: { $$type: ['int', 'long'] }
+                server.type: { $$type: string }
+                db.query.summary: create
+                db.query.text:
+                  $$matchAsDocument:
+                    $$matchAsRoot:
+                      create: newlyCreatedCollection
+                      capped: false
+                db.mongodb.server_connection_id:
+                  $$type: [ 'int', 'long' ]
+                db.mongodb.driver_connection_id:
+                  $$type: [ 'int', 'long' ]

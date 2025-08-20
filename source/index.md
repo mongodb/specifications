@@ -36,6 +36,7 @@
 - [MongoDB Handshake](mongodb-handshake/handshake.md)
 - [OCSP Support](ocsp-support/ocsp-support.md)
 - [OP_MSG](message/OP_MSG.md)
+- [OpenTelemetry](open-telemetry/open-telemetry.md)
 - [Performance Benchmarking](benchmarking/benchmarking.md)
 - [Polling SRV Records for mongos Discovery](polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md)
 - [Read and Write Concern](read-write-concern/read-write-concern.md)
