@@ -100,7 +100,21 @@
           "type": "string"
         },
         "csfle": {
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "properties": {
+                "minLibmongocryptVersion": {
+                  "$ref": "#/definitions/version"
+                }
+              }
+            }
+          ]
         }
       }
     },
