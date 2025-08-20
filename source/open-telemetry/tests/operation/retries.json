@@ -1,5 +1,5 @@
 {
-  "description": "operation find retrying failed command",
+  "description": "retrying failed command",
   "schemaVersion": "1.26",
   "createEntities": [
     {
@@ -35,7 +35,7 @@
   ],
   "tests": [
     {
-      "description": "find an element",
+      "description": "find an element with retries",
       "operations": [
         {
           "name": "failPoint",
