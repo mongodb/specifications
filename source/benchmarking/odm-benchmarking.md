@@ -189,8 +189,8 @@ Dataset size: For scoring purposes, the dataset size is the size of the `updated
 | Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. Save 10,000 instances into the database. |
 | Before task | n/a.                                                                                                                |
 | Do task     | Update the `field1` field for each instance of the model to equal `updated_value` in an ODM-appropriate manner.     |
-| After task  | Drop the collection associated with the SMALL_DOC model.                                                            |
-| Teardown    | n/a.                                                                                                                |
+| After task  | n/a.                                                                                                                |
+| Teardown    | Drop the collection associated with the SMALL_DOC model.                                                            |
 
 #### Small model find by filter
 
@@ -373,5 +373,12 @@ The MongoDB ODM Performance Benchmark should be placed within the ODM's test dir
 to the relatively long runtime of the benchmarks, including them as part of an automated suite that runs against every
 PR is not recommended. Instead, scheduling benchmark runs on a regular cadence is the recommended method of automating
 this suite of tests.
+
+## ODM-specific benchmarking
+
+As discussed earlier in this document, ODM feature sets vary significantly across libraries. Many ODMs have features
+unique to them or their niche in the wider ecosystem, which makes specifying concrete benchmark test cases for every
+possible API unfeasible. Instead, ODM authors should determine what mainline use cases of their library are not covered
+by the benchmarks specified above and expand this testing suite with additional benchmarks to cover those areas.
 
 ## Changelog
