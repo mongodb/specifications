@@ -64,9 +64,6 @@
         "minServerVersion": {
           "$ref": "#/definitions/version"
         },
-        "minLibmongocryptVersion": {
-          "$ref": "#/definitions/version"
-        },
         "topologies": {
           "type": "array",
           "minItems": 1,
