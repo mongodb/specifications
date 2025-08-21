@@ -620,10 +620,7 @@ Using `client_encrypted` perform the following operations:
 
     Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
 
-> [!NOTE]
-> MongoDB 8.0+ is required for MongoClient.bulkWrite
-
-7. Use MongoClient.bulkWrite to insert the following into `coll2`:
+7. If using MongoDB 8.0+, use MongoClient.bulkWrite to insert the following into `coll2`:
 
     - `{ "_id": "over_2mib_3", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
     - `{ "_id": "over_2mib_4", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
@@ -631,7 +628,7 @@ Using `client_encrypted` perform the following operations:
     Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
     [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
-8. Use MongoClient.bulkWrite to insert the following into `coll2`:
+8. If using MongoDB 8.0+, use MongoClient.bulkWrite to insert the following into `coll2`:
 
     - The document [limits/limits-qe-doc.json](../limits/limits-qe-doc.json) concatenated with
         `{ "_id": "encryption_exceeds_2mib_3", "foo": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
