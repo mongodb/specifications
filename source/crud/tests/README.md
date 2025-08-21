@@ -607,7 +607,9 @@ Execute `bulkWrite` on `client` with `largeNamespaceModel`. Assert that an error
 Assert that `error` is a client error. If a `BulkWriteException` was thrown, assert `BulkWriteException.partialResult`
 is unset.
 
-### 13. `explain` helpers allow users to specify `maxTimeMS`
+### 13. *Removed*
+
+### 14. `explain` helpers allow users to specify `maxTimeMS`
 
 Drivers that provide multiple APIs to specify explain should ensure this test is run at least once with each distinct
 API. For example, the Node driver runs this test with option API (`collection.find({}, { explain: ... })`) and the
@@ -622,8 +624,6 @@ maxTimeMS value of 2000ms for the `explain`.
 
 Obtain the command started event for the explain. Confirm that the top-level explain command should has a `maxTimeMS`
 value of `2000`.
-
-### 14. *Removed*
 
 ### 15. `MongoClient.bulkWrite` with unacknowledged write concern uses `w:0` for all batches
 
