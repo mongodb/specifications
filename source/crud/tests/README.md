@@ -623,7 +623,9 @@ maxTimeMS value of 2000ms for the `explain`.
 Obtain the command started event for the explain. Confirm that the top-level explain command should has a `maxTimeMS`
 value of `2000`.
 
-### 14. `MongoClient.bulkWrite` with unacknowledged write concern uses `w:0` for all batches
+### 14. *Removed*
+
+### 15. `MongoClient.bulkWrite` with unacknowledged write concern uses `w:0` for all batches
 
 This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
 
@@ -665,7 +667,7 @@ To force completion of the `w:0` writes, execute `coll.countDocuments` and expec
 `maxMessageSizeBytes / maxBsonObjectSize + 1`. This is intended to avoid incomplete writes interfering with other tests
 that may use this collection.
 
-### 15. Generated document identifiers are the first field in their document
+### 16. Generated document identifiers are the first field in their document
 
 Construct a `MongoClient` (referred to as `client`) with
 [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
