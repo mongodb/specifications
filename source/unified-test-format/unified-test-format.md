@@ -2979,8 +2979,8 @@ If [test.runOnRequirements](#test_runOnRequirements) is specified, the test runn
 
 If [initialData](#initialData) is specified, for each [collectionData](#collectiondata) therein the test runner MUST set
 up the collection. All setup operations MUST use the internal MongoClient and a "majority" write concern. The test
-runner MUST first drop the collection. The test runner must also drop the collections `_enxcol.<collectionName>.esc` and
-`_enxcol.<collectionName>.ecoc`. If a `createOptions` document is present, the test runner MUST execute a `create`
+runner MUST first drop the collection. The test runner must also drop the collections `enxcol_.<collectionName>.esc` and
+`enxcol_.<collectionName>.ecoc`. If a `createOptions` document is present, the test runner MUST execute a `create`
 command to create the collection with the specified options. The test runner MUST then insert the specified documents
 (if any). If no documents are present and `createOptions` is not set, the test runner MUST create the collection. If the
 topology is sharded, the test runner SHOULD use a single mongos for handling [initialData](#initialData) to avoid
@@ -3353,9 +3353,9 @@ enforceable by the JSON schema or the test runner implementation.
 
 <span id="rationale_dropping_metadata"></span>
 
-### Why are `_enxcol` collections dropped?
+### Why are `enxcol_` collections dropped?
 
-The collections `_enxcol.<collectionName>.esc` and `_enxcol.<collectionName>.ecoc` are
+The collections `enxcol_.<collectionName>.esc` and `enxcol_.<collectionName>.ecoc` are
 [automatically created](../client-side-encryption/client-side-encryption.md#create-collection-helper) for Queryable
 Encryption collections. If these collections are present and non-empty, the server generated `__safeContent__` field may
 differ. `__safeContent__` includes a count of the number of instances of the given value. To do exact matching on
@@ -3422,6 +3422,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
+- 2025-08-20: Fix typo `_enxcol` => `enxcol_`
+
 - 2025-07-28: **Schema version 1.25.**
 
     Add alternate form of `csfle`. Previously it was only a bool. Now it can also be an object containing
@@ -3438,7 +3440,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2025-06-04: Deprecate the `serverless` runOnRequirement
 
-- 2025-04-25: Drop `_enxcol` collections.
+- 2025-04-25: Drop `enxcol_` collections.
 
 - 2025-04-07: Add `topologyOpeningEvent` and `topologyClosedEvent` to the unified test format and schema 1.20+ as they
     were omitted in error.
