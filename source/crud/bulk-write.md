@@ -866,6 +866,9 @@ Auto-encryption does not currently support document sequences. This specificatio
 [DRIVERS-2859](https://jira.mongodb.org/browse/DRIVERS-2859) is completed to require use of document sequences for `ops`
 and `nsInfo` when auto-encryption is enabled.
 
+Drivers requiring significant changes to pass a bulkWrite command to libmongocrypt are recommended to wait until
+[DRIVERS-2859](https://jira.mongodb.org/browse/DRIVERS-2859) is implemented before supporting automatic encryption.
+
 ## Q&A
 
 ### Is `bulkWrite` supported on Atlas Serverless?

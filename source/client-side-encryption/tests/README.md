@@ -563,7 +563,7 @@ First, perform the setup.
 2. Using `client`, drop and create the collection `db.coll` configured with the included JSON schema
     [limits/limits-schema.json](../limits/limits-schema.json).
 
-3. Using `client`, drop and create the collection `db.coll2` configured with the included encryptedFields
+3. If using MongoDB 8.0+, use `client` to drop and create the collection `db.coll2` configured with the included encryptedFields
     [limits/limits-encryptedFields.json](../limits/limits-encryptedFields.json).
 
 4. Using `client`, drop the collection `keyvault.datakeys`. Insert the document
