@@ -563,8 +563,8 @@ First, perform the setup.
 2. Using `client`, drop and create the collection `db.coll` configured with the included JSON schema
     [limits/limits-schema.json](../limits/limits-schema.json).
 
-3. If using MongoDB 8.0+, use `client` to drop and create the collection `db.coll2` configured with the included encryptedFields
-    [limits/limits-encryptedFields.json](../limits/limits-encryptedFields.json).
+3. If using MongoDB 8.0+, use `client` to drop and create the collection `db.coll2` configured with the included
+    encryptedFields [limits/limits-encryptedFields.json](../limits/limits-encryptedFields.json).
 
 4. Using `client`, drop the collection `keyvault.datakeys`. Insert the document
     [limits/limits-key.json](../limits/limits-key.json)
@@ -586,8 +586,8 @@ Using `client_encrypted` perform the following operations:
     Expect this to succeed since this is still under the `maxBsonObjectSize` limit.
 
 2. Insert the document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
-    `{ "_id": "encryption_exceeds_2mib", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }` into `coll`. Note:
-    limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
+    `{ "_id": "encryption_exceeds_2mib", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }` into
+    `coll`. Note: limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
 
     Expect this to succeed since after encryption this still is below the normal maximum BSON document size. Note, before
     auto encryption this document is under the 2 MiB limit. After encryption it exceeds the 2 MiB limit, but does NOT
@@ -616,7 +616,8 @@ Using `client_encrypted` perform the following operations:
     Expect this to succeed since this is still (just) under the `maxBsonObjectSize` limit.
 
 6. Insert the document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
-    `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }` into `coll`.
+    `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }` into
+    `coll`.
 
     Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
 
@@ -634,7 +635,7 @@ Using `client_encrypted` perform the following operations:
         `{ "_id": "encryption_exceeds_2mib_3", "foo": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
     - The document [limits/limits-qe-doc.json](../limits/limits-qe-doc.json) concatenated with
         `{ "_id": "encryption_exceeds_2mib_4", "foo": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
-    
+
     Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
     [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
