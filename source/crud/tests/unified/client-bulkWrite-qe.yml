@@ -1,11 +1,12 @@
 description: client bulkWrite with queryable encryption
 
-schemaVersion: "1.23"
+schemaVersion: "1.25"
 
 runOnRequirements:
   - minServerVersion: "8.0"
     serverless: forbid # Serverless does not support bulkWrite: CLOUDP-256344.
-    csfle: true
+    csfle:
+      minLibmongocryptVersion: "1.10.0"
 
 createEntities:
   - client:
