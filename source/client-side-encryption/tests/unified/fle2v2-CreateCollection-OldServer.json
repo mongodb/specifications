@@ -1,6 +1,6 @@
 {
   "description": "fle2v2-CreateCollection-OldServer",
-  "schemaVersion": "1.26",
+  "schemaVersion": "1.25",
   "runOnRequirements": [
     {
       "minServerVersion": "6.0.0",
@@ -10,7 +10,9 @@
         "sharded",
         "load-balanced"
       ],
-      "minLibmongocryptVersion": "1.15.1"
+      "csfle": {
+        "minLibmongocryptVersion": "1.15.1"
+      }
     }
   ],
   "createEntities": [
