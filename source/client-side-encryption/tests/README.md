@@ -563,10 +563,13 @@ First, perform the setup.
 2. Using `client`, drop and create the collection `db.coll` configured with the included JSON schema
     [limits/limits-schema.json](../limits/limits-schema.json).
 
-3. Using `client`, drop the collection `keyvault.datakeys`. Insert the document
+3. If using MongoDB 8.0+, use `client` to drop and create the collection `db.coll2` configured with the included
+    encryptedFields [limits/limits-encryptedFields.json](../limits/limits-encryptedFields.json).
+
+4. Using `client`, drop the collection `keyvault.datakeys`. Insert the document
     [limits/limits-key.json](../limits/limits-key.json)
 
-4. Create a MongoClient configured with auto encryption (referred to as `client_encrypted`)
+5. Create a MongoClient configured with auto encryption (referred to as `client_encrypted`)
 
     Configure with the `local` KMS provider as follows:
 
@@ -578,19 +581,19 @@ First, perform the setup.
 
 Using `client_encrypted` perform the following operations:
 
-1. Insert `{ "_id": "over_2mib_under_16mib", "unencrypted": <the string "a" repeated 2097152 times> }`.
+1. Insert `{ "_id": "over_2mib_under_16mib", "unencrypted": <the string "a" repeated 2097152 times> }` into `coll`.
 
     Expect this to succeed since this is still under the `maxBsonObjectSize` limit.
 
 2. Insert the document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
-    `{ "_id": "encryption_exceeds_2mib", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }` Note:
-    limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
+    `{ "_id": "encryption_exceeds_2mib", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }` into
+    `coll`. Note: limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
 
     Expect this to succeed since after encryption this still is below the normal maximum BSON document size. Note, before
     auto encryption this document is under the 2 MiB limit. After encryption it exceeds the 2 MiB limit, but does NOT
     exceed the 16 MiB limit.
 
-3. Bulk insert the following:
+3. Use MongoCollection.bulkWrite to insert the following into `coll`:
 
     - `{ "_id": "over_2mib_1", "unencrypted": <the string "a" repeated (2097152) times> }`
     - `{ "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }`
@@ -598,7 +601,7 @@ Using `client_encrypted` perform the following operations:
     Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
     [command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
-4. Bulk insert the following:
+4. Use MongoCollection.bulkWrite insert the following into `coll`:
 
     - The document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
         `{ "_id": "encryption_exceeds_2mib_1", "unencrypted": < the string "a" repeated (2097152 - 2000) times > }`
@@ -608,14 +611,33 @@ Using `client_encrypted` perform the following operations:
     Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
     [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
-5. Insert `{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>`.
+5. Insert `{ "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times>` into `coll`.
 
     Expect this to succeed since this is still (just) under the `maxBsonObjectSize` limit.
 
 6. Insert the document [limits/limits-doc.json](../limits/limits-doc.json) concatenated with
-    `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }`
+    `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }` into
+    `coll`.
 
     Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
+
+7. If using MongoDB 8.0+, use MongoClient.bulkWrite to insert the following into `coll2`:
+
+    - `{ "_id": "over_2mib_3", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
+    - `{ "_id": "over_2mib_4", "unencrypted": <the string "a" repeated (2097152 - 1500) times> }`
+
+    Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
+    [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
+
+8. If using MongoDB 8.0+, use MongoClient.bulkWrite to insert the following into `coll2`:
+
+    - The document [limits/limits-qe-doc.json](../limits/limits-qe-doc.json) concatenated with
+        `{ "_id": "encryption_exceeds_2mib_3", "foo": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
+    - The document [limits/limits-qe-doc.json](../limits/limits-qe-doc.json) concatenated with
+        `{ "_id": "encryption_exceeds_2mib_4", "foo": < the string "a" repeated (2097152 - 2000 - 1500) times > }`
+
+    Expect the bulk write to succeed and split after first doc (i.e. two inserts occur). This may be verified using
+    [command logging and monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md).
 
 Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that
 setting maxWriteBatchSize=1 and inserting the two documents `{ "_id": "a" }, { "_id": "b" }` with `client_encrypted`
