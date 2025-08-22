@@ -4,6 +4,7 @@ schemaVersion: "1.25"
 
 runOnRequirements:
   - minServerVersion: "8.0"
+    topologies: ["replicaset", "sharded", "load-balanced"] # QE does not support standalone.
     serverless: forbid # Serverless does not support bulkWrite: CLOUDP-256344.
     csfle:
       minLibmongocryptVersion: "1.10.0"
