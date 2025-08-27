@@ -607,40 +607,7 @@ Execute `bulkWrite` on `client` with `largeNamespaceModel`. Assert that an error
 Assert that `error` is a client error. If a `BulkWriteException` was thrown, assert `BulkWriteException.partialResult`
 is unset.
 
-### 13. `MongoClient.bulkWrite` returns an error if auto-encryption is configured
-
-This test is expected to be removed when [DRIVERS-2888](https://jira.mongodb.org/browse/DRIVERS-2888) is resolved.
-
-Test that `MongoClient.bulkWrite` returns an error if the client has auto-encryption configured.
-
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
-
-Construct a `MongoClient` (referred to as `client`) configured with the following `AutoEncryptionOpts`:
-
-```javascript
-AutoEncryptionOpts {
-  "keyVaultNamespace": "db.coll",
-  "kmsProviders": {
-    "aws": {
-      "accessKeyId": "foo",
-      "secretAccessKey": "bar"
-    }
-  }
-}
-```
-
-Construct the following write model (referred to as `model`):
-
-```javascript
-InsertOne {
-  "namespace": "db.coll",
-  "document": { "a": "b" }
-}
-```
-
-Execute `bulkWrite` on `client` with `model`. Assert that an error (referred to as `error`) is returned. Assert that
-`error` is a client error containing the message: "bulkWrite does not currently support automatic encryption". If a
-`BulkWriteException` was thrown, assert `BulkWriteException.partialResult` is unset.
+### 13. *Removed*
 
 ### 14. `explain` helpers allow users to specify `maxTimeMS`
 
