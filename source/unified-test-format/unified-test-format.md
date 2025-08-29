@@ -488,7 +488,7 @@ The structure of this object is as follows:
         - [connectionCheckedInEvent](#expectedEvent_connectionCheckedInEvent)
         - [connectionPendingResponseStarted](#expectedEvent_connectionPendingResponseStarted)
         - [connectionPendingResponseSucceeded](#expectedEvent_connectionPendingResponseSucceeded)
-        - connectionPendingResponseFailed\](#expectedEvent_connectionPendingResponseFailed)
+        - [connectionPendingResponseFailed](#expectedEvent_connectionPendingResponseFailed)
         - [serverDescriptionChangedEvent](#expectedEvent_serverDescriptionChangedEvent)
         - [serverHeartbeatStartedEvent](#expectedEvent_serverHeartbeatStartedEvent)
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
