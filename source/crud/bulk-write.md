@@ -310,6 +310,16 @@ class BulkWriteOptions {
     comment: Optional<BSON value>;
 
     /**
+     * This option MAY be implemented by drivers that need to grant access to underlying namespaces
+     * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+     *
+     * @note This option MUST NOT be sent when connected to pre-8.2 servers.
+     *
+     * @since MongoDB 8.2
+     */
+    rawData: Optional<Boolean>;
+
+    /**
      * Whether detailed results for each successful operation should be included in the returned
      * BulkWriteResult.
      *
@@ -449,7 +459,7 @@ class BulkWriteResult {
      * The results of each individual write operation that was successfully performed.
      *
      * This value will only be populated if the verboseResults option was set to true.
-     */ 
+     */
     verboseResults: Optional<VerboseResults>;
 
     /* rest of fields */
@@ -538,11 +548,14 @@ The `bulkWrite` server command has the following format:
     "bypassDocumentValidation": Optional<Boolean>,
     "comment": Optional<BSON value>,
     "let": Optional<Document>,
+    "rawData": Optional<Boolean>,
     ...additional operation-agnostic fields
 }
 ```
 
-Drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.md) payload type 1) for the `ops` and `nsInfo` fields.
+If auto-encryption is not enabled, drivers MUST use document sequences ([`OP_MSG`](../message/OP_MSG.md) payload type 1)
+for the `ops` and `nsInfo` fields. If auto-encryption is enabled, drivers MUST NOT use document sequences and MUST
+append the `ops` and `nsInfo` fields to the `bulkWrite` command document.
 
 The `bulkWrite` command is executed on the "admin" database.
 
@@ -634,13 +647,6 @@ write concern containing the following message:
 
 > Cannot request unacknowledged write concern and ordered writes
 
-## Auto-Encryption
-
-If `MongoClient.bulkWrite` is called on a `MongoClient` configured with `AutoEncryptionOpts`, drivers MUST return an
-error with the message: "bulkWrite does not currently support automatic encryption".
-
-This is expected to be removed once [DRIVERS-2888](https://jira.mongodb.org/browse/DRIVERS-2888) is implemented.
-
 ## Command Batching
 
 Drivers MUST accept an arbitrary number of operations as input to the `MongoClient.bulkWrite` method. Because the server
@@ -661,8 +667,10 @@ multiple commands if the user provides more than `maxWriteBatchSize` operations 
 
 ### Total Message Size
 
-Drivers MUST ensure that the total size of the `OP_MSG` built for each `bulkWrite` command does not exceed
-`maxMessageSizeBytes`.
+#### Unencrypted bulk writes
+
+When auto-encryption is not enabled, drivers MUST ensure that the total size of the `OP_MSG` built for each `bulkWrite`
+command does not exceed `maxMessageSizeBytes`.
 
 The upper bound for the size of an `OP_MSG` includes opcode-related bytes (e.g. the `OP_MSG` header) and
 operation-agnostic command field bytes (e.g. `txnNumber`, `lsid`). Drivers MUST limit the combined size of the
@@ -715,6 +723,12 @@ See [this Q&A entry](#how-was-the-op_msg-overhead-allowance-determined) for more
 was determined.
 
 Drivers MUST return an error if there is not room to add at least one operation to `ops`.
+
+#### Auto-encrypted bulk writes
+
+Drivers MUST use the reduced size limit defined in
+[Size limits for Write Commands](../client-side-encryption/client-side-encryption.md#size-limits-for-write-commands) for
+the size of the `bulkWrite` command document when auto-encryption is enabled.
 
 ## Handling the `bulkWrite` Server Response
 
@@ -846,6 +860,15 @@ When a `getMore` fails with a retryable error when attempting to iterate the res
 entire `bulkWrite` command to receive a fresh cursor and retry iteration. This work was omitted to minimize the scope of
 the initial implementation and testing of the new bulk write API, but may be revisited in the future.
 
+### Use document sequences for auto-encrypted bulk writes
+
+Auto-encryption does not currently support document sequences. This specification should be updated when
+[DRIVERS-2859](https://jira.mongodb.org/browse/DRIVERS-2859) is completed to require use of document sequences for `ops`
+and `nsInfo` when auto-encryption is enabled.
+
+Drivers requiring significant changes to pass a bulkWrite command to libmongocrypt are recommended to wait until
+[DRIVERS-2859](https://jira.mongodb.org/browse/DRIVERS-2859) is implemented before supporting automatic encryption.
+
 ## Q&A
 
 ### Is `bulkWrite` supported on Atlas Serverless?
@@ -916,6 +939,10 @@ The requirement has since been removed. Checking size limits complicates some dr
 error in this specific situation does not seem helpful enough to require size checks.
 
 ## **Changelog**
+
+- 2025-08-13: Removed the requirement to error when QE is enabled.
+
+- 2025-06-27: Added `rawData` option.
 
 - 2024-11-05: Updated the requirements regarding the size validation.
 

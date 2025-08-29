@@ -101,19 +101,22 @@ means that two single bit vectors in which 7 bits are ignored do not match unles
 server does.
 
 ```python
-b1 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7)
-assert b1 == Binary(b'\x10\x07\x80', subtype=9) # This is effectively a roundtrip.
-v1 = Binary.as_vector(b1)
+b1 = Binary(b'\x10\x07\x80', subtype=9) # 1-bit vector with all 0 ignored bits.
+b2 = Binary(b'\x10\x07\xff', subtype=9) # 1-bit vector with all 1 ignored bits.
+b3 = Binary.from_vector([0b10000000], BinaryVectorDtype.PACKED_BIT, padding=7) # Same data as b1.
 
-b2 = Binary.from_vector([0b11111111], BinaryVectorDtype.PACKED_BIT, padding=7)
-assert b2 == Binary(b'\x10\x07\xff', subtype=9)
+v1 = Binary.as_vector(b1)
 v2 = Binary.as_vector(b2)
+v3 = Binary.as_vector(b3)
 
 assert b1 != b2  # Unequal at naive Binary level 
 assert v2 != v1  # Also chosen to be unequal at BinaryVector level as [255] != [128]
+assert b1 == b3  # Equal at naive Binary level
+assert v1 == v3  # Equal at the BinaryVector level
 ```
 
-Drivers MAY skip this test if they choose not to implement a `Vector` type.
+Drivers MAY skip this test if they choose not to implement a `Vector` type, or the type does not support comparison, or
+the type cannot be constructed with non-zero ignored bits.
 
 ## FAQ
 
