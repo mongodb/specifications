@@ -220,7 +220,7 @@ interface Connection {
    *   - "pending":           The Connection has been created but has not yet been established. Contributes to
    *                          totalConnectionCount and pendingConnectionCount.
    *
-   *   - "pending response":  The Connection is attempting to discard a response for an operation where the socket timed 
+   *   - "pending response":  The Connection is attempting to discard a response for an operation where the socket timed
    *                          out. This state is only used when CSOT is enabled and maxTimeMS was added to the command.
    *
    *   - "available":         The Connection has been established and is waiting in the pool to be checked
@@ -358,7 +358,7 @@ interface ConnectionPool {
   /**
    *  Mark all current Connections as stale, clear the WaitQueue, and mark the pool as "paused".
    *  No connections may be checked out or created in this pool until ready() is called again.
-   *  interruptInUseConnections specifies whether the pool will force interrupt "in use" connections as part of the clear. 
+   *  interruptInUseConnections specifies whether the pool will force interrupt "in use" connections as part of the clear.
    *  Default false.
    */
   clear(interruptInUseConnections: Optional<Boolean>): void;
@@ -579,7 +579,7 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
-##### Awaiting Pending Read (CSOT-only)
+##### Awaiting Pending Read (drivers that support CSOT)
 
 If an operation times out the socket while awaiting a server response and CSOT is enabled and `maxTimeMS` was added to
 the command:
@@ -597,12 +597,12 @@ consuming buffered data.
 1. **Persist and update timestamp**: The connection must record the current time immediately after the original socket
     timeout. This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or
     consumed while explicitly awaiting the pending response as part of checking out the connection.
-2. **Aliveness check**: If the connection remains idle (i.e. no data is read or received) for more than 3 seconds since
-    the start of the "pending response" state or since the last successful read/receive, the driver MUST attempt to
-    verify the connection’s health by either performing a non-blocking read or using the minimal possible timeout to
-    check if at least one byte can be read/received. If at least one byte can be read the connection should be returned
-    to the pool for reuse and a retryable error should be propagated to the operation layer. If no bytes can be read,
-    the connection MUST be closed.
+2. **Aliveness check**: If the undrained connection remains idle (i.e. no data is read or received) for more than 3
+    seconds since the start of the "pending response" state or since the last successful read/receive, the driver MUST
+    attempt to verify the connection’s health by either performing a non-blocking read or using the minimal possible
+    timeout to check if at least one byte can be read/received. If at least one byte can be read the connection should
+    be returned to the pool for reuse and a retryable error should be propagated to the operation layer. If no bytes
+    can be read, the connection MUST be closed.
 3. **User-provided timeout**: If a user-provided timeout is specified for the "pending response" drain, the driver MUST
     use the minimum of (a) the remaining time before the 3 second "pending response" window elapses and (b) the
     user-provided timeout as the effective timeout for the read/drain operation.
@@ -618,76 +618,76 @@ consuming buffered data.
 ```mermaid
 sequenceDiagram
     participant Driver
-    participant Pool  
-    participant Conn as Connection (*) 
-    participant Server  
-  
+    participant Pool
+    participant Conn as Connection (*)
+    participant Server
+
     Driver->>Pool: Checkout Connection (*)
     Pool->>Driver: Return connection (*)
-    Driver->>Conn: Send operation (1) (CSOT enabled, maxTimeMS > 0, exhaustAllowed = false)  
-    Conn->>Server: Send command  
+    Driver->>Conn: Send operation (1) (CSOT enabled, maxTimeMS > 0, exhaustAllowed = false)
+    Conn->>Server: Send command
     Server-->>Conn: (No response, socket times out)
 
-    Conn->>Conn: Transition connection to "pending response" state, record current time 
-    Conn-->>Driver: Error  
+    Conn->>Conn: Transition connection to "pending response" state, record current time
+    Conn-->>Driver: Error
 
     Driver->>Pool: Checkout Connection (*)
     Pool->>Driver: Return connection (*)
     Driver->>Conn: Send operation (2)
- 
+
     Conn->>Conn: Attempt to drain pending response from operation (1)
-    Conn->>Conn: Update pending read timestamp if bytes read  
-    alt Timeout window exceeded or non-timeout error 
-        Conn->>Conn: Close connection  
-        Conn-->>Driver: Error  
-    else Timeout window not exceeded  
-       alt Error  
+    Conn->>Conn: Update pending read timestamp if bytes read
+    alt Timeout window exceeded or non-timeout error
+        Conn->>Conn: Close connection
+        Conn-->>Driver: Error
+    else Timeout window not exceeded
+       alt Error
             Conn->>Conn: Clear pending response state
-            Conn->>Conn: Reset to current time  
-            Conn->>Pool: Check connection back into pool  
-            Conn-->>Driver: Error  
-        else No error  
-            Conn->>Conn: Clear pending response state  
-            Conn->>Driver: Return connection to execute operation  
-        end  
-    end  
+            Conn->>Conn: Reset to current time
+            Conn->>Pool: Check connection back into pool
+            Conn-->>Driver: Error
+        else No error
+            Conn->>Conn: Clear pending response state
+            Conn->>Driver: Return connection to execute operation
+        end
+    end
 ```
 
 ```python
-PENDING_RESPONSE_TIMEOUT_MS = 3000  # static timeout  
-  
-def await_pending_response(timeout, conn):  
-    # Note: conn.pending_start is initialized after the original socket timeout  
-    # and not in this function since the connection will sit in the pool for some  
-    # non-deterministic amount of time after the socket timeout.  
-  
-    remaining_time = (conn.pending_start + PENDING_RESPONSE_TIMEOUT_MS) - current_time()  
-    if remaining_time <= 0:  
-        # Use the smallest timeout (or enable non-blocking read).  
-        remaining_time = 0.001  
-  
-    if timeout is None:  
-        timeout = min(remaining_time, conn.socket_timeout_ms)  
-    else:  
-        timeout = min(remaining_time, timeout)  
-  
-    data, error = execute_pending_response(timeout, conn)  
-    end_time = current_time()  
-  
-    if error is not None and error is not timeout:  
-        close_connection(conn)  
-        raise  
-  
-    if len(data) > 0:  
-        # Refresh the remaining time upon a successful read  
-        conn.pending_start = end_time  
-  
-    # Check if the remaining time has been exceeded  
-    if end_time - conn.pending_start >= PENDING_RESPONSE_TIMEOUT_MS:  
-        close_connection(conn)  
-  
-    if error is not None:  
-        raise error  
+PENDING_RESPONSE_TIMEOUT_MS = 3000  # static timeout
+
+def await_pending_response(timeout, conn):
+    # Note: conn.pending_start is initialized after the original socket timeout
+    # and not in this function since the connection will sit in the pool for some
+    # non-deterministic amount of time after the socket timeout.
+
+    remaining_time = (conn.pending_start + PENDING_RESPONSE_TIMEOUT_MS) - current_time()
+    if remaining_time <= 0:
+        # Use the smallest timeout (or enable non-blocking read).
+        remaining_time = 0.001
+
+    if timeout is None:
+        timeout = min(remaining_time, conn.socket_timeout_ms)
+    else:
+        timeout = min(remaining_time, timeout)
+
+    data, error = execute_pending_response(timeout, conn)
+    end_time = current_time()
+
+    if error is not None and error is not timeout:
+        close_connection(conn)
+        raise
+
+    if len(data) > 0:
+        # Refresh the remaining time upon a successful read
+        conn.pending_start = end_time
+
+    # Check if the remaining time has been exceeded
+    if end_time - conn.pending_start >= PENDING_RESPONSE_TIMEOUT_MS:
+        close_connection(conn)
+
+    if error is not None:
+        raise error
 ```
 
 ##### Pseudocode
@@ -966,7 +966,7 @@ interface PoolClosedEvent {
  *  Emitted when a Connection Pool creates a Connection object.
  *  NOTE: This does not mean that the Connection is ready for use.
  */
-interface ConnectionCreatedEvent { 
+interface ConnectionCreatedEvent {
   /**
    *  The ServerAddress of the Endpoint the pool is attempting to connect to.
    */
@@ -1122,7 +1122,7 @@ interface ConnectionCheckedInEvent {
 }
 
 /**
- *  Emitted when the connection being checked out is attempting to read and 
+ *  Emitted when the connection being checked out is attempting to read and
  *  discard a pending server response.
  */
 interface PendingResponseStarted {
@@ -1143,7 +1143,7 @@ interface PendingResponseStarted {
 }
 
 /**
- *  Emitted when the connection successfully read the pending read and is ready 
+ *  Emitted when the connection successfully read the pending read and is ready
  *  to be checked out.
  */
 interface PendingResponseSucceeded {
@@ -1637,6 +1637,12 @@ since there is no reason to believe that a new connection would reduce latency.
 Exhaust cursors are incompatible with the "pending response" connection state due to the non-deterministic nature of the
 connection's completion, which occurs only when `moreToCome=0` is received. Consequently, discarding one of these
 responses does not restore the connection to a reusable state.
+
+### Async IO Considerations for Awaiting a Pending Response
+
+Several drivers (e.g., event-loop or background-read designs) perform socket I/O asynchronously. After a socket times
+out, the server's reply may be drained while the connection is idle in the pool. Therefore, the aliveness check only
+applies to an undrained connection that has exceeded the pending-response window without progress.
 
 ## Backwards Compatibility
 

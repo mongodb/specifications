@@ -824,6 +824,7 @@
               "type": "string"
             }
           }
+        }
       }
     },
     "expectedSdamEvent": {
