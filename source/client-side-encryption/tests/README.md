@@ -619,7 +619,8 @@ Using `client_encrypted` perform the following operations:
     `{ "_id": "encryption_exceeds_16mib", "unencrypted": < the string "a" repeated (16777216 - 2000) times > }` into
     `coll`.
 
-    Expect this to fail since encryption results in a document exceeding the `maxBsonObjectSize` limit.
+    Expect this to fail indicating the document exceeded the `maxBsonObjectSize` limit. If the write is sent to the
+    server, expect a server error with code 2 or 10334.
 
 7. If using MongoDB 8.0+, use MongoClient.bulkWrite to insert the following into `coll2`:
 
