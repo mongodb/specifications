@@ -9,11 +9,11 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: operation-update
+      databaseName: &databaseName0 operation-update
   - collection:
       id: &collection0 collection0
       database: *database0
-      collectionName: test
+      collectionName: &collectionName0 test
 
 tests:
   - description: update one element
@@ -26,29 +26,28 @@ tests:
           update: { $inc: { x: 1 } }
 
     expectTracingMessages:
-      client: *client0
-      ignoreExtraSpans: false
-      spans:
-        - name: update operation-update.test
-          tags:
-            db.system: mongodb
-            db.namespace: operation-update
-            db.collection.name: test
-            db.operation.name: update
-            db.operation.summary: update operation-update.test
-          nested:
-            - name: command update
-              tags:
-                db.system: mongodb
-                db.namespace: operation-update
-                server.address: { $$type: string }
-                server.port: { $$type: [ 'long', 'string' ] }
-                server.type: { $$type: string }
-                db.query.summary: update
-                db.query.text:
-                  $$matchAsDocument:
-                    $$matchAsRoot:
-                      update: test
-                      ordered: true
-                      txnNumber: 1
-                      updates: [ { "q": { "_id": 1 }, "u": { "$inc": { "x": 1 } } } ]
+      - client: *client0
+        ignoreExtraSpans: false
+        spans:
+          - name: update operation-update.test
+            attributes:
+              db.system: mongodb
+              db.namespace: *databaseName0
+              db.collection.name: *collectionName0
+              db.operation.name: update
+              db.operation.summary: update operation-update.test
+            nested:
+              - name: update operation-update.test
+                attributes:
+                  db.system: mongodb
+                  db.namespace: operation-update
+                  server.address: { $$type: string }
+                  server.port: { $$type: [ 'long', 'string' ] }
+                  db.query.summary: update
+                  db.query.text:
+                    $$matchAsDocument:
+                      $$matchAsRoot:
+                        update: test
+                        ordered: true
+                        txnNumber: 1
+                        updates: [ { "q": { "_id": 1 }, "u": { "$inc": { "x": 1 } } } ]

@@ -54,7 +54,7 @@
         "spans": [
           {
             "name": "createView operation-create-view.my_view",
-            "tags": {
+            "attributes": {
               "db.system": "mongodb",
               "db.namespace": "operation-create-view",
               "db.collection.name": "my_view",
@@ -64,7 +64,7 @@
             "nested": [
               {
                 "name": "command create",
-                "tags": {
+                "attributes": {
                   "db.system": "mongodb",
                   "db.namespace": "operation-create-view",
                   "db.collection.name": "operation-create-view.$cmd",

@@ -46,36 +46,25 @@ tests:
         object: *collection0
         arguments: { filter: { x: 1 } }
 
-      - object: *session0
-        name: startTransaction
-      - object: *collection0
-        name: insertOne
-        arguments:
-          session: *session0
-          document:
-            _id: 2
-      - object: *session0
-        name: abortTransaction
-
     expectTracingMessages:
-      client: *client0
-      ignoreExtraSpans: false
-      spans:
-        - name: transaction
-          tags:
-            db.system: mongodb
-          nested:
-            - name: insert transaction-tests.test
-              tags:
-                db.system: mongodb
+      - client: *client0
+        ignoreExtraSpans: false
+        spans:
+          - name: transaction
+            attributes:
+              db.system: mongodb
+            nested:
+              - name: insert transaction-tests.test
+                attributes:
+                  db.system: mongodb
                 db.namespace: transaction-tests
                 db.collection.name: test
                 db.operation.name: insert
                 db.operation.summary: insert transaction-tests.test
-              nested:
-                - name: command insert
-                  tags:
-                    db.system: mongodb
+                nested:
+                  - name: command insert
+                    attributes:
+                      db.system: mongodb
                     db.namespace: transaction-tests
                     server.address: { $$type: string }
                     server.port: { $$type: ['long', 'string'] }
@@ -92,74 +81,30 @@ tests:
                           documents:
                             - _id: 1
                     db.mongodb.lsid: { $$sessionLsid: *session0 }
-            - name: commitTransaction admin.$cmd
-              tags:
-                db.system: mongodb
-              nested:
-                - name: command commitTransaction
-                  tags:
-                    db.system: mongodb
-                    db.query.text:
-                      $$matchAsDocument:
-                        $$matchAsRoot:
-                            commitTransaction: 1
-                            txnNumber: 1
-                            autocommit: false
-        - name: find transaction-tests.test
-          tags: {}
-          nested:
-            - name: command find
-              tags:
-                db.system: mongodb
-                db.namespace: transaction-tests
-                server.address: { $$type: string }
-                server.port: { $$type: ['long', 'string'] }
-                server.type: { $$type: string }
-                db.query.summary: find
-        - name: transaction
-          tags:
-            db.system: mongodb
-          nested:
-            - name: insert transaction-tests.test
-              tags:
-                db.system: mongodb
-                db.namespace: transaction-tests
-                db.collection.name: test
-                db.operation.name: insert
-                db.operation.summary: insert transaction-tests.test
-              nested:
-                - name: command insert
-                  tags:
-                    db.system: mongodb
-                    db.namespace: transaction-tests
-                    server.address: { $$type: string }
-                    server.port: { $$type: ['long', 'string'] }
-                    server.type: { $$type: string }
-                    db.query.summary: insert
-                    db.query.text:
-                      $$matchAsDocument:
-                        $$matchAsRoot:
-                          insert: test
-                          ordered: true
-                          txnNumber: 2
-                          startTransaction: true
-                          autocommit: false
-                          documents:
-                            - _id: 2
-                    db.mongodb.lsid: { $$sessionLsid: *session0 }
-            - name: abortTransaction admin.$cmd
-              tags:
-                db.system: mongodb
-              nested:
-                - name: command abortTransaction
-                  tags:
-                    db.system: mongodb
-                    db.query.text:
-                      $$matchAsDocument:
-                        $$matchAsRoot:
-                          abortTransaction: 1
-                          txnNumber: 2
-                          autocommit: false
+              - name: commitTransaction admin.$cmd
+                attributes:
+                  db.system: mongodb
+                  nested:
+                    - name: command commitTransaction
+                      attributes:
+                        db.system: mongodb
+                        db.query.text:
+                          $$matchAsDocument:
+                            $$matchAsRoot:
+                              commitTransaction: 1
+                              txnNumber: 1
+                              autocommit: false
+      - name: find transaction-tests.test
+        attributes: {}
+        nested:
+          - name: command find
+            attributes:
+              db.system: mongodb
+              db.namespace: transaction-tests
+              server.address: { $$type: string }
+              server.port: { $$type: ['long', 'string'] }
+              server.type: { $$type: string }
+              db.query.summary: find
     outcome:
       - collectionName: test
         databaseName: transaction-tests

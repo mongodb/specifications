@@ -117,7 +117,7 @@ The span name SHOULD be:
 
 - `driver_operation_name db.collection_name` if the command is executed on a collection (e.g.,
     `findOneAndDelete warehouse.users`).
-- `db.driver_operation_name` if there is no specific collection for the command (e.g., `warehouse.runCommand`).
+- `driver_operation_name db` if there is no specific collection for the command (e.g., `runCommand warehouse`).
 
 ##### Span Kind
 
@@ -164,7 +164,7 @@ The span name SHOULD be:
 
 - `server_command db.collection_name` if the command is executed on a collection (e.g.,
     `findAndModify warehouse.users`).
-- `db.server_command` if there is no specific collection for the command.
+- `server_command db` if there is no specific collection for the command.
 
 ##### Span Kind
 

@@ -383,13 +383,13 @@
       "additionalProperties": false,
       "required": [
         "name",
-        "tags"
+        "attributes"
       ],
       "properties": {
         "name": {
           "type": "string"
         },
-        "tags": {
+        "attributes": {
           "type": "object"
         },
         "nested": {
@@ -972,6 +972,29 @@
         }
       }
     },
+    "expectTracingMessagesForClient": {
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "client",
+        "spans"
+      ],
+      "properties": {
+        "client": {
+          "type": "string"
+        },
+        "ignoreExtraSpans": {
+          "type": "boolean"
+        },
+        "spans": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/spanComponent"
+          }
+        }
+      }
+    },
     "expectedLogMessage": {
       "type": "object",
       "additionalProperties": false,
@@ -1197,26 +1220,10 @@
           }
         },
         "expectTracingMessages": {
-          "additionalProperties" : false,
-          "type": "object",
-          "required": [
-            "client",
-            "spans"
-          ],
-          "properties": {
-            "client": {
-              "type": "string"
-            },
-            "ignoreExtraSpans": {
-              "type": "boolean"
-            },
-            "spans": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "$ref": "#/definitions/spanComponent"
-              }
-            }
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/expectTracingMessagesForClient"
           }
         },
         "outcome": {

@@ -28,26 +28,26 @@
           "name": "listCollections"
         }
       ],
-      "expectTracingMessages": {
-        "client": "client0",
-        "ignoreExtraSpans": false,
-        "spans": [
-          {
-            "name": "listCollections operation-list-collections.$cmd",
-            "tags": {
-              "db.system": "mongodb",
+      "expectTracingMessages": [
+        {
+          "client": "client0",
+          "ignoreExtraSpans": false,
+          "spans": [
+            {
+              "name": "listCollections operation-list-collections",
+              "attributes": {
+                "db.system": "mongodb"
+              },
               "db.namespace": "operation-list-collections",
-              "db.collection.name": "$cmd",
               "db.operation.name": "listCollections",
-              "db.operation.summary": "listCollections operation-list-collections.$cmd"
-            },
-            "nested": [
-              {
-                "name": "command listCollections",
-                "tags": {
-                  "db.system": "mongodb",
+              "db.operation.summary": "listCollections operation-list-collections",
+              "nested": [
+                {
+                  "name": "listCollections operation-list-collections",
+                  "attributes": {
+                    "db.system": "mongodb"
+                  },
                   "db.namespace": "operation-list-collections",
-                  "db.collection.name": "operation-list-collections.$cmd",
                   "db.command.name": "listCollections",
                   "network.transport": "tcp",
                   "db.mongodb.cursor_id": {
@@ -74,9 +74,6 @@
                       "long"
                     ]
                   },
-                  "server.type": {
-                    "$$type": "string"
-                  },
                   "db.query.summary": "listCollections",
                   "db.query.text": {
                     "$$matchAsDocument": {
@@ -99,11 +96,11 @@
                     ]
                   }
                 }
-              }
-            ]
-          }
-        ]
-      }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

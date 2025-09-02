@@ -140,24 +140,26 @@
           }
         }
       ],
-      "expectTracingMessages": {
-        "client": "client0",
-        "ignoreExtraSpans": false,
-        "spans": [
-          {
-            "name": "bulkWrite operation-bulk-write.test",
-            "tags": {
-              "db.system": "mongodb",
+      "expectTracingMessages": [
+        {
+          "client": "client0",
+          "ignoreExtraSpans": false,
+          "spans": [
+            {
+              "name": "bulkWrite operation-bulk-write.test",
+              "attributes": {
+                "db.system": "mongodb"
+              },
               "db.namespace": "operation-bulk-write",
               "db.collection.name": "test",
               "db.operation.name": "bulkWrite",
-              "db.operation.summary": "bulkWrite operation-bulk-write.test"
-            },
-            "nested": [
-              {
-                "name": "command bulkWrite",
-                "tags": {
-                  "db.system": "mongodb",
+              "db.operation.summary": "bulkWrite operation-bulk-write.test",
+              "nested": [
+                {
+                  "name": "command bulkWrite",
+                  "attributes": {
+                    "db.system": "mongodb"
+                  },
                   "db.namespace": "admin",
                   "db.collection.name": "admin.$cmd",
                   "db.command.name": "bulkWrite",
@@ -292,11 +294,11 @@
                     ]
                   }
                 }
-              }
-            ]
-          }
-        ]
-      }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

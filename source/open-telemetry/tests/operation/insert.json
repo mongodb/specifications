@@ -53,7 +53,7 @@
         "spans": [
           {
             "name": "insert operation-insert.test",
-            "tags": {
+            "attributes": {
               "db.system": "mongodb",
               "db.namespace": "operation-insert",
               "db.collection.name": "test",
@@ -63,7 +63,7 @@
             "nested": [
               {
                 "name": "command insert",
-                "tags": {
+                "attributes": {
                   "db.system": "mongodb",
                   "db.namespace": "operation-insert",
                   "server.address": {

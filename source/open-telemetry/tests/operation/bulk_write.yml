@@ -59,20 +59,20 @@ tests:
                   $and: [ { _id: { $gt: 5 } }, { _id: { $lte: 7 } } ]
 
     expectTracingMessages:
-      client: *client0
-      ignoreExtraSpans: false
-      spans:
-        - name: bulkWrite operation-bulk-write.test
-          tags:
-            db.system: mongodb
+      - client: *client0
+        ignoreExtraSpans: false
+        spans:
+          - name: bulkWrite operation-bulk-write.test
+            attributes:
+              db.system: mongodb
             db.namespace: operation-bulk-write
             db.collection.name: test
             db.operation.name: bulkWrite
             db.operation.summary: bulkWrite operation-bulk-write.test
-          nested:
-            - name: command bulkWrite
-              tags:
-                db.system: mongodb
+            nested:
+              - name: command bulkWrite
+                attributes:
+                  db.system: mongodb
                 db.namespace: admin
                 db.collection.name: admin.$cmd
                 db.command.name: bulkWrite
@@ -93,14 +93,14 @@ tests:
                       errorsOnly: true
                       ordered: true
                       ops: [ { "insert": 0, "document": { "_id": 8, "x": 88 } },
-                             { "update": 0, "multi": false, "filter": { "_id": 1 }, "updateMods": { "$inc": { "x": 1 } } },
-                             { "update": 0, "multi": true, "filter": { "$and": [ { "_id": { "$gt": 1 } }, { "_id": { "$lte": 3 } } ] },
-                               "updateMods": { "$inc": { "x": 2 } } },
-                             { "update": 0, "multi": false, "filter": { "_id": 4 },
-                               "updateMods": { "x": 44 }, "upsert": true },
-                             { "delete": 0, "multi": false, "filter": { "_id": 5 } },
-                             { "delete": 0, "multi": true, "filter": { "$and": [
-                             { "_id": { "$gt": 5 } }, { "_id": { "$lte": 7 } } ] } } ]
+                      { "update": 0, "multi": false, "filter": { "_id": 1 }, "updateMods": { "$inc": { "x": 1 } } },
+                      { "update": 0, "multi": true, "filter": { "$and": [ { "_id": { "$gt": 1 } }, { "_id": { "$lte": 3 } } ] },
+                      "updateMods": { "$inc": { "x": 2 } } },
+                      { "update": 0, "multi": false, "filter": { "_id": 4 },
+                      "updateMods": { "x": 44 }, "upsert": true },
+                      { "delete": 0, "multi": false, "filter": { "_id": 5 } },
+                      { "delete": 0, "multi": true, "filter": { "$and": [
+                        { "_id": { "$gt": 5 } }, { "_id": { "$lte": 7 } } ] } } ]
                 db.mongodb.server_connection_id:
                   $$type: [ 'int', 'long' ]
                 db.mongodb.driver_connection_id:
