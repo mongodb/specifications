@@ -620,7 +620,7 @@ Using `client_encrypted` perform the following operations:
     `coll`.
 
     Expect this to fail indicating the document exceeded the `maxBsonObjectSize` limit. If the write is sent to the
-    server, expect a server error with code 2 or 10334.
+    server (i.e. does not fail due to a driver-side check), expect a server error with code 2 or 10334.
 
 7. If using MongoDB 8.0+, use MongoClient.bulkWrite to insert the following into `coll2`:
 
