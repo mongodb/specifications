@@ -185,8 +185,8 @@ Drivers MUST NOT provide a default value for this key.
 
 This value is required and is not application configurable.
 
-The internal driver name. For drivers written on-top of other core drivers, the `appendClientMetadata()` method can be
-used to add package information to an existing MongoClient.
+The internal driver name. For drivers written on-top of other core drivers, the `appendMetadata()` method can be used to
+add package information to an existing MongoClient.
 
 Example:
 
@@ -200,7 +200,7 @@ Example:
 This value is required and is not application configurable.
 
 The internal driver version. The version formatting is not defined. For drivers written on-top of other core drivers,
-the `appendClientMetadata()` method can be used to add package information to an existing MongoClient.
+the `appendMetadata()` method can be used to add package information to an existing MongoClient.
 
 Example:
 
