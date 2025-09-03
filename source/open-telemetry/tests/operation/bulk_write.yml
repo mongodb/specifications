@@ -70,11 +70,11 @@ tests:
             db.operation.name: bulkWrite
             db.operation.summary: bulkWrite operation-bulk-write.test
             nested:
-              - name: command bulkWrite
+              - name: bulkWrite bulkWrite operation-bulk-write.test
                 attributes:
                   db.system: mongodb
                 db.namespace: admin
-                db.collection.name: admin.$cmd
+                db.collection.name: test
                 db.command.name: bulkWrite
                 network.transport: tcp
                 db.mongodb.cursor_id: { $$exists: false }
