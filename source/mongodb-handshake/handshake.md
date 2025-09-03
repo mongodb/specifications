@@ -185,8 +185,8 @@ Drivers MUST NOT provide a default value for this key.
 
 This value is required and is not application configurable.
 
-The internal driver name. For drivers written on-top of other core drivers, the underlying driver will typically expose
-a function to append additional name to this field.
+The internal driver name. For drivers written on-top of other core drivers, the `appendClientMetadata()` method can be
+used to add package information to an existing MongoClient.
 
 Example:
 
@@ -200,7 +200,7 @@ Example:
 This value is required and is not application configurable.
 
 The internal driver version. The version formatting is not defined. For drivers written on-top of other core drivers,
-the underlying driver will typically expose a function to append additional name to this field.
+the `appendClientMetadata()` method can be used to add package information to an existing MongoClient.
 
 Example:
 
@@ -405,6 +405,9 @@ class DriverInfoOptions {
 }
 ```
 
+Two `DriverInfo` objects are considered identical if all fields are strictly equal with case sensitive string
+comparison.
+
 Note that how these options are provided to a driver during `MongoClient` initialization is left up to the implementer.
 
 ### Metadata updates after MongoClient initialization
@@ -441,6 +444,12 @@ be appended to their respective fields, and be delimited by a `|` character. For
     }
 }
 ```
+
+Some client libraries provide APIs that accept a pre-initialized MongoClient as an argument. In these circumstances, it
+is possible for multiple library objects to be associated with the same MongoClient, which could result in the same
+metadata being appended multiple times. Drivers MUST ensure that a `DriverInfo` object can be appended to a MongoClient
+exactly once. However, drivers MUST ensure that the same `name` with different versions or platforms can be appended to
+the existing MongoClient object.
 
 **NOTE:** All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatention.
 Drivers MUST throw an error if any of these strings contains that character.
