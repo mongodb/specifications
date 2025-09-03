@@ -107,7 +107,7 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "coll",
           "arguments": {
             "filter": {
@@ -217,7 +217,7 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "coll",
           "arguments": {
             "filter": {
@@ -334,7 +334,7 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "coll",
           "arguments": {
             "timeoutMS": 200,
@@ -445,7 +445,7 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "coll",
           "arguments": {
             "timeoutMS": 50,
@@ -458,7 +458,7 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "coll",
           "arguments": {
             "filter": {
@@ -584,7 +584,7 @@
           }
         },
         {
-          "name": "findOne",
+          "name": "find",
           "object": "coll",
           "arguments": {
             "timeoutMS": 50,

@@ -71,7 +71,7 @@ tests:
         expectError:
           isTimeoutError: true
       # Execute a subsequent operation to complete the read.
-      - name: findOne
+      - name: find
         object: *collection
         arguments:
           filter: {_id: 1}
@@ -128,8 +128,8 @@ tests:
           isTimeoutError: true
       # Execute a subsequent operation to complete the read. We expect failure
       # in the pending read, resulting in a closed connection. However, the
-      # findOne should retry and succeed.
-      - name: findOne
+      # find should retry and succeed.
+      - name: find
         object: *collection
         arguments:
           filter: {_id: 1}
@@ -191,7 +191,7 @@ tests:
         expectError:
           isTimeoutError: true
       # Execute a subsequent operation to complete the read.
-      - name: findOne
+      - name: find
         object: *collection
         arguments:
           timeoutMS: 200
@@ -248,7 +248,7 @@ tests:
         expectError:
           isTimeoutError: true
       # Execute a subsequent operation with a timeout less than the block time.
-      - name: findOne
+      - name: find
         object: *collection
         arguments:
           timeoutMS: 50
@@ -256,7 +256,7 @@ tests:
         expectError:
           isTimeoutError: true
       # Execute a final operation to drain the buffer.
-      - name: findOne
+      - name: find
         object: *collection
         arguments:
           filter: {_id: 1}
@@ -320,7 +320,7 @@ tests:
         arguments:
           ms: 500
       # Execute a subsequent operation with a timeout less than the block time.
-      - name: findOne
+      - name: find
         object: *collection
         arguments:
           timeoutMS: 50
