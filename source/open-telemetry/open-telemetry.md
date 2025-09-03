@@ -100,15 +100,18 @@ selection and serialization/deserialization.
 The span for the operation MUST be created within the current span of the host application, with the exceptions listed
 below.
 
-##### Cursors
+##### Transactions
 
-If the driver operation returns a cursor, spans for all the subsequent operations on the cursor SHOULD be nested into
-the operation span. This includes operations such as `getMore`, `next`, `close`.
+When a user starts a transaction with `startTransaction`, the driver SHOULD create a span for the pseudo operation
+`transaction`. This span MUST have only one attribute `db.system` with the value `mongodb`. All operations executed
+within the transaction SHOULD be nested to the `transaction` span.
+
+When a user commits or aborts a transaction with `commitTransaction` or `abortTransaction`, the driver SHOULD finish the
+`transaction` span.
 
 ##### `withTransaction`
 
-The `withTransaction` operation is a special case because it may include other operations that are executed "in scope"
-of `withTransaction`. In this case, spans for operations that are executed inside the callbacks SHOULD be nested into
+In case of `withTransaction` operation spans for operations that are executed inside the callbacks SHOULD be nested into
 the `withTransaction` span.
 
 ##### Span Name
@@ -191,12 +194,16 @@ Spans SHOULD have the following attributes:
 | `db.query.text`                   | `string` | Database command that was sent to the server. Content should be equivalent to the `document` field of the CommandStartedEvent of the command monitoring.                                           | Conditional                  |
 | `db.mongodb.cursor_id`            | `int64`  | If a cursor is created or used in the operation                                                                                                                                                    | Required if available        |
 
-##### db.response.status_code and error.type
+Besides the attributes listed in the table above, drivers MAY add other attributes from the
+[Semantic Conventions for Databases](https://opentelemetry.io/docs/specs/semconv/registry/attributes/db/) that are
+applicable to MongoDB.
+
+###### db.response.status_code and error.type
 
 These attributes should be added only if the command was not successful. The content of `error.type` is language
 specific; a driver decides what best describes the error.
 
-##### db.query.text
+###### db.query.text
 
 This attribute contains the full database command executed serialized to extended JSON. If not truncated, the content of
 this attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command monitoring
@@ -210,13 +217,19 @@ added and truncated to the provided value (similar to the Logging specification)
 On the `MongoClient` level this configuration can be implemented with a `MongoClient` option, for example,
 `tracing.query_text_max_length`.
 
-##### db.mongodb.cursor_id
+###### db.mongodb.cursor_id
 
 If the command returns a cursor, or uses a cursor, the `cursor_id` attribute SHOULD be added.
 
-##### Exception Handling
+##### Exceptions
 
-Exceptions MUST be added to the parent span of the command span, which is the driver operation span.
+If the server command fails with an exception, drivers MUST record an exception to the current command span. When
+recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute if
+available:
+
+- `exception.message`
+- `exception.type`
+- `exception.stacktrace`
 
 ## Motivation for Change
 
