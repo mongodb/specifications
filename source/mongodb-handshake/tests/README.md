@@ -202,7 +202,7 @@ Before each test case, perform the setup.
         - `client.driver.version`:
             - If test case's version is non-null: `1.2|<version>`
             - Otherwise, the field remains unchanged: `1.2`
-        - `client.driver.platform`:
+        - `client.platform`:
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
 
@@ -242,9 +242,9 @@ Before each test case, perform the setup.
 | 3    | library   | 2.0     | Library Platform   |
 | 4    | library   | 1.2     | Framework Platform |
 | 5    | framework | 2.0     | Library Platform   |
-| 7    | framework | 1.2     | Framework Platform |
-| 8    | library   | 2.0     | Framework Platform |
-| 9    | framework | 2.0     | Framework Platform |
+| 6    | framework | 1.2     | Framework Platform |
+| 7    | library   | 2.0     | Framework Platform |
+| 8    | framework | 2.0     | Framework Platform |
 
 #### Running a test case
 
@@ -255,17 +255,17 @@ Before each test case, perform the setup.
     - The command succeeds.
 
     - The framework metadata is appended to the existing `DriverInfoOptions` in the `client.driver` fields of the `hello`
-        command, with values separated by a pipe `|`.
+        command, with values separated by a pipe `|`. To simplify assertions in these tests, strip out the default driver
+        info that is automatically added by the driver (ex: `metadata.name.split('|').slice(1).join('|')`).
 
-        - `client.driver.name`:
-            - If test case's name is `framework`: `library|framework`
-            - Otherwise, the field remains unchanged: `library`
-        - `client.driver.version`:
-            - If test case's version is 2.0: `1.2|2.0`
-            - Otherwise, the field remains unchanged: `1.2`
-        - `client.driver.platform`:
-            - If test case's platform is `Framework Platform`: `Library Platform|Framework Platform`
-            - Otherwise, the field remains unchanged: `Library Platform`
+        - If the test case's DriverInfo is identical to the driver info from setup step 2 (test case 1):
+            - Assert metadata.name is equal to `library`
+            - Assert metadata.version is equal to `1.2`
+            - Assert metadata.platform is equal to `LibraryPlatform`
+        - Otherwise:
+            - Assert metadata.name is equal to `library|<name>`
+            - Assert metadata.version is equal to `1.2|<version>`
+            - Assert metadata.platform is equal to `LibraryPlatform|<platform>`
 
     - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
 

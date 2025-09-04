@@ -561,6 +561,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
 - 2024-10-09: Clarify that FaaS and container metadata must both be populated when both are present.
