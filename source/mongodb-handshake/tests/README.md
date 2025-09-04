@@ -202,8 +202,102 @@ Before each test case, perform the setup.
         - `client.driver.version`:
             - If test case's version is non-null: `1.2|<version>`
             - Otherwise, the field remains unchanged: `1.2`
-        - `client.driver.platform`:
+        - `client.platform`:
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
 
     - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
+
+## Test 3: Multiple Successive Metadata Updates with Identical/Partially Identical `DriverInfo`
+
+There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
+Before each test case, perform the setup.
+
+### Setup
+
+1. Create a `MongoClient` instance with:
+
+    - `maxIdleTimeMS` set to `1ms`
+
+2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+3. Send a `ping` command to the server and verify that the command succeeds.
+
+4. Save intercepted `client` document as `updatedClientMetadata`.
+
+5. Wait 5ms for the connection to become idle.
+
+#### Parameterized test cases
+
+| Case | Name      | Version | Platform           |
+| ---- | --------- | ------- | ------------------ |
+| 1    | library   | 1.2     | Library Platform   |
+| 2    | framework | 1.2     | Library Platform   |
+| 3    | library   | 2.0     | Library Platform   |
+| 4    | library   | 1.2     | Framework Platform |
+| 5    | framework | 2.0     | Library Platform   |
+| 6    | framework | 1.2     | Framework Platform |
+| 7    | library   | 2.0     | Framework Platform |
+| 8    | framework | 2.0     | Framework Platform |
+
+#### Running a test case
+
+1. Append the `DriverInfoOptions` from the selected test case to the `MongoClient` metadata.
+
+2. Send a `ping` command to the server and verify:
+
+    - The command succeeds.
+
+    - The framework metadata is appended to the existing `DriverInfoOptions` in the `client.driver` fields of the `hello`
+        command, with values separated by a pipe `|`. To simplify assertions in these tests, strip out the default driver
+        info that is automatically added by the driver (ex: `metadata.name.split('|').slice(1).join('|')`).
+
+        - If the test case's DriverInfo is identical to the driver info from setup step 2 (test case 1):
+            - Assert metadata.name is equal to `library`
+            - Assert metadata.version is equal to `1.2`
+            - Assert metadata.platform is equal to `LibraryPlatform`
+        - Otherwise:
+            - Assert metadata.name is equal to `library|<name>`
+            - Assert metadata.version is equal to `1.2|<version>`
+            - Assert metadata.platform is equal to `LibraryPlatform|<platform>`
+
+    - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
+
+## Test 4: Metadata is not appended if identical to initial metadata
+
+1. Create a `MongoClient` instance with:
+
+    - `maxIdleTimeMS` set to `1ms`
+    - `driverInfo` set to the following:
+
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+2. Send a `ping` command to the server and verify that the command succeeds.
+
+3. Save intercepted `client` document as `clientMetadata`.
+
+4. Wait 5ms for the connection to become idle.
+
+5. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+6. Send a `ping` command to the server and verify that the command succeeds.
+
+7. Save intercepted `client` document as `updatedClientMetadata`.
+
+8. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
