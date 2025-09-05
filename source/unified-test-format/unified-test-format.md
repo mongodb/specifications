@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.25.0
+- Current Schema Version: 1.26.0
 
 ______________________________________________________________________
 
@@ -541,6 +541,16 @@ The structure of this object is as follows:
                 can avoid test errors loading crypt_shared from different paths.
         - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
         - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
+
+    <span id="entity_client_awaitMinPoolSizeMS"></span>
+
+    - `awaitMinPoolSizeMS`: Optional, integer. When specified, this parameter defines the maximum duration (in
+        milliseconds) that the test runner MUST wait for each connection pool to be populated with `minPoolSize` URI
+        option. Only connection pools for data-bearing nodes should be considered. If any connection pool is not populated
+        within the specified timeframe, the test runner MUST raise an error and mark the test as failed. Any CMAP and SDAM
+        event/log listeners configured on the client should ignore any events that occur before the pool is being
+        populated. If the parameter is omitted or if `minPoolSize` URI option is set to 0, no waiting is required for a
+        specific pool state prior to test execution.
 
 <span id="entity_clientEncryption"></span>
 
@@ -3419,6 +3429,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-09-16: **Schema version 1.26.** Add `awaitMinPoolSize` client parameter to await on connection pool population.
 
 - 2025-09-15: Remove note about Atlas Data Lake since Atlas Data Lake testing is removed.
 
