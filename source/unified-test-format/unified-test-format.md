@@ -542,6 +542,12 @@ The structure of this object is as follows:
         - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
         - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
+    <span id="entity_client_awaitMinPoolSize"></span>
+
+    - `awaitMinPoolSize`: Optional boolean. If `true`, the unified spec runner must wait for the connection pool to be
+        populated for all servers according to the `minPoolSize` option. If `false`, not specified, or if minPoolSize
+        equals 0, there is no need to wait for any specific pool state.
+
 <span id="entity_clientEncryption"></span>
 
 - `clientEncryption`: Optional object. Defines a ClientEncryption object.
@@ -3421,6 +3427,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-09-05: **Schema version 1.26.** Add `awaitMinPoolSize` client parameter to await on connection pool population.
 
 - 2025-08-20: Fix typo `_enxcol` => `enxcol_`
 
