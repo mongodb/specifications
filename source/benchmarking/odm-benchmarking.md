@@ -106,7 +106,8 @@ monotonic timer (or best language approximation).
 Unless otherwise specified, the number of iterations to measure per task is variable:
 
 - iterations should loop for at least 30 seconds cumulative execution time
-- iterations should stop after 10 iterations or 1 minute cumulative execution time, whichever is shorter
+- once this 30 second minimum execution time is reached, iterations should stop after at least 10 iterations or 1 minute
+    cumulative execution time, whichever is shorter
 
 This balances measurement stability with a timing cap to ensure all tasks can complete in a reasonable time.
 
@@ -117,7 +118,7 @@ algorithm:
 - Sort the array into ascending order (i.e. shortest time first)
 - Let the index i for percentile p in the range [1,100] be defined as: `i = int(N * p / 100) - 1`
 
-*N.B. This is the [Nearest Rank](https://en.wikipedia.org/wiki/Percentile#The_Nearest_Rank_method) algorithm, chosen for
+*N.B. This is the [Nearest Rank](https://en.wikipedia.org/wiki/Percentile#The_nearest-rank_method) algorithm, chosen for
 its utter simplicity given that it needs to be implemented identically across a wide variety of ODMs and languages.*
 
 The 50th percentile (i.e. the median) will be used for score composition. Other percentiles will be stored for
@@ -145,7 +146,7 @@ into the efficiency of the ODM's implementation of basic data operations.
 The data will be stored as strict JSON with no extended types. These JSON representations must be converted into
 equivalent models as part of each benchmark task.
 
-Flat model benchmark tasks include:s
+Flat model benchmark tasks include:
 
 - Small model creation
 - Small model update
@@ -202,13 +203,13 @@ JSON with an encoded length of approximately 250 bytes.
 Dataset size: For scoring purposes, the dataset size is the size of the `small_doc` source file (250 bytes) times 10,000
 operations, which equals 2,250,000 bytes or 2.5 MB.
 
-| Phase       | Description                                                                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the inserted `id` field for each into a list. |
-| Before task | n/a.                                                                                                                                                                       |
-| Do task     | For each of the 10,000 `id` values, perform a filter operation to find the corresponding SMALL_DOC model.                                                                  |
-| After task  | n/a.                                                                                                                                                                       |
-| Teardown    | Drop the collection associated with the SMALL_DOC model.                                                                                                                   |
+| Phase       | Description                                                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. Insert 10,000 instances into the database, saving the `_id` field for each into a list. |
+| Before task | n/a.                                                                                                                                                               |
+| Do task     | For each of the 10,000 `_id` values, perform a filter operation to find the corresponding SMALL_DOC model.                                                         |
+| After task  | n/a.                                                                                                                                                               |
+| Teardown    | Drop the collection associated with the SMALL_DOC model.                                                                                                           |
 
 #### Small model find foreign key by filter
 
@@ -222,13 +223,13 @@ consisting of only a string field called `name`, must also be created.
 Dataset size: For scoring purposes, the dataset size is the size of the `small_doc` source file (250 bytes) times 10,000
 operations, which equals 2,250,000 bytes or 2.5 MB.
 
-| Phase       | Description                                                                                                                                                                                                                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. For each SMALL_DOC model, create and assign a FOREIGN_KEY instance to the `field_fk` field. Insert 10,000 instances of both models into the database, saving the inserted `id` field for each FOREIGN_KEY into a list. |
-| Before task | n/a.                                                                                                                                                                                                                                                                                              |
-| Do task     | For each of the 10,000 FOREIGN_KEY `id` values, perform a filter operation in an ODM-appropriate manner to find the corresponding SMALL_DOC model.                                                                                                                                                |
-| After task  | n/a.                                                                                                                                                                                                                                                                                              |
-| Teardown    | Drop the collections associated with the SMALL_DOC and FOREIGN_KEY models.                                                                                                                                                                                                                        |
+| Phase       | Description                                                                                                                                                                                                                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Load the SMALL_DOC dataset into memory as an ODM-appropriate model object. For each SMALL_DOC model, create and assign a FOREIGN_KEY instance to the `field_fk` field. Insert 10,000 instances of both models into the database, saving the inserted `_id` field for each FOREIGN_KEY into a list. |
+| Before task | n/a.                                                                                                                                                                                                                                                                                               |
+| Do task     | For each of the 10,000 FOREIGN_KEY `_id` values, perform a filter operation in an ODM-appropriate manner to find the corresponding SMALL_DOC model.                                                                                                                                                |
+| After task  | n/a.                                                                                                                                                                                                                                                                                               |
+| Teardown    | Drop the collections associated with the SMALL_DOC and FOREIGN_KEY models.                                                                                                                                                                                                                         |
 
 #### Large model creation
 
