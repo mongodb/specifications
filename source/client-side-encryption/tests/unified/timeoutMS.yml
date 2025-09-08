@@ -122,7 +122,7 @@ tests:
         arguments:
           document: &doc0 { _id: 1, encrypted_string: "string0", random: "abc" }
         object: "coll"
-        expectResult:
+        expectError:
           isTimeoutError: true
     expectEvents:
       - client: "client0"
@@ -156,5 +156,5 @@ tests:
         arguments:
           document: *doc0
         object: "coll"
-        expectResult:
+        expectError:
           isTimeoutError: true
