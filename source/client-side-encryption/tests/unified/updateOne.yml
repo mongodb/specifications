@@ -248,6 +248,8 @@ tests:
                 updates:
                   - q: {}
                     u: { $unset: { encrypted_string: "" } }
+                    multi: { "$$unsetOrMatches": false }
+                    upsert: { "$$unsetOrMatches": false }
                 ordered: true
               commandName: update
   - description: "$rename works if target value has same encryption options"
@@ -292,6 +294,8 @@ tests:
                 updates:
                   - q: {}
                     u: { $rename: { encrypted_string: "encrypted_string_equivalent" } }
+                    multi: { "$$unsetOrMatches": false }
+                    upsert: { "$$unsetOrMatches": false }
                 ordered: true
               commandName: update
   - description: "$rename fails if target value has different encryption options"
