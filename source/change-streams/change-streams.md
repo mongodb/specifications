@@ -757,17 +757,17 @@ When `resumeAfter` is specified the `ChangeStream` will return notifications sta
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
-A driver MUST only attempt to resume once from a resumable error.  However, if the `aggregate` for that resume succeeds,
+A driver MUST only attempt to resume once from a resumable error. However, if the `aggregate` for that resume succeeds,
 a driver MUST ensure that following resume attempts can succeed, even in the absence of any changes received by the
-cursor between resume attempts.  For example:
+cursor between resume attempts. For example:
 
 1. `aggregate` (succeeds)
-1. `getMore` (fails with resumable error)
-1. `aggregate` (succeeds)
-1. `getMore` (fails with resumable error)
-1. `aggregate` (succeeds)
-1. `getMore` (succeeds)
-1. change stream document received
+2. `getMore` (fails with resumable error)
+3. `aggregate` (succeeds)
+4. `getMore` (fails with resumable error)
+5. `aggregate` (succeeds)
+6. `getMore` (succeeds)
+7. change stream document received
 
 A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and
 MUST NOT attempt to kill the cursor on any other server. Any exceptions or errors that occur during the process of
