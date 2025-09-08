@@ -56,7 +56,7 @@
               },
               "nested": [
                 {
-                  "name": "createIndexes operation-create-indexes.test",
+                  "name": "createIndexes",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-create-indexes",
@@ -87,7 +87,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "createIndexes",
+                    "db.query.summary": "createIndexes operation-create-indexes.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

@@ -105,11 +105,11 @@
               },
               "nested": [
                 {
-                  "name": "command mapReduce",
+                  "name": "mapReduce",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-map-reduce",
-                    "db.collection.name": "operation-map-reduce.$cmd",
+                    "db.collection.name": "test",
                     "db.command.name": "mapReduce",
                     "network.transport": "tcp",
                     "db.mongodb.cursor_id": {
@@ -139,7 +139,7 @@
                     "server.type": {
                       "$$type": "string"
                     },
-                    "db.query.summary": "mapReduce",
+                    "db.query.summary": "mapReduce operation-map-reduce.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

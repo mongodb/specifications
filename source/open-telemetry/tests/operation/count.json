@@ -50,17 +50,17 @@
           "ignoreExtraSpans": false,
           "spans": [
             {
-              "name": "estimatedDocumentCount operation-count.test",
+              "name": "count operation-count.test",
               "attributes": {
                 "db.system": "mongodb",
                 "db.namespace": "operation-count",
                 "db.collection.name": "test",
-                "db.operation.name": "estimatedDocumentCount",
-                "db.operation.summary": "estimatedDocumentCount operation-count.test"
+                "db.operation.name": "count",
+                "db.operation.summary": "count operation-count.test"
               },
               "nested": [
                 {
-                  "name": "count operation-count.test",
+                  "name": "count",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-count",
@@ -91,7 +91,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "count",
+                    "db.query.summary": "count operation-count.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

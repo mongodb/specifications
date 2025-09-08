@@ -102,7 +102,7 @@
               },
               "nested": [
                 {
-                  "name": "find cursor.test",
+                  "name": "find",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "cursor",
@@ -133,7 +133,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "find",
+                    "db.query.summary": "find cursor.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {
@@ -160,130 +160,130 @@
                       ]
                     }
                   }
+                },
+                {
+                  "name": "getMore",
+                  "attributes": {
+                    "db.system": "mongodb",
+                    "db.namespace": "cursor",
+                    "db.collection.name": "test",
+                    "db.command.name": "getMore",
+                    "network.transport": "tcp",
+                    "db.mongodb.cursor_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.response.status_code": {
+                      "$$exists": false
+                    },
+                    "exception.message": {
+                      "$$exists": false
+                    },
+                    "exception.type": {
+                      "$$exists": false
+                    },
+                    "exception.stacktrace": {
+                      "$$exists": false
+                    },
+                    "server.address": {
+                      "$$type": "string"
+                    },
+                    "server.port": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.query.summary": "getMore cursor.test",
+                    "db.query.text": {
+                      "$$matchAsDocument": {
+                        "$$matchAsRoot": {
+                          "getMore": {
+                            "$$type": "long"
+                          },
+                          "collection": "test",
+                          "batchSize": 2
+                        }
+                      }
+                    },
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "getMore",
+                  "attributes": {
+                    "db.system": "mongodb",
+                    "db.namespace": "cursor",
+                    "db.collection.name": "test",
+                    "db.command.name": "getMore",
+                    "network.transport": "tcp",
+                    "db.mongodb.cursor_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.response.status_code": {
+                      "$$exists": false
+                    },
+                    "exception.message": {
+                      "$$exists": false
+                    },
+                    "exception.type": {
+                      "$$exists": false
+                    },
+                    "exception.stacktrace": {
+                      "$$exists": false
+                    },
+                    "server.address": {
+                      "$$type": "string"
+                    },
+                    "server.port": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.query.summary": "getMore cursor.test",
+                    "db.query.text": {
+                      "$$matchAsDocument": {
+                        "$$matchAsRoot": {
+                          "getMore": {
+                            "$$type": "long"
+                          },
+                          "collection": "test",
+                          "batchSize": 2
+                        }
+                      }
+                    },
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    }
+                  }
                 }
               ]
-            },
-            {
-              "name": "getMore cursor.test",
-              "attributes": {
-                "db.system": "mongodb",
-                "db.namespace": "cursor",
-                "db.collection.name": "test",
-                "db.command.name": "getMore",
-                "network.transport": "tcp",
-                "db.mongodb.cursor_id": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "db.response.status_code": {
-                  "$$exists": false
-                },
-                "exception.message": {
-                  "$$exists": false
-                },
-                "exception.type": {
-                  "$$exists": false
-                },
-                "exception.stacktrace": {
-                  "$$exists": false
-                },
-                "server.address": {
-                  "$$type": "string"
-                },
-                "server.port": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "db.query.summary": "getMore",
-                "db.query.text": {
-                  "$$matchAsDocument": {
-                    "$$matchAsRoot": {
-                      "getMore": {
-                        "$$type": "long"
-                      },
-                      "collection": "test",
-                      "batchSize": 2
-                    }
-                  }
-                },
-                "db.mongodb.server_connection_id": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "db.mongodb.driver_connection_id": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "getMore cursor.test",
-              "attributes": {
-                "db.system": "mongodb",
-                "db.namespace": "cursor",
-                "db.collection.name": "test",
-                "db.command.name": "getMore",
-                "network.transport": "tcp",
-                "db.mongodb.cursor_id": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "db.response.status_code": {
-                  "$$exists": false
-                },
-                "exception.message": {
-                  "$$exists": false
-                },
-                "exception.type": {
-                  "$$exists": false
-                },
-                "exception.stacktrace": {
-                  "$$exists": false
-                },
-                "server.address": {
-                  "$$type": "string"
-                },
-                "server.port": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "db.query.summary": "getMore",
-                "db.query.text": {
-                  "$$matchAsDocument": {
-                    "$$matchAsRoot": {
-                      "getMore": {
-                        "$$type": "long"
-                      },
-                      "collection": "test",
-                      "batchSize": 2
-                    }
-                  }
-                },
-                "db.mongodb.server_connection_id": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                },
-                "db.mongodb.driver_connection_id": {
-                  "$$type": [
-                    "int",
-                    "long"
-                  ]
-                }
-              }
             }
           ]
         }

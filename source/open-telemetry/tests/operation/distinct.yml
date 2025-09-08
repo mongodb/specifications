@@ -39,7 +39,7 @@ tests:
               db.operation.name: distinct
               db.operation.summary: distinct operation-distinct.test
             nested:
-              - name: distinct operation-distinct.test
+              - name: distinct
                 attributes:
                   db.system: mongodb
                   db.namespace: operation-distinct
@@ -53,7 +53,7 @@ tests:
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
                   server.port: { $$type: ['int', 'long'] }
-                  db.query.summary: distinct
+                  db.query.summary: distinct operation-distinct.test
                   db.query.text:
                     $$matchAsDocument:
                       $$matchAsRoot:

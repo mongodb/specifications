@@ -58,7 +58,7 @@
               "db.operation.summary": "listIndexes operation-list-indexes.test",
               "nested": [
                 {
-                  "name": "listIndexes operation-list-indexes.test",
+                  "name": "listIndexes",
                   "attributes": {
                     "db.system": "mongodb"
                   },
@@ -90,7 +90,7 @@
                       "long"
                     ]
                   },
-                  "db.query.summary": "listIndexes",
+                  "db.query.summary": "listIndexes operation-list-indexes.test",
                   "db.query.text": {
                     "$$matchAsDocument": {
                       "$$matchAsRoot": {

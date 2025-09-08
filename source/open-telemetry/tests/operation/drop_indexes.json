@@ -81,7 +81,7 @@
               },
               "nested": [
                 {
-                  "name": "dropIndexes operation-drop-indexes.test",
+                  "name": "dropIndexes",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-drop-indexes",
@@ -112,7 +112,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "dropIndexes",
+                    "db.query.summary": "dropIndexes operation-drop-indexes.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

@@ -16,17 +16,18 @@ tests:
       - client: *client0
         ignoreExtraSpans: false
         spans:
-          - name: listDatabases
+          - name: listDatabases admin
             attributes:
               db.system: mongodb
-            db.namespace: admin
-            db.operation.name: listDatabases
-            db.operation.summary: listDatabases admin
+              db.namespace: admin
+              db.operation.name: listDatabases
+              db.operation.summary: listDatabases admin
             nested:
-              - name: listDatabases admin
+              - name: listDatabases
                 attributes:
                   db.system: mongodb
                   db.namespace: admin
+                  db.collection.name: { $$exists: false }
                   db.command.name: listDatabases
                   network.transport: tcp
                   db.mongodb.cursor_id: { $$exists: false }
@@ -36,7 +37,7 @@ tests:
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
                   server.port: { $$type: ['int', 'long'] }
-                  db.query.summary: listDatabases
+                  db.query.summary: listDatabases admin
                   db.query.text:
                     $$matchAsDocument:
                       $$matchAsRoot:

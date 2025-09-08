@@ -34,7 +34,7 @@ tests:
               db.operation.name: createIndexes
               db.operation.summary: createIndexes operation-create-indexes.test
             nested:
-              - name: createIndexes operation-create-indexes.test
+              - name: createIndexes
                 attributes:
                   db.system: mongodb
                   db.namespace: *database0Name
@@ -48,7 +48,7 @@ tests:
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
                   server.port: { $$type: ['int', 'long'] }
-                  db.query.summary: createIndexes
+                  db.query.summary: createIndexes operation-create-indexes.test
                   db.query.text:
                     $$matchAsDocument:
                       $$matchAsRoot:

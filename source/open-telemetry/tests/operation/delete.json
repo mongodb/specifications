@@ -48,20 +48,21 @@
           "ignoreExtraSpans": false,
           "spans": [
             {
-              "name": "deleteMany operation-delete.test",
+              "name": "delete operation-delete.test",
               "attributes": {
                 "db.system": "mongodb",
                 "db.namespace": "operation-delete",
                 "db.collection.name": "test",
-                "db.operation.name": "deleteMany",
-                "db.operation.summary": "deleteMany operation-delete.test"
+                "db.operation.name": "delete",
+                "db.operation.summary": "delete operation-delete.test"
               },
               "nested": [
                 {
-                  "name": "delete operation-delete.test",
+                  "name": "delete",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-delete",
+                    "db.collection.name": "test",
                     "server.address": {
                       "$$type": "string"
                     },
@@ -71,7 +72,7 @@
                         "string"
                       ]
                     },
-                    "db.query.summary": "delete",
+                    "db.query.summary": "delete operation-delete.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

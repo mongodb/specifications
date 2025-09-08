@@ -21,26 +21,46 @@
       "database": {
         "id": "database0",
         "client": "client0",
-        "databaseName": "operation-bulk-write"
+        "databaseName": "operation-bulk-write-0"
+      }
+    },
+    {
+      "database": {
+        "id": "database1",
+        "client": "client0",
+        "databaseName": "operation-bulk-write-1"
       }
     },
     {
       "collection": {
         "id": "collection0",
         "database": "database0",
-        "collectionName": "test"
+        "collectionName": "test0"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection1",
+        "database": "database1",
+        "collectionName": "test1"
       }
     }
   ],
   "initialData": [
     {
-      "collectionName": "test",
-      "databaseName": "operation-bulk-write",
+      "collectionName": "test0",
+      "databaseName": "operation-bulk-write-0",
+      "documents": []
+    },
+    {
+      "collectionName": "test1",
+      "databaseName": "operation-bulk-write-1",
       "documents": []
     }
   ],
   "_yamlAnchors": {
-    "namespace": "operation-bulk-write.test"
+    "namespace0": "operation-bulk-write-0.test0",
+    "namespace1": "operation-bulk-write-1.test1"
   },
   "tests": [
     {
@@ -53,7 +73,7 @@
             "models": [
               {
                 "insertOne": {
-                  "namespace": "operation-bulk-write.test",
+                  "namespace": "operation-bulk-write-0.test0",
                   "document": {
                     "_id": 8,
                     "x": 88
@@ -62,7 +82,7 @@
               },
               {
                 "updateOne": {
-                  "namespace": "operation-bulk-write.test",
+                  "namespace": "operation-bulk-write-0.test0",
                   "filter": {
                     "_id": 1
                   },
@@ -75,7 +95,7 @@
               },
               {
                 "updateMany": {
-                  "namespace": "operation-bulk-write.test",
+                  "namespace": "operation-bulk-write-1.test1",
                   "filter": {
                     "$and": [
                       {
@@ -99,7 +119,7 @@
               },
               {
                 "replaceOne": {
-                  "namespace": "operation-bulk-write.test",
+                  "namespace": "operation-bulk-write-1.test1",
                   "filter": {
                     "_id": 4
                   },
@@ -111,7 +131,7 @@
               },
               {
                 "deleteOne": {
-                  "namespace": "operation-bulk-write.test",
+                  "namespace": "operation-bulk-write-0.test0",
                   "filter": {
                     "_id": 5
                   }
@@ -119,7 +139,7 @@
               },
               {
                 "deleteMany": {
-                  "namespace": "operation-bulk-write.test",
+                  "namespace": "operation-bulk-write-1.test1",
                   "filter": {
                     "$and": [
                       {
@@ -146,152 +166,164 @@
           "ignoreExtraSpans": false,
           "spans": [
             {
-              "name": "bulkWrite operation-bulk-write.test",
+              "name": "bulkWrite admin",
               "attributes": {
-                "db.system": "mongodb"
+                "db.system": "mongodb",
+                "db.namespace": "admin",
+                "db.collection.name": {
+                  "$$exists": false
+                },
+                "db.operation.name": "bulkWrite",
+                "db.operation.summary": "bulkWrite admin"
               },
-              "db.namespace": "operation-bulk-write",
-              "db.collection.name": "test",
-              "db.operation.name": "bulkWrite",
-              "db.operation.summary": "bulkWrite operation-bulk-write.test",
               "nested": [
                 {
-                  "name": "bulkWrite bulkWrite operation-bulk-write.test",
+                  "name": "bulkWrite",
                   "attributes": {
-                    "db.system": "mongodb"
-                  },
-                  "db.namespace": "admin",
-                  "db.collection.name": "test",
-                  "db.command.name": "bulkWrite",
-                  "network.transport": "tcp",
-                  "db.mongodb.cursor_id": {
-                    "$$exists": false
-                  },
-                  "db.response.status_code": {
-                    "$$exists": false
-                  },
-                  "exception.message": {
-                    "$$exists": false
-                  },
-                  "exception.type": {
-                    "$$exists": false
-                  },
-                  "exception.stacktrace": {
-                    "$$exists": false
-                  },
-                  "server.address": {
-                    "$$type": "string"
-                  },
-                  "server.port": {
-                    "$$type": [
-                      "int",
-                      "long"
-                    ]
-                  },
-                  "server.type": {
-                    "$$type": "string"
-                  },
-                  "db.query.summary": "bulkWrite",
-                  "db.query.text": {
-                    "$$matchAsDocument": {
-                      "$$matchAsRoot": {
-                        "bulkWrite": 1,
-                        "errorsOnly": true,
-                        "ordered": true,
-                        "ops": [
-                          {
-                            "insert": 0,
-                            "document": {
-                              "_id": 8,
-                              "x": 88
-                            }
-                          },
-                          {
-                            "update": 0,
-                            "multi": false,
-                            "filter": {
-                              "_id": 1
+                    "db.system": "mongodb",
+                    "db.namespace": "admin",
+                    "db.collection.name": {
+                      "$$exists": false
+                    },
+                    "db.command.name": "bulkWrite",
+                    "network.transport": "tcp",
+                    "db.mongodb.cursor_id": {
+                      "$$exists": false
+                    },
+                    "db.response.status_code": {
+                      "$$exists": false
+                    },
+                    "exception.message": {
+                      "$$exists": false
+                    },
+                    "exception.type": {
+                      "$$exists": false
+                    },
+                    "exception.stacktrace": {
+                      "$$exists": false
+                    },
+                    "server.address": {
+                      "$$type": "string"
+                    },
+                    "server.port": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "server.type": {
+                      "$$type": "string"
+                    },
+                    "db.query.summary": "bulkWrite admin",
+                    "db.query.text": {
+                      "$$matchAsDocument": {
+                        "$$matchAsRoot": {
+                          "bulkWrite": 1,
+                          "errorsOnly": true,
+                          "ordered": true,
+                          "ops": [
+                            {
+                              "insert": 0,
+                              "document": {
+                                "_id": 8,
+                                "x": 88
+                              }
                             },
-                            "updateMods": {
-                              "$inc": {
-                                "x": 1
+                            {
+                              "update": 0,
+                              "multi": false,
+                              "filter": {
+                                "_id": 1
+                              },
+                              "updateMods": {
+                                "$inc": {
+                                  "x": 1
+                                }
+                              }
+                            },
+                            {
+                              "update": 1,
+                              "multi": true,
+                              "filter": {
+                                "$and": [
+                                  {
+                                    "_id": {
+                                      "$gt": 1
+                                    }
+                                  },
+                                  {
+                                    "_id": {
+                                      "$lte": 3
+                                    }
+                                  }
+                                ]
+                              },
+                              "updateMods": {
+                                "$inc": {
+                                  "x": 2
+                                }
+                              }
+                            },
+                            {
+                              "update": 1,
+                              "multi": false,
+                              "filter": {
+                                "_id": 4
+                              },
+                              "updateMods": {
+                                "x": 44
+                              },
+                              "upsert": true
+                            },
+                            {
+                              "delete": 0,
+                              "multi": false,
+                              "filter": {
+                                "_id": 5
+                              }
+                            },
+                            {
+                              "delete": 1,
+                              "multi": true,
+                              "filter": {
+                                "$and": [
+                                  {
+                                    "_id": {
+                                      "$gt": 5
+                                    }
+                                  },
+                                  {
+                                    "_id": {
+                                      "$lte": 7
+                                    }
+                                  }
+                                ]
                               }
                             }
-                          },
-                          {
-                            "update": 0,
-                            "multi": true,
-                            "filter": {
-                              "$and": [
-                                {
-                                  "_id": {
-                                    "$gt": 1
-                                  }
-                                },
-                                {
-                                  "_id": {
-                                    "$lte": 3
-                                  }
-                                }
-                              ]
+                          ],
+                          "nsInfo": [
+                            {
+                              "ns": "operation-bulk-write-0.test0"
                             },
-                            "updateMods": {
-                              "$inc": {
-                                "x": 2
-                              }
+                            {
+                              "ns": "operation-bulk-write-1.test1"
                             }
-                          },
-                          {
-                            "update": 0,
-                            "multi": false,
-                            "filter": {
-                              "_id": 4
-                            },
-                            "updateMods": {
-                              "x": 44
-                            },
-                            "upsert": true
-                          },
-                          {
-                            "delete": 0,
-                            "multi": false,
-                            "filter": {
-                              "_id": 5
-                            }
-                          },
-                          {
-                            "delete": 0,
-                            "multi": true,
-                            "filter": {
-                              "$and": [
-                                {
-                                  "_id": {
-                                    "$gt": 5
-                                  }
-                                },
-                                {
-                                  "_id": {
-                                    "$lte": 7
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
+                          ]
+                        }
                       }
+                    },
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
                     }
-                  },
-                  "db.mongodb.server_connection_id": {
-                    "$$type": [
-                      "int",
-                      "long"
-                    ]
-                  },
-                  "db.mongodb.driver_connection_id": {
-                    "$$type": [
-                      "int",
-                      "long"
-                    ]
                   }
                 }
               ]

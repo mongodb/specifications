@@ -35,7 +35,7 @@ tests:
               db.operation.name: dropCollection
               db.operation.summary: dropCollection operation-drop-collection.test
             nested:
-              - name: drop operation-drop-collection.test
+              - name: drop
                 attributes:
                   db.system: mongodb
                   db.namespace: operation-drop-collection
@@ -49,7 +49,7 @@ tests:
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
                   server.port: { $$type: ['int', 'long'] }
-                  db.query.summary: drop
+                  db.query.summary: drop operation-drop-collection.test
                   db.query.text:
                     $$matchAsDocument:
                       $$matchAsRoot:

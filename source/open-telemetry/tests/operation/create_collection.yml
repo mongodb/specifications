@@ -30,7 +30,7 @@ tests:
               db.operation.name: createCollection
               db.operation.summary: createCollection operation-create-collection.newlyCreatedCollection
             nested:
-              - name: create operation-create-collection.newlyCreatedCollection
+              - name: create
                 attributes:
                   db.system: mongodb
                   db.namespace: *database0Name
@@ -44,7 +44,7 @@ tests:
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
                   server.port: { $$type: ['int', 'long'] }
-                  db.query.summary: create
+                  db.query.summary: create operation-create-collection.newlyCreatedCollection
                   db.query.text:
                     $$matchAsDocument:
                       $$matchAsRoot:

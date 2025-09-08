@@ -100,104 +100,124 @@
                 {
                   "name": "insert transaction-tests.test",
                   "attributes": {
-                    "db.system": "mongodb"
+                    "db.system": "mongodb",
+                    "db.namespace": "transaction-tests",
+                    "db.collection.name": "test",
+                    "db.operation.name": "insert",
+                    "db.operation.summary": "insert transaction-tests.test"
                   },
-                  "db.namespace": "transaction-tests",
-                  "db.collection.name": "test",
-                  "db.operation.name": "insert",
-                  "db.operation.summary": "insert transaction-tests.test",
                   "nested": [
                     {
-                      "name": "command insert",
+                      "name": "insert",
                       "attributes": {
-                        "db.system": "mongodb"
-                      },
-                      "db.namespace": "transaction-tests",
-                      "server.address": {
-                        "$$type": "string"
-                      },
-                      "server.port": {
-                        "$$type": [
-                          "long",
-                          "string"
-                        ]
-                      },
-                      "server.type": {
-                        "$$type": "string"
-                      },
-                      "db.query.summary": "insert",
-                      "db.query.text": {
-                        "$$matchAsDocument": {
-                          "$$matchAsRoot": {
-                            "insert": "test",
-                            "ordered": true,
-                            "txnNumber": 1,
-                            "startTransaction": true,
-                            "autocommit": false,
-                            "documents": [
-                              {
-                                "_id": 1
-                              }
-                            ]
+                        "db.system": "mongodb",
+                        "db.namespace": "transaction-tests",
+                        "db.collection.name": "test",
+                        "server.address": {
+                          "$$type": "string"
+                        },
+                        "server.port": {
+                          "$$type": [
+                            "long",
+                            "string"
+                          ]
+                        },
+                        "server.type": {
+                          "$$type": "string"
+                        },
+                        "db.query.summary": "insert transaction-tests.test",
+                        "db.query.text": {
+                          "$$matchAsDocument": {
+                            "$$matchAsRoot": {
+                              "insert": "test",
+                              "ordered": true,
+                              "txnNumber": 1,
+                              "startTransaction": true,
+                              "autocommit": false,
+                              "documents": [
+                                {
+                                  "_id": 1
+                                }
+                              ]
+                            }
                           }
+                        },
+                        "db.mongodb.lsid": {
+                          "$$sessionLsid": "session0"
                         }
-                      },
-                      "db.mongodb.lsid": {
-                        "$$sessionLsid": "session0"
                       }
                     }
                   ]
                 },
                 {
-                  "name": "commitTransaction admin.$cmd",
+                  "name": "commitTransaction admin",
                   "attributes": {
                     "db.system": "mongodb",
-                    "nested": [
-                      {
-                        "name": "command commitTransaction",
-                        "attributes": {
-                          "db.system": "mongodb",
-                          "db.query.text": {
-                            "$$matchAsDocument": {
-                              "$$matchAsRoot": {
-                                "commitTransaction": 1,
-                                "txnNumber": 1,
-                                "autocommit": false
-                              }
+                    "db.namespace": "admin",
+                    "db.collection.name": {
+                      "$$exists": false
+                    },
+                    "db.operation.name": "commitTransaction"
+                  },
+                  "nested": [
+                    {
+                      "name": "commitTransaction",
+                      "attributes": {
+                        "db.system": "mongodb",
+                        "db.namespace": "admin",
+                        "db.collection.name": {
+                          "$$exists": false
+                        },
+                        "db.query.summary": "commitTransaction admin",
+                        "db.command.name": "commitTransaction",
+                        "db.query.text": {
+                          "$$matchAsDocument": {
+                            "$$matchAsRoot": {
+                              "commitTransaction": 1,
+                              "txnNumber": 1,
+                              "autocommit": false
                             }
                           }
                         }
                       }
-                    ]
-                  }
+                    }
+                  ]
                 }
               ]
-            }
-          ]
-        },
-        {
-          "name": "find transaction-tests.test",
-          "attributes": {},
-          "nested": [
+            },
             {
-              "name": "command find",
+              "name": "find transaction-tests.test",
               "attributes": {
                 "db.system": "mongodb",
                 "db.namespace": "transaction-tests",
-                "server.address": {
-                  "$$type": "string"
-                },
-                "server.port": {
-                  "$$type": [
-                    "long",
-                    "string"
-                  ]
-                },
-                "server.type": {
-                  "$$type": "string"
-                },
-                "db.query.summary": "find"
-              }
+                "db.collection.name": "test",
+                "db.operation.summary": "find transaction-tests.test",
+                "db.operation.name": "find"
+              },
+              "nested": [
+                {
+                  "name": "find",
+                  "attributes": {
+                    "db.system": "mongodb",
+                    "db.namespace": "transaction-tests",
+                    "db.collection.name": "test",
+                    "db.command.name": "find",
+                    "server.address": {
+                      "$$type": "string"
+                    },
+                    "server.port": {
+                      "$$type": [
+                        "long",
+                        "string"
+                      ]
+                    },
+                    "server.type": {
+                      "$$type": "string"
+                    },
+                    "db.query.summary": "find transaction-tests.test"
+                  }
+                }
+              ]
             }
           ]
         }

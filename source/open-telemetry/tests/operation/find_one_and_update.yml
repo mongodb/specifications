@@ -31,15 +31,15 @@ tests:
       - client: *client0
         ignoreExtraSpans: false
         spans:
-          - name: findOneAndUpdate operation-aggregate.test
+          - name: findAndModify operation-aggregate.test
             attributes:
               db.system: mongodb
               db.namespace: operation-aggregate
               db.collection.name: test
-              db.operation.name: findOneAndUpdate
-              db.operation.summary: findOneAndUpdate operation-aggregate.test
+              db.operation.name: findAndModify
+              db.operation.summary: findAndModify operation-aggregate.test
             nested:
-              - name: findAndModify operation-aggregate.test
+              - name: findAndModify
                 attributes:
                   db.system: mongodb
                   db.namespace: operation-aggregate
@@ -53,7 +53,7 @@ tests:
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
                   server.port: { $$type: ['int', 'long'] }
-                  db.query.summary: findAndModify
+                  db.query.summary: findAndModify operation-aggregate.test
                   db.query.text:
                     $$matchAsDocument:
                       $$matchAsRoot:

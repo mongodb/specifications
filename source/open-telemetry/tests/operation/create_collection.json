@@ -47,7 +47,7 @@
               },
               "nested": [
                 {
-                  "name": "create operation-create-collection.newlyCreatedCollection",
+                  "name": "create",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-create-collection",
@@ -78,7 +78,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "create",
+                    "db.query.summary": "create operation-create-collection.newlyCreatedCollection",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

@@ -60,7 +60,7 @@
               },
               "nested": [
                 {
-                  "name": "aggregate operation-aggregate.test",
+                  "name": "aggregate",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-aggregate",
@@ -91,7 +91,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "aggregate",
+                    "db.query.summary": "aggregate operation-aggregate.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

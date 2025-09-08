@@ -91,7 +91,7 @@
               },
               "nested": [
                 {
-                  "name": "find operation-find-retries.test",
+                  "name": "find",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-find-retries",
@@ -101,20 +101,15 @@
                     "db.mongodb.cursor_id": {
                       "$$exists": false
                     },
-                    "db.response.status_code": {
-                      "$$exists": true
-                    },
-                    "error.type": {
-                      "$$exists": true
-                    },
+                    "db.response.status_code": 89,
                     "exception.message": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.type": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.stacktrace": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "server.address": {
                       "$$type": "string"
@@ -125,7 +120,7 @@
                         "string"
                       ]
                     },
-                    "db.query.summary": "find",
+                    "db.query.summary": "find operation-find-retries.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {
@@ -151,7 +146,7 @@
                   }
                 },
                 {
-                  "name": "find operation-find-retries.test",
+                  "name": "find",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-find-retries",
@@ -162,9 +157,6 @@
                       "$$exists": false
                     },
                     "db.response.status_code": {
-                      "$$exists": false
-                    },
-                    "error.type": {
                       "$$exists": false
                     },
                     "exception.message": {
@@ -185,7 +177,7 @@
                         "long"
                       ]
                     },
-                    "db.query.summary": "find",
+                    "db.query.summary": "find operation-find-retries.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {

@@ -61,7 +61,7 @@
               },
               "nested": [
                 {
-                  "name": "update operation-update.test",
+                  "name": "update",
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-update",
@@ -74,7 +74,7 @@
                         "string"
                       ]
                     },
-                    "db.query.summary": "update",
+                    "db.query.summary": "update operation-update.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {
