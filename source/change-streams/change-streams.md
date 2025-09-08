@@ -1026,6 +1026,8 @@ There should be no backwards compatibility concerns.
 
 ## Changelog
 
+- 2025-09-08: Clarify resume behavior.
+
 - 2025-03-31: Update for expanded field visibility in server 8.2+
 
 - 2025-02-24: Make `nsType` `Optional` to match other optional fields in the change stream spec.
