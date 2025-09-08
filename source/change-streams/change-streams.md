@@ -757,7 +757,7 @@ When `resumeAfter` is specified the `ChangeStream` will return notifications sta
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
-A resumable error from a `getMore` MUST only attempt to resume once.  However, if the `aggregate` for a resume succeeds,
+A driver MUST only attempt to resume once from a resumable error.  However, if the `aggregate` for that resume succeeds,
 a driver MUST ensure that following resume attempts can succeed, even in the absence of any changes received by the
 cursor between resume attempts.  For example:
 
