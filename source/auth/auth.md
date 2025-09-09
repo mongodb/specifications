@@ -959,6 +959,10 @@ Examples are provided below.
 
         Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
 
+    - AWS_CREDENTIAL_PROVIDER
+
+        Drivers MAY allow the user to specify a custom credential provider object or function.
+
 #### Obtaining Credentials
 
 Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete
@@ -1005,9 +1009,9 @@ Drivers MAY expose API for default providers for the following scenarios when ap
 
 The order in which Drivers MUST search for credentials is:
 
-1. The URI
-2. Environment variables
-3. A custom AWS credential provider if the driver supports it.
+1. A custom AWS credential provider if the driver supports it.
+2. The URI
+3. Environment variables
 4. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
 5. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
