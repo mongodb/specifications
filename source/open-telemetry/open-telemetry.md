@@ -137,7 +137,6 @@ Spans SHOULD have the following attributes:
 | `db.collection.name`   | `string` | The collection being accessed within the database stated in `db.namespace` | Required if available |
 | `db.operation.name`    | `string` | The name of the driver operation being executed                            | Required              |
 | `db.operation.summary` | `string` | Equivalent to span name                                                    | Required              |
-| `db.mongodb.cursor_id` | `int64`  | If a cursor is created or used in the operation                            | Required if available |
 
 Not all attributes are available at the moment of span creation. Drivers need to add attributes at later stages, which
 requires an operation span to be available throughout the complete operation lifecycle.
