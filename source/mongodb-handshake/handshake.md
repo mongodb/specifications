@@ -405,8 +405,9 @@ class DriverInfoOptions {
 }
 ```
 
-Two `DriverInfoOptions` objects are considered identical if all fields are strictly equal with case sensitive string
-comparison.
+Two `DriverInfoOptions` objects are considered equal if they would result in the same metadata in the client handshake.\
+In practice, this means if a field is the empty string (`""`), treat it as unset. Assert that each field is strictly
+equal with case sensitive string comparison.
 
 Note that how these options are provided to a driver during `MongoClient` initialization is left up to the implementer.
 

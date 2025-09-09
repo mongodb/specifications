@@ -392,3 +392,102 @@ Before each test case, perform the setup.
 10. Save intercepted `client` document as `updatedClientMetadata`.
 
 11. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+
+## Test 7: Empty strings are considered unset when appending duplicate metadata
+
+Drivers should verify that after `MongoClient` initialization, metadata can be updated multiple times, not replaced, and
+is visible in the `hello` command of new connections.
+
+There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
+Before each test case, perform the setup.
+
+#### Parameterized test cases
+
+##### Initial metadata
+
+| Case | Name    | Version | Platform         |
+| ---- | ------- | ------- | ---------------- |
+| 1    | null    | 1.2     | Library Platform |
+| 2    | library | null    | Library Platform |
+| 3    | library | 1.2     | null             |
+
+##### Appended Metadata
+
+| Case | Name    | Version | Platform         |
+| ---- | ------- | ------- | ---------------- |
+| 1    | ""      | 1.2     | Library Platform |
+| 2    | library | ""      | Library Platform |
+| 3    | library | 1.2     | ""               |
+
+### Setup
+
+1. Create a `MongoClient` instance with:
+
+    - `maxIdleTimeMS` set to `1ms`
+
+2. Append the `DriverInfoOptions` from the selected test case from the initial metadata section.
+
+3. Send a `ping` command to the server and verify that the command succeeds.
+
+4. Save intercepted `client` document as `initialClientMetadata`.
+
+5. Wait 5ms for the connection to become idle.
+
+#### Running a test case
+
+1. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+
+2. Send a `ping` command to the server and verify the command succeeds.
+
+3. Store the response as `updatedClientMetadata`.
+
+4. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+
+## Test 8: Empty strings are considered unset when appending metadata identical to initial metadata
+
+Drivers should verify that after `MongoClient` initialization, metadata can be updated multiple times, not replaced, and
+is visible in the `hello` command of new connections.
+
+There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
+Before each test case, perform the setup.
+
+#### Parameterized test cases
+
+##### Initial metadata
+
+| Case | Name    | Version | Platform         |
+| ---- | ------- | ------- | ---------------- |
+| 1    | null    | 1.2     | Library Platform |
+| 2    | library | null    | Library Platform |
+| 3    | library | 1.2     | null             |
+
+##### Appended Metadata
+
+| Case | Name    | Version | Platform         |
+| ---- | ------- | ------- | ---------------- |
+| 1    | ""      | 1.2     | Library Platform |
+| 2    | library | ""      | Library Platform |
+| 3    | library | 1.2     | ""               |
+
+### Setup
+
+1. Create a `MongoClient` instance with:
+
+    - `maxIdleTimeMS` set to `1ms`
+    - `driverInfo` set to the `DriverInfoOptions` from the selected test case from the initial metadata section.
+
+2. Send a `ping` command to the server and verify that the command succeeds.
+
+3. Save intercepted `client` document as `initialClientMetadata`.
+
+4. Wait 5ms for the connection to become idle.
+
+#### Running a test case
+
+1. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+
+2. Send a `ping` command to the server and verify the command succeeds.
+
+3. Store the response as `updatedClientMetadata`.
+
+4. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
