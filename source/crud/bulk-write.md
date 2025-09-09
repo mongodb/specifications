@@ -313,6 +313,13 @@ class BulkWriteOptions {
      * This option MAY be implemented by drivers that need to grant access to underlying namespaces
      * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
      *
+     * This option is intended for internal use by MongoDB teams and should be discouraged for
+     * general application use. It may be changed or removed in any release without notice.
+     *
+     * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+     *   - Marking it as deprecated, experimental, or internal in their language's idioms
+     *   - Excluding it from primary documentation
+     *
      * @note This option MUST NOT be sent when connected to pre-8.2 servers.
      *
      * @since MongoDB 8.2
@@ -939,6 +946,8 @@ The requirement has since been removed. Checking size limits complicates some dr
 error in this specific situation does not seem helpful enough to require size checks.
 
 ## **Changelog**
+
+- 2025-09-09: Clarify that `rawData` is for internal use only.
 
 - 2025-08-13: Removed the requirement to error when QE is enabled.
 
