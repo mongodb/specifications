@@ -757,8 +757,17 @@ When `resumeAfter` is specified the `ChangeStream` will return notifications sta
 
 If the server supports sessions, the resume attempt MUST use the same session as the previous attempt's command.
 
-A driver MUST ensure that consecutive resume attempts can succeed, even in the absence of any changes received by the
-cursor between resume attempts.
+A driver MUST only attempt to resume once from a resumable error. However, if the `aggregate` for that resume succeeds,
+a driver MUST ensure that following resume attempts can succeed, even in the absence of any changes received by the
+cursor between resume attempts. For example:
+
+1. `aggregate` (succeeds)
+2. `getMore` (fails with resumable error)
+3. `aggregate` (succeeds)
+4. `getMore` (fails with resumable error)
+5. `aggregate` (succeeds)
+6. `getMore` (succeeds)
+7. change stream document received
 
 A driver SHOULD attempt to kill the cursor on the server on which the cursor is opened during the resume process, and
 MUST NOT attempt to kill the cursor on any other server. Any exceptions or errors that occur during the process of
@@ -1016,6 +1025,8 @@ There should be no backwards compatibility concerns.
 - RUBY (RUBY-1228)
 
 ## Changelog
+
+- 2025-09-08: Clarify resume behavior.
 
 - 2025-03-31: Update for expanded field visibility in server 8.2+
 
