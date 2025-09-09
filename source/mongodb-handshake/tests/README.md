@@ -419,7 +419,7 @@ Before each test case, perform the setup.
 | 2    | library | ""      | Library Platform |
 | 3    | library | 1.2     | ""               |
 
-### Setup
+#### Running a test case
 
 1. Create a `MongoClient` instance with:
 
@@ -433,15 +433,13 @@ Before each test case, perform the setup.
 
 5. Wait 5ms for the connection to become idle.
 
-#### Running a test case
+6. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
-1. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+7. Send a `ping` command to the server and verify the command succeeds.
 
-2. Send a `ping` command to the server and verify the command succeeds.
+8. Store the response as `updatedClientMetadata`.
 
-3. Store the response as `updatedClientMetadata`.
-
-4. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+9. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
 
 ## Test 8: Empty strings are considered unset when appending metadata identical to initial metadata
 
@@ -469,7 +467,7 @@ Before each test case, perform the setup.
 | 2    | library | ""      | Library Platform |
 | 3    | library | 1.2     | ""               |
 
-### Setup
+#### Running a test case
 
 1. Create a `MongoClient` instance with:
 
@@ -482,12 +480,10 @@ Before each test case, perform the setup.
 
 4. Wait 5ms for the connection to become idle.
 
-#### Running a test case
+5. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
-1. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+6. Send a `ping` command to the server and verify the command succeeds.
 
-2. Send a `ping` command to the server and verify the command succeeds.
+7. Store the response as `updatedClientMetadata`.
 
-3. Store the response as `updatedClientMetadata`.
-
-4. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+8. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
