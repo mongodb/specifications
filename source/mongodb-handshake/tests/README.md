@@ -142,7 +142,7 @@ Before each test case, perform the setup.
         - `client.driver.version`:
             - If test case's version is non-null: `1.2|<version>`
             - Otherwise, the field remains unchanged: `1.2`
-        - `client.driver.platform`:
+        - `client.platform`:
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
 
@@ -259,13 +259,13 @@ Before each test case, perform the setup.
         info that is automatically added by the driver (ex: `metadata.name.split('|').slice(1).join('|')`).
 
         - If the test case's DriverInfo is identical to the driver info from setup step 2 (test case 1):
-            - Assert metadata.name is equal to `library`
-            - Assert metadata.version is equal to `1.2`
-            - Assert metadata.platform is equal to `LibraryPlatform`
+            - Assert `metadata.driver.name` is equal to `library`
+            - Assert `metadata.driver.version` is equal to `1.2`
+            - Assert `metadata.platform` is equal to `LibraryPlatform`
         - Otherwise:
-            - Assert metadata.name is equal to `library|<name>`
-            - Assert metadata.version is equal to `1.2|<version>`
-            - Assert metadata.platform is equal to `LibraryPlatform|<platform>`
+            - Assert `metadata.driver.name` is equal to `library|<name>`
+            - Assert `metadata.driver.version` is equal to `1.2|<version>`
+            - Assert `metadata.platform` is equal to `LibraryPlatform|<platform>`
 
     - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
 
