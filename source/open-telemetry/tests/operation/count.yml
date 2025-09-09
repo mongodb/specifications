@@ -36,8 +36,7 @@ tests:
               db.namespace: *database0Name
               db.collection.name: *collection0Name
               db.operation.name: count
-              db.operation.summary: count
-                |||||operation-count.test
+              db.operation.summary: count operation-count.test
             nested:
               - name: count
                 attributes:
