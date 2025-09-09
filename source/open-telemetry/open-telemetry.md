@@ -118,9 +118,9 @@ the `withTransaction` span.
 
 The span name SHOULD be:
 
-- `driver_operation_name db.collection_name` if the command is executed on a collection (e.g.,
+- `driver_operation_name db.collection_name` if the operation is executed on a collection (e.g.,
     `findOneAndDelete warehouse.users`).
-- `driver_operation_name db` if there is no specific collection for the command (e.g., `runCommand warehouse`).
+- `driver_operation_name db` if there is no specific collection for the operation (e.g., `runCommand warehouse`).
 
 ##### Span Kind
 
@@ -141,6 +141,16 @@ Spans SHOULD have the following attributes:
 
 Not all attributes are available at the moment of span creation. Drivers need to add attributes at later stages, which
 requires an operation span to be available throughout the complete operation lifecycle.
+
+###### db.namespace
+
+This attribute SHOULD be set to current database name except for operations executing against admin db. This field is
+omitted for transaction (abort|commit), and client `bulkWrite` operations.
+
+###### db.collection.name
+
+This attribute should be set to the user's collection if the operation is executing against a collection, this field is
+omitted for commands running against `admin` database or commands that do not target a specific collection.
 
 ##### Exceptions
 
@@ -183,7 +193,7 @@ Spans SHOULD have the following attributes:
 | `server.port`                     | `int64`  | Server port number                                                                                                                                       | Required                     |
 | `server.address`                  | `string` | Name of the database host, or IP address if name is not known                                                                                            | Required                     |
 | `network.transport`               | `string` | MUST be 'tcp' or 'unix' depending on the protocol                                                                                                        | Required                     |
-| `db.query.summary`                | `string` | Equivalent to span name                                                                                                                                  | Required                     |
+| `db.query.summary`                | `string` | `command_name database_name.collection_name`                                                                                                             | Required                     |
 | `db.mongodb.server_connection_id` | `int64`  | Server connection id                                                                                                                                     | Required if available        |
 | `db.mongodb.driver_connection_id` | `int64`  | Local connection id                                                                                                                                      | Required if available        |
 | `db.query.text`                   | `string` | Database command that was sent to the server. Content should be equivalent to the `document` field of the CommandStartedEvent of the command monitoring. | Conditional                  |
@@ -192,6 +202,24 @@ Spans SHOULD have the following attributes:
 Besides the attributes listed in the table above, drivers MAY add other attributes from the
 [Semantic Conventions for Databases](https://opentelemetry.io/docs/specs/semconv/registry/attributes/db/) that are
 applicable to MongoDB.
+
+###### db.namespace
+
+This attribute SHOULD be set to current database name except for commands executing against admin db. This field is
+omitted for transaction (abort|commit).
+
+###### db.collection.name
+
+This attribute should be set to the user's collection if the operation is executing against a collection, this field is
+omitted for commands running against `admin` database or commands that do not target a specific collection.
+
+###### db.query.summary
+
+This attribute SHOULD contain:
+
+- `command_name db.collection_name` if the command is executed on a collection.
+- `command_name db` if there is no specific collection for the command.
+- `command_name` in other cases (e.g., commands executed against `admin` database).
 
 ###### db.query.text
 
