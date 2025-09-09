@@ -101,7 +101,7 @@
                     "db.mongodb.cursor_id": {
                       "$$exists": false
                     },
-                    "db.response.status_code": 89,
+                    "db.response.status_code": "89",
                     "exception.message": {
                       "$$exists": true
                     },
