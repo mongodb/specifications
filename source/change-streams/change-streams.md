@@ -139,7 +139,7 @@ class ChangeStreamDocument {
 
   /**
    * Only present for ops of type 'rename', 'create', 'modify', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
-   * Prior to server version 8.2.0, only present when the `showExpandedEvents` change stream option is enabled.
+   * Only present when the `showExpandedEvents` change stream option is enabled.
    *
    * A description of the operation.
    * 
@@ -202,7 +202,7 @@ class ChangeStreamDocument {
   /**
    * The `ui` field from the oplog entry corresponding to the change event.
    * 
-   * Only present for the following events:
+   * Only present when the `showExpandedEvents` change stream option is enabled and for the following events:
    *  - 'insert'
    *  - 'update'
    *  - 'delete'
@@ -214,7 +214,6 @@ class ChangeStreamDocument {
    *  - 'shardCollection'
    *  - 'reshardCollection'
    *  - 'refineCollectionShardKey'
-   * Prior to server versions 8.2, only present when the `showExpandedEvents` change stream option is enabled.
    *  
    * This field is a value of binary subtype 4 (UUID).
    *  
@@ -298,6 +297,8 @@ class UpdateDescription {
    *   }
    * 
    * In each array, all elements will be returned as strings with the exception of array indices, which will be returned as 32 bit integers.
+   * 
+   * Only present when the `showExpandedEvents` change stream option is enabled.
    * 
    * @since 6.1.0
    */
@@ -1025,6 +1026,8 @@ There should be no backwards compatibility concerns.
 - RUBY (RUBY-1228)
 
 ## Changelog
+
+- 2025-09-09: Revert expanded field visibility change.
 
 - 2025-09-08: Clarify resume behavior.
 
