@@ -199,7 +199,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 }
 ```
 
-- Perform a `find` operation that fails.
+- Perform a `insert` operation that fails.
 - Assert that the callback was called 2 times.
 - Close the client.
 
