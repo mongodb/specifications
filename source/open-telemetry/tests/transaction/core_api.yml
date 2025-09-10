@@ -30,7 +30,7 @@ initialData:
     databaseName: transaction-tests
     documents: []
 tests:
-  - description: observeTracingMessages around transaction
+  - description: commit transaction
     operations:
       - object: *session0
         name: startTransaction
@@ -125,3 +125,79 @@ tests:
         databaseName: transaction-tests
         documents:
           - _id: 1
+
+  - description: abort transaction
+    operations:
+      - object: *session0
+        name: startTransaction
+      - object: *collection0
+        name: insertOne
+        arguments:
+          session: *session0
+          document:
+            _id: 1
+      - object: *session0
+        name: abortTransaction
+
+    expectTracingMessages:
+      - client: *client0
+        ignoreExtraSpans: false
+        spans:
+          - name: transaction
+            attributes:
+              db.system: mongodb
+            nested:
+              - name: insert transaction-tests.test
+                attributes:
+                  db.system: mongodb
+                  db.namespace: transaction-tests
+                  db.collection.name: test
+                  db.operation.name: insert
+                  db.operation.summary: insert transaction-tests.test
+                nested:
+                  - name: insert
+                    attributes:
+                      db.system: mongodb
+                      db.namespace: transaction-tests
+                      db.collection.name: test
+                      server.address: { $$type: string }
+                      server.port: { $$type: ['long', 'string'] }
+                      server.type: { $$type: string }
+                      db.query.summary: insert transaction-tests.test
+                      db.query.text:
+                        $$matchAsDocument:
+                          $$matchAsRoot:
+                            insert: test
+                            ordered: true
+                            txnNumber: 1
+                            startTransaction: true
+                            autocommit: false
+                            documents:
+                              - _id: 1
+                      db.mongodb.lsid: { $$sessionLsid: *session0 }
+              - name: abortTransaction admin
+                attributes:
+                  db.system: mongodb
+                  db.namespace: admin
+                  db.collection.name: { $$exists: false }
+                  db.operation.name: abortTransaction
+                nested:
+                  - name: abortTransaction
+                    attributes:
+                      db.system: mongodb
+                      db.namespace: admin
+                      db.collection.name: { $$exists: false }
+                      db.query.summary: abortTransaction admin
+                      db.command.name: abortTransaction
+                      db.query.text:
+                        $$matchAsDocument:
+                          $$matchAsRoot:
+                            abortTransaction: 1
+                            txnNumber: 1
+                            autocommit: false
+
+    outcome:
+      - collectionName: test
+        databaseName: transaction-tests
+        documents: []
+

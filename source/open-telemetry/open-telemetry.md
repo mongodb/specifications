@@ -119,7 +119,12 @@ the `withTransaction` span.
 The span name SHOULD be:
 
 - `driver_operation_name db.collection_name` if the operation is executed on a collection (e.g.,
-    `findOneAndDelete warehouse.users`).
+    `collection.findOneAndDelete(filter)` will report `findAndModify warehouse_db.users_coll`).
+
+**Note**: since the `findOneAndDelete` operation is implemented as a `findAndModify` command, the operation name in the
+span is `findAndModify`. This ensures consistency between drivers when naming operations. See the
+[covered operations](#covered-operations) table below for mapping of public API methods to operation names.
+
 - `driver_operation_name db` if there is no specific collection for the operation (e.g., `runCommand warehouse`).
 
 ##### Operation Span Kind
@@ -143,13 +148,29 @@ requires an operation span to be available throughout the complete operation lif
 
 ###### db.namespace
 
-This attribute SHOULD be set to current database name except for operations executing against admin db. This field is
-omitted for transaction (abort|commit), and client `bulkWrite` operations.
+This attribute SHOULD be set to current database name except for operations executing against admin db ex: (transaction,
+client `bulkWrite`) operations.
+
+Examples:
+
+- `find` on `test.users` → `test`
+- `runCommand` on `admin` → `admin`
+- `commitTransaction` → `admin`
+- `abortTransaction` → `admin`
+- client `bulkWrite` → `admin`
 
 ###### db.collection.name
 
 This attribute should be set to the user's collection if the operation is executing against a collection, this field is
 omitted for commands running against `admin` database or commands that do not target a specific collection.
+
+Examples:
+
+- `find` on `test.users` → `users`
+- `runCommand` on `admin` → *omitted*
+- `commitTransaction` → *omitted*
+- `abortTransaction` → *omitted*
+- client `bulkWrite` → *omitted*
 
 ##### Exceptions
 
@@ -204,13 +225,29 @@ applicable to MongoDB.
 
 ###### db.namespace
 
-This attribute SHOULD be set to current database name except for commands executing against admin db. This field is
-omitted for transaction (abort|commit).
+This attribute SHOULD be set to current database name except for operations executing against admin db ex: (transaction,
+client `bulkWrite`) operations.
+
+Examples:
+
+- `find` on `test.users` → `test`
+- `runCommand` on `admin` → `admin`
+- `commitTransaction` → `admin`
+- `abortTransaction` → `admin`
+- client `bulkWrite` → `admin`
 
 ###### db.collection.name
 
 This attribute should be set to the user's collection if the operation is executing against a collection, this field is
 omitted for commands running against `admin` database or commands that do not target a specific collection.
+
+Examples:
+
+- `find` on `test.users` → `users`
+- `runCommand` on `admin` → *omitted*
+- `commitTransaction` → *omitted*
+- `abortTransaction` → *omitted*
+- client `bulkWrite` → *omitted*
 
 ###### db.query.summary
 
@@ -218,7 +255,8 @@ This attribute SHOULD contain:
 
 - `command_name db.collection_name` if the command is executed on a collection.
 - `command_name db` if there is no specific collection for the command.
-- `command_name` in other cases (e.g., commands executed against `admin` database).
+- `command_name admin` in other cases (e.g., commands executed against `admin` database, transaction or client
+    `bulkWrite`).
 
 ###### db.query.text
 
@@ -269,32 +307,33 @@ See [OpenTelemetry Tests](tests/README.md) for the test plan.
 
 The OpenTelemetry specification covers the following operations:
 
-| Operation                | Test                                                                                 |
-| :----------------------- | :----------------------------------------------------------------------------------- |
-| `aggregate`              | [tests/transaction/aggregate.yml](tests/operation/aggregate.yml)                     |
-| `findAndModify`          | [tests/transaction/find_one_and_update.yml](tests/operation/find_one_and_update.yml) |
-| `bulkWrite`              | [tests/transaction/bulk_write.yml](tests/operation/bulk_write.yml)                   |
-| `commitTransaction`      | [tests/transaction/transaction.yml](tests/transaction/transaction.yml)               |
-| `abortTransaction`       | [tests/transaction/transaction.yml](tests/transaction/transaction.yml)               |
-| `createCollection`       | [tests/transaction/create_collection.yml](tests/operation/create_collection.yml)     |
-| `createIndexes`          | [tests/transaction/create_indexes.yml](tests/operation/create_indexes.yml)           |
-| `createView`             | [tests/transaction/create_view.yml](tests/operation/create_view.yml)                 |
-| `distinct`               | [tests/transaction/distinct.yml](tests/operation/distinct.yml)                       |
-| `dropCollection`         | [tests/transaction/drop_collection.yml](tests/operation/drop_collection.yml)         |
-| `dropIndexes`            | [tests/transaction/drop_indexes.yml](tests/operation/drop_indexes.yml)               |
-| `find`                   | [tests/transaction/find.yml](tests/operation/find.yml)                               |
-| `listCollections`        | [tests/transaction/list_collections.yml](tests/operation/list_collections.yml)       |
-| `listDatabases`          | [tests/transaction/list_databases.yml](tests/operation/list_databases.yml)           |
-| `listIndexes`            | [tests/transaction/list_indexes.yml](tests/operation/list_indexes.yml)               |
-| `mapReduce`              | [tests/transaction/map_reduce.yml](tests/operation/map_reduce.yml)                   |
-| `estimatedDocumentCount` | [tests/transaction/count.yml](tests/operation/count.yml)                             |
-| `insert`                 | [tests/transaction/insert.yml](tests/operation/insert.yml)                           |
-| `delete`                 | [tests/transaction/delete.yml](tests/operation/delete.yml)                           |
-| `update`                 | [tests/transaction/update.yml](tests/operation/update.yml)                           |
-| `createSearchIndexes`    | [tests/transaction/atlas_search.yml](tests/operation/atlas_search.yml)               |
-| `dropSearchIndex`        | [tests/transaction/atlas_search.yml](tests/operation/atlas_search.yml)               |
-| `updateSearchIndex`      | [tests/transaction/delete.yml](tests/operation/delete.yml)                           |
-| `delete`                 | [tests/transaction/atlas_search.yml](tests/operation/atlas_search.yml)               |
+| Operation                | Test                                                                           |
+| :----------------------- | :----------------------------------------------------------------------------- |
+| `aggregate`              | [tests/operation/aggregate.yml](tests/operation/aggregate.yml)                 |
+| `findAndModify`          | [tests/operation/find_and_modify.yml](tests/operation/find_and_modify.yml)     |
+| `bulkWrite`              | [tests/operation/bulk_write.yml](tests/operation/bulk_write.yml)               |
+| `commitTransaction`      | [tests/transaction/core_api.yml](tests/transaction/core_api.yml)               |
+| `abortTransaction`       | [tests/transaction/core_api.yml](tests/transaction/core_api.yml)               |
+| `withTransaction`        | [tests/transaction/convenient.yml](tests/transaction/convenient.yml)           |
+| `createCollection`       | [tests/operation/create_collection.yml](tests/operation/create_collection.yml) |
+| `createIndexes`          | [tests/operation/create_indexes.yml](tests/operation/create_indexes.yml)       |
+| `createView`             | [tests/operation/create_view.yml](tests/operation/create_view.yml)             |
+| `distinct`               | [tests/operation/distinct.yml](tests/operation/distinct.yml)                   |
+| `dropCollection`         | [tests/operation/drop_collection.yml](tests/operation/drop_collection.yml)     |
+| `dropIndexes`            | [tests/operation/drop_indexes.yml](tests/operation/drop_indexes.yml)           |
+| `find`                   | [tests/operation/find.yml](tests/operation/find.yml)                           |
+| `listCollections`        | [tests/operation/list_collections.yml](tests/operation/list_collections.yml)   |
+| `listDatabases`          | [tests/operation/list_databases.yml](tests/operation/list_databases.yml)       |
+| `listIndexes`            | [tests/operation/list_indexes.yml](tests/operation/list_indexes.yml)           |
+| `mapReduce`              | [tests/operation/map_reduce.yml](tests/operation/map_reduce.yml)               |
+| `estimatedDocumentCount` | [tests/operation/count.yml](tests/operation/count.yml)                         |
+| `insert`                 | [tests/operation/insert.yml](tests/operation/insert.yml)                       |
+| `delete`                 | [tests/operation/delete.yml](tests/operation/delete.yml)                       |
+| `update`                 | [tests/operation/update.yml](tests/operation/update.yml)                       |
+| `createSearchIndexes`    | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)           |
+| `dropSearchIndex`        | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)           |
+| `updateSearchIndex`      | [tests/operation/delete.yml](tests/operation/delete.yml)                       |
+| `delete`                 | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)           |
 
 ## Backwards Compatibility
 
