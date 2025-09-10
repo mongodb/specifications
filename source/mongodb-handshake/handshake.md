@@ -449,7 +449,7 @@ be appended to their respective fields, and be delimited by a `|` character. For
 Some client libraries provide APIs that accept a pre-initialized MongoClient as an argument. In these circumstances, it
 is possible for multiple library objects to be associated with the same MongoClient, which could result in the same
 metadata being appended multiple times. Drivers MUST ensure that any duplicate `DriverInfoOptions` objects provided to a
-MongoClient or appended to a MongoClient do not result in additional metadata being appended (i.e., a no-op). See
+MongoClient or appended to a MongoClient do not result in additional metadata being appended. See
 [Supporting Wrapping Libraries](#supporting-wrapping-libraries).
 
 **NOTE:** All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatention.
