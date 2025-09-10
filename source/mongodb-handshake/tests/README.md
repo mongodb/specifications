@@ -4,7 +4,7 @@
 
 ### Test 1: Test that environment metadata is properly captured
 
-Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
 the following sets of environment variables:
 
 1. Valid AWS
@@ -76,7 +76,7 @@ the following sets of environment variables:
 
 ### Test 2: Test that the driver accepts an arbitrary auth mechanism
 
-1. Mock the server response in a way that `saslSupportedMechs` array in the `hello` command response contains an
+1. Mock the server response in a way that the `saslSupportedMechs` array in the `hello` command response contains an
     arbitrary string.
 
 2. Create and connect a `Connection` object that connects to the server that returns the mocked response.
@@ -93,8 +93,8 @@ test-only backdoor mechanism to intercept the handshake `hello` command for veri
 Drivers should verify that metadata provided after `MongoClient` initialization is appended, not replaced, and is
 visible in the `hello` command of new connections.
 
-There are multiple test cases parameterized with `DriverInfoOptions` to be appended after `MongoClient` initialization.
-Before each test case, perform the setup.
+There are multiple test cases with `DriverInfoOptions` parameters to be appended after `MongoClient` initialization.
+Before each test case, perform the following setup.
 
 #### Setup
 
@@ -124,6 +124,7 @@ Before each test case, perform the setup.
 | 2    | framework | 2.0     | null               |
 | 3    | framework | null    | Framework Platform |
 | 4    | framework | null    | null               |
+| 5    | null      | null    | null               |
 
 #### Running a test case
 
@@ -148,15 +149,15 @@ Before each test case, perform the setup.
 
     - All other subfields in the `client` document remain unchanged from `initialClientMetadata`.
 
-## Test 2: Multiple Successive Metadata Updates
+### Test 2: Multiple Successive Metadata Updates
 
 Drivers should verify that after `MongoClient` initialization, metadata can be updated multiple times, not replaced, and
 is visible in the `hello` command of new connections.
 
-There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
-Before each test case, perform the setup.
+There are multiple test cases with `DriverInfoOptions` parameter to be appended after a previous metadata update. Before
+each test case, perform the following setup.
 
-### Setup
+#### Setup
 
 1. Create a `MongoClient` instance with:
 
@@ -184,6 +185,7 @@ Before each test case, perform the setup.
 | 2    | framework | 2.0     | null               |
 | 3    | framework | null    | Framework Platform |
 | 4    | framework | null    | null               |
+| 5    | null      | null    | null               |
 
 #### Running a test case
 
