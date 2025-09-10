@@ -2161,6 +2161,8 @@ practice to avoid this. (See
 
 ## Changelog
 
+- 2025-09-10: Update precedence of MONGODB-AWS credential fetching behaviour.
+
 - 2025-01-29: Add support for custom AWS credential providers.
 
 - 2024-10-02: Add Kubernetes built-in OIDC provider integration.
