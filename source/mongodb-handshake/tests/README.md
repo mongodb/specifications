@@ -244,7 +244,6 @@ Before each test case, perform the setup.
 | 5    | framework | 2.0     | Library Platform   |
 | 6    | framework | 1.2     | Framework Platform |
 | 7    | library   | 2.0     | Framework Platform |
-| 8    | framework | 2.0     | Framework Platform |
 
 ##### Running a test case
 
