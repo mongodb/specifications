@@ -114,7 +114,7 @@ When a user commits or aborts a transaction with `commitTransaction` or `abortTr
 In case of `withTransaction` operation spans for operations that are executed inside the callbacks SHOULD be nested into
 the `withTransaction` span.
 
-##### Span Name
+##### Operation Span Name
 
 The span name SHOULD be:
 
@@ -122,11 +122,11 @@ The span name SHOULD be:
     `findOneAndDelete warehouse.users`).
 - `driver_operation_name db` if there is no specific collection for the operation (e.g., `runCommand warehouse`).
 
-##### Span Kind
+##### Operation Span Kind
 
 Span kind MUST be "client".
 
-##### Span Attributes
+##### Operation Span Attributes
 
 Spans SHOULD have the following attributes:
 
@@ -170,15 +170,15 @@ Spans for commands MUST be nested to the span for the corresponding driver opera
 retried, the driver MUST create a separate span for each retry; all the retries MUST be nested to the same operation
 span.
 
-##### Span Name
+##### Command Span Name
 
 The span name SHOULD be the command name. For example, `find`, `insert`, `update`, etc.
 
-##### Span Kind
+##### Command Span Kind
 
 Span kind MUST be "client".
 
-##### Span Attributes
+##### Command Span Attributes
 
 Spans SHOULD have the following attributes:
 
