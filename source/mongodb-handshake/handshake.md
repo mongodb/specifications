@@ -405,7 +405,7 @@ class DriverInfoOptions {
 }
 ```
 
-Two `DriverInfoOptions` objects are considered equal if they would result in the same metadata in the client handshake.\
+Two `DriverInfoOptions` objects are considered equal if they would result in the same metadata in the client handshake.
 In practice, this means if a field is the empty string (`""`), treat it as unset. Assert that each field is strictly
 equal with case sensitive string comparison.
 
@@ -448,7 +448,7 @@ be appended to their respective fields, and be delimited by a `|` character. For
 
 Some client libraries provide APIs that accept a pre-initialized MongoClient as an argument. In these circumstances, it
 is possible for multiple library objects to be associated with the same MongoClient, which could result in the same
-metadata being appended multiple times. Drivers MUST ensure that a `DriverInfo` objects provided to a MongoClient or
+metadata being appended multiple times. Drivers MUST ensure that all `DriverInfo` objects provided to a MongoClient or
 appended to a MongoClient are distinct (see [Supporting Wrapping Libraries](#supporting-wrapping-libraries)).
 
 **NOTE:** All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatention.

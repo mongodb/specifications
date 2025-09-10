@@ -148,7 +148,7 @@ Before each test case, perform the setup.
 
     - All other subfields in the `client` document remain unchanged from `initialClientMetadata`.
 
-## Test 2: Multiple Successive Metadata Updates
+### Test 2: Multiple Successive Metadata Updates
 
 Drivers should verify that after `MongoClient` initialization, metadata can be updated multiple times, not replaced, and
 is visible in the `hello` command of new connections.
@@ -156,7 +156,7 @@ is visible in the `hello` command of new connections.
 There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
 Before each test case, perform the setup.
 
-### Setup
+#### Setup
 
 1. Create a `MongoClient` instance with:
 
@@ -176,7 +176,7 @@ Before each test case, perform the setup.
 
 5. Wait 5ms for the connection to become idle.
 
-#### Parameterized test cases
+##### Parameterized test cases
 
 | Case | Name      | Version | Platform           |
 | ---- | --------- | ------- | ------------------ |
@@ -185,7 +185,7 @@ Before each test case, perform the setup.
 | 3    | framework | null    | Framework Platform |
 | 4    | framework | null    | null               |
 
-#### Running a test case
+##### Running a test case
 
 1. Append the `DriverInfoOptions` from the selected test case to the `MongoClient` metadata.
 
@@ -208,12 +208,12 @@ Before each test case, perform the setup.
 
     - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
 
-## Test 3: Multiple Successive Metadata Updates with Duplicate Data
+### Test 3: Multiple Successive Metadata Updates with Duplicate Data
 
 There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
 Before each test case, perform the setup.
 
-### Setup
+#### Setup
 
 1. Create a `MongoClient` instance with:
 
@@ -233,7 +233,7 @@ Before each test case, perform the setup.
 
 5. Wait 5ms for the connection to become idle.
 
-#### Parameterized test cases
+##### Parameterized test cases
 
 | Case | Name      | Version | Platform           |
 | ---- | --------- | ------- | ------------------ |
@@ -246,7 +246,7 @@ Before each test case, perform the setup.
 | 7    | library   | 2.0     | Framework Platform |
 | 8    | framework | 2.0     | Framework Platform |
 
-#### Running a test case
+##### Running a test case
 
 1. Append the `DriverInfoOptions` from the selected test case to the `MongoClient` metadata.
 
@@ -269,7 +269,7 @@ Before each test case, perform the setup.
 
     - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
 
-## Test 4: Multiple Metadata Updates with Duplicate Data
+### Test 4: Multiple Metadata Updates with Duplicate Data
 
 1. Create a `MongoClient` instance with:
 
@@ -315,7 +315,7 @@ Before each test case, perform the setup.
 
 12. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
-## Test 5: Metadata is not appended if identical to initial metadata
+### Test 5: Metadata is not appended if identical to initial metadata
 
 1. Create a `MongoClient` instance with:
 
@@ -348,7 +348,7 @@ Before each test case, perform the setup.
 
 8. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
-## Test 6: Metadata is not appended if identical to initial metadata (separated by non-identical metadata)
+### Test 6: Metadata is not appended if identical to initial metadata (separated by non-identical metadata)
 
 1. Create a `MongoClient` instance with:
 
@@ -393,7 +393,7 @@ Before each test case, perform the setup.
 
 11. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
-## Test 7: Empty strings are considered unset when appending duplicate metadata
+### Test 7: Empty strings are considered unset when appending duplicate metadata
 
 Drivers should verify that after `MongoClient` initialization, metadata can be updated multiple times, not replaced, and
 is visible in the `hello` command of new connections.
@@ -401,9 +401,9 @@ is visible in the `hello` command of new connections.
 There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
 Before each test case, perform the setup.
 
-#### Parameterized test cases
+##### Parameterized test cases
 
-##### Initial metadata
+###### Initial metadata
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
@@ -411,7 +411,7 @@ Before each test case, perform the setup.
 | 2    | library | null    | Library Platform |
 | 3    | library | 1.2     | null             |
 
-##### Appended Metadata
+###### Appended Metadata
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
@@ -419,7 +419,7 @@ Before each test case, perform the setup.
 | 2    | library | ""      | Library Platform |
 | 3    | library | 1.2     | ""               |
 
-#### Running a test case
+##### Running a test case
 
 1. Create a `MongoClient` instance with:
 
@@ -441,7 +441,7 @@ Before each test case, perform the setup.
 
 9. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
 
-## Test 8: Empty strings are considered unset when appending metadata identical to initial metadata
+### Test 8: Empty strings are considered unset when appending metadata identical to initial metadata
 
 Drivers should verify that after `MongoClient` initialization, metadata can be updated multiple times, not replaced, and
 is visible in the `hello` command of new connections.
@@ -449,9 +449,9 @@ is visible in the `hello` command of new connections.
 There are multiple test cases parameterized with `DriverInfoOptions` to be appended after a previous metadata update.
 Before each test case, perform the setup.
 
-#### Parameterized test cases
+##### Parameterized test cases
 
-##### Initial metadata
+###### Initial metadata
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
@@ -459,7 +459,7 @@ Before each test case, perform the setup.
 | 2    | library | null    | Library Platform |
 | 3    | library | 1.2     | null             |
 
-##### Appended Metadata
+###### Appended Metadata
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
@@ -467,7 +467,7 @@ Before each test case, perform the setup.
 | 2    | library | ""      | Library Platform |
 | 3    | library | 1.2     | ""               |
 
-#### Running a test case
+##### Running a test case
 
 1. Create a `MongoClient` instance with:
 
