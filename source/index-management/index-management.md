@@ -138,7 +138,7 @@ interface Collection {
 
   /**
    * Creates multiple indexes in the collection.
-   * 
+   *
    * In all server versions, this MUST execute a createIndexes command.
    *
    * @return The names of all the indexes that were created.
@@ -183,7 +183,7 @@ interface Collection {
   dropIndexes(options: Optional<DropIndexesOptions>): Result;
 
   /**
-   * Gets index information for all indexes in the collection. The behavior for 
+   * Gets index information for all indexes in the collection. The behavior for
    * enumerating indexes is described in the :ref:`Enumerating Indexes` section.
    *
    */
@@ -218,12 +218,19 @@ interface CreateIndexOptions {
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
    *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
+   *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
    * @since MongoDB 8.2
    */
   rawData: Optional<Boolean>;
- 
+
   /**
    * Enables users to specify an arbitrary comment to help trace the operation through
    * the database profiler, currentOp and logs. The default is to not send a value.
@@ -250,6 +257,13 @@ interface DropIndexOptions {
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -422,8 +436,8 @@ interface IndexView extends Iterable<Document> {
    * For drivers that cannot make IndexView iterable, they MUST implement this method to
    * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
    *  or language/implementation equivalent.
-   * 
-   *  If drivers are unable to make the IndexView iterable, they MAY opt to provide the options for 
+   *
+   *  If drivers are unable to make the IndexView iterable, they MAY opt to provide the options for
    *  listing search indexes via the `list` method instead of the `Collection.indexes` method.
 
    */
@@ -460,7 +474,7 @@ interface IndexView extends Iterable<Document> {
    *
    * @note Each specification document becomes the "key" field in the document that
    *   is inserted or the command.
-   *   
+   *
    */
   createMany(models: Iterable<IndexModel>, options: Optional<CreateManyIndexesOptions>): Iterable<String>;
 
@@ -688,7 +702,7 @@ interface IndexOptions {
    * @example For an index of name: 1, age: -1, the generated name would be "name_1_age_-1".
    */
   name: String;
-  
+
   /**
    * Optionally tells the index to only reference documents with the specified field in
    * the index.
@@ -819,7 +833,7 @@ interface ListIndexesOptions {
 
   /**
    * Configures the batch size of the cursor returned from the ``listIndexes`` command.
-   * 
+   *
    * @note drivers MAY chose to support batchSize on the ListIndexesOptions.
    */
   batchSize: Optional<Int32>;
@@ -827,6 +841,13 @@ interface ListIndexesOptions {
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -970,10 +991,10 @@ interface SearchIndexOptions {
 }
 
 /**
- * The following interfaces are empty but are provided as placeholders for drivers that cannot 
+ * The following interfaces are empty but are provided as placeholders for drivers that cannot
  * add options in a non-breaking manner, if options are added in the future.
  */
-interface CreateSearchIndexOptions {} 
+interface CreateSearchIndexOptions {}
 interface UpdateSearchIndexOptions {}
 interface ListSearchIndexOptions {}
 interface DropSearchIndexOptions {}
@@ -985,22 +1006,22 @@ interface DropSearchIndexOptions {}
 interface Collection {
   /**
    * Convenience method for creating a single search index.
-   * 
+   *
    * @return The name of the created search index
-   * 
+   *
    * @note Drivers MAY opt to implement this method signature, the signature that
    *   takes an SearchIndexModel as a parameter, or for those languages with method
    *   overloading MAY decide to implement both.
-   *   
+   *
    * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
    */
   createSearchIndex(definition: Document, indexOptions: Optional<SearchIndexOptions>, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
 
   /**
    * Convenience method for creating a single index.
-   * 
+   *
    * @return The name of the created search index
-   * 
+   *
    * @note Drivers MAY opt to implement this method signature, the signature that
    *   takes an name and a definition as parameters, or for those languages with method
    *   overloading MAY decide to implement both.
@@ -1009,13 +1030,13 @@ interface Collection {
 
   /**
    * Creates multiple search indexes on the collection.
-   * 
+   *
    * @return An iterable of the newly created index names.
    */
   createSearchIndexes(models: Iterable<SearchIndexModel>, options: CreateSearchIndexOptions): Iterable<String>;
 
   /**
-   * Updates the search index with the given name to use the provided 
+   * Updates the search index with the given name to use the provided
    * definition.
    */
   updateSearchIndex(name: String, definition: Document, options: Optional<UpdateSearchIndexOptions>): void;
@@ -1046,7 +1067,7 @@ interface Collection {
 
 interface SearchIndexView extends Iterable<Document> {
   /**
-   * Enumerates the index information for all search indexes in the collection. 
+   * Enumerates the index information for all search indexes in the collection.
    *
    * @note For drivers that cannot make the IndexView iterable, they MUST implement a list
    *   method. See below.
@@ -1057,8 +1078,8 @@ interface SearchIndexView extends Iterable<Document> {
    * For drivers that cannot make SearchIndexView iterable, they MUST implement this method to
    * return a list of indexes. In the case of async drivers, this MAY return a Future<Cursor>
    *  or language/implementation equivalent.
-   *  
-   *  If drivers are unable to make the SearchIndexView iterable, they MAY opt to provide the options for 
+   *
+   *  If drivers are unable to make the SearchIndexView iterable, they MAY opt to provide the options for
    *  listing search indexes via the `list` method instead of the `Collection.searchIndexes` method.
    */
   list(): Cursor<Document>;
@@ -1072,7 +1093,7 @@ interface SearchIndexView extends Iterable<Document> {
    * @note Drivers MAY opt to implement this method signature, the signature that
    *   takes an SearchIndexModel as a parameter, or for those languages with method
    *   overloading MAY decide to implement both.
-   *   
+   *
    * @note Drivers MAY combine the `indexOptions` with the `createSearchIndexOptions`, if that is idiomatic for their language.
    */
   createOne(definition: Document, indexOptions: Optional<SearchIndexOptions>, createSearchIndexOptions: Optional<CreateSearchIndexOptions>): String;
@@ -1176,6 +1197,8 @@ internally by the server on those versions, and its value could have adverse eff
 from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 #### Changelog
+
+- 2025-09-09: Clarify that `rawData` is for internal use only.
 
 - 2025-06-27: Added `rawData` option to CreateIndexOptions, DropIndexOptions and ListIndexesOptions.
 
