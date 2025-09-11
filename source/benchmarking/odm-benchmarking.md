@@ -30,11 +30,13 @@ within ODMs that are faster or slower.
 - Nested models -- reading and writing nested models of various sizes, to explore basic operation efficiency for complex
     data
 
-The suite is intentionally kept small for several reasons. One, ODM feature sets vary significantly across libraries.
-This limits the number of benchmarks that can be run across the entire collection of extant ODMs. Two, several popular
-MongoDB ODMs are actively maintained by third-parties, such as Mongoose. By limiting the benchmarking suite to a minimal
-set of representative tests that are easy to implement, we encourage adoption of the suite by these third-party
-maintainers.
+The suite is intentionally kept small for several reasons:
+
+- ODM feature sets vary significantly across libraries, limiting the number of benchmarks that can be run across the
+    entire collection of extant ODMs.
+- Several popular \`MongoDB ODMs are actively maintained by third-parties, such as Mongoose. By limiting the
+    benchmarking suite to a minimal set of representative tests that are easy to implement, we encourage adoption of the
+    suite by these third-party maintainers.
 
 ### Measurement
 
