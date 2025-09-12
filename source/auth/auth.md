@@ -1010,8 +1010,8 @@ Drivers MAY expose API for default providers for the following scenarios when ap
 
 The order in which Drivers MUST search for credentials is:
 
-1. A custom AWS credential provider if the driver supports it.
-2. The URI
+1. The URI
+2. A custom AWS credential provider if the driver supports it.
 3. Environment variables
 4. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
 5. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
