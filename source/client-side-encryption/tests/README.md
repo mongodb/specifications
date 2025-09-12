@@ -3838,6 +3838,7 @@ const dk = await clientEncryption.createDataKey('aws', { masterKey });
 expect(dk).to.be.a(Binary);
 expect(calledCount).to.be.greaterThan(0);
 ```
+
 ### 27. Text Explicit Encryption
 
 The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server 8.2.0+
