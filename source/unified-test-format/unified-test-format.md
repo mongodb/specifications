@@ -545,11 +545,11 @@ The structure of this object is as follows:
     <span id="entity_client_awaitMinPoolSizeMS"></span>
 
     - `awaitMinPoolSizeMS`: Optional, integer. When specified, this parameter defines the maximum duration (in
-        milliseconds) that the Unified Spec Runner must wait for the connection pool to be populated across all
-        data-bearing servers, in accordance with the `minPoolSize` option. If the connection pool is not populated within
-        the specified timeframe, the Unified Spec Runner must raise an error and mark the test case as failed. If the
-        parameter is omitted or if `minPoolSize` is set to 0, no waiting is required for a specific pool state prior to
-        test execution.
+        milliseconds) that the Unified Spec Runner must wait for each connection pool to be populated with `minPoolSize`
+        connections. Only connection pools for data-bearing nodes should be considered. If any connection pool is not
+        populated within the specified timeframe, the Unified Spec Runner must raise an error and mark the test as failed.
+        If the parameter is omitted or if `minPoolSize` is set to 0, no waiting is required for a specific pool state
+        prior to test execution.
 
 <span id="entity_clientEncryption"></span>
 
