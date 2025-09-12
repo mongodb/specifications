@@ -544,7 +544,7 @@ The structure of this object is as follows:
 
     <span id="entity_client_awaitMinPoolSize"></span>
 
-    - `awaitMinPoolSize`: Optional boolean. If `true`, the unified spec runner must wait for the connection pool to be
+    - `awaitMinPoolSize`: Optional boolean. If `true` the unified spec runner must wait for the connection pool to be
         populated for all data bearing servers according to the `minPoolSize` option, if pool was not populated after
         `minPoolSize * 10 seconds` of waiting, unified spec runner should throw an error and report test as failed. If
         `false`, not specified, or if minPoolSize equals 0, there is no need to wait for any specific pool state.
