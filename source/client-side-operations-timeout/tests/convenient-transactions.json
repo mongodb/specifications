@@ -24,11 +24,11 @@
           "timeoutMS": 500,
           "minPoolSize": 1
         },
-        "awaitMinPoolSize": true,
         "useMultipleMongoses": false,
         "observeEvents": [
           "commandStartedEvent"
-        ]
+        ],
+        "awaitMinPoolSize": true
       }
     },
     {
