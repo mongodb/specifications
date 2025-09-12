@@ -57,7 +57,7 @@ tests:
                   timeoutMS: 500
                   heartbeatFrequencyMS: 500
                   minPoolSize: 1
-                awaitMinPoolSize: true
+                awaitMinPoolSizeMS: 10000
                 observeEvents:
                   - commandStartedEvent
             - database:
@@ -130,7 +130,7 @@ tests:
                   timeoutMS: 10
                   heartbeatFrequencyMS: 500
                   minPoolSize: 1
-                awaitMinPoolSize: true
+                awaitMinPoolSizeMS: 10000
                 observeEvents:
                   - commandStartedEvent
             - database:
@@ -215,7 +215,7 @@ tests:
                   timeoutMS: 90
                   heartbeatFrequencyMS: 100000  # Override heartbeatFrequencyMS to ensure only 1 RTT is recorded.
                   minPoolSize: 1
-                awaitMinPoolSize: true
+                awaitMinPoolSizeMS: 10000
                 observeEvents:
                   - commandStartedEvent
             - database:

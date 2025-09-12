@@ -244,8 +244,8 @@
                 }
               }
             },
-            "awaitMinPoolSize": {
-              "type": "boolean"
+            "awaitMinPoolSizeMS": {
+              "type": "integer"
             }
           }
         },

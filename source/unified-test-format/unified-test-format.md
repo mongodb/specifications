@@ -542,12 +542,14 @@ The structure of this object is as follows:
         - `bypassQueryAnalysis`: Optional. Disables analysis of outgoing commands. Defaults to `false`.
         - `keyExpirationMS`: The same as in [`clientEncryption`](#entity_clientEncryption).
 
-    <span id="entity_client_awaitMinPoolSize"></span>
+    <span id="entity_client_awaitMinPoolSizeMS"></span>
 
-    - `awaitMinPoolSize`: Optional boolean. If `true` the unified spec runner must wait for the connection pool to be
-        populated for all data bearing servers according to the `minPoolSize` option, if pool was not populated after
-        `minPoolSize * 10 seconds` of waiting, unified spec runner should throw an error and report test as failed. If
-        `false`, not specified, or if minPoolSize equals 0, there is no need to wait for any specific pool state.
+    - `awaitMinPoolSizeMS`: Optional, integer. When specified, this parameter defines the maximum duration (in
+        milliseconds) that the Unified Spec Runner must wait for the connection pool to be populated across all
+        data-bearing servers, in accordance with the `minPoolSize` option. If the connection pool is not populated within
+        the specified timeframe, the Unified Spec Runner must raise an error and mark the test case as failed. If the
+        parameter is omitted or if `minPoolSize` is set to 0, no waiting is required for a specific pool state prior to
+        test execution.
 
 <span id="entity_clientEncryption"></span>
 

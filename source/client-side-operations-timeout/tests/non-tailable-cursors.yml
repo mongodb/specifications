@@ -14,7 +14,7 @@ createEntities:
       uriOptions:
         timeoutMS: 200
         minPoolSize: 1
-      awaitMinPoolSize: true
+      awaitMinPoolSizeMS: 10000
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent

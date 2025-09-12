@@ -72,7 +72,7 @@
                     "heartbeatFrequencyMS": 500,
                     "minPoolSize": 1
                   },
-                  "awaitMinPoolSize": true,
+                  "awaitMinPoolSizeMS": 10000,
                   "observeEvents": [
                     "commandStartedEvent"
                   ]
@@ -190,7 +190,7 @@
                     "heartbeatFrequencyMS": 500,
                     "minPoolSize": 1
                   },
-                  "awaitMinPoolSize": true,
+                  "awaitMinPoolSizeMS": 10000,
                   "observeEvents": [
                     "commandStartedEvent"
                   ]
@@ -323,7 +323,7 @@
                     "heartbeatFrequencyMS": 100000,
                     "minPoolSize": 1
                   },
-                  "awaitMinPoolSize": true,
+                  "awaitMinPoolSizeMS": 10000,
                   "observeEvents": [
                     "commandStartedEvent"
                   ]
