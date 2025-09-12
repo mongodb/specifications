@@ -961,8 +961,8 @@ Examples are provided below.
 
     - AWS_CREDENTIAL_PROVIDER
 
-        Drivers MAY allow the user to specify a custom credential provider object or function.
-        See [Custom Credential Providers](https://github.com/mongodb/specifications/blob/master/source/auth/auth.md#custom-credential-providers)
+        Drivers MAY allow the user to specify a custom credential provider object or function. See
+        [Custom Credential Providers](https://github.com/mongodb/specifications/blob/master/source/auth/auth.md#custom-credential-providers)
 
 #### Obtaining Credentials
 
