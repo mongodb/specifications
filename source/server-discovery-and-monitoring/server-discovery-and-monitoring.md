@@ -897,7 +897,7 @@ else:
         ):
             # Stale primary.
             # The error field MUST include the substring "primary marked stale due to electionId/setVersion mismatch"
-            replace serverDescription with a default ServerDescription of type "Unknown" 
+            replace serverDescription with a default ServerDescription of type "Unknown"
             checkIfHasPrimary()
             return
 
