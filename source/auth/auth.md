@@ -959,6 +959,11 @@ Examples are provided below.
 
         Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
 
+    - AWS_CREDENTIAL_PROVIDER
+
+        Drivers MAY allow the user to specify a custom credential provider object or function. See
+        [Custom Credential Providers](https://github.com/mongodb/specifications/blob/master/source/auth/auth.md#custom-credential-providers)
+
 #### Obtaining Credentials
 
 Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete
@@ -1006,8 +1011,8 @@ Drivers MAY expose API for default providers for the following scenarios when ap
 The order in which Drivers MUST search for credentials is:
 
 1. The URI
-2. Environment variables
-3. A custom AWS credential provider if the driver supports it.
+2. A custom AWS credential provider if the driver supports it.
+3. Environment variables
 4. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
 5. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
@@ -2156,6 +2161,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2025-09-10: Update precedence of MONGODB-AWS credential fetching behaviour.
 
 - 2025-01-29: Add support for custom AWS credential providers.
 
