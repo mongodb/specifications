@@ -25,7 +25,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 An application that uses the MongoDB driver.
 
-#### Span
+**Span**
 
 A Span represents a single operation within a trace. Spans can be nested to form a trace tree. Each trace contains a
 root span, which typically describes the entire operation and, optionally, one or more sub-spans for its sub-operations.
@@ -43,20 +43,15 @@ Spans encapsulate:
 - A list of timestamped Events
 - A Status
 
-#### Tracer
+### Implementation Requirements
 
-A Tracer is responsible for creating spans, and using a tracer is the only way to create a span. A Tracer is not
-responsible for configuration; this should be the responsibility of the TracerProvider instead.
+#### External Dependencies
 
 **OpenTelemetry API and SDK**
 
 OpenTelemetry offers two components for implementing instrumentation – API and SDK. The OpenTelemetry API provides all
 the necessary types and method signatures. If there is no OpenTelemetry SDK available at runtime, API methods are
 no-ops. OpenTelemetry SDK is an actual implementation of the API. If the SDK is available, API methods do work.
-
-### Implementation Requirements
-
-#### External Dependencies
 
 Drivers MAY add a dependency to the corresponding OpenTelemetry API. This is the recommended way for implementing
 OpenTelemetry in libraries. Alternatively, drivers can implement OpenTelemetry support using any suitable tools within
@@ -174,9 +169,12 @@ Examples:
 
 ##### Exceptions
 
-If the driver operation fails with an exception, drivers MUST record an exception to the current operation span. When
-recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute if
-available:
+If the driver operation fails with an exception, drivers MUST record an exception to the current operation span. This
+does not relate to exceptions that happen on the server command level (see below). Those exceptions MUST be recorded to
+the corresponding command span.
+
+When recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute
+if available:
 
 - `exception.message`
 - `exception.type`
@@ -213,11 +211,13 @@ Spans SHOULD have the following attributes:
 | `server.port`                     | `int64`  | Server port number                                                                                                                                       | Required                     |
 | `server.address`                  | `string` | Name of the database host, or IP address if name is not known                                                                                            | Required                     |
 | `network.transport`               | `string` | MUST be 'tcp' or 'unix' depending on the protocol                                                                                                        | Required                     |
-| `db.query.summary`                | `string` | `command_name database_name.collection_name`                                                                                                             | Required                     |
+| `db.query.summary`                | `string` | (see explanation below)                                                                                                                                  | Required                     |
 | `db.mongodb.server_connection_id` | `int64`  | Server connection id                                                                                                                                     | Required if available        |
 | `db.mongodb.driver_connection_id` | `int64`  | Local connection id                                                                                                                                      | Required if available        |
 | `db.query.text`                   | `string` | Database command that was sent to the server. Content should be equivalent to the `document` field of the CommandStartedEvent of the command monitoring. | Conditional                  |
 | `db.mongodb.cursor_id`            | `int64`  | If a cursor is created or used in the operation                                                                                                          | Required if available        |
+| `db.mongodb.lsid`                 | `string` | Logical session id                                                                                                                                       | Required is available        |
+| `db.mongodb.txn_number`           | `int64`  | Transaction number                                                                                                                                       | Required is available        |
 
 Besides the attributes listed in the table above, drivers MAY add other attributes from the
 [Semantic Conventions for Databases](https://opentelemetry.io/docs/specs/semconv/registry/attributes/db/) that are
@@ -292,12 +292,12 @@ A common complaint from our support team is that they don't know how to easily g
 Some drivers provide debug logging, but others do not. For drivers that do provide it, the log messages produced and the
 mechanisms for enabling debug logging are inconsistent.
 
-Although users can implement their own debug logging support via existing driver events (SDAM, APM, etc), this requires
-code changes. It is often difficult to quickly implement and deploy such changes in production at the time they are
-needed, and to remove the changes afterward. Additionally, there are useful scenarios to log that do not correspond to
-existing events. Standardizing on debug log messages that drivers produce and how to enable/configure logging will
-provide TSEs, CEs, and MongoDB users an easier way to get debugging information out of our drivers, facilitate support
-of drivers for our internal teams, and improve our documentation around troubleshooting.
+OpenTelemetry is currently the industry standard for instrumenting, generating, and collecting telemetry data (metrics,
+logs, and traces). By instrumenting our drivers natively, we allow our end users to collect traces in a
+batteries-included way, with the additional benefits that the tracing is developed and maintained in-house, and conforms
+to the open-source standard for tracing. This also ensures that traces generated on the client-side on driver operations
+can tie into other traces, thus giving our end users a broader picture of the network hops that a single request might
+take.
 
 ## Test Plan
 
@@ -305,7 +305,7 @@ See [OpenTelemetry Tests](tests/README.md) for the test plan.
 
 ## Covered operations
 
-The OpenTelemetry specification covers the following operations:
+The OpenTelemetry specification covers all driver operations including but not limited to the following operations:
 
 | Operation                | Test                                                                           |
 | :----------------------- | :----------------------------------------------------------------------------- |

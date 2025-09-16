@@ -120,6 +120,10 @@
                           "$$type": "string"
                         },
                         "db.query.summary": "insert convenient-transaction-tests.test",
+                        "db.mongodb.lsid": {
+                          "$$sessionLsid": "session"
+                        },
+                        "db.mongodb.txn_number": 1,
                         "db.query.text": {
                           "$$matchAsDocument": {
                             "$$matchAsRoot": {
@@ -135,9 +139,6 @@
                               ]
                             }
                           }
-                        },
-                        "db.mongodb.lsid": {
-                          "$$sessionLsid": "session"
                         }
                       }
                     }
@@ -164,6 +165,10 @@
                         },
                         "db.query.summary": "commitTransaction admin",
                         "db.command.name": "commitTransaction",
+                        "db.mongodb.lsid": {
+                          "$$sessionLsid": "session"
+                        },
+                        "db.mongodb.txn_number": 1,
                         "db.query.text": {
                           "$$matchAsDocument": {
                             "$$matchAsRoot": {
