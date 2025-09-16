@@ -3148,8 +3148,6 @@ impossible to guarantee that an existing transaction will not block test executi
 SHOULD either ignore Unauthorized(13) command failures or avoid calling `killAllSessions` altogether when connected to
 Atlas (e.g. by detecting `mongodb.net` in the hostname or allowing the test runner to be configured externally).
 
-Test runners MUST NOT execute `killAllSessions` when connected to Atlas Data Lake.
-
 ##### MigrationConflict Errors on Sharded Clusters
 
 Following [SERVER-82353](https://jira.mongodb.org/browse/SERVER-82353), drivers may encounter MigrationConflict errors
@@ -3421,6 +3419,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-09-15: Remove note about Atlas Data Lake since Atlas Data Lake testing is removed.
 
 - 2025-08-20: Fix typo `_enxcol` => `enxcol_`
 

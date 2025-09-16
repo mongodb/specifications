@@ -1,7 +1,6 @@
 SCHEMA=../schema-1.25.json
 
 .PHONY: all \
-	atlas-data-lake \
 	auth \
 	change-streams \
 	client-side-encryption \
@@ -33,8 +32,7 @@ SCHEMA=../schema-1.25.json
 	versioned-api \
 	HAS_AJV
 
-all: atlas-data-lake \
-	auth \
+all: auth \
 	change-streams \
 	client-side-encryption \
 	client-side-operations-timeout \
@@ -61,9 +59,6 @@ all: atlas-data-lake \
 # When adding a new specification, remember to add it to the all and .PHONY targets above
 # For specifications that contain multiple test folders, create a target for each folder
 # in addition to a target for the specification itself
-atlas-data-lake: HAS_AJV
-	@ajv --spec=draft2019 test -s $(SCHEMA) -d "../../atlas-data-lake-testing/tests/unified/*.yml" --valid
-
 auth: HAS_AJV
 	@ajv --spec=draft2019 test -s $(SCHEMA) -d "../../auth/tests/unified/*.yml" --valid
 
