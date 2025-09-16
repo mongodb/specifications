@@ -35,7 +35,7 @@ tests:
         arguments:
           model: { definition: { mappings: { dynamic: true } } , type: 'search' }
         expectError:
-          # This test always errors in a non-Atlas environment.  The test functions as a unit test  by asserting
+          # This test always errors in a non-Atlas environment.  The test functions as a unit test by asserting
           # that the driver constructs and sends the correct command.
           # The expected error message was changed in SERVER-83003. Check for the substring "Atlas" shared by both error messages.
           isError: true
