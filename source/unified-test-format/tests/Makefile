@@ -1,4 +1,4 @@
-SCHEMA=../schema-1.25.json
+SCHEMA=../schema-latest.json
 
 .PHONY: all \
 	auth \
