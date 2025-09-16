@@ -41,7 +41,7 @@ Spans encapsulate:
 - Attributes
 - A list of links to other Spans
 - A list of timestamped Events
-- A Status.
+- A Status
 
 #### Tracer
 
