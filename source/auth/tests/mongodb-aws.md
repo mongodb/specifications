@@ -39,7 +39,8 @@ from the custom provider instead of using the AWS SDK default provider.
 
 #### Case 1: Credentials in URI Take Precedence
 
-Create a `MongoClient` configured with AWS auth and credentials in the URI. Example: `mongodb://<AccessKeyId>:<SecretAccessKey>@localhost:27017/?authMechanism=MONGODB-AWS`
+Create a `MongoClient` configured with AWS auth and credentials in the URI. Example:
+`mongodb://<AccessKeyId>:<SecretAccessKey>@localhost:27017/?authMechanism=MONGODB-AWS`
 
 Configure a custom credential provider to pass valid AWS credentials. The provider must track if it was called.
 
@@ -47,9 +48,10 @@ Expect authentication to succeed and the custom credential provider was *not* ca
 
 #### Case 2: Custom Provider Takes Precedence Over Environment Variables
 
-Run this test in an environment with AWS credentials configured as environment variables (e.g. `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`)
+Run this test in an environment with AWS credentials configured as environment variables (e.g. `AWS_ACCESS_KEY_ID`,
+`AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`)
 
-Create a `MongoClient` configured to use AWS auth. Example: `mongodb://localhost:27017/?authMechanism=MONGODB-AWS`. 
+Create a `MongoClient` configured to use AWS auth. Example: `mongodb://localhost:27017/?authMechanism=MONGODB-AWS`.
 
 Configure a custom credential provider to pass valid AWS credentials. The provider must track if it was called.
 
