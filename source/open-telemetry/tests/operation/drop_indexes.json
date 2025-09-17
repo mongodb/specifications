@@ -1,6 +1,6 @@
 {
   "description": "operation drop indexes",
-  "schemaVersion": "1.26",
+  "schemaVersion": "1.27",
   "createEntities": [
     {
       "client": {

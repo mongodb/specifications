@@ -198,15 +198,6 @@
                 }
               }
             },
-            "observeTracingMessages": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "enableCommandPayload": {
-                  "type": "boolean"
-                }
-              }
-            },
             "serverApi": {
               "$ref": "#/definitions/serverApi"
             },
@@ -252,6 +243,9 @@
                   "type": "integer"
                 }
               }
+            },
+            "awaitMinPoolSizeMS": {
+              "type": "integer"
             }
           }
         },
@@ -377,29 +371,6 @@
         "serverSelection",
         "connection"
       ]
-    },
-    "spanComponent": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name",
-        "attributes"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "attributes": {
-          "type": "object"
-        },
-        "nested": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/spanComponent"
-          }
-        }
-      }
     },
     "logSeverityLevel": {
       "type": "string",
@@ -972,29 +943,6 @@
         }
       }
     },
-    "expectTracingMessagesForClient": {
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "client",
-        "spans"
-      ],
-      "properties": {
-        "client": {
-          "type": "string"
-        },
-        "ignoreExtraSpans": {
-          "type": "boolean"
-        },
-        "spans": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/spanComponent"
-          }
-        }
-      }
-    },
     "expectedLogMessage": {
       "type": "object",
       "additionalProperties": false,
@@ -1217,13 +1165,6 @@
           "minItems": 1,
           "items": {
             "$ref": "#/definitions/expectedLogMessagesForClient"
-          }
-        },
-        "expectTracingMessages": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/expectTracingMessagesForClient"
           }
         },
         "outcome": {

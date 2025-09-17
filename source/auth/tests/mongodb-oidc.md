@@ -199,7 +199,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 }
 ```
 
-- Perform a `find` operation that fails.
+- Perform a `insert` operation that fails.
 - Assert that the callback was called 2 times.
 - Close the client.
 
@@ -209,7 +209,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 - Populate the *Client Cache* with a valid access token to enforce Speculative Authentication.
 - Perform an `insert` operation that succeeds.
 - Assert that the callback was not called.
-- Assert there were no `SaslStart` commands executed.
+- Assert there were no `saslStart` commands executed.
 - Set a fail point for `insert` commands of the form:
 
 ```javascript
@@ -229,7 +229,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 - Perform an `insert` operation that succeeds.
 - Assert that the callback was called once.
-- Assert there were `SaslStart` commands executed.
+- Assert there were `saslStart` commands executed.
 - Close the client.
 
 #### 4.5 Reauthentication Succeeds when a Session is involved

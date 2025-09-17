@@ -1,6 +1,6 @@
 {
   "description": "operation bulk_write",
-  "schemaVersion": "1.26",
+  "schemaVersion": "1.27",
   "runOnRequirements": [
     {
       "minServerVersion": "8.0",

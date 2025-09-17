@@ -1,7 +1,6 @@
 # Hide generated JSON spec test files from displaying in diffs by default
 # https://docs.github.com/en/repositories/working-with-files/managing-files/customizing-how-changed-files-appear-on-github
 
-/source/atlas-data-lake-testing/tests/*.json linguist-generated=true
 /source/auth/tests/**/*.json linguist-generated=true
 /source/change-streams/tests/unified/*.json linguist-generated=true
 /source/client-side-encryption/tests/**/*.json linguist-generated=true

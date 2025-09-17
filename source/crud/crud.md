@@ -323,6 +323,13 @@ class AggregateOptions {
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -384,7 +391,13 @@ class CountOptions {
 
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
-   * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -415,10 +428,17 @@ class EstimatedDocumentCountOptions {
    * comment may result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -469,10 +489,17 @@ class DistinctOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   hint: Optional<(String | Document)>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -753,10 +780,17 @@ class FindOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
   let: Optional<Document>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -1035,10 +1069,17 @@ class BulkWriteOptions {
    * The value of let will be passed to all update and delete, but not insert, commands.
    */
   let: Optional<Document>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -1067,10 +1108,17 @@ class InsertOneOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -1106,10 +1154,17 @@ class InsertManyOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -1207,10 +1262,17 @@ class UpdateOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   sort: Optional<Document>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -1296,10 +1358,17 @@ class ReplaceOptions {
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
   sort: Optional<Document>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -1356,10 +1425,17 @@ class DeleteOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -2119,10 +2195,17 @@ class FindOneAndDeleteOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -2237,10 +2320,17 @@ class FindOneAndReplaceOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -2364,10 +2454,17 @@ class FindOneAndUpdateOptions {
    * and providing one will result in a server-side error.
    */
   comment: Optional<any>;
-  
+
   /**
    * This option MAY be implemented by drivers that need to grant access to underlying namespaces
    * for time-series collections. Drivers SHOULD NOT implement this option unless asked to do so.
+   *
+   * This option is intended for internal use by MongoDB teams and should be discouraged for
+   * general application use. It may be changed or removed in any release without notice.
+   *
+   * Drivers SHOULD implement this option in a way that discourages customer use, such as:
+   *   - Marking it as deprecated, experimental, or internal in their language's idioms
+   *   - Excluding it from primary documentation
    *
    * @note This option MUST NOT be sent when connected to pre-8.2 servers.
    *
@@ -2455,7 +2552,7 @@ specifically. An example, using Node, might look like:
 collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
 
 // sends:
-{ 
+{
   explain: { find: <collection>, query: { name: 'john doe' } },
   maxTimeMS: 1000
 }
@@ -2463,7 +2560,7 @@ collection.find({ name: 'john doe' }).explain({ maxTimeMS: 1000 });
 collection.find({ name: 'john doe' }).explain({ timeoutMS: 1000 });
 
 // sends:
-{ 
+{
   explain: { find: <collection>, query: { name: 'john doe' } },
   maxTimeMS: <1000 - min rtt>
 }
@@ -2651,6 +2748,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2025-09-09: Clarify that `rawData` is for internal use only.
 
 - 2025-06-27: Added `rawData` options.
 

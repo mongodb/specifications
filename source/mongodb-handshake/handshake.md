@@ -185,8 +185,8 @@ Drivers MUST NOT provide a default value for this key.
 
 This value is required and is not application configurable.
 
-The internal driver name. For drivers written on-top of other core drivers, the underlying driver will typically expose
-a function to append additional name to this field.
+The internal driver name. For drivers written on-top of other core drivers, the `appendMetadata()` method can be used to
+add package information to an existing MongoClient.
 
 Example:
 
@@ -200,7 +200,7 @@ Example:
 This value is required and is not application configurable.
 
 The internal driver version. The version formatting is not defined. For drivers written on-top of other core drivers,
-the underlying driver will typically expose a function to append additional name to this field.
+the `appendMetadata()` method can be used to add package information to an existing MongoClient.
 
 Example:
 
@@ -405,6 +405,10 @@ class DriverInfoOptions {
 }
 ```
 
+Two `DriverInfoOptions` objects are considered equal if they would result in the same metadata in the client handshake.
+In practice, this means if a field is the empty string (`""`), treat it as unset. Assert that each field is strictly
+equal with case sensitive string comparison.
+
 Note that how these options are provided to a driver during `MongoClient` initialization is left up to the implementer.
 
 ### Metadata updates after MongoClient initialization
@@ -441,6 +445,12 @@ be appended to their respective fields, and be delimited by a `|` character. For
     }
 }
 ```
+
+Some client libraries provide APIs that accept a pre-initialized MongoClient as an argument. In these circumstances, it
+is possible for multiple library objects to be associated with the same MongoClient, which could result in the same
+metadata being appended multiple times. Drivers MUST ensure that any duplicate `DriverInfoOptions` objects provided to a
+MongoClient or appended to a MongoClient do not result in additional metadata being appended. See
+[Supporting Wrapping Libraries](#supporting-wrapping-libraries).
 
 **NOTE:** All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatention.
 Drivers MUST throw an error if any of these strings contains that character.
@@ -553,6 +563,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
 - 2024-10-09: Clarify that FaaS and container metadata must both be populated when both are present.
