@@ -1,4 +1,4 @@
-description: retrying failed command
+description: retries
 schemaVersion: '1.26'
 createEntities:
   - client:
@@ -20,26 +20,26 @@ createEntities:
 initialData:
   - collectionName: test
     databaseName: operation-find-retries
-    documents: []
+    documents: [ ]
 tests:
   - description: find an element with retries
     operations:
-    - name: failPoint
-      object: testRunner
-      arguments:
-        client: *failPointClient
-        failPoint:
-          configureFailPoint: failCommand
-          mode: { times: 1 }
-          data:
-            failCommands: [ find ]
-            errorCode: 89
-            errorLabels: [ RetryableWriteError ]
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ find ]
+              errorCode: 89
+              errorLabels: [ RetryableWriteError ]
 
-    - name: find
-      object: *collection0
-      arguments:
-        filter: { x: 1 }
+      - name: find
+        object: *collection0
+        arguments:
+          filter: { x: 1 }
 
     expectTracingMessages:
       - client: *client0
@@ -66,7 +66,7 @@ tests:
                   exception.type: { $$exists: true }
                   exception.stacktrace: { $$exists: true }
                   server.address: { $$type: string }
-                  server.port: { $$type: ['long', 'string'] }
+                  server.port: { $$type: [ long, string ] }
                   db.query.summary: find operation-find-retries.test
                   db.query.text:
                     $$matchAsDocument:
@@ -75,9 +75,9 @@ tests:
                         filter:
                           x: 1
                   db.mongodb.server_connection_id:
-                    $$type: [ 'int', 'long' ]
+                    $$type: [ int, long ]
                   db.mongodb.driver_connection_id:
-                    $$type: [ 'int', 'long' ]
+                    $$type: [ int, long ]
               - name: find
                 attributes:
                   db.system: mongodb
@@ -91,7 +91,7 @@ tests:
                   exception.type: { $$exists: false }
                   exception.stacktrace: { $$exists: false }
                   server.address: { $$type: string }
-                  server.port: { $$type: ['int', 'long'] }
+                  server.port: { $$type: [ int, long ] }
                   db.query.summary: find operation-find-retries.test
                   db.query.text:
                     $$matchAsDocument:
@@ -100,6 +100,6 @@ tests:
                         filter:
                           x: 1
                   db.mongodb.server_connection_id:
-                    $$type: [ 'int', 'long' ]
+                    $$type: [ int, long ]
                   db.mongodb.driver_connection_id:
-                    $$type: [ 'int', 'long' ]
+                    $$type: [ int, long ]

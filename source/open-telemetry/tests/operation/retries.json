@@ -1,5 +1,5 @@
 {
-  "description": "retrying failed command",
+  "description": "retries",
   "schemaVersion": "1.26",
   "createEntities": [
     {

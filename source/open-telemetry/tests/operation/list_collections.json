@@ -1,5 +1,5 @@
 {
-  "description": "operation list collections",
+  "description": "operation list_collections",
   "schemaVersion": "1.26",
   "createEntities": [
     {

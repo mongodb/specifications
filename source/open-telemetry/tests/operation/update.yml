@@ -42,7 +42,7 @@ tests:
                   db.system: mongodb
                   db.namespace: operation-update
                   server.address: { $$type: string }
-                  server.port: { $$type: [ 'long', 'string' ] }
+                  server.port: { $$type: [ long, string ] }
                   db.query.summary: update operation-update.test
                   db.query.text:
                     $$matchAsDocument:

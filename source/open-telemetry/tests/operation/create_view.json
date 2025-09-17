@@ -1,5 +1,5 @@
 {
-  "description": "operation create view",
+  "description": "operation create_view",
   "schemaVersion": "1.26",
   "createEntities": [
     {

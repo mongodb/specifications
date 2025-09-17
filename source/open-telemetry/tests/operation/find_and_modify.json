@@ -1,5 +1,5 @@
 {
-  "description": "operation findOneAndUpdate",
+  "description": "operation find_one_and_update",
   "schemaVersion": "1.26",
   "createEntities": [
     {

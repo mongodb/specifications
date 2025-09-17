@@ -1,5 +1,5 @@
 {
-  "description": "operation bulkwrite",
+  "description": "operation bulk_write",
   "schemaVersion": "1.26",
   "runOnRequirements": [
     {

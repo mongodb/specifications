@@ -1,5 +1,5 @@
 {
-  "description": "operation atlas search",
+  "description": "operation atlas_search",
   "schemaVersion": "1.26",
   "createEntities": [
     {

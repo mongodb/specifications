@@ -41,7 +41,7 @@ tests:
                   db.namespace: operation-delete
                   db.collection.name: test
                   server.address: { $$type: string }
-                  server.port: { $$type: [ 'long', 'string' ] }
+                  server.port: { $$type: [ long, string ] }
                   db.query.summary: delete operation-delete.test
                   db.query.text:
                     $$matchAsDocument:

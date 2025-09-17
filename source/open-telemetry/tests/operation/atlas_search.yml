@@ -1,4 +1,4 @@
-description: operation atlas search
+description: operation atlas_search
 schemaVersion: '1.26'
 createEntities:
   - client:
@@ -82,7 +82,7 @@ tests:
                   db.namespace: operation-atlas-search
                   db.collection.name: test
                   server.address: { $$type: string }
-                  server.port: { $$type: [ 'long', 'string' ] }
+                  server.port: { $$type: [ long, string ] }
                   server.type: { $$type: string }
                   db.query.summary: createSearchIndexes operation-atlas-search.test
                   db.query.text:
@@ -105,7 +105,7 @@ tests:
                   db.namespace: operation-atlas-search
                   db.collection.name: test
                   server.address: { $$type: string }
-                  server.port: { $$type: [ 'long', 'string' ] }
+                  server.port: { $$type: [ long, string ] }
                   server.type: { $$type: string }
                   db.query.summary: updateSearchIndex operation-atlas-search.test
                   db.query.text:
@@ -129,7 +129,7 @@ tests:
                   db.namespace: operation-atlas-search
                   db.collection.name: test
                   server.address: { $$type: string }
-                  server.port: { $$type: [ 'long', 'string' ] }
+                  server.port: { $$type: [ long, string ] }
                   server.type: { $$type: string }
                   db.query.summary: dropSearchIndex operation-atlas-search.test
                   db.query.text:

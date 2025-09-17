@@ -1,5 +1,5 @@
 {
-  "description": "operation list databases",
+  "description": "operation list_databases",
   "schemaVersion": "1.26",
   "createEntities": [
     {

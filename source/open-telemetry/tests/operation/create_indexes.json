@@ -1,5 +1,5 @@
 {
-  "description": "operation create indexes",
+  "description": "operation create_indexes",
   "schemaVersion": "1.26",
   "createEntities": [
     {
