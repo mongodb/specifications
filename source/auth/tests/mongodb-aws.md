@@ -28,12 +28,12 @@ If the driver supports custom AWS credential providers, the driver MUST test the
 ### 1. Custom Credential Provider Authenticates
 
 Scenarios 1-6 from the previous section with a user provided `AWS_CREDENTIAL_PROVIDER` auth mechanism property. This
-credentials MAY be obtained from the default credential provider from the AWS SDK. If the default provider does not cover all scenarios
-above, those not covered MAY be skipped. In these tests the driver MUST also assert that the user provided credential
-provider was called in each test. This may be via a custom function or object that wraps the calls to the custom
-provider and asserts that it was called at least once. For test scenarios where the drivers tools scripts put the
-credentials in the MONGODB_URI, drivers MAY extract the credentials from the URI and return the AWS credentials directly
-from the custom provider instead of using the AWS SDK default provider.
+credentials MAY be obtained from the default credential provider from the AWS SDK. If the default provider does not
+cover all scenarios above, those not covered MAY be skipped. In these tests the driver MUST also assert that the user
+provided credential provider was called in each test. This may be via a custom function or object that wraps the calls
+to the custom provider and asserts that it was called at least once. For test scenarios where the drivers tools scripts
+put the credentials in the MONGODB_URI, drivers MAY extract the credentials from the URI and return the AWS credentials
+directly from the custom provider instead of using the AWS SDK default provider.
 
 ### 2. Custom Credential Provider Authentication Precedence
 
