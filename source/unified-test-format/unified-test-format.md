@@ -785,8 +785,8 @@ The structure of this object is as follows:
 
 <span id="expectTracingMessages"></span>
 
-- `expectTracingMessages`: Optional object that defines expected tracing
-    [spans](../open-telemetry/open-telemetry.md#span) for a test. The structure of this object is as follows:
+- `expectTracingMessages`: Optional object that defines expected tracing [spans](../open-telemetry/open-telemetry.md)
+    for a test. The structure of this object is as follows:
 
     - `client`: Required string. The ID of the client entity associated with these tracing spans.
 

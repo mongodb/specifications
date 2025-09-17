@@ -20,8 +20,8 @@ createEntities:
         enableCommandPayload: true
 ```
 
-These tests require the ability to collect tracing [spans](../open-telemetry.md#span) data in a structured form as
-described in the
+These tests require the ability to collect tracing [spans](../open-telemetry.md) data in a structured form as described
+in the
 [Unified Test Format specification.expectTracingMessages](../../unified-test-format/unified-test-format.md#expectTracingMessages).
 For example the Java driver uses [Micrometer](https://jira.mongodb.org/browse/JAVA-5732) to collect tracing spans.
 
