@@ -961,8 +961,9 @@ Examples are provided below.
 
     - AWS_CREDENTIAL_PROVIDER
 
-        Drivers MAY allow the user to specify a custom credential provider object or function. See
-        [Custom Credential Providers](#custom-credential-providers)
+        An AWS [Custom Credential Provider](#custom-credential-providers) that returns AWS credentials. Drivers MAY
+        allow the user to specify an object or function, depending on what is idiomatic for the driver. This property
+        MUST follow the same API as the driver language's AWS SDK credential provider.
 
 #### Obtaining Credentials
 
