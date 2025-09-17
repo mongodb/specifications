@@ -3790,7 +3790,7 @@ Assert that an error is thrown.
 
 #### Case 4: ClientEncryption with `credentialProviders` and valid environment variables.
 
-Ensure a valid `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` are present in the environment.
+Ensure a valid `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are present in the environment.
 
 Create a MongoClient named `setupClient`.
 
