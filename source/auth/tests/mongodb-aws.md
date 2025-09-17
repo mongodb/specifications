@@ -2,7 +2,7 @@
 
 Drivers MUST test the following scenarios:
 
-1. `Regular Credentials`: Auth via an `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` pair
+1. `Regular Credentials`: Auth via an `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` pair
 2. `EC2 Credentials`: Auth from an EC2 instance via temporary credentials assigned to the machine
 3. `ECS Credentials`: Auth from an ECS instance via temporary credentials assigned to the task
 4. `Assume Role`: Auth via temporary credentials obtained from an STS AssumeRole request
@@ -25,6 +25,8 @@ Token=AQoDYXdzEJr...<remainder of security token>
 
 If the driver supports custom AWS credential providers, the driver MUST test the following:
 
+### 1. Custom Credential Provider Authenticates
+
 Scenarios 1-6 from the previous section with a user provided `AWS_CREDENTIAL_PROVIDER` auth mechanism property. This
 credentials MAY be obtained from the default credential provider from the AWS SDK. If the default provider does not cover all scenarios
 above, those not covered MAY be skipped. In these tests the driver MUST also assert that the user provided credential
@@ -32,6 +34,26 @@ provider was called in each test. This may be via a custom function or object th
 provider and asserts that it was called at least once. For test scenarios where the drivers tools scripts put the
 credentials in the MONGODB_URI, drivers MAY extract the credentials from the URI and return the AWS credentials directly
 from the custom provider instead of using the AWS SDK default provider.
+
+### 2. Custom Credential Provider Authentication Precedence
+
+#### Case 1: Credentials in URI Take Precedence
+
+Create a `MongoClient` configured with AWS auth and credentials in the URI. Example: `mongodb://<AccessKeyId>:<SecretAccessKey>@localhost:27017/?authMechanism=MONGODB-AWS`
+
+Configure a custom credential provider to pass valid AWS credentials. The provider must track if it was called.
+
+Expect authentication to succeed and the custom credential provider was *not* called.
+
+#### Case 2: Custom Provider Takes Precedence Over Environment Variables
+
+Run this test in an environment with AWS credentials configured as environment variables (e.g. `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`)
+
+Create a `MongoClient` configured to use AWS auth. Example: `mongodb://localhost:27017/?authMechanism=MONGODB-AWS`. 
+
+Configure a custom credential provider to pass valid AWS credentials. The provider must track if it was called.
+
+Expect authentication to succeed and the custom credential provider was called.
 
 ## Regular credentials
 
