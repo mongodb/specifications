@@ -48,9 +48,9 @@ expectTracingMessages:
 
 *Test 2: Command Payload Emission via Environment Variable*
 
-1. Set the environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH` to `true`.
+1. Set the environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_ENABLED` to `true`.
 2. Set the environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH` to a positive integer
-    (e.g., 100).
+    (e.g., 1024).
 3. Create a `MongoClient` without explicitly enabling command payload emission.
 4. Perform a database operation (e.g., `find()`).
 5. Assert that the emitted tracing span includes the `db.query.text` attribute.
