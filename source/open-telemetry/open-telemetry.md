@@ -301,7 +301,7 @@ If the command returns a cursor, or uses a cursor, the `cursor_id` attribute SHO
 ##### Exceptions
 
 If the server command fails with an exception, drivers MUST record an exception to the current command span. When
-recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute if
+recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute is
 available:
 
 - `exception.message`
@@ -371,3 +371,20 @@ disable it completely.
 ## Security Implication
 
 Drivers MUST take care to avoid exposing sensitive information (e.g. authentication credentials) in traces.
+
+## Future Work
+
+### Query Parametrization
+
+It might be beneficial to implement query parametrization for the `db.query.text` attribute. This means that drivers
+replace literal values in queries with placeholders. For example, the query
+
+```json
+{ find: "users", filter: { age: { $gt: 30 } } }
+```
+
+will be transformed to
+
+```json
+{ find: "users", filter: { age: { $gt: "?" } } }
+```
