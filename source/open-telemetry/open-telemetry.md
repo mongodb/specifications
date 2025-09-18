@@ -57,7 +57,7 @@ Drivers MAY add a dependency to the corresponding OpenTelemetry API. This is the
 OpenTelemetry in libraries. Alternatively, drivers can implement OpenTelemetry support using any suitable tools within
 the driver ecosystem. Drivers MUST NOT add a dependency to OpenTelemetry SDK.
 
-#### Enabling and Disabling OpenTelemetry
+#### Enabling, Disabling, and Configuring OpenTelemetry
 
 OpenTelemetry SHOULD be disabled by default.
 
@@ -76,6 +76,28 @@ Drivers SHOULD support configuring OpenTelemetry on multiple levels.
     Ruby), and a driver can detect this, OpenTelemetry SHOULD be enabled in the driver.
 
 Drivers MUST NOT try to detect whether the OpenTelemetry SDK library is available, and enable tracing based on this.
+Drivers MUST NOT add means that configure OpenTelemetry SDK (e.g., setting a specific exporter). Drivers MUST NOT add
+means that configure OpenTelemetry on the host application level (e.g., setting a specific sampler).
+
+##### `MongoClient` Options for configuring OpenTelemetry on the client level
+
+Drivers SHOULD add new options to `MongoClient` for configuring OpenTelemetry as described above. These options SHOULD
+be a dictionary that groups all OpenTelemetry-related options, the name of the dictionary SHOULD be `tracing`. The
+dictionary SHOULD contain at least the following options:
+
+- `enabled`: A boolean that enables or disables OpenTelemetry for this `MongoClient` instance. Default is `false` (i.e.,
+    use the driver-level setting).
+- `query_text_max_length`: An integer that sets the maximum length of the `db.query.text` attribute of command spans.
+    Default is `0` (i.e., do not add the attribute).
+
+#### Environment Variables for configuring OpenTelemetry
+
+Drivers SHOULD support configuration of OpenTelemetry on the driver level via at least the following environment
+variables:
+
+- `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_ENABLED`: enables OpenTelemetry when set to `1`, `true`, `yes`.
+- `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH`: An integer that sets the maximum length of the
+    `db.query.text` attribute of command spans. Default is `0` (i.e., do not add the attribute).
 
 #### Tracer Attributes
 
