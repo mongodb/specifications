@@ -238,8 +238,8 @@ Spans SHOULD have the following attributes:
 | `db.mongodb.driver_connection_id` | `int64`  | Local connection id                                                                                                                                      | Required if available        |
 | `db.query.text`                   | `string` | Database command that was sent to the server. Content should be equivalent to the `document` field of the CommandStartedEvent of the command monitoring. | Conditional                  |
 | `db.mongodb.cursor_id`            | `int64`  | If a cursor is created or used in the operation                                                                                                          | Required if available        |
-| `db.mongodb.lsid`                 | `string` | Logical session id                                                                                                                                       | Required is available        |
-| `db.mongodb.txn_number`           | `int64`  | Transaction number                                                                                                                                       | Required is available        |
+| `db.mongodb.lsid`                 | `string` | Logical session id                                                                                                                                       | Required if available        |
+| `db.mongodb.txn_number`           | `int64`  | Transaction number                                                                                                                                       | Required if available        |
 
 Besides the attributes listed in the table above, drivers MAY add other attributes from the
 [Semantic Conventions for Databases](https://opentelemetry.io/docs/specs/semconv/registry/attributes/db/) that are
@@ -301,7 +301,7 @@ If the command returns a cursor, or uses a cursor, the `cursor_id` attribute SHO
 ##### Exceptions
 
 If the server command fails with an exception, drivers MUST record an exception to the current command span. When
-recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute is
+recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute if
 available:
 
 - `exception.message`
