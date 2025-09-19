@@ -65,8 +65,8 @@ Drivers SHOULD support configuring OpenTelemetry on multiple levels.
 
 - **MongoClient Level**: Drivers SHOULD provide a configuration option for `MongoClient`'s Configuration/Settings that
     enables or disables tracing for operations and commands executed with this client. This option MUST override
-    settings on higher levels. This configuration can be implemented with a `MongoClient` option, for example,
-    `tracing.enabled`.
+    settings on higher levels. This configuration can be implemented with a `MongoClient` option. See
+    [Client Options](#client-options) section below.
 - **Driver Level**: Drivers SHOULD provide a global setting that enables or disables OpenTelemetry for all `MongoClient`
     instances (excluding those that explicitly override the setting). This configuration SHOULD be implemented with an
     environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_ENABLED`. Drivers MAY provide other means to globally
@@ -78,6 +78,8 @@ Drivers SHOULD support configuring OpenTelemetry on multiple levels.
 Drivers MUST NOT try to detect whether the OpenTelemetry SDK library is available, and enable tracing based on this.
 Drivers MUST NOT add means that configure OpenTelemetry SDK (e.g., setting a specific exporter). Drivers MUST NOT add
 means that configure OpenTelemetry on the host application level (e.g., setting a specific sampler).
+
+<span id="client-options"></span>
 
 ##### `MongoClient` Options for configuring OpenTelemetry on the client level
 
@@ -106,7 +108,9 @@ If a driver creates a Tracer using OpenTelemetry API, drivers MUST use the follo
 - `name`: A string that identifies the driver. It can be the name of a driver's component (e.g., "mongo", "PyMongo") or
     a package name (e.g., "com.mongo.Driver"). Drivers SHOULD select a name that is idiomatic for their language and
     ecosystem. Drivers SHOULD follow the Instrumentation Scope guidance.
-- `version`: The version of the driver.
+- `version`: A string that represents internal driver version. The version formatting is not defined; drivers SHOULD
+    apply the same formatting as the use for `client.driver.version` attribute of the
+    [handshake](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.md#clientdriverversion).
 
 #### Instrumenting Driver Operations
 
@@ -175,6 +179,11 @@ Examples:
 - `commitTransaction` → `admin`
 - `abortTransaction` → `admin`
 - client `bulkWrite` → `admin`
+
+The name of this attribute is defined in the
+[OpenTelemetry Specifications](https://opentelemetry.io/docs/specs/semconv/registry/attributes/db/#db-namespace). In
+order to be compliant with these, we use this name even though the term `namespace` has a different
+[meaning](https://www.mongodb.com/docs/manual/reference/glossary/) for MongoDB.
 
 ###### db.collection.name
 
@@ -258,6 +267,11 @@ Examples:
 - `abortTransaction` → `admin`
 - client `bulkWrite` → `admin`
 
+The name of this attribute is defined in the
+[OpenTelemetry Specifications](https://opentelemetry.io/docs/specs/semconv/registry/attributes/db/#db-namespace). In
+order to be compliant with these, we use this name even though the term `namespace` has a different
+[meaning](https://www.mongodb.com/docs/manual/reference/glossary/) for MongoDB.
+
 ###### db.collection.name
 
 This attribute should be set to the user's collection if the operation is executing against a collection, this field is
@@ -339,7 +353,6 @@ The OpenTelemetry specification covers all driver operations including but not l
 | `withTransaction`        | [tests/transaction/convenient.yml](tests/transaction/convenient.yml)           |
 | `createCollection`       | [tests/operation/create_collection.yml](tests/operation/create_collection.yml) |
 | `createIndexes`          | [tests/operation/create_indexes.yml](tests/operation/create_indexes.yml)       |
-| `createView`             | [tests/operation/create_view.yml](tests/operation/create_view.yml)             |
 | `distinct`               | [tests/operation/distinct.yml](tests/operation/distinct.yml)                   |
 | `dropCollection`         | [tests/operation/drop_collection.yml](tests/operation/drop_collection.yml)     |
 | `dropIndexes`            | [tests/operation/drop_indexes.yml](tests/operation/drop_indexes.yml)           |
@@ -370,7 +383,10 @@ disable it completely.
 
 ## Security Implication
 
-Drivers MUST take care to avoid exposing sensitive information (e.g. authentication credentials) in traces.
+Drivers MUST take care to avoid exposing sensitive information (e.g. authentication credentials) in traces. Drivers
+SHOULD follow the
+[Security](https://github.com/mongodb/specifications/blob/master/source/command-logging-and-monitoring/command-logging-and-monitoring.md#security)
+guidance of the Command Logging and Monitoring spec.
 
 ## Future Work
 
@@ -388,3 +404,14 @@ will be transformed to
 ```json
 { find: "users", filter: { age: { $gt: "?" } } }
 ```
+
+## Design Rationale
+
+### No URI options
+
+Enabling tracing may have performance and security implications. Copying and using a connection string that enables
+tracing may have unexpected negative outcome.
+
+Further, we already have two attributes that configure tracing, and we expect there might be more.
+
+A URI options can be added later if we realise our users need it, while the opposite is not easily accomplished.
