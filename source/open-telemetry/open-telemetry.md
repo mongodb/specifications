@@ -392,8 +392,9 @@ guidance of the Command Logging and Monitoring spec.
 
 ### Query Parametrization
 
-It might be beneficial to implement query parametrization for the `db.query.text` attribute. This means that drivers
-replace literal values in queries with placeholders. For example, the query
+It might be beneficial to implement query parametrization for the `db.query.text` attribute.
+
+One might want to replace dynamic values in queries with placeholders. For example, the query
 
 ```json
 { find: "users", filter: { age: { $gt: 30 } } }
@@ -404,6 +405,12 @@ will be transformed to
 ```json
 { find: "users", filter: { age: { $gt: "?" } } }
 ```
+
+for purposes of obfuscating queries in traces or query aggregation.
+
+In the case of CSFLE, the query might already have BSON binary values (with the encrypted subtype) by the time the query
+is sent along for tracing, which can also be considered a form of parameterization. In that case, a driver could easily
+replace those binary values with placeholders (assuming the encrypted blobs are irrelevant for logging).
 
 ## Design Rationale
 
