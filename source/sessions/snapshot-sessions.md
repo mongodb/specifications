@@ -84,7 +84,7 @@ All read operations performed using this session will be read from the same snap
 If no value is provided for `snapshot` a value of false is implied. `snapshotTime` is an optional parameter and if not
 passed the snapshot time will be set internally after the first find/aggregate/distinct operation inside the session.
 
-There are no MongoDatabase, MongoClient, orMongoCollection API changes.
+There are no MongoDatabase, MongoClient, or MongoCollection API changes.
 
 ## SessionOptions changes
 
@@ -118,16 +118,16 @@ true. Snapshot reads are supported on both primaries and secondaries.
 
 ### snapshotTime
 
-Applications set `snapshotTime` when starting a session to indicate whether they want snapshot reads.
+Applications set `snapshotTime` when starting a snapshot session to specify the desired snapshot time.
 
 Note that the `snapshotTime` property is optional. The default value of this property is null.
 
-Client MUST throw an error if `snapshotTime` and `snapshot` is not set to true.
+Client MUST throw an error if `snapshotTime` is set and `snapshot` is not set to true.
 
 ## ClientSession changes
 
-A new readonly property (or method?) called `snapshotTime` will be added to `ClientSession` that allows developer to
-retrieve the snapshot time of the session:
+A new readonly property called `snapshotTime` will be added to `ClientSession` that allows applications to retrieve the
+snapshot time of the session:
 
 ```typescript
 class ClientSession {
