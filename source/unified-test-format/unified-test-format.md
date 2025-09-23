@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.27.0
+- Current Schema Version: 1.28.0
 
 ______________________________________________________________________
 
@@ -486,6 +486,9 @@ The structure of this object is as follows:
         - [connectionCheckOutFailedEvent](#expectedEvent_connectionCheckOutFailedEvent)
         - [connectionCheckedOutEvent](#expectedEvent_connectionCheckedOutEvent)
         - [connectionCheckedInEvent](#expectedEvent_connectionCheckedInEvent)
+        - [connectionPendingResponseStarted](#expectedEvent_connectionPendingResponseStarted)
+        - [connectionPendingResponseSucceeded](#expectedEvent_connectionPendingResponseSucceeded)
+        - [connectionPendingResponseFailed](#expectedEvent_connectionPendingResponseFailed)
         - [serverDescriptionChangedEvent](#expectedEvent_serverDescriptionChangedEvent)
         - [serverHeartbeatStartedEvent](#expectedEvent_serverHeartbeatStartedEvent)
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
@@ -1132,6 +1135,27 @@ The structure of this object is as follows:
 
 - `connectionCheckedInEvent`: Optional object. If present, this object MUST be an empty document as all fields in this
     event are non-deterministic.
+
+<span id="expectedEvent_connectionPendingResponseStarted"></span>
+
+- `connectionPendingResponseStarted`: Optional object. If present, this object MUST be an empty document as all fields
+    in this event are non-deterministic.
+
+<span id="expectedEvent_connectionPendingResponseSucceeded"></span>
+
+- `connectionPendingResponseSucceeded`: Optional object. If present, this object MUST be an empty document as all fields
+    in this event are non-deterministic.
+
+<span id="expectedEvent_connectionPendingResponseFailed"></span>
+
+- `connectionPendingResponseFailed`: Optional object. Assertions for one or more
+    [connectionPendingResponseFailed](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events)
+    fields.
+
+    The structure of this object is as follows:
+
+    - `reason`: Optional string. Test runners MUST assert that the reason in the published event matches this value. Valid
+        values for this field are defined in the CMAP spec.
 
 ##### expectedSdamEvent
 
@@ -3458,6 +3482,11 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-09-25: **Schema version 1.28**.
+
+    Add draining of pending response events to `expectEvents` and `observeEvents` for client entities. These include
+    `PendingResponseStartedEvent`, `PendingResponseSucceededEvent`, and `PendingResponseFailedEvent`.
 
 - 2025-09-17: **Schema version 1.27.**
 
