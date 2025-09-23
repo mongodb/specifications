@@ -18,8 +18,8 @@ different ODMs, and the relative performance of ODMs and their associated langua
 
 We expect substantial performance differences between ODMs based on both their language families (e.g. static vs.
 dynamic or compiled vs. virtual-machine-based) as well as their inherent design (e.g. web frameworks such as Django vs.
-application-agnostic such as Mongoose). However we still expect "vertical" comparison within families of ODMs to expose
-outlier behavior that can be optimized away.
+application-agnostic such as Mongoose). Within families of ODMs that use similar design and language families, these
+comparisons could be used to identify potential areas of performance improvement.
 
 ### Task Hierarchy
 
@@ -34,9 +34,9 @@ The suite is intentionally kept small for several reasons:
 
 - ODM feature sets vary significantly across libraries, limiting the number of benchmarks that can be run across the
     entire collection of extant ODMs.
-- Several popular \`MongoDB ODMs are actively maintained by third-parties, such as Mongoose. By limiting the
-    benchmarking suite to a minimal set of representative tests that are easy to implement, we encourage adoption of the
-    suite by these third-party maintainers.
+- Several popular MongoDB ODMs are actively maintained by third-parties, such as Mongoose. By limiting the benchmarking
+    suite to a minimal set of representative tests that are easy to implement, we encourage adoption of the suite by
+    these third-party maintainers.
 
 ### Measurement
 
@@ -368,14 +368,19 @@ supports.
 ### Benchmark Server
 
 The MongoDB ODM Performance Benchmark must be run against a MongoDB replica set of size 1 running the latest stable
-database version without authentication or SSL enabled.
+database version without authentication or SSL enabled. The Benchmark should be run on the established internal
+performance distro for the sake of consistency.
 
 ### Benchmark placement and scheduling
 
-The MongoDB ODM Performance Benchmark should be placed within the ODM's test directory as an independent test suite. Due
-to the relatively long runtime of the benchmarks, including them as part of an automated suite that runs against every
-PR is not recommended. Instead, scheduling benchmark runs on a regular cadence is the recommended method of automating
-this suite of tests.
+The MongoDB ODM Performance Benchmark should be placed in one of two places. For first-party ODMs, the Benchmark should
+be placed within the ODM's test directory as an independent test suite. For third-party ODMs, if the external
+maintainers do not wish to have the Benchmark included as part of the in-repo test suite, it should be included in the
+ODM performance testing repository created explicitly for this purpose.
+
+Due to the relatively long runtime of the benchmarks, including them as part of an automated suite that runs against
+every PR is not recommended. Instead, scheduling benchmark runs on a regular cadence is the recommended method of
+automating this suite of tests.
 
 ## ODM-specific benchmarking
 
