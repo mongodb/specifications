@@ -99,7 +99,7 @@ class SessionOptions {
 }
 ```
 
-In order to support snapshot reads two new properties called `snapshot` and `snapshotTime` are added to
+In order to support snapshot reads two properties called `snapshot` and `snapshotTime` are added to
 `SessionOptions`. Applications set `snapshot` when starting a client session to indicate whether they want snapshot
 reads and optionally set `snapshotTime` to specify the desired snapshot time beforehand. All read operations performed
 using that client session will share the same snapshot.
@@ -153,7 +153,7 @@ There are no new server commands related to snapshot reads. Instead, snapshot re
 1. If `snapshotTime` is specified in `SessionOptions`, saving the value in a `snapshotTime` property of the
     `ClientSession`.
 2. If `snapshotTime` is not specified in `SessionOptions`, saving the `atClusterTime` returned by 5.0+ servers for the
-    first find/aggregate/distinct operation in a private `snapshotTime` property of the `ClientSession` object. Drivers
+    first find/aggregate/distinct operation in a `snapshotTime` property of the `ClientSession` object. Drivers
     MUST save `atClusterTime` in the `ClientSession` object.
 3. Passing that `snapshotTime` in the `atClusterTime` field of the `readConcern` field for subsequent snapshot read
     operations (i.e. find/aggregate/distinct commands).
