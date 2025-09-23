@@ -63,24 +63,26 @@ response. The `atClusterTime` field represents the timestamp of the read and is 
 ## Specification
 
 An application requests snapshot reads by creating a `ClientSession` with options that specify that snapshot reads are
-desired. An application then passes the session as an argument to methods in the `MongoDatabase` and `MongoCollection`
+desired and optionally specifying a `snapshotTime`. An application then passes the session as an argument to methods in the `MongoDatabase` and `MongoCollection`
 classes. Read operations (find/aggregate/distinct) performed against that session will be read from the same snapshot.
 
 ## High level summary of the API changes for snapshot reads
 
 Snapshot reads are built on top of client sessions.
 
-Applications will start a new client session for snapshot reads like this:
+Applications will start a new client session for snapshot reads and possibly retrieve the snapshot time like this:
 
 ```typescript
-options = new SessionOptions(snapshot = true);
+options = new SessionOptions(snapshot = true, snapshotTime = timestampValue);
 session = client.startSession(options);
+snapshotTime = session.snapshotTime;
 ```
 
 All read operations performed using this session will be read from the same snapshot.
 
-If no value is provided for `snapshot` a value of false is implied. There are no MongoDatabase, MongoClient, or
-MongoCollection API changes.
+If no value is provided for `snapshot` a value of false is implied. `snapshotTime` is an optional parameter and if not passed the snapshot time will be set internally after the first find/aggregate/distinct operation inside the session.
+
+There are no MongoDatabase, MongoClient, orMongoCollection API changes.
 
 ## SessionOptions changes
 
@@ -89,14 +91,13 @@ MongoCollection API changes.
 ```typescript
 class SessionOptions {
     Optional<bool> snapshot;
+    Optional<BsonTimestamp> snapshotTime;
 
     // other options defined by other specs
 }
 ```
 
-In order to support snapshot reads a new property named `snapshot` is added to `SessionOptions`. Applications set
-`snapshot` when starting a client session to indicate whether they want snapshot reads. All read operations performed
-using that client session will share the same snapshot.
+In order to support snapshot reads two new properties called `snapshot` and `snapshotTime` are added to `SessionOptions`. Applications set `snapshot` when starting a client session to indicate whether they want snapshot reads and optionally set `snapshotTime` to specify the desired snapshot time beforehand. All read operations performed using that client session will share the same snapshot.
 
 Each new member is documented below.
 
@@ -110,7 +111,27 @@ Snapshot reads and causal consistency are mutually exclusive. Therefore if `snap
 `causalConsistency` must be false. Client MUST throw an error if both `snapshot` and `causalConsistency` are set to
 true. Snapshot reads are supported on both primaries and secondaries.
 
+### snapshotTime
+
+Applications set `snapshotTime` when starting a session to indicate whether they want snapshot reads.
+
+Note that the `snapshotTime` property is optional. The default value of this property is null.
+
+Client MUST throw an error if `snapshotTime` and `snapshot` is not set to true.
+
 ## ClientSession changes
+
+A new readonly property (or method?) called `snapshotTime` will be added to `ClientSession` that allows developer to retrieve the snapshot time of the session:
+
+```typescript
+class ClientSession {
+    readonly Optional<BsonTimestamp> snapshotTime;
+
+    // other options defined by other specs
+}
+```
+
+Getting the value of `snapshotTime` on a non-snapshot session MUST raise an error.
 
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
 MUST raise an error.
@@ -123,8 +144,8 @@ MUST raise an error.
 
 There are no new server commands related to snapshot reads. Instead, snapshot reads are implemented by:
 
-1. Saving the `atClusterTime` returned by 5.0+ servers for the first find/aggregate/distinct operation in a private
-    `snapshotTime` property of the `ClientSession` object. Drivers MUST save `atClusterTime` in the `ClientSession`
+1. If `snapshotTime` is specified in `SessionOptions`, saving the value in a `snapshotTime` property of the `ClientSession`.
+1. If `snapshotTime` is not specified in `SessionOptions`, saving the `atClusterTime` returned by 5.0+ servers for the first find/aggregate/distinct operation in a private `snapshotTime` property of the `ClientSession` object. Drivers MUST save `atClusterTime` in the `ClientSession`
     object.
 2. Passing that `snapshotTime` in the `atClusterTime` field of the `readConcern` field for subsequent snapshot read
     operations (i.e. find/aggregate/distinct commands).
@@ -241,6 +262,7 @@ C# driver will provide the reference implementation. The corresponding ticket is
 
 ## Changelog
 
+- 2025-09-23: Exposed snapshotTime to applications.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2021-06-15: Initial version.
 - 2021-06-28: Raise client side error on < 5.0.
