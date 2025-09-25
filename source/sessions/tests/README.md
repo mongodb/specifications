@@ -250,8 +250,16 @@ and configure a `MongoClient` with default options.
 - Run a ping command using C1 and assert that `$clusterTime` sent is the same as the `clusterTime` recorded earlier.
     This assertion proves that C1's `$clusterTime` was not advanced by gossiping through SDAM.
 
+### 21. Having `snapshotTime` set and `snapshot` set to false is not allowed
+
+Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
+
+- `client.startSession(snapshot = false, snapshotTime = new Timestamp(1))`
+- Assert that an error was raised by driver
+
 ## Changelog
 
+- 2025-09-25: Added test for snapshotTime.
 - 2025-02-24: Test drivers do not gossip $clusterTime on SDAM.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2019-05-15: Initial version.
