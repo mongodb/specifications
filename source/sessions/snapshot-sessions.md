@@ -124,6 +124,8 @@ Note that the `snapshotTime` property is optional. The default value of this pro
 
 Client MUST throw an error if `snapshotTime` is set and `snapshot` is not set to true.
 
+Note that when parsing `snapshotTime` for [unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md), the parsed string is the name of the key for the actual value of `snapshotTime` to be found in the [entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
+
 ## ClientSession changes
 
 A new readonly property called `snapshotTime` will be added to `ClientSession` that allows applications to retrieve the
@@ -141,6 +143,8 @@ Getting the value of `snapshotTime` on a non-snapshot session MUST raise an erro
 
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
 MUST raise an error.
+
+Note that a new operation on session called `getSnapshotTime` must be supported for [unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md). This operation returns the value of `snapshotTime` on the session, so that it can be used in following operations.
 
 ## ReadConcern changes
 
