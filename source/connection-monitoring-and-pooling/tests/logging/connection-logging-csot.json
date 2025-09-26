@@ -80,7 +80,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 200
+                "blockTimeMS": 300
               }
             }
           }
@@ -106,7 +106,7 @@
             "filter": {
               "_id": 1
             },
-            "timeoutMS": 50
+            "timeoutMS": 75
           },
           "expectError": {
             "isTimeoutError": true
@@ -116,7 +116,7 @@
           "name": "wait",
           "object": "testRunner",
           "arguments": {
-            "ms": 150
+            "ms": 200
           }
         },
         {

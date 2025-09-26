@@ -1,5 +1,5 @@
 description: "Connection churn is prevented by reading pending responses during connection checkout"
-schemaVersion: "1.27"
+schemaVersion: "1.28"
 runOnRequirements:
   - minServerVersion: "4.4"
     # TODO(SERVER-96344): When using failpoints, mongos returns MaxTimeMSExpired
