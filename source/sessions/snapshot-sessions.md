@@ -124,7 +124,7 @@ Note that the `snapshotTime` property is optional. The default value of this pro
 
 Client MUST throw an error if `snapshotTime` is set and `snapshot` is not set to true.
 
-Note that when parsing `snapshotTime` for [unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md), the parsed string is the name of the key for the actual value of `snapshotTime` to be found in the [entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
+Note that when parsing `snapshotTime` from `sessionOptions` for [unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md), the parsed string is the name of the key for the actual value of `snapshotTime` to be found in the [entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
 
 ## ClientSession changes
 
