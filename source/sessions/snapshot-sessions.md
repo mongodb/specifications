@@ -99,10 +99,10 @@ class SessionOptions {
 }
 ```
 
-In order to support snapshot reads two properties called `snapshot` and `snapshotTime` are added to
-`SessionOptions`. Applications set `snapshot` when starting a client session to indicate whether they want snapshot
-reads and optionally set `snapshotTime` to specify the desired snapshot time beforehand. All read operations performed
-using that client session will share the same snapshot.
+In order to support snapshot reads two properties called `snapshot` and `snapshotTime` are added to `SessionOptions`.
+Applications set `snapshot` when starting a client session to indicate whether they want snapshot reads and optionally
+set `snapshotTime` to specify the desired snapshot time beforehand. All read operations performed using that client
+session will share the same snapshot.
 
 Each new member is documented below.
 
@@ -124,7 +124,10 @@ Note that the `snapshotTime` property is optional. The default value of this pro
 
 Client MUST throw an error if `snapshotTime` is set and `snapshot` is not set to true.
 
-Note that when parsing `snapshotTime` from `sessionOptions` for [unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md), the parsed string is the name of the key for the actual value of `snapshotTime` to be found in the [entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
+Note that when parsing `snapshotTime` from `sessionOptions` for
+[unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md),
+the parsed string is the name of the key for the actual value of `snapshotTime` to be found in the
+[entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
 
 ## ClientSession changes
 
@@ -144,7 +147,9 @@ Getting the value of `snapshotTime` on a non-snapshot session MUST raise an erro
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
 MUST raise an error.
 
-Note that a new operation on session called `getSnapshotTime` must be supported for [unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md). This operation returns the value of `snapshotTime` on the session, so that it can be used in following operations.
+Note that a new operation on session called `getSnapshotTime` must be supported for
+[unified tests](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md).
+This operation returns the value of `snapshotTime` on the session, so that it can be used in following operations.
 
 ## ReadConcern changes
 
@@ -157,8 +162,8 @@ There are no new server commands related to snapshot reads. Instead, snapshot re
 1. If `snapshotTime` is specified in `SessionOptions`, saving the value in a `snapshotTime` property of the
     `ClientSession`.
 2. If `snapshotTime` is not specified in `SessionOptions`, saving the `atClusterTime` returned by 5.0+ servers for the
-    first find/aggregate/distinct operation in a `snapshotTime` property of the `ClientSession` object. Drivers
-    MUST save `atClusterTime` in the `ClientSession` object.
+    first find/aggregate/distinct operation in a `snapshotTime` property of the `ClientSession` object. Drivers MUST
+    save `atClusterTime` in the `ClientSession` object.
 3. Passing that `snapshotTime` in the `atClusterTime` field of the `readConcern` field for subsequent snapshot read
     operations (i.e. find/aggregate/distinct commands).
 
