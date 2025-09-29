@@ -131,7 +131,7 @@ the parsed string is the name of the key for the actual value of `snapshotTime` 
 
 ## ClientSession changes
 
-A new readonly property called `snapshotTime` will be added to `ClientSession` that allows applications to retrieve the
+A readonly property called `snapshotTime` will be added to `ClientSession` that allows applications to retrieve the
 snapshot time of the session:
 
 ```typescript
