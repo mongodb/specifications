@@ -3673,7 +3673,8 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 ]
 ```
 
-Expect an exception to be thrown with a message containing the substring `not supported`.
+Expect an exception to be thrown with a message containing the substring `Cannot specify both encryptionInformation and
+csfleEncryptionSchemas unless csfleEncryptionSchemas only contains non-encryption JSON schema validators`.
 
 #### Case 9: test error with \<8.1
 
