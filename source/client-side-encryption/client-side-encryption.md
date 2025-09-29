@@ -2519,6 +2519,8 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 ## Changelog
 
+- 2025-09-29: Update expected error substring in case 8 of `$lookup` prose test.
+
 - 2025-08-06: Add `TextPreview` algorithm.
 
 - 2024-02-19: Add custom options AWS credential provider.
