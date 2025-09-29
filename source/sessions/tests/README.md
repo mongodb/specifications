@@ -257,13 +257,6 @@ Snapshot sessions tests require server of version 5.0 or higher and replica set 
 - `client.startSession(snapshot = false, snapshotTime = new Timestamp(1))`
 - Assert that an error was raised by driver
 
-### 21. Having `snapshotTime` set and `snapshot` set to false is not allowed
-
-Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
-
-- `client.startSession(snapshot = false, snapshotTime = new Timestamp(1))`
-- Assert that an error was raised by driver
-
 ### 22. Retrieving `snapshotTime` on a non-snapshot session raises an error
 
 Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
@@ -274,7 +267,7 @@ Snapshot sessions tests require server of version 5.0 or higher and replica set 
 
 ## Changelog
 
-- 2025-09-25: Added test for snapshotTime.
+- 2025-09-25: Added tests for snapshotTime.
 - 2025-02-24: Test drivers do not gossip $clusterTime on SDAM.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2019-05-15: Initial version.
