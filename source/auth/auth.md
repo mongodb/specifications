@@ -1032,10 +1032,10 @@ AWS Lambda runtimes set several
 [environment variables](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime)
 during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e.,
 `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`, for the access key ID, secret access key and
-session token, respectively. The `AWS_SESSION_TOKEN` may or may not be set. However, if `AWS_SESSION_TOKEN` is set Drivers
-MUST use its value as the session token. Drivers implemented in programming languages that support altering environment
-variables MUST always read environment variables dynamically during authorization, to handle the case where another part the
-application has refreshed the credentials.
+session token, respectively. The `AWS_SESSION_TOKEN` may or may not be set. However, if `AWS_SESSION_TOKEN` is set
+Drivers MUST use its value as the session token. Drivers implemented in programming languages that support altering
+environment variables MUST always read environment variables dynamically during authorization, to handle the case where
+another part the application has refreshed the credentials.
 
 However, if environment variables are not present during initial authorization, credentials may be fetched from another
 source and cached. Even if the environment variables are present in subsequent authorization attempts, the driver MUST
