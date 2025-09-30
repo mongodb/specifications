@@ -3652,7 +3652,7 @@ Expect one document to be returned matching:
 
 #### Case 8: `db.csfle` joins `db.qe`
 
-Test requires server 8.2+ and mongocryptd/crypt_shared 8.2+.
+Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
@@ -3673,7 +3673,10 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 ]
 ```
 
-Expect an exception to be thrown with a message containing the substring
+Expect an exception to be thrown with a message containing one of the following substrings depending on the mongocryptd/crypt_shared version:
+
+- Below version 8.2: `not supported`.
+- Version 8.2 and above:
 `Cannot specify both encryptionInformation and csfleEncryptionSchemas unless csfleEncryptionSchemas only contains non-encryption JSON schema validators`.
 
 #### Case 9: test error with \<8.1
