@@ -957,7 +957,9 @@ Examples are provided below.
 
     - AWS_SESSION_TOKEN
 
-        Drivers MUST allow the user to specify an AWS session token for authentication with temporary credentials.
+        Drivers MAY allow an AWS session token for authentication with temporary credentials to exist in their API,
+        internally, but MUST raise an error if the user provided it explicitly via the URI or client options. This
+        property MUST NOT exist in the public API.
 
     - AWS_CREDENTIAL_PROVIDER
 
@@ -1011,11 +1013,10 @@ Drivers MAY expose API for default providers for the following scenarios when ap
 
 The order in which Drivers MUST search for credentials is:
 
-1. The URI
-2. A custom AWS credential provider if the driver supports it.
-3. Environment variables
-4. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
-5. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
+1. A custom AWS credential provider if the driver supports it.
+2. Environment variables
+3. Using `AssumeRoleWithWebIdentity` if `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` are set.
+4. The ECS endpoint if `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set. Otherwise, the EC2 endpoint.
 
 > [!NOTE]
 > See *Should drivers support accessing Amazon EC2 instance metadata in Amazon ECS* in [Q & A](#q-and-a)
@@ -1025,32 +1026,16 @@ The order in which Drivers MUST search for credentials is:
 > description of `AssumeRole` below, which is distinct from `AssumeRoleWithWebIdentity` requests that are meant to be
 > handled directly by the driver.
 
-##### URI
-
-An example URI for authentication with MONGODB-AWS using AWS IAM credentials passed through the URI is as follows:
-
-```javascript
-"mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS"
-```
-
-Users MAY have obtained temporary credentials through an
-[AssumeRole](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) request. If so, then in addition
-to a username and password, users MAY also provide an `AWS_SESSION_TOKEN` as a `mechanism_property`.
-
-```javascript
-"mongodb://<access_key>:<secret_key>@mongodb.example.com/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<security_token>"
-```
-
 ##### Environment variables
 
 AWS Lambda runtimes set several
 [environment variables](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime)
 during initialization. To support AWS Lambda runtimes Drivers MUST check a subset of these variables, i.e.,
 `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN`, for the access key ID, secret access key and
-session token, respectively if AWS credentials are not explicitly provided in the URI. The `AWS_SESSION_TOKEN` may or
-may not be set. However, if `AWS_SESSION_TOKEN` is set Drivers MUST use its value as the session token. Drivers
-implemented in programming languages that support altering environment variables MUST always read environment variables
-dynamically during authorization, to handle the case where another part the application has refreshed the credentials.
+session token, respectively. The `AWS_SESSION_TOKEN` may or may not be set. However, if `AWS_SESSION_TOKEN` is set Drivers
+MUST use its value as the session token. Drivers implemented in programming languages that support altering environment
+variables MUST always read environment variables dynamically during authorization, to handle the case where another part the
+application has refreshed the credentials.
 
 However, if environment variables are not present during initial authorization, credentials may be fetched from another
 source and cached. Even if the environment variables are present in subsequent authorization attempts, the driver MUST
@@ -2164,6 +2149,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2025-09-30: Remove credentials URI support for MONGODDB-AWS.
 
 - 2025-09-10: Update precedence of MONGODB-AWS credential fetching behaviour.
 

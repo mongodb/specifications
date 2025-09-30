@@ -59,11 +59,11 @@ Expect authentication to succeed and the custom credential provider was called.
 
 ## Regular credentials
 
-Drivers MUST be able to authenticate by providing a valid access key id and secret access key pair as the username and
-password, respectively, in the MongoDB URI. An example of a valid URI would be:
+Drivers MUST be able to authenticate when a valid access key id and secret access key pair are present in the
+environment. Drivers MUST provide the --nouri option to aws_tester.py in drivers-evergreen-tools for this test.
 
 ```text
-mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS
+mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
 ## EC2 Credentials
