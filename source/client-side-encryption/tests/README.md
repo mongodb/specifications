@@ -3714,7 +3714,7 @@ Test requires server 8.2+ and mongocryptd/crypt_shared 8.2+.
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
 
-Run an aggregate operation on `db.qe` with the following pipline:
+Run an aggregate operation on `db.qe` with the following pipeline:
 
 ```json
 [
