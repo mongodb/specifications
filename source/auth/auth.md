@@ -972,11 +972,8 @@ Examples are provided below.
 Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete
 the steps in the
 [Signature Version 4 Signing Process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true).
-If a username and password are provided drivers MUST use these for the AWS IAM access key and AWS IAM secret key,
-respectively. If, additionally, a session token is provided Drivers MUST use it as well. If a username is provided
-without a password (or vice-versa) or if *only* a session token is provided Drivers MUST raise an error. In other words,
-regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret
-access key or an access key ID, a secret access key and a session token.
+These values MUST be present in the environment or be retrieved via the optional AWS SDK. If credentials are provided
+in the URI or client options, the driver MUST raise an error.
 
 AWS recommends using an SDK to "take care of some of the heavy lifting necessary in successfully making API calls,
 including authentication, retry behavior, and more".
