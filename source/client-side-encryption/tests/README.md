@@ -3457,6 +3457,7 @@ Use `encryptedClient` to drop and create the following collections:
 - `db.qe2` with options: `{ "encryptedFields": "<schema-qe2.json>"}`.
 - `db.no_schema` with no options.
 - `db.no_schema2` with no options.
+- `db.non_csfle_schema` with options: `{ "validator": { "$jsonSchema": "<schema-non-csfle.json>"}}`
 
 Create an unencrypted MongoClient named `unencryptedClient`.
 
@@ -3472,6 +3473,7 @@ Insert documents with `encryptedClient`:
     - Use `unencryptedClient` to retrieve it. Assert the `qe2` field is BSON binary.
 - `{"no_schema": "no_schema"}` into `db.no_schema`
 - `{"no_schema2": "no_schema2"}` into `db.no_schema2`
+- `{"non_csfle_schema": "non_csfle_schema"}` into `db.non_csfle_schema`
 
 #### Case 1: `db.csfle` joins `db.no_schema`
 
@@ -3703,6 +3705,31 @@ Run an aggregate operation on `db.csfle` with the following pipeline:
 ```
 
 Expect an exception to be thrown with a message containing the substring `Upgrade`.
+
+#### Case 10: `db.qe` joins `db.non_csfle_schema`
+
+Test requires server 8.2+ and mongocryptd/crypt_shared 8.2+.
+
+Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
+impacting the test).
+
+Run an aggregate operation on `db.qe` with the following pipline:
+
+```json
+[
+    {"$match" : {"qe" : "qe"}},
+    {
+        "$lookup" : {
+            "from" : "non_csfle_schema",
+            "as" : "matched",
+            "pipeline" : [ {"$match" : {"non_csfle_schema" : "non_csfle_schema"}}, {"$project" : {"_id" : 0}} ]
+        }
+    },
+    {"$project" : {"_id" : 0}}
+]
+```
+
+Expect one document to be returned matching: `{"qe" : "qe", "matched" : [ {"non_csfle_schema" : "non_csfle_schema"} ]}`.
 
 ### 26. Custom AWS Credentials
 
