@@ -95,8 +95,8 @@ mongodb://localhost/?authMechanism=MONGODB-AWS
 ## AssumeRole
 
 Drivers MUST be able to authenticate using temporary credentials returned from an assume role request. These temporary
-credentials consist of an access key ID, a secret access key, and a security token passed into the URI. Drivers MUST provide
-the --nouri option to aws_tester.py in drivers-evergreen-tools for this test. A sample URI would be:
+credentials consist of an access key ID, a secret access key, and a security token passed into the URI. Drivers MUST
+provide the --nouri option to aws_tester.py in drivers-evergreen-tools for this test. A sample URI would be:
 
 ```text
 mongodb://localhost/?authMechanism=MONGODB-AWS
