@@ -3654,7 +3654,7 @@ Expect one document to be returned matching:
 
 #### Case 8: `db.csfle` joins `db.qe`
 
-Test requires server 8.1+ and mongocryptd/crypt_shared 8.1+.
+Test requires server 8.1+, mongocryptd/crypt_shared 8.1+, and libmongocrypt 1.17.0+.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
@@ -3709,7 +3709,7 @@ Expect an exception to be thrown with a message containing the substring `Upgrad
 
 #### Case 10: `db.qe` joins `db.non_csfle_schema`
 
-Test requires server 8.2+ and mongocryptd/crypt_shared 8.2+.
+Test requires server 8.2+, mongocryptd/crypt_shared 8.2+, and libmongocrypt 1.17.0+.
 
 Recreate `encryptedClient` with the same `AutoEncryptionOpts` as the setup. (Recreating prevents schema caching from
 impacting the test).
