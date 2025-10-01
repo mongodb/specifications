@@ -955,12 +955,6 @@ Examples are provided below.
 
 - mechanism_properties
 
-    - AWS_SESSION_TOKEN
-
-        Drivers MAY allow an AWS session token for authentication with temporary credentials to exist in their API,
-        internally, but MUST raise an error if the user provided it explicitly via the URI or client options. This
-        property MUST NOT exist in the public API.
-
     - AWS_CREDENTIAL_PROVIDER
 
         An AWS [Custom Credential Provider](#custom-credential-providers) that returns AWS credentials. Drivers MAY allow
@@ -972,8 +966,10 @@ Examples are provided below.
 Drivers will need AWS IAM credentials (an access key, a secret access key and optionally a session token) to complete
 the steps in the
 [Signature Version 4 Signing Process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html?shortFooter=true).
-These values MUST be present in the environment or be retrieved via the optional AWS SDK. If credentials are provided in
-the URI or client options, the driver MUST raise an error.
+Regardless of how Drivers obtain credentials the only valid combination of credentials is an access key ID and a secret
+access key or an access key ID, a secret access key and a session token. These values MUST be present in the environment
+or be retrieved via the optional AWS SDK. If credentials are provided in the URI or client options, the driver MUST raise
+an error.
 
 AWS recommends using an SDK to "take care of some of the heavy lifting necessary in successfully making API calls,
 including authentication, retry behavior, and more".
@@ -2147,7 +2143,7 @@ practice to avoid this. (See
 
 ## Changelog
 
-- 2025-09-30: Remove credentials URI support for MONGODDB-AWS.
+- 2025-09-30: Remove support for explicitly specifying MONGODDB-AWS authentication properties.
 
 - 2025-09-10: Update precedence of MONGODB-AWS credential fetching behaviour.
 
