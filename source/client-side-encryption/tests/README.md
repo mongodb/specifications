@@ -3723,10 +3723,10 @@ Run an aggregate operation on `db.qe` with the following pipeline:
         "$lookup" : {
             "from" : "non_csfle_schema",
             "as" : "matched",
-            "pipeline" : [ {"$match" : {"non_csfle_schema" : "non_csfle_schema"}}, {"$project" : {"_id" : 0}} ]
+            "pipeline" : [ {"$match" : {"non_csfle_schema" : "non_csfle_schema"}}, {"$project" : {"_id" : 0, "__safeContent__" : 0}} ]
         }
     },
-    {"$project" : {"_id" : 0}}
+    {"$project" : {"_id" : 0, "__safeContent__" : 0}}
 ]
 ```
 
