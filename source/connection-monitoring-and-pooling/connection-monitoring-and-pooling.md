@@ -602,8 +602,7 @@ response data is drained and the connection is ready to send the next command.
     of (a) the remaining time before the 3 second "pending response" window elapses and (b) the remaining of
     user-provided timeout as the effective timeout for the draining.
 4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining 3
-    second "pending response" window and (b) the `waitQueueTimeoutMS` (if not supported by the driver remaining of
-    `serverSelectionTimeoutMS` should be used instead) as the effective timeout for the draining.
+    second "pending response" window and (b) remaining timeout for connection checkout.
 5. **On Timeout**: if timeout occurred while draining the pending response and the 3 seconds pending-response window was
     not elapsed, Driver SHOULD return the connection to the pool, so the next operation can continue draining of the
     pending response.
