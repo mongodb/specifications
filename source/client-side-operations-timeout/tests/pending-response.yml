@@ -294,7 +294,7 @@ tests:
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {} # Find finishes.
     # If the connection is closed server-side while draining the response, the
-    # driver must retry with a different connection.
+    # driver must retry with a different connection (write operation)
   - description: "write op retries when connection closes server-side while draining response"
     operations:
       # Create a failpoint to block the first and second operation.
