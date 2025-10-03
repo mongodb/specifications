@@ -254,16 +254,16 @@ and configure a `MongoClient` with default options.
 
 Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
 
-- `client.startSession(snapshot = false, snapshotTime = new Timestamp(1))`
-- Assert that an error was raised by driver
+- Start a session by calling `startSession` with `snapshot = false` and `snapshotTime = new Timestamp(1)`.
+- Assert that a client side error was raised.
 
 ### 22. Retrieving `snapshotTime` on a non-snapshot session raises an error
 
 Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
 
-- `client.startSession(snapshot = false)`
-- `client.snapshotTime`
-- Assert that an error was raised by driver
+- Start a session by calling `startSession` on with `snapshot = false`.
+- Try to access the session's snapshot time.
+- Assert that a client side error was raised.
 
 ## Changelog
 
