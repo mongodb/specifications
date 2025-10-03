@@ -8,7 +8,7 @@
 
 This specification describes how to implement Wire Protocol Compression between MongoDB drivers and mongo[d|s].
 
-Compression is achieved through a new bi-directional wire protocol opcode, referred to as OP_COMPRESSED.
+Compression is achieved through a new bi-directional wire protocol opcode, referred to as `OP_COMPRESSED`.
 
 Server side compressor support is checked during the initial MongoDB Handshake, and is compatible with all historical
 versions of MongoDB. If a client detects a compatible compressor it will use the compressor for all valid requests.
@@ -79,9 +79,9 @@ If the server has no compression algorithms in common with the client, it sends 
 compression field. Clients MAY issue a log level event to inform the user, but MUST NOT error.
 
 When MongoDB server receives a compressor it can support it MAY reply to any and all requests using the selected
-compressor, including the reply of the initial MongoDB Handshake. As each OP_COMPRESSED message contains the compressor
+compressor, including the reply of the initial MongoDB Handshake. As each `OP_COMPRESSED` message contains the compressor
 ID, clients MUST NOT assume which compressor each message uses, but MUST decompress the message using the compressor
-identified in the OP_COMPRESSED opcode header.
+identified in the `OP_COMPRESSED` opcode header.
 
 When compressing, clients MUST use the first compressor in the client's configured compressors list that is also in the
 servers list.
@@ -121,7 +121,7 @@ Note that this value only applies to the client side compression level, not the 
 
 ### OP_COMPRESSED
 
-The new opcode, called OP_COMPRESSED, has the following structure:
+The new opcode, called `OP_COMPRESSED`, has the following structure:
 
 ```c
 struct OP_COMPRESSED {
@@ -134,7 +134,7 @@ struct OP_COMPRESSED {
     int32_t  originalOpcode;
     int32_t  uncompressedSize;
     uint8_t  compressorId;
-    char    *compressedMessage;
+    char     *compressedMessage;
 };
 ```
 
@@ -183,17 +183,17 @@ authentication requests.
 
 Messages using the following commands MUST NOT be compressed:
 
-- hello
+- `hello`
 - legacy hello (see [MongoDB Handshake Protocol](../mongodb-handshake/handshake.md) for details)
-- saslStart
-- saslContinue
-- getnonce
-- authenticate
-- createUser
-- updateUser
-- copydbSaslStart
-- copydbgetnonce
-- copydb
+- `saslStart`
+- `saslContinue`
+- `getnonce`
+- `authenticate`
+- `createUser`
+- `updateUser`
+- `copydbSaslStart`
+- `copydbgetnonce`
+- `copydb`
 
 ## Test Plan
 
@@ -316,11 +316,11 @@ normally.
     ```
 
 - Create example program that authenticates to the server using SCRAM-SHA-1, then creates another user (MONGODB-CR),
-    then runs hello followed with serverStatus.
+    then runs `hello` followed with `serverStatus`.
 
 - Reconnect to the same server using the created MONGODB-CR credentials. Observe that the only command that was
-    decompressed on the server was `serverStatus`, while the server replied with OP_COMPRESSED for at least the
-    serverStatus command.
+    decompressed on the server was `serverStatus`, while the server replied with `OP_COMPRESSED` for at least the
+    `serverStatus` command.
 
 ## Motivation For Change
 
@@ -347,7 +347,7 @@ More recently, the MongoDB server added Zstandard (zstd) support for another mod
 
 The new argument provided to the MongoDB Handshake has no backwards compatible implications as servers that do not
 expect it will simply ignore it. This means a server will therefore never reply with a list of acceptable compressors
-which in turns means a client CANNOT use the OP_COMPRESSED opcode.
+which in turns means a client CANNOT use the `OP_COMPRESSED` opcode.
 
 ## Reference Implementation
 
@@ -377,13 +377,13 @@ needing to (not) compress very few operations.
 
     - No.
 
-- Can the server reply to the MongoDB Handshake/hello compressed?
+- Can the server reply to the MongoDB Handshake/hello be compressed?
 
     - Yes, yes it can. Be aware it is completely acceptable for the server to use compression for any and all replies,
         using any supported compressor, when the client announced support for compression - this includes the reply to the
-        actual MongoDB Handshake/hello where the support was announced.
+        actual MongoDB Handshake/`hello` where the support was announced.
 
-- This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB3.4?
+- This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB 3.4?
 
     - Yes, it does. All MongoDB versions support the `compression` argument to the initial handshake and all MongoDB
         versions will reply with an intersection of compressors it supports. This works even with MongoDB 3.0, as it will
@@ -398,7 +398,7 @@ needing to (not) compress very few operations.
 
 - My language supports xyz compressor, should I announce them all in the handshake?
 
-    - No. But you are allowed to if you really want to make sure you can use that compressor with MongoDB 42 and your
+    - No. But you are allowed to if you really want to make sure you can use that compressor with MongoDB 4.2 and your
         current driver versions.
 
 - My language does not support xzy compressor. What do I do?
