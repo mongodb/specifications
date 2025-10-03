@@ -29,6 +29,15 @@ As part of the test setup for these cases, create a `MongoClient` pointed at the
 in the test case and verify that the test server does NOT define a value for `logicalSessionTimeoutMinutes` by sending a
 hello command and checking the response.
 
+## Specific operations and behaviour for unified tests
+
+An operation on sessions called `getSnapshotTime` must be supported for unified tests. This operation returns the value
+of `snapshotTime` on the session, so that it can be used in subsequent operations.
+
+When parsing `snapshotTime` from `sessionOptions` for unified tests, the parsed string is the name of the key for the
+actual value of `snapshotTime` to be found in the
+[entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
+
 ## Prose tests
 
 ### 1. Setting both `snapshot` and `causalConsistency` to true is not allowed
