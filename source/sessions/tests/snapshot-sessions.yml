@@ -517,6 +517,7 @@ tests:
       expectResult:
         - { _id: 1, x: 11 }
         - { _id: 2, x: 11 }
+    ## Calling the operation again to verify that atClusterTime/snapshotTime has not been modified after the first query
     - name: find
       object: collection0
       arguments:
@@ -598,6 +599,7 @@ tests:
         filter: {}
         fieldName: x
       expectResult: [11]
+    ## Calling the operation again to verify that atClusterTime/snapshotTime has not been modified after the first query
     - name: distinct
       object: collection0
       arguments:
@@ -681,6 +683,7 @@ tests:
         - "$match": { _id: 1 }
       expectResult:
       - { _id: 1, x: 11 }
+    ## Calling the operation again to verify that atClusterTime/snapshotTime has not been modified after the first query
     - name: aggregate
       object: collection0
       arguments:
@@ -759,8 +762,7 @@ tests:
         session: session2
         filter: {}
       expectResult: 2
-    ## Calling find again to verify that atClusterTime/snapshotTime has not been modified after the first query
-    ## as it would happen if snapshotTime had not been specified
+    ## Calling the operation again to verify that atClusterTime/snapshotTime has not been modified after the first query
     - name: countDocuments
       object: collection0
       arguments:
