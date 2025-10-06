@@ -157,9 +157,9 @@
                   "connectionCheckOutFailedEvent",
                   "connectionCheckedOutEvent",
                   "connectionCheckedInEvent",
-                  "connectionPendingResponseSucceeded",
-                  "connectionPendingResponseStarted",
-                  "connectionPendingResponseFailed",
+                  "connectionPendingResponseSucceededEvent",
+                  "connectionPendingResponseStartedEvent",
+                  "connectionPendingResponseFailedEvent",
                   "serverDescriptionChangedEvent",
                   "topologyDescriptionChangedEvent",
                   "topologyOpeningEvent",
@@ -841,17 +841,17 @@
           "additionalProperties": false,
           "properties": {}
         },
-        "connectionPendingResponseStarted": {
+        "connectionPendingResponseStartedEvent": {
           "type": "object",
           "additionalProperties": false,
           "properties": {}
         },
-        "connectionPendingResponseSucceeded": {
+        "connectionPendingResponseSucceededEvent": {
           "type": "object",
           "additionalProperties": false,
           "properties": {}
         },
-        "connectionPendingResponseFailed": {
+        "connectionPendingResponseFailedEvent": {
           "type": "object",
           "additionalProperties": false,
           "properties": {

@@ -486,9 +486,9 @@ The structure of this object is as follows:
         - [connectionCheckOutFailedEvent](#expectedEvent_connectionCheckOutFailedEvent)
         - [connectionCheckedOutEvent](#expectedEvent_connectionCheckedOutEvent)
         - [connectionCheckedInEvent](#expectedEvent_connectionCheckedInEvent)
-        - [connectionPendingResponseStarted](#expectedEvent_connectionPendingResponseStarted)
-        - [connectionPendingResponseSucceeded](#expectedEvent_connectionPendingResponseSucceeded)
-        - [connectionPendingResponseFailed](#expectedEvent_connectionPendingResponseFailed)
+        - [connectionPendingResponseStartedEvent](#expectedEvent_connectionPendingResponseStartedEvent)
+        - [connectionPendingResponseSucceededEvent](#expectedEvent_connectionPendingResponseSucceededEvent)
+        - [connectionPendingResponseFailedEvent](#expectedEvent_connectionPendingResponseFailedEvent)
         - [serverDescriptionChangedEvent](#expectedEvent_serverDescriptionChangedEvent)
         - [serverHeartbeatStartedEvent](#expectedEvent_serverHeartbeatStartedEvent)
         - [serverHeartbeatSucceededEvent](#expectedEvent_serverHeartbeatSucceededEvent)
@@ -1136,20 +1136,20 @@ The structure of this object is as follows:
 - `connectionCheckedInEvent`: Optional object. If present, this object MUST be an empty document as all fields in this
     event are non-deterministic.
 
-<span id="expectedEvent_connectionPendingResponseStarted"></span>
+<span id="expectedEvent_connectionPendingResponseStartedEvent"></span>
 
-- `connectionPendingResponseStarted`: Optional object. If present, this object MUST be an empty document as all fields
-    in this event are non-deterministic.
+- `connectionPendingResponseStartedEvent`: Optional object. If present, this object MUST be an empty document as all
+    fields in this event are non-deterministic.
 
-<span id="expectedEvent_connectionPendingResponseSucceeded"></span>
+<span id="expectedEvent_connectionPendingResponseSucceededEvent"></span>
 
-- `connectionPendingResponseSucceeded`: Optional object. If present, this object MUST be an empty document as all fields
-    in this event are non-deterministic.
+- `connectionPendingResponseSucceededEvent`: Optional object. If present, this object MUST be an empty document as all
+    fields in this event are non-deterministic.
 
-<span id="expectedEvent_connectionPendingResponseFailed"></span>
+<span id="expectedEvent_connectionPendingResponseFailedEvent"></span>
 
-- `connectionPendingResponseFailed`: Optional object. Assertions for one or more
-    [connectionPendingResponseFailed](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events)
+- `connectionPendingResponseFailedEvent`: Optional object. Assertions for one or more
+    [connectionPendingResponseFailedEvent](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events)
     fields.
 
     The structure of this object is as follows:

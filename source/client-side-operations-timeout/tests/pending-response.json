@@ -29,12 +29,16 @@
         "observeEvents": [
           "commandFailedEvent",
           "commandSucceededEvent",
+          "connectionCheckOutStartedEvent",
           "connectionCheckedOutEvent",
+          "ConnectionCheckOutFailedEvent",
           "connectionCheckedInEvent",
+          "connectionCreatedEvent",
+          "connectionReadyEvent",
           "connectionClosedEvent",
-          "connectionPendingResponseSucceeded",
-          "connectionPendingResponseStarted",
-          "connectionPendingResponseFailed"
+          "connectionPendingResponseSucceededEvent",
+          "connectionPendingResponseStartedEvent",
+          "connectionPendingResponseFailedEvent"
         ]
       }
     },
@@ -129,16 +133,22 @@
           "eventType": "cmap",
           "events": [
             {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
               "connectionCheckedOutEvent": {}
             },
             {
               "connectionCheckedInEvent": {}
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutStartedEvent": {}
             },
             {
-              "connectionPendingResponseSucceeded": {}
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseSucceededEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}
@@ -218,16 +228,22 @@
           "eventType": "cmap",
           "events": [
             {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
               "connectionCheckedOutEvent": {}
             },
             {
               "connectionCheckedInEvent": {}
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutStartedEvent": {}
             },
             {
-              "connectionPendingResponseFailed": {
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseFailedEvent": {
                 "reason": "timeout"
               }
             },
@@ -235,6 +251,18 @@
               "connectionClosedEvent": {
                 "reason": "error"
               }
+            },
+            {
+              "connectionCheckOutFailedEvent": {}
+            },
+            {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
+              "connectionCreatedEvent": {}
+            },
+            {
+              "connectionReadyEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}
@@ -315,16 +343,22 @@
           "eventType": "cmap",
           "events": [
             {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
               "connectionCheckedOutEvent": {}
             },
             {
               "connectionCheckedInEvent": {}
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutStartedEvent": {}
             },
             {
-              "connectionPendingResponseSucceeded": {}
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseSucceededEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}
@@ -417,24 +451,36 @@
           "eventType": "cmap",
           "events": [
             {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
               "connectionCheckedOutEvent": {}
             },
             {
               "connectionCheckedInEvent": {}
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutStartedEvent": {}
             },
             {
-              "connectionPendingResponseFailed": {
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseFailedEvent": {
                 "reason": "timeout"
               }
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutFailedEvent": {}
             },
             {
-              "connectionPendingResponseSucceeded": {}
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseSucceededEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}
@@ -523,16 +569,22 @@
           "eventType": "cmap",
           "events": [
             {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
               "connectionCheckedOutEvent": {}
             },
             {
               "connectionCheckedInEvent": {}
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutStartedEvent": {}
             },
             {
-              "connectionPendingResponseFailed": {
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseFailedEvent": {
                 "reason": "error"
               }
             },
@@ -540,6 +592,12 @@
               "connectionClosedEvent": {
                 "reason": "error"
               }
+            },
+            {
+              "connectionCreatedEvent": {}
+            },
+            {
+              "connectionReadyEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}
@@ -629,16 +687,22 @@
           "eventType": "cmap",
           "events": [
             {
+              "connectionCheckOutStartedEvent": {}
+            },
+            {
               "connectionCheckedOutEvent": {}
             },
             {
               "connectionCheckedInEvent": {}
             },
             {
-              "connectionPendingResponseStarted": {}
+              "connectionCheckOutStartedEvent": {}
             },
             {
-              "connectionPendingResponseFailed": {
+              "connectionPendingResponseStartedEvent": {}
+            },
+            {
+              "connectionPendingResponseFailedEvent": {
                 "reason": "error"
               }
             },
@@ -646,6 +710,12 @@
               "connectionClosedEvent": {
                 "reason": "error"
               }
+            },
+            {
+              "connectionCreatedEvent": {}
+            },
+            {
+              "connectionReadyEvent": {}
             },
             {
               "connectionCheckedOutEvent": {}

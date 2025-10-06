@@ -235,7 +235,7 @@ interface Connection {
    * in this specification. It is not required that drivers
    * actually include this field in their implementations of Connection.
    */
-  state: "pending" | "available" | "in use" | "closed";
+  state: "pending" | "pending response" | "available" | "in use" | "closed";
 }
 ```
 
@@ -675,17 +675,26 @@ try:
           close connection
           connection = Null
         if connection is in "pending response" state:
+          tConnectionDrainingStarted = current instant (use a monotonic clock if possible)
+          emit PendingResponseStartedEvent and equivalent log message
           drain the pending response
           if error:
+            tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
             if non-timeout error:
+              emit PendingResponseFailedEvent(reason="error", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
               close connection
               connection = Null
             else if timeout error and last read timestamp on connection > 3 seconds old
+              emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
               close connection
               connection = Null
             else
+              emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
               check in the connection
               connection = Null
+          else
+            tConnectionDrainingSucceeded = current instant (use a monotonic clock if possible)
+            emit PendingResponseSucceededEvent(duration = tConnectionDrainingSucceeded - tConnectionDrainingStarted) and equivalent log message
     else if totalConnectionCount < maxPoolSize:
       if pendingConnectionCount < maxConnecting:
         connection = create connection
@@ -1096,7 +1105,7 @@ interface ConnectionCheckedInEvent {
 /**
  *  Emitted when the connection is attempting to drain of the pending response.
  */
-interface PendingResponseStarted {
+interface PendingResponseStartedEvent {
   /**
    *  The ServerAddress of the Endpoint the pool is attempting to connect to.
    */
@@ -1116,7 +1125,7 @@ interface PendingResponseStarted {
 /**
  *  Emitted when the connection successfully drained of the pending response.
  */
-interface PendingResponseSucceeded {
+interface PendingResponseSucceededEvent {
  /**
    *  The ServerAddress of the Endpoint the pool is attempting to connect to.
    */
@@ -1147,7 +1156,7 @@ interface PendingResponseSucceeded {
 /**
  *  Emitted when the connection failed to drain of the pending response.
  */
-interface PendingResponseFailed {
+interface PendingResponseFailedEvent {
   /**
    *  The ServerAddress of the Endpoint the pool is attempting to connect to.
    */
@@ -1648,6 +1657,8 @@ Exhaust Cursors may require changes to how we close [Connections](#connection) i
 to close and remove from its pool a [Connection](#connection) which has unread exhaust messages.
 
 ## Changelog
+
+- 2025-09-25: Added pending response draining behavior.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
