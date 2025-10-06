@@ -23,7 +23,7 @@ createEntities:
         - commandSucceededEvent
         - connectionCheckOutStartedEvent
         - connectionCheckedOutEvent
-        - ConnectionCheckOutFailedEvent
+        - connectionCheckOutFailedEvent
         - connectionCheckedInEvent
         - connectionCreatedEvent
         - connectionReadyEvent
