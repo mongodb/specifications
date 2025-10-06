@@ -36,14 +36,7 @@ directly from the custom provider instead of using the AWS SDK default provider.
 
 ### 2. Custom Credential Provider Authentication Precedence
 
-#### Case 1: Credentials in URI Take Precedence
-
-Create a `MongoClient` configured with AWS auth and credentials in the URI. Example:
-`mongodb://<AccessKeyId>:<SecretAccessKey>@localhost:27017/?authMechanism=MONGODB-AWS`
-
-Configure a custom credential provider to pass valid AWS credentials. The provider must track if it was called.
-
-Expect authentication to succeed and the custom credential provider was *not* called.
+#### Case 1: Credentials in URI Take Precedence *Removed*
 
 #### Case 2: Custom Provider Takes Precedence Over Environment Variables
 
@@ -56,7 +49,7 @@ Configure a custom credential provider to pass valid AWS credentials. The provid
 
 Expect authentication to succeed and the custom credential provider was called.
 
-## Regular credentials *Removed*
+## Regular credentials
 
 Drivers MUST be able to authenticate when a valid access key id and secret access key pair are present in the
 environment. Drivers MUST provide the --nouri option to aws_tester.py in drivers-evergreen-tools for this test.
