@@ -2,7 +2,7 @@
 
 Drivers MUST test the following scenarios:
 
-1. `Regular Credentials`: Auth via an `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` pair *Removed*
+1. `Regular Credentials`: Auth via an `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` pair
 2. `EC2 Credentials`: Auth from an EC2 instance via temporary credentials assigned to the machine
 3. `ECS Credentials`: Auth from an ECS instance via temporary credentials assigned to the task
 4. `Assume Role`: Auth via temporary credentials obtained from an STS AssumeRole request
