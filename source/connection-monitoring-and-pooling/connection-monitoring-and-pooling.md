@@ -677,22 +677,22 @@ try:
         if connection is in "pending response" state:
           tConnectionDrainingStarted = current instant (use a monotonic clock if possible)
           emit PendingResponseStartedEvent and equivalent log message
-          drain the pending response
-          if error:
+          try:
+            drain the pending response
+          except timeout:
             tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
-            if non-timeout error:
-              emit PendingResponseFailedEvent(reason="error", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
+            emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and quivalent log message
+            if last read timestamp on connection > 3 seconds old
               close connection
-              connection = Null
-            else if timeout error and last read timestamp on connection > 3 seconds old
-              emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
-              close connection
-              connection = Null
             else
-              emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
               check in the connection
-              connection = Null
-          else
+            connection = Null
+          except:
+            tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
+            emit PendingResponseFailedEvent(reason="error", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
+            close connection
+            connection = Null
+          else:
             tConnectionDrainingSucceeded = current instant (use a monotonic clock if possible)
             emit PendingResponseSucceededEvent(duration = tConnectionDrainingSucceeded - tConnectionDrainingStarted) and equivalent log message
     else if totalConnectionCount < maxPoolSize:

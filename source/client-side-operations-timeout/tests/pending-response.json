@@ -253,12 +253,6 @@
               }
             },
             {
-              "connectionCheckOutFailedEvent": {}
-            },
-            {
-              "connectionCheckOutStartedEvent": {}
-            },
-            {
               "connectionCreatedEvent": {}
             },
             {
@@ -292,7 +286,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 250
+                "blockTimeMS": 100
               }
             }
           }
@@ -315,7 +309,7 @@
           "name": "find",
           "object": "coll",
           "arguments": {
-            "timeoutMS": 200,
+            "timeoutMS": 100,
             "filter": {
               "_id": 1
             }
@@ -388,7 +382,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 500
+                "blockTimeMS": 200
               }
             }
           }
@@ -424,6 +418,7 @@
           "name": "find",
           "object": "coll",
           "arguments": {
+            "timeoutMS": 200,
             "filter": {
               "_id": 1
             }
@@ -510,7 +505,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 500,
+                "blockTimeMS": 200,
                 "closeConnection": true
               }
             }
@@ -531,17 +526,10 @@
           }
         },
         {
-          "name": "wait",
-          "object": "testRunner",
-          "arguments": {
-            "ms": 500
-          }
-        },
-        {
           "name": "find",
           "object": "coll",
           "arguments": {
-            "timeoutMS": 50,
+            "timeoutMS": 1000,
             "filter": {
               "_id": 1
             }
@@ -627,7 +615,7 @@
                   "insert"
                 ],
                 "blockConnection": true,
-                "blockTimeMS": 500,
+                "blockTimeMS": 200,
                 "closeConnection": true
               }
             }
@@ -648,17 +636,10 @@
           }
         },
         {
-          "name": "wait",
-          "object": "testRunner",
-          "arguments": {
-            "ms": 500
-          }
-        },
-        {
           "name": "insertOne",
           "object": "coll",
           "arguments": {
-            "timeoutMS": 50,
+            "timeoutMS": 1000,
             "document": {
               "_id": 3,
               "x": 1

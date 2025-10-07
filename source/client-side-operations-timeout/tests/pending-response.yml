@@ -142,8 +142,6 @@ tests:
               reason: timeout
           - connectionClosedEvent:
               reason: error
-          - connectionCheckOutFailedEvent: {}
-          - connectionCheckOutStartedEvent: {} # Find's retry starts and succeeds
           - connectionCreatedEvent: {}
           - connectionReadyEvent: {}
           - connectionCheckedOutEvent: {}
@@ -164,7 +162,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 250
+              blockTimeMS: 100
       # Execute operation with timeout less than block time.
       - name: insertOne
         object: *collection
@@ -177,7 +175,7 @@ tests:
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 200
+          timeoutMS: 100
           filter: {_id: 1}
     expectEvents:
       - client: *client
@@ -212,7 +210,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 500
+              blockTimeMS: 200
       # Execute operation with timeout less than block time.
       - name: insertOne
         object: *collection
@@ -233,7 +231,9 @@ tests:
       - name: find
         object: *collection
         arguments:
+          timeoutMS: 200
           filter: {_id: 1}
+          
     expectEvents:
       - client: *client
         events:
@@ -272,7 +272,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 500
+              blockTimeMS: 200
               closeConnection: true
       # Execute operation with timeout less than block time.
       - name: insertOne
@@ -282,15 +282,10 @@ tests:
           document: {_id: 3, x: 1}
         expectError:
           isTimeoutError: true
-      - name: wait
-        object: testRunner
-        arguments:
-          ms: 500
-      # Execute a subsequent operation with a timeout less than the block time.
       - name: find
         object: *collection
         arguments:
-          timeoutMS: 50
+          timeoutMS: 1000
           filter: {_id: 1}
     expectEvents:
       - client: *client
@@ -330,7 +325,7 @@ tests:
             data:
               failCommands: ["insert"]
               blockConnection: true
-              blockTimeMS: 500
+              blockTimeMS: 200
               closeConnection: true
       # Execute operation with timeout less than block time.
       - name: insertOne
@@ -340,15 +335,10 @@ tests:
           document: {_id: 3, x: 1}
         expectError:
           isTimeoutError: true
-      - name: wait
-        object: testRunner
-        arguments:
-          ms: 500
-      # Execute a subsequent operation with a timeout less than the block time.
       - name: insertOne
         object: *collection
         arguments:
-          timeoutMS: 50
+          timeoutMS: 1000
           document: {_id: 3, x: 1}
     expectEvents:
       - client: *client
