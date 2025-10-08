@@ -12,8 +12,7 @@ Drivers MUST test the following scenarios:
 7. Caching of AWS credentials fetched by the driver.
 
 For brevity, this section gives the values `<AccessKeyId>`, `<SecretAccessKey>` and `<Token>` in place of a valid access
-key ID, secret access key and session token (also known as a security token). Note that if these values are passed into
-the URI they MUST be URL encoded. Sample values are below.
+key ID, secret access key and session token (also known as a security token). Sample values are below.
 
 ```text
 AccessKeyId=AKIAI44QH8DHBEXAMPLE
@@ -37,14 +36,7 @@ directly from the custom provider instead of using the AWS SDK default provider.
 
 ### 2. Custom Credential Provider Authentication Precedence
 
-#### Case 1: Credentials in URI Take Precedence
-
-Create a `MongoClient` configured with AWS auth and credentials in the URI. Example:
-`mongodb://<AccessKeyId>:<SecretAccessKey>@localhost:27017/?authMechanism=MONGODB-AWS`
-
-Configure a custom credential provider to pass valid AWS credentials. The provider must track if it was called.
-
-Expect authentication to succeed and the custom credential provider was *not* called.
+#### Case 1: Credentials in URI Take Precedence *Removed*
 
 #### Case 2: Custom Provider Takes Precedence Over Environment Variables
 
@@ -59,11 +51,11 @@ Expect authentication to succeed and the custom credential provider was called.
 
 ## Regular credentials
 
-Drivers MUST be able to authenticate by providing a valid access key id and secret access key pair as the username and
-password, respectively, in the MongoDB URI. An example of a valid URI would be:
+Drivers MUST be able to authenticate when a valid access key id and secret access key pair are present in the
+environment. Drivers MUST provide the --nouri option to aws_tester.py in drivers-evergreen-tools for this test.
 
 ```text
-mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS
+mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
 ## EC2 Credentials
@@ -95,11 +87,11 @@ mongodb://localhost/?authMechanism=MONGODB-AWS
 ## AssumeRole
 
 Drivers MUST be able to authenticate using temporary credentials returned from an assume role request. These temporary
-credentials consist of an access key ID, a secret access key, and a security token passed into the URI. A sample URI
-would be:
+credentials consist of an access key ID, a secret access key, and a security token present in the environment. Drivers
+MUST provide the --nouri option to aws_tester.py in drivers-evergreen-tools for this test. A sample URI would be:
 
 ```text
-mongodb://<AccessKeyId>:<SecretAccessKey>@localhost/?authMechanism=MONGODB-AWS&authMechanismProperties=AWS_SESSION_TOKEN:<Token>
+mongodb://localhost/?authMechanism=MONGODB-AWS
 ```
 
 ## Assume Role with Web Identity
