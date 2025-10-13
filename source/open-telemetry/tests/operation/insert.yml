@@ -50,7 +50,7 @@ tests:
                       $$matchAsRoot:
                         insert: test
                         ordered: true
-                        txnNumber: 1
+                        txnNumber: { $$unsetOrMatches: 1 }
                         documents:
                           - _id: 1
 

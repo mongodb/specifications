@@ -80,7 +80,9 @@
                         "$$matchAsRoot": {
                           "update": "test",
                           "ordered": true,
-                          "txnNumber": 1,
+                          "txnNumber": {
+                            "$$unsetOrMatches": 1
+                          },
                           "updates": [
                             {
                               "q": {

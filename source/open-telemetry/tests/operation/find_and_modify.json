@@ -29,6 +29,11 @@
   "tests": [
     {
       "description": "findOneAndUpdate",
+      "runOnRequirements": [
+        {
+          "minServerVersion": "4.4"
+        }
+      ],
       "operations": [
         {
           "name": "findOneAndUpdate",

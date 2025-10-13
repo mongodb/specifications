@@ -49,5 +49,5 @@ tests:
                       $$matchAsRoot:
                         update: test
                         ordered: true
-                        txnNumber: 1
+                        txnNumber: { $$unsetOrMatches: 1 }
                         updates: [ { "q": { "_id": 1 }, "u": { "$inc": { "x": 1 } } } ]
