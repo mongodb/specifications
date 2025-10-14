@@ -69,7 +69,6 @@ tests:
                       db.collection.name: *collectionName
                       server.address: { $$type: string }
                       server.port: { $$type: [ 'long', 'string' ] }
-                      server.type: { $$type: string }
                       db.query.summary: insert convenient-transaction-tests.test
                       db.mongodb.lsid: { $$sessionLsid: *session }
                       db.mongodb.txn_number: 1
@@ -122,7 +121,6 @@ tests:
                   db.command.name: find
                   server.address: { $$type: string }
                   server.port: { $$type: [ 'long', 'string' ] }
-                  server.type: { $$type: string }
                   db.query.summary: find convenient-transaction-tests.test
 
     outcome:

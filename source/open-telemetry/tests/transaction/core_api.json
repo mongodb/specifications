@@ -122,9 +122,6 @@
                             "string"
                           ]
                         },
-                        "server.type": {
-                          "$$type": "string"
-                        },
                         "db.query.summary": "insert transaction-tests.test",
                         "db.mongodb.lsid": {
                           "$$sessionLsid": "session0"
@@ -216,9 +213,6 @@
                         "string"
                       ]
                     },
-                    "server.type": {
-                      "$$type": "string"
-                    },
                     "db.query.summary": "find transaction-tests.test"
                   }
                 }
@@ -296,9 +290,6 @@
                             "long",
                             "string"
                           ]
-                        },
-                        "server.type": {
-                          "$$type": "string"
                         },
                         "db.query.summary": "insert transaction-tests.test",
                         "db.mongodb.lsid": {

@@ -94,9 +94,6 @@
                         "long"
                       ]
                     },
-                    "server.type": {
-                      "$$type": "string"
-                    },
                     "db.query.summary": "find operation-find.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
@@ -208,9 +205,6 @@
                         "string"
                       ]
                     },
-                    "server.type": {
-                      "$$type": "string"
-                    },
                     "db.query.summary": "find operation-find.test",
                     "db.query.text": {
                       "$$matchAsDocument": {
@@ -267,9 +261,6 @@
                         "int",
                         "long"
                       ]
-                    },
-                    "server.type": {
-                      "$$type": "string"
                     },
                     "db.query.summary": "find operation-find.test",
                     "db.query.text": {
