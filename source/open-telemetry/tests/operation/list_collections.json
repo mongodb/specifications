@@ -77,8 +77,7 @@
                     "db.query.text": {
                       "$$matchAsDocument": {
                         "$$matchAsRoot": {
-                          "listCollections": 1,
-                          "cursor": {}
+                          "listCollections": 1
                         }
                       }
                     },
