@@ -79,9 +79,9 @@ If the server has no compression algorithms in common with the client, it sends 
 compression field. Clients MAY issue a log level event to inform the user, but MUST NOT error.
 
 When MongoDB server receives a compressor it can support it MAY reply to any and all requests using the selected
-compressor, including the reply of the initial MongoDB Handshake. As each `OP_COMPRESSED` message contains the compressor
-ID, clients MUST NOT assume which compressor each message uses, but MUST decompress the message using the compressor
-identified in the `OP_COMPRESSED` opcode header.
+compressor, including the reply of the initial MongoDB Handshake. As each `OP_COMPRESSED` message contains the
+compressor ID, clients MUST NOT assume which compressor each message uses, but MUST decompress the message using the
+compressor identified in the `OP_COMPRESSED` opcode header.
 
 When compressing, clients MUST use the first compressor in the client's configured compressors list that is also in the
 servers list.
