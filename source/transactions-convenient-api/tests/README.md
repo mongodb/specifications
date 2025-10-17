@@ -41,8 +41,14 @@ If possible, drivers should implement these tests without requiring the test run
 the retry timeout. This might be done by internally modifying the timeout value used by `withTransaction` with some
 private API or using a mock timer.
 
+### Retry Backoff is Enforced
+
+Drivers should test that retries within `withTransaction` do not occur immediately. Ideally, set BACKOFF_INITIAL 500ms
+and configure a failpoint that forces one retry. Ensure that the operation took more than 500ms so succeed. 
+
 ## Changelog
 
+- 2025-10-17: Added Backoff test.
 - 2024-09-06: Migrated from reStructuredText to Markdown.
 - 2024-02-08: Converted legacy tests to unified format.
 - 2021-04-29: Remove text about write concern timeouts from prose test.
