@@ -356,6 +356,16 @@ non-configurable default and is intentionally twice the value of MongoDB 4.0's d
 parameter (60 seconds). Applications that desire longer retry periods may call `withTransaction` additional times as
 needed. Applications that desire shorter retry periods should not use this method.
 
+### Backoff Benefits
+
+Previously, the driver would retry transactions immediately, which is fine for low levels of contention. But, as the
+server load increases, immediate retries can result in retry storms, unnecessarily further overloading the server.
+
+Exponential backoff is well-researched and accepted backoff strategy that is simple to implement. A low initial backoff
+(1-millisecond) and growth value (1.25x) were chosen specifically to mitigate latency in low levels of contention.
+Empirical evidence suggests that 500-millisecond max backoff ensured that a transaction did not wait so long as to
+exceed the 120-second timeout and reduced load spikes.
+
 ## Backwards Compatibility
 
 The specification introduces a new method on the ClientSession class and does not introduce any backward breaking
