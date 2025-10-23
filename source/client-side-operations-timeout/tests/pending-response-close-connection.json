@@ -66,7 +66,7 @@
   ],
   "tests": [
     {
-      "description": "write op retries when connection closes server-side while draining response",
+      "description": "op retries when connection closes server-side while draining response",
       "operations": [
         {
           "name": "failPoint",
