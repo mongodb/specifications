@@ -1,6 +1,6 @@
 description: "connection-logging"
 
-schemaVersion: "1.13"
+schemaVersion: "1.24"
 
 runOnRequirements:
   - topologies:
@@ -11,7 +11,7 @@ createEntities:
       id: &failPointClient failPointClient
 
 tests:
-  - description: "Create a client, run a command, and close the client"
+  - description: "force a pending response read, fail first try, succeed second try"
     operations:
       - name: createEntities
         object: testRunner
@@ -19,16 +19,80 @@ tests:
           entities:
             - client:
                 id: &client client
+                uriOptions:
+                  retryReads: false
+                  appname: &clientAppName clientAppName
+                  maxPoolSize: 1
+                  # use a high heartbeatFrequencyMS to avoid a successful monitor check marking the pool as
+                  # ready (and emitting another event) during the course of test execution.
+                  heartbeatFrequencyMS: 10000
                 observeLogMessages:
                   connection: debug
-      - name: listDatabases
-        object: *client
+            - database:
+                id: &database test
+                client: *client
+                databaseName: *database
+            - collection:
+                id: &collection coll
+                database: *database
+                collectionName: *collection
+
+      # Run a ping command to pre-load the pool with a connection.
+      - name: runCommand
+        object: *database
         arguments:
-          filter: {}
-      - name: close
-        object: *client
+          command:
+            ping: 1
+          commandName: ping
+
+      # Create a failpoint to block the first operation
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: ["insert"]
+              blockConnection: true
+              blockTimeMS: 300
+
+      # Execute operation with timeout less than block time
+      - name: insertOne
+        object: *collection
+        arguments:
+          timeoutMS: 50
+          document: { _id: 3, x: 1 }
+        expectError:
+          isTimeoutError: true
+
+      # Execute a subsequent operation which should time out during the 
+      # pending response read attempt.
+      - name: find
+        object: *collection
+        arguments:
+          filter: { _id: 1 }
+          timeoutMS: 75
+        expectError:
+          isTimeoutError: true
+
+      # Wait for the  blocked connection to free up.
+      - name: wait
+      # operation.
+        object: testRunner
+        arguments:
+          ms: 200
+
+      # Execute a subsequent operation which should completed the pending read.
+      - name: find
+        object: *collection
+        arguments:
+          filter: { _id: 1 }
+
     expectLogMessages:
       - client: *client
+        ignoreExtraMessages: true
         messages:
           - level: debug
             component: connection
@@ -44,6 +108,7 @@ tests:
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
 
+          # Ping
           - level: debug
             component: connection
             data:
@@ -85,7 +150,7 @@ tests:
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
 
-          #  The next three expected logs are for ending a session.
+          # Insert
           - level: debug
             component: connection
             data:
@@ -110,77 +175,7 @@ tests:
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
 
-          - level: debug
-            component: connection
-            data:
-              message: "Connection closed"
-              driverConnectionId: { $$type: [int, long] }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              reason: "Connection pool was closed"
-
-          - level: debug
-            component: connection
-            data:
-              message: "Connection pool closed"
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-
-  # This test exists to provide coverage of checkout failed and pool cleared events.
-  - description: "Connection checkout fails due to error establishing connection"
-    runOnRequirements:
-      - auth: true
-        minServerVersion: "4.0" # failCommand was added to mongod in 4.0
-    operations:
-      - name: createEntities
-        object: testRunner
-        arguments:
-          entities:
-            - client:
-                id: &client client
-                uriOptions:
-                  retryReads: false
-                  appname: &clientAppName clientAppName
-                  # use a high heartbeatFrequencyMS to avoid a successful monitor check marking the pool as
-                  # ready (and emitting another event) during the course of test execution.
-                  heartbeatFrequencyMS: 10000
-                observeLogMessages:
-                  connection: debug
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: *failPointClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode: { times: 1 }
-            data:
-              failCommands: ["saslContinue"]
-              closeConnection: true
-              appName: *clientAppName
-      - name: listDatabases
-        object: *client
-        arguments:
-          filter: {}
-        expectError:
-          isClientError: true
-
-    expectLogMessages:
-      - client: *client
-        messages:
-          - level: debug
-            component: connection
-            data:
-              message: "Connection pool created"
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-
-          - level: debug
-            component: connection
-            data:
-              message: "Connection pool ready"
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-
+          # First Find
           - level: debug
             component: connection
             data:
@@ -191,35 +186,69 @@ tests:
           - level: debug
             component: connection
             data:
-              message: "Connection created"
-              driverConnectionId: { $$type: [int, long] }
+              message: "Pending response started"
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
+              driverConnectionId: { $$type: [int, long] }
+              requestId: { $$type: [int, long] }
 
           - level: debug
             component: connection
             data:
-              message: "Connection pool cleared"
+              message: "Pending response failed"
               serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
-
-          - level: debug
-            component: connection
-            data:
-              message: "Connection closed"
               driverConnectionId: { $$type: [int, long] }
-              serverHost: { $$type: string }
-              serverPort: { $$type: [int, long] }
-              reason: "An error occurred while using the connection"
-              error: { $$exists: true }
+              requestId: { $$type: [int, long] }
+              reason: "timeout"
 
           - level: debug
             component: connection
             data:
               message: "Connection checkout failed"
               serverHost: { $$type: string }
+              serverPort: { $$type: [ int, long ] }
+
+          # Second Find 
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checkout started"
+              serverHost: { $$type: string }
               serverPort: { $$type: [int, long] }
-              reason: "An error occurred while trying to establish a new connection"
-              error: { $$exists: true }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Pending response started"
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+              driverConnectionId: { $$type: [int, long] }
+              requestId: { $$type: [int, long] }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Pending response succeeded"
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+              driverConnectionId: { $$type: [int, long] }
+              requestId: { $$type: [int, long] }
               durationMS: { $$type: [double, int, long] }
 
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checked out"
+              driverConnectionId: { $$type: [int, long] }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }
+              durationMS: { $$type: [double, int, long] }
+
+          - level: debug
+            component: connection
+            data:
+              message: "Connection checked in"
+              driverConnectionId: { $$type: [int, long] }
+              serverHost: { $$type: string }
+              serverPort: { $$type: [int, long] }

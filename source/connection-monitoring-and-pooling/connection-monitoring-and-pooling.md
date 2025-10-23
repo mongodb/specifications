@@ -217,23 +217,25 @@ interface Connection {
    * The current state of the Connection.
    *
    * Possible values are the following:
-   *   - "pending":       The Connection has been created but has not yet been established. Contributes to
-   *                      totalConnectionCount and pendingConnectionCount.
+   *   - "pending":           The Connection has been created but has not yet been established. Contributes to
+   *                          totalConnectionCount and pendingConnectionCount.
    *
-   *   - "available":     The Connection has been established and is waiting in the pool to be checked
-   *                      out. Contributes to both totalConnectionCount and availableConnectionCount.
+   *   - "pending response":  The Connection is expecting a response for an operation that was timed out, but server's response was not fully read from the connection.
    *
-   *   - "in use":        The Connection has been established, checked out from the pool, and has yet
-   *                      to be checked back in. Contributes to totalConnectionCount.
+   *   - "available":         The Connection has been established and is waiting in the pool to be checked
+   *                          out. Contributes to both totalConnectionCount and availableConnectionCount.
    *
-   *   - "closed":        The Connection has had its socket closed and cannot be used for any future
-   *                      operations. Does not contribute to any connection counts.
+   *   - "in use":            The Connection has been established, checked out from the pool, and has yet
+   *                          to be checked back in. Contributes to totalConnectionCount.
+   *
+   *   - "closed":            The Connection has had its socket closed and cannot be used for any future
+   *                          operations. Does not contribute to any connection counts.
    *
    * Note: this field is mainly used for the purposes of describing state
    * in this specification. It is not required that drivers
    * actually include this field in their implementations of Connection.
    */
-  state: "pending" | "available" | "in use" | "closed";
+  state: "pending" | "pending response" | "available" | "in use" | "closed";
 }
 ```
 
@@ -576,31 +578,140 @@ other threads from checking out [Connections](#connection) while establishing a 
 Before a given [Connection](#connection) is returned from checkOut, it must be marked as "in use", and the pool's
 availableConnectionCount MUST be decremented.
 
+##### Draining of Pending Response (drivers that support CSOT)
+
+If an operation times out while awaiting a server response:
+
+- **Non-exhaust commands**: If the command was not sent with the `exhaustAllowed` OP_MSG bit flag, the driver MUST:
+    1. Put the connection into a "pending response" state.
+    2. Record the current time in a way that can be updated while draining of pending response.
+- **Exhaust commands**: If the command was sent with the `exhaustAllowed` bit, the driver MUST NOT transition the
+    connection to a "pending response" state and MUST instead close the connection.
+
+The next time connection in the "pending response" state is checked out, the driver MUST ensure that any remaining
+response data is drained and the connection is ready to send the next command.
+
+1. **Persist and update timestamp**: The connection must record the current time immediately after the original timeout.
+    This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or consumed
+    while draining of the pending response.
+2. **Aliveness check**: If driver uses synchronous read from the socket and the timestamp is older than 3 seconds, the
+    driver MUST perform aliveness check either performing a non-blocking read or using the minimal possible timeout to
+    check if at least one byte can be read/received. If at least one byte can be read the timestamp must be updated and
+    connection SHOULD be drained. If no bytes can be read, the connection MUST be closed.
+3. **User-provided timeout**: If a user-provided timeout is specified for the operation, the driver MUST use the minimum
+    of (a) the remaining time before the 3 second "pending response" window elapses and (b) the remaining of
+    user-provided timeout as the effective timeout for the draining.
+4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining 3
+    second "pending response" window and (b) remaining timeout for connection checkout.
+5. **On Timeout**: if timeout occurred while draining the pending response and the 3 seconds pending-response window was
+    not elapsed, Driver SHOULD return the connection to the pool, so the next operation can continue draining of the
+    pending response.
+6. **Error or over-age**: If any error other than timeout occurs while draining the pending response, or if the draining
+    exceeds the 3 seconds pending-response window, the driver MUST close the connection. Driver SHOULD try to make
+    another checkout attempt accordingly to the Checking Out a Connection behavior.
+7. **Clear pending state on success**: If the pending response is fully drained, the pending response state MUST be
+    cleared and connection can be used to execute the next command.
+
+```mermaid
+sequenceDiagram
+    participant Driver
+    participant Pool
+    participant Conn as Connection (*)
+    participant Server
+
+    Driver->>Pool: Checkout Connection (*)
+    Pool->>Driver: Return connection (*)
+    Driver->>Conn: Send operation (1) (CSOT enabled, maxTimeMS > 0, exhaustAllowed = false)
+    Conn->>Server: Send command
+    Server-->>Conn: (No response, socket times out)
+
+    Conn->>Conn: Transition connection to "pending response" state, record current time
+    Conn->>Pool: Check connection back into pool
+    Pool->>Driver: Error
+
+    Driver->>Pool: Checkout Connection (*)
+    Pool->>Conn: Draining of pending response from operation (1)
+    Conn->>Conn: Update pending read timestamp if bytes read
+    alt No error
+        Conn->>Conn: Clear pending response state
+        Conn->>Pool: Draining of pending response succeeded
+        Pool->>Driver: Return connection
+    else Error
+        alt Non-Timeout Error 
+            Conn->>Conn: Close connection
+            Conn->>Pool: Draining of pending response failed
+            Pool->>Pool: Checkout next connection
+        else Timeout Error
+            alt Timeout window exceeded
+                Conn->>Conn: Close connection
+                Conn->>Pool: Draining of pending response failed
+                Pool->>Driver: Error
+            else Timeout window not exceeded
+                Conn->>Pool: Check connection back into pool
+                Pool->>Driver: Error
+            end
+        end
+    end
+```
+
+##### Pseudocode
+
+This subsection outlines the pseudocode steps for acquiring a connection from the pool.
+
 ```text
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
+checkout_timeout = timeoutMS is set ? remaining computedServerSelectionTimeout : waitQueueTimeoutMS
 try:
-  enter WaitQueue
-  wait until at top of wait queue
-  # Note that in a lock-based implementation of the wait queue would
-  # only allow one thread in the following block at a time
   while connection is Null:
-    if a connection is available:
-      while connection is Null and a connection is available:
-        connection = next available connection
-        if connection is perished:
+    try:
+      enter WaitQueue
+      wait until at top of wait queue
+      # Note that in a lock-based implementation of the wait queue would
+      # only allow one thread in the following block at a time
+      while connection is Null:
+        if a connection is available:
+          while connection is Null and a connection is available:
+            connection = next available connection
+            if connection is perished:
+              close connection
+              connection = Null
+        else if totalConnectionCount < maxPoolSize:
+          if pendingConnectionCount < maxConnecting:
+            connection = create connection
+          else:
+            # this waiting MUST NOT prevent other threads from checking Connections
+            # back in to the pool.
+            wait until pendingConnectionCount < maxConnecting or a connection is available
+            continue
+    finally:
+      # This must be done in all drivers
+      leave wait queue
+    
+    # If the Connection has pending response state it should be drained before it is returned.
+    # This MUST NOT block other threads from acquiring connections.
+    if connection is in "pending response" state:
+      tConnectionDrainingStarted = current instant (use a monotonic clock if possible)
+      emit PendingResponseStartedEvent and equivalent log message
+      try:
+        draining_timeout = min(remaining checkout_timeout, remaining expiration window)
+        drain the pending response
+        tConnectionDrainingSucceeded = current instant (use a monotonic clock if possible)
+        emit PendingResponseSucceededEvent(duration = tConnectionDrainingSucceeded - tConnectionDrainingStarted) and equivalent log message
+      except timeout:
+        tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
+        emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
+        if last read timestamp on connection > 3 seconds old
           close connection
-          connection = Null
-    else if totalConnectionCount < maxPoolSize:
-      if pendingConnectionCount < maxConnecting:
-        connection = create connection
-      else:
-        # this waiting MUST NOT prevent other threads from checking Connections
-        # back in to the pool.
-        wait until pendingConnectionCount < maxConnecting or a connection is available
-        continue
-
+        else
+          return the connection to pool
+        connection = Null
+      except:
+        tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
+        emit PendingResponseFailedEvent(reason="error", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
+        close connection
+        connection = Null
 except pool is "closed":
   tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
   emit ConnectionCheckOutFailedEvent(reason="poolClosed", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
@@ -613,9 +724,6 @@ except timeout:
   tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
   emit ConnectionCheckOutFailedEvent(reason="timeout", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
   throw WaitQueueTimeoutError
-finally:
-  # This must be done in all drivers
-  leave wait queue
 
 # If the Connection has not been established yet (TCP, TLS,
 # handshake, compression, and auth), it must be established
@@ -633,6 +741,7 @@ if connection state is "pending":
     decrement pendingConnectionCount
 else:
     decrement availableConnectionCount
+
 set connection state to "in use"
 
 # If there is no background thread, the pool MUST ensure that
@@ -997,6 +1106,93 @@ interface ConnectionCheckedInEvent {
    */
   connectionId: int64;
 }
+
+/**
+ *  Emitted when the connection is attempting to drain of the pending response.
+ */
+interface PendingResponseStartedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection.
+   */
+  connectionId: int64;
+
+  /**
+   *  The driver-generated request ID of the operation that caused the pending response state.
+   */
+  requestId: int64;
+}
+
+/**
+ *  Emitted when the connection successfully drained of the pending response.
+ */
+interface PendingResponseSucceededEvent {
+ /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection.
+   */
+  connectionId: int64;
+
+  /**
+   *  The time it took to complete the pending response drainig. Measured from when the
+   *  `PendingResponseStarted` event is emitted as part of the connection
+   *  checkout.
+   *
+   *  Drivers SHOULD choose an idiomatic duration type. If the type doesn't
+   *  include units (e.g. `int64`), include them in the name (for example,
+   *  `durationMS`).
+   */
+  duration: Duration;
+
+  /**
+   *  The driver-generated request ID of the operation that caused the pending response state.
+   */
+  requestId: int64;
+}
+
+/**
+ *  Emitted when the connection failed to drain of the pending response.
+ */
+interface PendingResponseFailedEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   *  The ID of the Connection.
+   */
+  connectionId: int64;
+
+  /**
+   *  The driver-generated request ID of the operation that caused the pending response state.
+   */
+  requestId: int64;
+
+  /**
+   *  Duration until the pending response draining failed. Measured from when the
+   *  `PendingResponseStarted` event is emitted as part of the connection
+   *  checkout.
+   *
+   *  Drivers SHOULD choose an idiomatic duration type. If the type doesn't
+   *  include units (e.g. `int64`), include them in the name (for example,
+   *  `durationMS`).
+   */
+  duration: Duration;
+
+  /**
+   *  The reason for why the pending read failed.
+   */
+  reason: string;
+}
 ```
 
 ### Connection Pool Logging
@@ -1194,6 +1390,57 @@ placeholders as appropriate:
 
 > Connection checked in: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}
 
+#### Connection Pending Response Started
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key                | Suggested Type | Value                                                                                    |
+| ------------------ | -------------- | ---------------------------------------------------------------------------------------- |
+| message            | string         | "Pending response started"                                                               |
+| driverConnectionId | int64          | The driver-generated ID for the connection                                               |
+| requestId          | int64          | The driver-generated request ID of the operation that caused the pending response state. |
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
+> ID={{requestId}}
+
+#### Connection Pending Response Succeeded
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key                | Suggested Type     | Value                                                                                    |
+| ------------------ | ------------------ | ---------------------------------------------------------------------------------------- |
+| message            | string             | "Pending response succeeded"                                                             |
+| driverConnectionId | int64              | The driver-generated ID for the connection.                                              |
+| requestId          | int64              | The driver-generated request ID of the operation that caused the pending response state. |
+| durationMS         | Int32/Int64/Double | `PendingResponseSucceeded.duration` converted to milliseconds.                           |
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
+> ID={{requestId}}, duration={{durationMS}} ms
+
+#### Connection Pending Response Failed
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key                | Suggested Type     | Value                                                                                    |
+| ------------------ | ------------------ | ---------------------------------------------------------------------------------------- |
+| message            | string             | "Pending response failed"                                                                |
+| driverConnectionId | int64              | The driver-generated ID for the connection                                               |
+| requestId          | int64              | The driver-generated request ID of the operation that caused the pending response state. |
+| reason             | string             | The reason for why the pending response read failed                                      |
+| durationMS         | Int32/Int64/Double | `PendingResponseFailed.duration` converted to milliseconds.                              |
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Pending response started: address={{serverHost}}:{{serverPort}}, driver-generated ID={{driverConnectionId}}, request
+> ID={{requestId}}, reason={{reason}}, duration={{durationMS}} ms
+
 ### Connection Pool Errors
 
 A connection pool throws errors in specific circumstances. These Errors MUST be emitted by the pool. Errors SHOULD be
@@ -1339,6 +1586,54 @@ some equivalent configuration, but this configuration will also require target f
 5.0. The advantage of using Background Thread to manage perished connections is that it will work regardless of
 environment setup.
 
+### Why introduce the draining pending responses?
+
+Draining pending responses is necessary to address issues when connections are being closed client-side in cases when
+the configured maxTimeMS does not allow enough time for the driver to read the MaxTimeMSExpired error and cases where
+the server or network delays the response. Since establishing a new connection can be an expensive and time-consuming
+operation it makes sense try to complete the previous read instead.
+
+### Why is the pending response timeout not calculated dynamically? Why is it specifically 3 seconds?
+
+Using a dynamic timeout introduces additional complexity. In particular, RTT is an unreliable metric for predicting
+future operation latency as both server and network conditions are unpredictable. Benchmarks demonstrate that even in
+slow, high-latency scenarios (e.g. draining a 16MiB document over cross-country), reads reliably complete in under 1
+second. The 3-second timeout ensures that every realistic pending response draining will not result in premature
+connection closure, but will still close in pathological conditions (e.g., a dead server or true network outage).
+
+### Why is the pending response read timeout not configurable?
+
+Because of the
+["no knobs" mantra](https://github.com/mongodb/specifications/blob/master/source/driver-mantras.md#no-knobs). We can
+always reconsider this in the future.
+
+### Why does the pending response timeout include the time the connection is idle in the pool?
+
+The pending response timeout includes idle time in the pool so that stale or unusable connections (e.g., if the socket
+is dead) are detected and closed promptly instead of incurring an additional 3-second wait upon checkout. By tracking
+the timeout during idle periods, we ensure that the driver can quickly determine if the connection should be closed with
+a fast, non-blocking check as soon as it's checked out, avoiding introducing unnecessary latency while still protecting
+connection availability. This approach maintains a balance between minimizing connection churn and ensuring users don't
+encounter avoidable delays.
+
+### Why do we refresh the pending response timeout each time we successfully drain bytes from the TCP stream?
+
+By refreshing the timeout after each successful draining, we acknowledge that progress is being made, and we provide a
+new time window for the next segment of data to arrive. Refreshing is less costly than re-establishing a connection
+since there is no reason to believe that a new connection would reduce latency.
+
+### Why are exhaust cursors prohibited from transitioning a connection to the "pending response" state?
+
+Exhaust cursors are incompatible with the "pending response" connection state due to the non-deterministic nature of the
+connection's completion, which occurs only when `moreToCome=0` is received. Consequently, discarding one of these
+responses does not restore the connection to a reusable state.
+
+### Async IO Considerations for Awaiting a Pending Response
+
+Several drivers (e.g., event-loop or background-read designs) perform socket I/O asynchronously. After a socket times
+out, the server's reply may be drained while the connection is idle in the pool. Therefore, the aliveness check only
+applies to an undrained connection that has exceeded the pending-response window without progress.
+
 ## Backwards Compatibility
 
 As mentioned in [Deprecated Options](#deprecated-options), some drivers currently implement the options `waitQueueSize`
@@ -1374,6 +1669,8 @@ Exhaust Cursors may require changes to how we close [Connections](#connection) i
 to close and remove from its pool a [Connection](#connection) which has unread exhaust messages.
 
 ## Changelog
+
+- 2025-09-25: Added pending response draining behavior.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
