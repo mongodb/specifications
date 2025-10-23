@@ -34,21 +34,31 @@ This test verifies that if only part of a response was read before the timeout, 
 response and reuse the connection for the next operation. This test has 3 variation, see step 4, `sendBytes` parameter.
 
 1. Setup mongoproxy.
+
 2. Connect to the proxy server with `maxPoolSize=1`, `direct=true`, disable read and write retryability, subscribing to
     the following CMAP events:
+
     - `PendingResponseStartedEvent`
     - `PendingResponseSucceededEvent`
     - `PendingResponseFailedEvent`
     - `ConnectionCreatedEvent`
     - `ConnectionClosedEvent`
+
 3. Execute `ping` command to populate the connection pool.
+
 4. Send a command (e.g. an insert) with a 200 millisecond timeout and the following `proxyTest` actions:
-    - `sendBytes`: There are 3 test cases here:
-        1. Message size was partially read: random value between 1 and 3 inclusive
-        2. Message size was read, body was not read at all: use 4
-        3. Message size was read, body read partially: random value between 5 and 100 inclusive
+
+    - `sendBytes`: Depending on implementation, we have 4 test cases here (some driver could read message size only to
+        determine the message size, other could read entire message header):
+        1. Message size was partially read: 2
+        2. Message size was read: 4
+        3. Message header was read, body was not read: 16
+        4. Message header was read, body read partially: 20
     - `delayMs`: 400 ( to exceed the 200 ms timeout)
-    - `sendAll`: `true` Example of run command payload:
+    - `sendAll`: `true`
+
+    Example of run command payload:
+
     ```
     {
        insert: "coll",
@@ -62,13 +72,19 @@ response and reuse the connection for the next operation. This test has 3 variat
        }
     }
     ```
+
 5. Assert that the operation failed with timeout error.
+
 6. Issue another operation (e.g. another insert) and assert that it does not return an error.
+
 7. Verify that the following sequence of events was observed:
+
     - `ConnectionCreatedEvent`
     - `ConnectionPendingResponseStartedEvent`
     - `ConnectionPendingResponseSucceededEvent`
+
 8. Verify that NONE the following events was observed:
+
     - `ConnectionPendingResponseFailedEvent`
     - `ConnectionClosedEvent`
 
@@ -78,18 +94,26 @@ This test verifies that if a connection idles past the pending response window (
 aliveness check does not attempt to discard bytes from the TCP stream.
 
 1. Setup mongoproxy.
+
 2. Connect to the proxy server with `maxPoolSize=1`, `direct=true`, disable read and write retryability, subscribing to
     the following CMAP events:
+
     - `PendingResponseStartedEvent`
     - `PendingResponseSucceededEvent`
     - `PendingResponseFailedEvent`
     - `ConnectionCreatedEvent`
     - `ConnectionClosedEvent`
+
 3. Execute `ping` command to populate the connection pool.
+
 4. Send a command (e.g. an insert) with a 200 millisecond timeout and the following `proxyTest` actions:
-    - `sendBytes`: random value between 1 and 3 inclusive
+
+    - `sendBytes`: 2
     - `delayMs`: 400 ( to exceed the 200 ms timeout)
-    - `sendAll`: `true` Example of run command payload:
+    - `sendAll`: `true`
+
+    Example of run command payload:
+
     ```
     {
        insert: "coll",
@@ -103,14 +127,21 @@ aliveness check does not attempt to discard bytes from the TCP stream.
        }
     }
     ```
+
 5. Assert that the operation failed with timeout error.
+
 6. Sleep for 4 seconds (to pass the 3-seconds expiration window)
+
 7. Issue another operation (e.g. another insert) and assert that it does not return an error.
+
 8. Verify that the following sequence of events was observed:
+
     - `ConnectionCreatedEvent`
     - `ConnectionPendingResponseStartedEvent`
     - `ConnectionPendingResponseSucceededEvent`
+
 9. Verify that NONE the following events was observed:
+
     - `ConnectionClosedEvent`
     - `ConnectionPendingResponseFailedEvent`
 

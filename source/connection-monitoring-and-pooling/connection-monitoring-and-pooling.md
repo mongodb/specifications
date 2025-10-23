@@ -662,48 +662,56 @@ This subsection outlines the pseudocode steps for acquiring a connection from th
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
+checkout_timeout = timeoutMS is set ? remaining computedServerSelectionTimeout : waitQueueTimeoutMS
 try:
-  enter WaitQueue
-  wait until at top of wait queue
-  # Note that in a lock-based implementation of the wait queue would
-  # only allow one thread in the following block at a time
   while connection is Null:
-    if a connection is available:
-      while connection is Null and a connection is available:
-        connection = next available connection
-        if connection is perished:
-          close connection
-          connection = Null
-        if connection is in "pending response" state:
-          tConnectionDrainingStarted = current instant (use a monotonic clock if possible)
-          emit PendingResponseStartedEvent and equivalent log message
-          try:
-            drain the pending response
-          except timeout:
-            tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
-            emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and quivalent log message
-            if last read timestamp on connection > 3 seconds old
+    try:
+      enter WaitQueue
+      wait until at top of wait queue
+      # Note that in a lock-based implementation of the wait queue would
+      # only allow one thread in the following block at a time
+      while connection is Null:
+        if a connection is available:
+          while connection is Null and a connection is available:
+            connection = next available connection
+            if connection is perished:
               close connection
-            else
-              check in the connection
-            connection = Null
-          except:
-            tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
-            emit PendingResponseFailedEvent(reason="error", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
-            close connection
-            connection = Null
+              connection = Null
+        else if totalConnectionCount < maxPoolSize:
+          if pendingConnectionCount < maxConnecting:
+            connection = create connection
           else:
-            tConnectionDrainingSucceeded = current instant (use a monotonic clock if possible)
-            emit PendingResponseSucceededEvent(duration = tConnectionDrainingSucceeded - tConnectionDrainingStarted) and equivalent log message
-    else if totalConnectionCount < maxPoolSize:
-      if pendingConnectionCount < maxConnecting:
-        connection = create connection
-      else:
-        # this waiting MUST NOT prevent other threads from checking Connections
-        # back in to the pool.
-        wait until pendingConnectionCount < maxConnecting or a connection is available
-        continue
-
+            # this waiting MUST NOT prevent other threads from checking Connections
+            # back in to the pool.
+            wait until pendingConnectionCount < maxConnecting or a connection is available
+            continue
+    finally:
+      # This must be done in all drivers
+      leave wait queue
+    
+    # If the Connection has pending response state it should be drained before it is returned.
+    # This MUST NOT block other threads from acquiring connections.
+    if connection is in "pending response" state:
+      tConnectionDrainingStarted = current instant (use a monotonic clock if possible)
+      emit PendingResponseStartedEvent and equivalent log message
+      try:
+        draining_timeout = min(remaining checkout_timeout, remaining expiration window)
+        drain the pending response
+        tConnectionDrainingSucceeded = current instant (use a monotonic clock if possible)
+        emit PendingResponseSucceededEvent(duration = tConnectionDrainingSucceeded - tConnectionDrainingStarted) and equivalent log message
+      except timeout:
+        tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
+        emit PendingResponseFailedEvent(reason="timeout", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
+        if last read timestamp on connection > 3 seconds old
+          close connection
+        else
+          return the connection to pool
+        connection = Null
+      except:
+        tConnectionDrainingFailed = current instant (use a monotonic clock if possible)
+        emit PendingResponseFailedEvent(reason="error", duration = tConnectionDrainingFailed - tConnectionDrainingStarted) and equivalent log message
+        close connection
+        connection = Null
 except pool is "closed":
   tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
   emit ConnectionCheckOutFailedEvent(reason="poolClosed", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
@@ -716,9 +724,6 @@ except timeout:
   tConnectionCheckOutFailed = current instant (use a monotonic clock if possible)
   emit ConnectionCheckOutFailedEvent(reason="timeout", duration = tConnectionCheckOutFailed - tConnectionCheckOutStarted) and equivalent log message
   throw WaitQueueTimeoutError
-finally:
-  # This must be done in all drivers
-  leave wait queue
 
 # If the Connection has not been established yet (TCP, TLS,
 # handshake, compression, and auth), it must be established
@@ -1580,6 +1585,13 @@ higher or equal to .net 5.0. On macOS, there is no straight equivalent for this 
 some equivalent configuration, but this configuration will also require target frameworks higher than or equal to .net
 5.0. The advantage of using Background Thread to manage perished connections is that it will work regardless of
 environment setup.
+
+### Why introduce the draining pending responses?
+
+Draining pending responses is necessary to address issues when connections are being closed client-side in cases when
+the configured maxTimeMS does not allow enough time for the driver to read the MaxTimeMSExpired error and cases where
+the server or network delays the response. Since establishing a new connection can be an expensive and time-consuming
+operation it makes sense try to complete the previous read instead.
 
 ### Why is the pending response timeout not calculated dynamically? Why is it specifically 3 seconds?
 

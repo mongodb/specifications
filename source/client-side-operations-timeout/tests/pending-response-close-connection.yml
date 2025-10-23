@@ -43,7 +43,7 @@ initialData:
 tests:
     # If the connection is closed server-side while draining the response, the
     # driver must retry with a different connection.
-  - description: "write op retries when connection closes server-side while draining response"
+  - description: "op retries when connection closes server-side while draining response"
     operations:
       # Create a failpoint to block the first and second operation.
       - name: failPoint
@@ -66,7 +66,7 @@ tests:
           document: {_id: 3, x: 1}
         expectError:
           isTimeoutError: true
-      # Draining pending response should failure because of closed connection,
+      # Draining pending response should fail because of closed connection,
       # but another connection should be established within the checkout and operation should succeed.
       - name: insertOne
         object: *collection
