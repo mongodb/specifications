@@ -138,7 +138,7 @@ This method should perform the following sequence of actions:
         3. BACKOFF_INITIAL is 1ms
         4. BACKOFF_MAX is 500ms
 
-        Then, jump back to step two.
+        Append this sleep duration to a list for testing purposes. Then, jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
@@ -170,12 +170,15 @@ var BACKOFF_MAX = 500  // 500ms max backoff
 withTransaction(callback, options) {
     // Note: drivers SHOULD use a monotonic clock to determine elapsed time
     var startTime = Date.now(); // milliseconds since Unix epoch
-    var retry = 0
+    var retry = 0;
+    this._transaction_retry_backoffs = []; // for testing purposes
 
     retryTransaction: while (true) {
         if (retry > 0):
-            sleep(Math.random() * min(BACKOFF_INITIAL * (1.25**retry), 
-                                      BACKOFF_MAX))
+            var backoff = Math.random() * min(BACKOFF_INITIAL * (1.25**retry), 
+                                              BACKOFF_MAX)
+            this._transaction_retry_backoffs.push(backoff)
+            sleep(backoff)
         retry += 1
         this.startTransaction(options); // may throw on error
 
