@@ -43,12 +43,9 @@ private API or using a mock timer.
 
 ### Retry Backoff is Enforced
 
-Drivers should test that retries within `withTransaction` do not occur immediately. Configure a fail point that forces 3
-retries. Ensure that:
-
-- 3 backoffs occurred
-- each backoff was greater than or equal to 0
-- the total operation time took more than the sum of the individual backoffs
+Drivers should test that retries within `withTransaction` do not occur immediately. Optionally, set BACKOFF_INITIAL to a
+higher value to decrease flakiness of this test. Configure a fail point that forces 30 retries. Check that the total
+time for all retries exceeded 1.25 seconds.
 
 ## Changelog
 
