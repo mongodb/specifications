@@ -74,6 +74,7 @@ Valid Unit Test Operations are the following:
     - `interruptInUseConnections`: Determines whether "in use" connections should be also interrupted
 - `pool.close()`: call `close` on Pool
 - `pool.ready()`: call `ready` on Pool
+- `pool.backoff()`: call `backoff` on Pool
 
 ## Integration Test Format
 
