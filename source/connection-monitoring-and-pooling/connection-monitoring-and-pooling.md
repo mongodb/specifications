@@ -324,7 +324,10 @@ interface ConnectionPool {
    *                      connections in the background. The pool can be set to this state via the
    *                      ready() method.
    * 
-   *   - "backoff":       The pool is in backoff state. XXX
+   *   - "backoff":       The pool is in backoff state. MaxConnecting is set to 1 and the pool backoff period
+   *                      must be observed before attempting another connection.  A subsequent failed connection
+   *                      attempt increases the backoff duration.  The pool can be set to this state via the
+   *                      backoff() method.  
    *
    *   - "closed":        The pool is destroyed. No more Connections may ever be checked out nor any
    *                      created in the background. The pool can be set to this state via the close()
