@@ -1876,6 +1876,14 @@ Test runners MUST allow any errors from the callback operation(s) to propagate t
 callback operation raises an error, it should be possible to assert that error at both the callback operation and
 `withTransaction` level.
 
+#### getSnapshotTime
+
+The operation `getSnapshotTime` returns the value of `snapshotTime` on the session, so that it can be used in subsequent
+operations.
+
+When parsing `snapshotTime` from `sessionOptions` for unified tests, the parsed string is the name of the key for the
+actual value of `snapshotTime` to be found in the [Entity Map](#entity-map).
+
 ### Bucket Operations
 
 These operations and their arguments may be documented in the following specifications:
@@ -3470,6 +3478,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 ## Changelog
 
 - 2025-XX-YY: **Scheam version 1.28.** Add `poolBackoffEvent`.
+
+- 2025-10-22: Added `getSnapshotTime` operation on sessions.
 
 - 2025-09-17: **Schema version 1.27.**
 
