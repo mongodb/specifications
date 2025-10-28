@@ -3467,6 +3467,8 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 ## Changelog
 
+- 2025-10-22: Added `getSnapshotTime` operation on sessions.
+
 - 2025-09-17: **Schema version 1.27.**
 
     Add `observeTracingMessages` configuration for clients and `expectTracingMessages` for test expectations. This allows
