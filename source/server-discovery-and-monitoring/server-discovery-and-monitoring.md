@@ -1056,6 +1056,10 @@ def handleError(error):
                 if isNotWritablePrimary(error):
                     check failing server
         elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+            # Ignore network errors and network timeout errors during TLS handshake or "hello" messages.
+            # These will be handled by the pool backoff.
+            if error.occurredDuringHello or error.occurredDuringTLSHandshake:
+                continue
             if type != LoadBalanced
               # Mark the server Unknown
               unknown = new ServerDescription(type=Unknown, error=error)
@@ -1169,8 +1173,9 @@ TopologyType is ReplicaSetWithPrimary: referring to the table above we see the s
 [checkIfHasPrimary](#checkifhasprimary). The result is the TopologyType changes to ReplicaSetNoPrimary. See the test
 scenario called "Network error writing to primary".
 
-The client MUST close all idle sockets in its connection pool for the server: if one socket is bad, it is likely that
-all are.
+The clients MUST NOT clear the connection pool when a connection TLS handshake or MongoDB handshake fail with network
+errors or timeouts. If the network error or timeout occurs during TCP connection establishment, DNS lookup, or during
+the authentication step, then client MUST close all idle sockets in its connection pool for the server.
 
 Clients MUST NOT request an immediate check of the server; since application sockets are used frequently, a network
 error likely means the server has just become unavailable, so an immediate refresh is likely to get a network error,

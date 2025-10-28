@@ -284,6 +284,15 @@ Endpoint. The pool has the following properties:
 - **Rate-limited:** A Pool MUST limit the number of [Connections](#connection) being
     [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
     [pool option](#connection-pool-options).
+- **Backoff-capable** A pool MUST be able to enter backoff mode. A pool will automatically enter backoff mode when a
+    connection checkout fails under conditions that indicate server overload. While the Pool is in backoff, it exhibits
+    the following behaviors:
+    - **maxConnecting** is set to 1.
+    - The Pool waits for the backoff duration before another connection attempt.
+    - A successful heartbeat does NOT change the state of the pool.
+    - A failed heartbeat clears the pool.
+    - A subsequent failed connection will increase the backoff attempt.
+    - A successful connection will return the Pool to ready state.
 
 ```typescript
 interface ConnectionPool {
@@ -314,12 +323,14 @@ interface ConnectionPool {
    *   - "ready":         The healthy state of the pool. It can service checkOut requests and create
    *                      connections in the background. The pool can be set to this state via the
    *                      ready() method.
+   * 
+   *   - "backoff":       The pool is in backoff state. XXX
    *
    *   - "closed":        The pool is destroyed. No more Connections may ever be checked out nor any
    *                      created in the background. The pool can be set to this state via the close()
    *                      method. The pool cannot transition to any other state after being closed.
    */
-  state: "paused" | "ready" | "closed";
+  state: "paused" | "ready" | "backoff" | "closed";
 
   // Any of the following connection counts may be computed rather than
   // actually stored on the pool.
@@ -359,6 +370,11 @@ interface ConnectionPool {
    *  Default false.
    */
   clear(interruptInUseConnections: Optional<Boolean>): void;
+
+  /**
+   * Enter backoff mode or increase backoff amount if already in backoff mode.  Mark the pool as "backoff".
+   */
+  backoff(): void
 
   /**
    *  Mark the pool as "ready", allowing checkOuts to resume and connections to be created in the background.
@@ -830,6 +846,34 @@ interface PoolClearedEvent {
 }
 
 /**
+ *  Emitted when a Connection Pool is in backoff
+ */
+interface PoolBackoffEvent {
+  /**
+   *  The ServerAddress of the Endpoint the pool is attempting to connect to.
+   */
+  address: string;
+
+  /**
+   * The backoff attempt number.
+   * 
+   * The incrementing backoff attempt number.  This is included because 
+   * the backoff duration is non-deterministic due to jitter.
+   */
+  attempt: int64;
+
+  /**
+   * The duration the pool will not allow new connection establishments.
+   * 
+   * A driver MAY choose the type idiomatic to the driver.
+   * If the type chosen does not convey units, e.g., `int64`,
+   * then the driver MAY include units in the name, e.g., `durationMS`.
+   */
+  duration: Duration;
+}
+
+
+/**
  *  Emitted when a Connection Pool is closed
  */
 interface PoolClosedEvent {
@@ -1073,6 +1117,21 @@ The unstructured form SHOULD be as follows, using the values defined in the stru
 placeholders as appropriate:
 
 > Connection pool for {{serverHost}}:{{serverPort}} cleared for serviceId {{serviceId}}
+
+#### Pool Backoff Message
+
+In addition to the common fields defined above, this message MUST contain the following key-value pairs:
+
+| Key        | Suggested Type | Value                        |
+| ---------- | -------------- | ---------------------------- |
+| message    | String         | "Connection pool in backoff" |
+| attempt    | Int            | The backoff attempt number.  |
+| durationMS | Int            | Int32/Int64/Double           |
+
+The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
+placeholders as appropriate:
+
+> Connection pool for {{serverHost}}:{{serverPort}} in backoff. Attempt: {{attempt}}. Duration: {{durationMS}} ms
 
 #### Pool Closed Message
 
