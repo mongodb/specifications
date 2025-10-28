@@ -2032,6 +2032,8 @@ oversaw the specification process.
 - 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
     discovered.
 
+- 2025-XX-YY: Add support for pool backoff state.
+
 ______________________________________________________________________
 
 [^1]: "localThresholdMS" was called "secondaryAcceptableLatencyMS" in the Read Preferences Spec, before it was superseded

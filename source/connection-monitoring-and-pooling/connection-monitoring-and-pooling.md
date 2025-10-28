@@ -1434,6 +1434,8 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 ## Changelog
 
+- 2025-XX-YY: Introduce "backoff" state.
+
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
 - 2024-11-27: Relaxed the WaitQueue fairness requirement.

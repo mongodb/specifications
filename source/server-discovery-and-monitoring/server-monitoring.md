@@ -972,6 +972,8 @@ outdated or inaccurate.
 
 ## Changelog
 
+- 2025-XX-YY: Add support for pool "backoff" state.
+
 - 2024-05-02: Migrated from reStructuredText to Markdown.
 
 - 2020-02-20: Extracted server monitoring from SDAM into this new spec.
