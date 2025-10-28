@@ -149,6 +149,7 @@
                   "poolCreatedEvent",
                   "poolReadyEvent",
                   "poolClearedEvent",
+                  "poolBackoffEvent",
                   "poolClosedEvent",
                   "connectionCreatedEvent",
                   "connectionReadyEvent",
@@ -553,6 +554,7 @@
               "PoolCreatedEvent",
               "PoolReadyEvent",
               "PoolClearedEvent",
+              "PoolBackoffEvent",
               "PoolClosedEvent",
               "ConnectionCreatedEvent",
               "ConnectionReadyEvent",
@@ -787,6 +789,15 @@
             },
             "interruptInUseConnections": {
               "type": "boolean"
+            }
+          }
+        },
+        "poolBackoffEvent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "attempt": {
+              "type": "integer"
             }
           }
         },
