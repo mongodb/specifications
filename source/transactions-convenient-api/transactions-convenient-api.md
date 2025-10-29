@@ -131,7 +131,7 @@ This method should perform the following sequence of actions:
         [abortTransaction](../transactions/transactions.md#aborttransaction) on the session.
 
     2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
-        less than 120 seconds, calculate the backoff value to be
+        less than 120 seconds, calculate the backoffMS to be
         `jitter * min(BACKOFF_INITIAL * (1.25**retry), BACKOFF_MAX)` where:
 
         1. jitter is a random float between \[0, 1)
@@ -139,8 +139,8 @@ This method should perform the following sequence of actions:
         3. BACKOFF_INITIAL is 1ms
         4. BACKOFF_MAX is 500ms
 
-        If the time elapsed thus far plus the backoff value would not exceed 120 seconds, then sleep for the backoff
-        value and jump back to step two, otherwise, raise last known error.
+        If timeoutMS is set and remainingTimeMS < backoffMS or timoutMS is not set and elapsed time + backoffMS > 120
+        seconds then, raise last known error. Otherwise, sleep for backoffMS and jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
@@ -178,7 +178,10 @@ withTransaction(callback, options) {
         if (retry > 0) {
             var backoff = Math.random() * min(BACKOFF_INITIAL * (1.25**retry), 
                                               BACKOFF_MAX);
-            if (Date.now() + backoff - startTime >= 120000) {
+            if (timeoutMS is None) {
+                timeoutMS = 120000
+            }
+            if (Date.now() + backoff - startTime >= timeoutMS) {
                 throw last_error;
             }
             sleep(backoff);
