@@ -285,14 +285,14 @@ Endpoint. The pool has the following properties:
     [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
     [pool option](#connection-pool-options).
 - **Backoff-capable** A pool MUST be able to enter backoff mode. A pool will automatically enter backoff mode when a
-    connection checkout fails under conditions that indicate server overload. While the Pool is in backoff, it exhibits
-    the following behaviors:
-    - **maxConnecting** is set to 1.
-    - The Pool waits for the backoff duration before another connection attempt.
-    - A successful heartbeat does NOT change the state of the pool.
-    - A failed heartbeat clears the pool.
-    - A subsequent failed connection will increase the backoff attempt.
-    - A successful connection will return the Pool to ready state.
+    connection checkout fails under conditions that indicate server overload. The rules for entering backoff mode are as
+    follows: - A network error or network timeout during the TCP handshake or the `hello` message for a new connection
+    MUST trigger the backoff state. - Other pending connections MUST not be canceled. - In the case of multiple pending
+    connections, the backoff attempt number MUST only be incremented once. This can be done by recording the state prior
+    to attempting the connection. While the Pool is in backoff, it exhibits the following behaviors: - **maxConnecting**
+    MUST be set to 1. - The Pool MUST wait for the backoff duration before another connection attempt. - A successful
+    heartbeat MUST NOT change the state of the pool. - A failed heartbeat MUST clear the pool. - A subsequent failed
+    connection MUST increase the backoff attempt. - A successful connection MUST return the Pool to ready state.
 
 ```typescript
 interface ConnectionPool {
