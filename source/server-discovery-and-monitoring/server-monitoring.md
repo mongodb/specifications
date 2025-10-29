@@ -482,8 +482,8 @@ When a monitor completes a successful check against a server, it MUST mark the c
 "ready", and doing so MUST be synchronized with the update to the topology (e.g. by marking the pool as ready in
 onServerDescriptionChanged). This is required to ensure a server does not get selected while its pool is still paused.
 See the [Connection Pool](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#connection-pool)
-definition in the CMAP specification for more details on marking the pool as "ready". If the server is in "backoff"
-state, the monitor MUST NOT mark the connection pool as "ready".
+definition in the CMAP specification for more details on marking the pool as "ready". If the pool is in "backoff" state,
+the monitor MUST NOT mark the connection pool as "ready".
 
 ### Error handling
 
