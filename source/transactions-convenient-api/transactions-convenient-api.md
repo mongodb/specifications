@@ -99,7 +99,8 @@ has not been exceeded, the driver MUST retry a transaction that fails with an er
 "TransientTransactionError" label. Since retrying the entire transaction will entail invoking the callback again,
 drivers MUST document that the callback may be invoked multiple times (i.e. one additional time per retry attempt) and
 MUST document the risk of side effects from using a non-idempotent callback. If the retry timeout has been exceeded,
-drivers MUST NOT retry the transaction and allow `withTransaction` to propagate the error to its caller.
+drivers MUST NOT retry the transaction and allow `withTransaction` to propagate the error to its caller. When retrying,
+drivers MUST implement an exponential backoff with jitter following the algorithm described below.
 
 If an error bearing neither the UnknownTransactionCommitResult nor the TransientTransactionError label is encountered at
 any point, the driver MUST NOT retry and MUST allow `withTransaction` to propagate the error to its caller.
@@ -128,11 +129,23 @@ This method should perform the following sequence of actions:
 6. If the callback reported an error:
     1. If the ClientSession is in the "starting transaction" or "transaction in progress" state, invoke
         [abortTransaction](../transactions/transactions.md#aborttransaction) on the session.
+
     2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
-        less than 120 seconds, jump back to step two.
+        less than 120 seconds, calculate the backoffMS to be
+        `jitter * min(BACKOFF_INITIAL * (1.25**retry), BACKOFF_MAX)` where:
+
+        1. jitter is a random float between \[0, 1)
+        2. retry is one less than the number of times Step 2 has been executed since Step 1 was executed
+        3. BACKOFF_INITIAL is 1ms
+        4. BACKOFF_MAX is 500ms
+
+        If timeoutMS is set and remainingTimeMS < backoffMS or timoutMS is not set and elapsed time + backoffMS > 120
+        seconds then, raise last known error. Otherwise, sleep for backoffMS and jump back to step two.
+
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
         immediately.
+
     4. Otherwise, propagate the callback's error to the caller of `withTransaction` and return immediately.
 7. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
@@ -154,16 +167,32 @@ This method should perform the following sequence of actions:
 This method can be expressed by the following pseudo-code:
 
 ```typescript
+var BACKOFF_INITIAL = 1  // 1ms initial backoff
+var BACKOFF_MAX = 500  // 500ms max backoff
 withTransaction(callback, options) {
     // Note: drivers SHOULD use a monotonic clock to determine elapsed time
     var startTime = Date.now(); // milliseconds since Unix epoch
+    var retry = 0;
 
     retryTransaction: while (true) {
+        if (retry > 0) {
+            var backoff = Math.random() * min(BACKOFF_INITIAL * (1.25**retry), 
+                                              BACKOFF_MAX);
+            if (timeoutMS is None) {
+                timeoutMS = 120000
+            }
+            if (Date.now() + backoff - startTime >= timeoutMS) {
+                throw last_error;
+            }
+            sleep(backoff);
+        }
+        retry += 1
         this.startTransaction(options); // may throw on error
 
         try {
             callback(this);
         } catch (error) {
+            var last_error = error;
             if (this.transactionState == STARTING ||
                 this.transactionState == IN_PROGRESS) {
                 this.abortTransaction();
@@ -324,8 +353,8 @@ exceed the user's original intention for `maxTimeMS`.
 The callback may be executed any number of times. Drivers are free to encourage their users to design idempotent
 callbacks.
 
-A previous design had no limits for retrying commits or entire transactions. The callback is always able indicate that
-`withTransaction` should return to its caller (without future retry attempts) by aborting the transaction directly;
+A previous design had no limits for retrying commits or entire transactions. The callback is always able to indicate
+that `withTransaction` should return to its caller (without future retry attempts) by aborting the transaction directly;
 however, that puts the onus on avoiding very long (or infinite) retry loops on the application. We expect the most
 common cause of retry loops will be due to TransientTransactionErrors caused by write conflicts, as those can occur
 regularly in a healthy application, as opposed to UnknownTransactionCommitResult, which would typically be caused by an
@@ -337,6 +366,16 @@ non-configurable default and is intentionally twice the value of MongoDB 4.0's d
 [transactionLifetimeLimitSeconds](https://www.mongodb.com/docs/manual/reference/parameters/#param.transactionLifetimeLimitSeconds)
 parameter (60 seconds). Applications that desire longer retry periods may call `withTransaction` additional times as
 needed. Applications that desire shorter retry periods should not use this method.
+
+### Backoff Benefits
+
+Previously, the driver would retry transactions immediately, which is fine for low levels of contention. But, as the
+server load increases, immediate retries can result in retry storms, unnecessarily further overloading the server.
+
+Exponential backoff is well-researched and accepted backoff strategy that is simple to implement. A low initial backoff
+(1-millisecond) and growth value (1.25x) were chosen specifically to mitigate latency in low levels of contention.
+Empirical evidence suggests that 500-millisecond max backoff ensured that a transaction did not wait so long as to
+exceed the 120-second timeout and reduced load spikes.
 
 ## Backwards Compatibility
 
@@ -356,6 +395,8 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
+
+- 2025-10-17: withTransaction applies exponential backoff when retrying.
 
 - 2024-09-06: Migrated from reStructuredText to Markdown.
 
