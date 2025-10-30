@@ -83,15 +83,15 @@ tests:
                   db.command.name: createSearchIndexes
                   db.collection.name: test
                   db.mongodb.cursor_id: { $$exists: false }
-                  db.response.status_code: { $$exists: false }
+                  db.response.status_code: { $$exists: true }
                   network.transport: tcp
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]
                   db.mongodb.driver_connection_id:
                     $$type: [ int, long ]
-                  exception.message: { $$exists: false }
-                  exception.type: { $$exists: false }
-                  exception.stacktrace: { $$exists: false }
+                  exception.message: { $$exists: true }
+                  exception.type: { $$exists: true }
+                  exception.stacktrace: { $$exists: true }
                   server.address: { $$type: string }
                   server.port: { $$type: [ long, string ] }
                   db.query.summary: createSearchIndexes operation-atlas-search.test
@@ -119,10 +119,10 @@ tests:
                   server.address: { $$type: string }
                   server.port: { $$type: [ long, string ] }
                   db.mongodb.cursor_id: { $$exists: false }
-                  db.response.status_code: { $$exists: false }
-                  exception.message: { $$exists: false }
-                  exception.type: { $$exists: false }
-                  exception.stacktrace: { $$exists: false }
+                  db.response.status_code: { $$exists: true }
+                  exception.message: { $$exists: true }
+                  exception.type: { $$exists: true }
+                  exception.stacktrace: { $$exists: true }
                   network.transport: tcp
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]
@@ -153,10 +153,10 @@ tests:
                   server.address: { $$type: string }
                   server.port: { $$type: [ long, string ] }
                   db.mongodb.cursor_id: { $$exists: false }
-                  db.response.status_code: { $$exists: false }
-                  exception.message: { $$exists: false }
-                  exception.type: { $$exists: false }
-                  exception.stacktrace: { $$exists: false }
+                  db.response.status_code: { $$exists: true }
+                  exception.message: { $$exists: true }
+                  exception.type: { $$exists: true }
+                  exception.stacktrace: { $$exists: true }
                   network.transport: tcp
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]

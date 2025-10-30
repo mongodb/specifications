@@ -119,7 +119,7 @@
                       "$$exists": false
                     },
                     "db.response.status_code": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "network.transport": "tcp",
                     "db.mongodb.server_connection_id": {
@@ -135,13 +135,13 @@
                       ]
                     },
                     "exception.message": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.type": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.stacktrace": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "server.address": {
                       "$$type": "string"
@@ -204,16 +204,16 @@
                       "$$exists": false
                     },
                     "db.response.status_code": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.message": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.type": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.stacktrace": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "network.transport": "tcp",
                     "db.mongodb.server_connection_id": {
@@ -272,16 +272,16 @@
                       "$$exists": false
                     },
                     "db.response.status_code": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.message": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.type": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "exception.stacktrace": {
-                      "$$exists": false
+                      "$$exists": true
                     },
                     "network.transport": "tcp",
                     "db.mongodb.server_connection_id": {
