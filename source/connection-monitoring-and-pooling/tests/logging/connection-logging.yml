@@ -320,8 +320,7 @@ tests:
                   - long
   - description: Connection enters backoff on closed connection
     runOnRequirements:
-      - auth: true
-        minServerVersion: "4.4"
+      - minServerVersion: "4.4"
     operations:
       - name: createEntities
         object: testRunner
