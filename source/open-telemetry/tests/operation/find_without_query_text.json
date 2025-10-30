@@ -70,9 +70,6 @@
                     "db.collection.name": "test",
                     "db.command.name": "find",
                     "network.transport": "tcp",
-                    "db.mongodb.cursor_id": {
-                      "$$exists": false
-                    },
                     "db.response.status_code": {
                       "$$exists": false
                     },
@@ -89,6 +86,18 @@
                       "$$type": "string"
                     },
                     "server.port": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
                       "$$type": [
                         "int",
                         "long"

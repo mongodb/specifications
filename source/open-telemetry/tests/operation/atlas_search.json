@@ -113,7 +113,36 @@
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-atlas-search",
+                    "db.command.name": "createSearchIndexes",
                     "db.collection.name": "test",
+                    "db.mongodb.cursor_id": {
+                      "$$exists": false
+                    },
+                    "db.response.status_code": {
+                      "$$exists": false
+                    },
+                    "network.transport": "tcp",
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "exception.message": {
+                      "$$exists": false
+                    },
+                    "exception.type": {
+                      "$$exists": false
+                    },
+                    "exception.stacktrace": {
+                      "$$exists": false
+                    },
                     "server.address": {
                       "$$type": "string"
                     },
@@ -160,6 +189,7 @@
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-atlas-search",
+                    "db.command.name": "updateSearchIndex",
                     "db.collection.name": "test",
                     "server.address": {
                       "$$type": "string"
@@ -168,6 +198,34 @@
                       "$$type": [
                         "long",
                         "string"
+                      ]
+                    },
+                    "db.mongodb.cursor_id": {
+                      "$$exists": false
+                    },
+                    "db.response.status_code": {
+                      "$$exists": false
+                    },
+                    "exception.message": {
+                      "$$exists": false
+                    },
+                    "exception.type": {
+                      "$$exists": false
+                    },
+                    "exception.stacktrace": {
+                      "$$exists": false
+                    },
+                    "network.transport": "tcp",
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
                       ]
                     },
                     "db.query.summary": "updateSearchIndex operation-atlas-search.test",
@@ -199,6 +257,7 @@
                   "attributes": {
                     "db.system": "mongodb",
                     "db.namespace": "operation-atlas-search",
+                    "db.command.name": "dropSearchIndex",
                     "db.collection.name": "test",
                     "server.address": {
                       "$$type": "string"
@@ -207,6 +266,34 @@
                       "$$type": [
                         "long",
                         "string"
+                      ]
+                    },
+                    "db.mongodb.cursor_id": {
+                      "$$exists": false
+                    },
+                    "db.response.status_code": {
+                      "$$exists": false
+                    },
+                    "exception.message": {
+                      "$$exists": false
+                    },
+                    "exception.type": {
+                      "$$exists": false
+                    },
+                    "exception.stacktrace": {
+                      "$$exists": false
+                    },
+                    "network.transport": "tcp",
+                    "db.mongodb.server_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
+                      ]
+                    },
+                    "db.mongodb.driver_connection_id": {
+                      "$$type": [
+                        "int",
+                        "long"
                       ]
                     },
                     "db.query.summary": "dropSearchIndex operation-atlas-search.test",

@@ -38,6 +38,7 @@ tests:
               db.collection.name: test
               db.operation.name: dropCollection
               db.operation.summary: dropCollection operation-drop-collection.test
+
             nested:
               - name: drop
                 attributes:

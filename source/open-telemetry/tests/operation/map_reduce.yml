@@ -69,6 +69,7 @@ tests:
               db.collection.name: test
               db.operation.name: mapReduce
               db.operation.summary: mapReduce operation-map-reduce.test
+
             nested:
               - name: mapReduce
                 attributes:
