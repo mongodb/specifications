@@ -2,7 +2,6 @@ description: backoff-network-timeout-error
 schemaVersion: "1.4"
 runOnRequirements:
   - minServerVersion: "4.4"
-    backoff: true
     serverless: forbid
     topologies:
       - single
