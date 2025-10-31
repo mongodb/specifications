@@ -382,6 +382,9 @@ The structure of this object is as follows:
         tests. If this field is omitted, there is no lower bound on the required libmongocrypt version. The format of this
         string is defined in [Version String](#version-string).
 
+- `poolBackoff`: Optional boolean. If it is true, tests MUST only run if the driver supports backoff state in connection
+    pools. If it is false, tests MUST only run if the driver does not support backoff state in connection pools.
+
 Test runners MAY evaluate these conditions in any order. For example, it may be more efficient to evaluate `serverless`
 or `auth` before communicating with a server to check its version.
 
@@ -478,6 +481,7 @@ The structure of this object is as follows:
         - [poolCreatedEvent](#expectedEvent_poolCreatedEvent)
         - [poolReadyEvent](#expectedEvent_poolReadyEvent)
         - [poolClearedEvent](#expectedEvent_poolClearedEvent)
+        - [poolBackoffEvent](#expectedEvent_poolBackoffEvent)
         - [poolClosedEvent](#expectedEvent_poolClosedEvent)
         - [connectionCreatedEvent](#expectedEvent_connectionCreatedEvent)
         - [connectionReadyEvent](#expectedEvent_connectionReadyEvent)
@@ -1081,6 +1085,15 @@ The structure of this object is as follows:
     - `hasServiceId`: Defined in [hasServiceId](#hasserviceid).
     - `interruptInUseConnections`: Optional boolean. If specified, test runners MUST assert that the field is set and
         matches this value.
+
+<span id="expectedEvent_poolBackoffEvent"></span>
+
+- `poolBackoffEvent`: Optional object. Assertions for one or more
+    [PoolBackoffEvent](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) fields.
+
+    The structure of this object is as follows:
+
+    - `attempt`: Optional integer. If specified, test runners MUST assert that the field is set and matches this value.
 
 <span id="expectedEvent_poolClosedEvent"></span>
 
@@ -3466,6 +3479,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2025-XX-YY: **Scheam version 1.28.** Add `poolBackoffEvent`.
 
 - 2025-10-22: Added `getSnapshotTime` operation on sessions.
 
