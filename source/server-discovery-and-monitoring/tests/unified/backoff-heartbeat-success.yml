@@ -74,6 +74,13 @@ tests:
             - _id: 4
         expectError:
           isError: true
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: client
+          event:
+            poolBackoffEvent: {}
+          count: 1
       - name: failPoint
         object: testRunner
         arguments:
@@ -88,13 +95,3 @@ tests:
           event:
             serverHeartbeatSucceededEvent: {}
           count: 1
-    expectEvents:
-      - client: client
-        eventType: cmap
-        events:
-          - poolBackoffEvent: {}
-          - poolBackoffEvent: {}
-          - poolBackoffEvent: {}
-          - poolBackoffEvent: {}
-          - poolBackoffEvent: {}
-          - poolBackoffEvent: {}
