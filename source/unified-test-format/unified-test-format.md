@@ -382,6 +382,9 @@ The structure of this object is as follows:
         tests. If this field is omitted, there is no lower bound on the required libmongocrypt version. The format of this
         string is defined in [Version String](#version-string).
 
+- `poolBackoff`: Optional boolean. If it is true, tests MUST only run if the driver supports backoff state in connection
+    pools. If it is false, tests MUST only run if the driver does not support backoff state in connection pools.
+
 Test runners MAY evaluate these conditions in any order. For example, it may be more efficient to evaluate `serverless`
 or `auth` before communicating with a server to check its version.
 

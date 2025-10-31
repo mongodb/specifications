@@ -112,6 +112,9 @@
               }
             }
           ]
+        },
+        "poolBackoff": {
+          "type": "boolean"
         }
       }
     },

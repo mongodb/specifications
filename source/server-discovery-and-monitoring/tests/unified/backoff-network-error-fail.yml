@@ -3,6 +3,7 @@ schemaVersion: "1.28"
 runOnRequirements:
   - minServerVersion: "4.4"
     serverless: forbid
+    poolBackoff: true
     topologies:
       - single
       - replicaset
@@ -74,6 +75,9 @@ tests:
             - _id: 4
         expectError:
           isError: true
+          errorLabelsContain:
+            - SystemOverloadedError
+            - RetryableError
       - name: insertMany
         object: collection
         arguments:
@@ -145,6 +149,9 @@ tests:
             - _id: 4
         expectError:
           isError: true
+          errorLabelsContain:
+            - SystemOverloadedError
+            - RetryableError
       - name: waitForEvent
         object: testRunner
         arguments:
