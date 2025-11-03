@@ -1,9 +1,9 @@
 description: state change errors are correctly handled
-schemaVersion: "1.4"
+schemaVersion: "1.28"
 runOnRequirements:
   - topologies:
       - load-balanced
-    poolBackoff: false
+    poolBackoff: true
 _yamlAnchors:
   observedEvents:
     - connectionCreatedEvent
@@ -31,6 +31,7 @@ createEntities:
         - connectionCheckedInEvent
         - connectionClosedEvent
         - poolClearedEvent
+        - poolBackoffEvent
   - database:
       id: singleDB
       client: singleClient
@@ -139,7 +140,7 @@ tests:
               reason: stale
           - connectionCheckedOutEvent: {}
           - connectionCheckedInEvent: {}
-  - description: errors during the initial connection hello are ignored
+  - description: errors during the initial connection hello trigger backoff
     runOnRequirements:
       - minServerVersion: 4.4.7
     operations:
@@ -162,8 +163,13 @@ tests:
         arguments:
           document:
             x: 1
-        expectError:
-          isClientError: true
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: singleClient
+          event:
+            poolBackoffEvent: {}
+          count: 1
     expectEvents:
       - client: singleClient
         eventType: cmap
@@ -171,8 +177,14 @@ tests:
           - connectionCreatedEvent: {}
           - connectionClosedEvent:
               reason: error
+          - poolBackoffEvent:
+              attempt: 1
           - connectionCheckOutFailedEvent:
               reason: connectionError
+          - connectionCreatedEvent: {}
+          - connectionReadyEvent: {}
+          - connectionCheckedOutEvent: {}
+          - connectionCheckedInEvent: {}
   - description: errors during authentication are processed
     runOnRequirements:
       - auth: true
@@ -202,11 +214,11 @@ tests:
         eventType: cmap
         events:
           - connectionCreatedEvent: {}
-          - poolClearedEvent: {}
           - connectionClosedEvent:
               reason: error
           - connectionCheckOutFailedEvent:
               reason: connectionError
+          - poolClearedEvent: {}
   - description: stale errors are ignored
     operations:
       - name: failPoint

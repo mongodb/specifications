@@ -91,7 +91,8 @@ tests:
         arguments:
           client: client
           event:
-            poolBackoffEvent: {}
+            poolBackoffEvent:
+              attempt: 1
           count: 1
   - description: Backoff and clear the pool after network failures followed by server error
     operations:
@@ -157,7 +158,8 @@ tests:
         arguments:
           client: client
           event:
-            poolBackoffEvent: {}
+            poolBackoffEvent:
+              attempt: 1
           count: 1
       - name: failPoint
         object: testRunner

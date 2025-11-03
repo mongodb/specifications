@@ -89,3 +89,22 @@ tests:
             poolBackoffEvent:
               attempt: 1
           count: 1
+      - name: insertMany
+        object: collection
+        arguments:
+          documents:
+            - _id: 3
+            - _id: 4
+        expectError:
+          isError: true
+          errorLabelsContain:
+            - SystemOverloadedError
+            - RetryableError
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: client
+          event:
+            poolBackoffEvent:
+              attempt: 2
+          count: 1

@@ -321,6 +321,7 @@ tests:
   - description: Connection enters backoff on closed connection
     runOnRequirements:
       - minServerVersion: "4.4"
+        poolBackoff: true
     operations:
       - name: createEntities
         object: testRunner

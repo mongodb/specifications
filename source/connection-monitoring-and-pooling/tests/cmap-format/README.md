@@ -89,6 +89,8 @@ The integration test format is identical to the unit test format with the additi
     - `maxServerVersion` (optional): The maximum server version (inclusive) against which the tests can be run
         successfully. If this field is omitted, it should be assumed that there is no upper bound on the required server
         version.
+    - `poolBackoff` (optional): If it is true, tests MUST only run if the driver supports backoff state in connection
+        pools. If it is false, tests MUST only run if the driver does not support backoff state in connection pools.
 - `failPoint`: optional, a document containing a `configureFailPoint` command to run against the endpoint being used for
     the test.
 - `poolOptions.appName` (optional): appName attribute to be set in connections, which will be affected by the fail
