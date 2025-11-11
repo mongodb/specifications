@@ -285,12 +285,11 @@ Endpoint. The pool has the following properties:
     [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
     [pool option](#connection-pool-options).
 - **Backpressure-enabled** - The pool MUST add the error labels `SystemOverloadedError` and `RetryableError` to network
-    errors or network timeouts it encounters during the TLS Handshake or the `hello` message. These labels are used by
-    the [server monitor](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
-    to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
-    after the `hello` message. If the driver cannot distinguish between TLS Handshake and TCP connection or DNS lookup,
-    it MUST add the backpressure error labels to network errors or network timeouts during initial connection
-    establishment.
+    errors or network timeouts it encounters during the connection establishment or the `hello` message. These labels
+    are used by the
+    [server monitor](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode) to
+    avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step after the
+    `hello` message.
 
 ```typescript
 interface ConnectionPool {

@@ -434,18 +434,18 @@ correspond to [replica set member states](https://www.mongodb.com/docs/manual/re
 some replica set member states like STARTUP and RECOVERING are identical from the client's perspective, so they are
 merged into "RSOther". Additionally, states like Standalone and Mongos are not replica set member states at all.
 
-| State           | Symptoms                                                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Unknown         | Initial, or after a network error or failed hello or legacy hello call, or "ok: 1" not in hello or legacy hello response. |
-| Standalone      | No "msg: isdbgrid", no setName, and no "isreplicaset: true".                                                              |
-| Mongos          | "msg: isdbgrid".                                                                                                          |
-| PossiblePrimary | Not yet checked, but another member thinks it is the primary.                                                             |
-| RSPrimary       | "isWritablePrimary: true" or "ismaster: true", "setName" in response.                                                     |
-| RSSecondary     | "secondary: true", "setName" in response.                                                                                 |
-| RSArbiter       | "arbiterOnly: true", "setName" in response.                                                                               |
-| RSOther         | "setName" in response, "hidden: true" or not primary, secondary, nor arbiter.                                             |
-| RSGhost         | "isreplicaset: true" in response.                                                                                         |
-| LoadBalanced    | "loadBalanced=true" in URI.                                                                                               |
+| State           | Symptoms                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------- |
+| Unknown         | Initial, or after a failed hello or legacy hello call, or "ok: 1" not in hello or legacy hello response. |
+| Standalone      | No "msg: isdbgrid", no setName, and no "isreplicaset: true".                                             |
+| Mongos          | "msg: isdbgrid".                                                                                         |
+| PossiblePrimary | Not yet checked, but another member thinks it is the primary.                                            |
+| RSPrimary       | "isWritablePrimary: true" or "ismaster: true", "setName" in response.                                    |
+| RSSecondary     | "secondary: true", "setName" in response.                                                                |
+| RSArbiter       | "arbiterOnly: true", "setName" in response.                                                              |
+| RSOther         | "setName" in response, "hidden: true" or not primary, secondary, nor arbiter.                            |
+| RSGhost         | "isreplicaset: true" in response.                                                                        |
+| LoadBalanced    | "loadBalanced=true" in URI.                                                                              |
 
 A server can transition from any state to any other. For example, an administrator could shut down a secondary and bring
 up a mongos in its place.
@@ -1142,16 +1142,20 @@ errors, network timeout errors, state change errors, and authentication errors.
 
 ##### Network error when reading or writing
 
-To describe how the client responds to network errors during application operations, we distinguish two phases of
+To describe how the client responds to network errors during application operations, we distinguish three phases of
 connecting to a server and using it for application operations:
 
-- *Before the handshake completes*: the client establishes a new connection to the server and completes an initial
-    handshake by calling "hello" or legacy hello and reading the response, and optionally completing authentication
+- *Connection establishment and hello*: the client establishes a new connection to the server and completes an initial
+    handshake by calling "hello" or legacy hello and reading the response
+- *Authentication step*: the client optionally completes an authentication step
 - *After the handshake completes*: the client uses the established connection for application operations
 
-If there is a network error or timeout on the connection before the handshake completes, the client MUST replace the
-server's description with a default ServerDescription of type Unknown when the TopologyType is not LoadBalanced, and
-fill the ServerDescription's error field with useful information.
+If there is a network error or timeout on the connection establishment or the hello, the client MUST NOT change the
+server's description.
+
+If there is an network error or timeout during the authentication step,, the client MUST replace the server's
+description with a default ServerDescription of type Unknown when the TopologyType is not LoadBalanced, and fill the
+ServerDescription's error field with useful information.
 
 If there is a network error or timeout on the connection before the handshake completes, and the TopologyType is
 LoadBalanced, the client MUST keep the ServerDescription as LoadBalancer.
@@ -1720,10 +1724,10 @@ error handling:
 
 1. Two concurrent writes begin on application threads A and B.
 2. The server restarts.
-3. Thread A receives the first non-timeout network error, and the client marks the server Unknown, and clears the
-    server's pool.
+3. Thread A receives the first error with no backpressure labels, and the client marks the server Unknown, and clears
+    the server's pool.
 4. The client re-checks the server and marks it Primary.
-5. Thread B receives the second non-timeout network error and the client marks the server Unknown again.
+5. Thread B receives the second an error with no backpressure labels and the client marks the server Unknown again.
 
 The core issue is that the client processes errors in arbitrary order and may overwrite fresh information about the
 server's status with stale information. Using CMAP's generation number avoids the race condition because the duplicate
@@ -1731,10 +1735,10 @@ server's status with stale information. Using CMAP's generation number avoids th
 
 1. Two concurrent writes begin on application threads A and B, **with generation 1**.
 2. The server restarts.
-3. Thread A receives the first non-timeout network error, and the client marks the server Unknown, and clears the
-    server's pool. **The pool's generation is now 2.**
+3. Thread A receives the first error with no backpressure labels, and the client marks the server Unknown, and clears
+    the server's pool. **The pool's generation is now 2.**
 4. The client re-checks the server and marks it Primary.
-5. Thread B receives the second non-timeout network error, **and the client ignores the error because the error
+5. Thread B receives the second error with no backpressure labels, **and the client ignores the error because the error
     originated from a connection with generation 1.**
 
 ### Why synchronize clearing a server's pool with updating the topology?
@@ -1744,7 +1748,7 @@ the previous example:
 
 1. A write begins on an application thread.
 2. The server restarts.
-3. The application thread receives a non-timeout network error.
+3. The application thread receives an error with no backpressure labels..
 4. The application thread acquires the lock on the TopologyDescription, marks the Server as Unknown, and releases the
     lock.
 5. The monitor re-checks the server and marks it Primary and its pool as "ready".
