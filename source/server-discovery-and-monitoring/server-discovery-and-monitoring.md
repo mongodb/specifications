@@ -1056,6 +1056,9 @@ def handleError(error):
                 if isNotWritablePrimary(error):
                     check failing server
         elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+            # Ignore errors that have backpressure error labels applied.
+            if error.hasLabel("SystemOverloadedError") and error.hasLabel("RetryableError"):
+                continue
             if type != LoadBalanced
               # Mark the server Unknown
               unknown = new ServerDescription(type=Unknown, error=error)
@@ -1255,7 +1258,8 @@ and [other transient errors](#other-transient-errors) and
 
 ##### Authentication and Handshake errors
 
-If the driver encounters errors when establishing application connections (this includes the initial handshake and
+If the driver encounters errors that do not have the backpressure error labels (`SystemOverloadedError` and
+`RetryableError`) applied when establishing application connections (this includes the initial handshake and
 authentication), the driver MUST mark the server Unknown and clear the server's connection pool if the TopologyType is
 not LoadBalanced. (See [Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
 
@@ -2026,6 +2030,8 @@ oversaw the specification process.
 
 - 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
     discovered.
+
+- 2025-XX-YY: Add handling of backpressure error labels.
 
 ______________________________________________________________________
 

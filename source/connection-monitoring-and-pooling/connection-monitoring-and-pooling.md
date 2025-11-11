@@ -284,6 +284,13 @@ Endpoint. The pool has the following properties:
 - **Rate-limited:** A Pool MUST limit the number of [Connections](#connection) being
     [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
     [pool option](#connection-pool-options).
+- **Backpressure-enabled** - The pool MUST add the error labels `SystemOverloadedError` and `RetryableError` to network
+    errors or network timeouts it encounters during the TLS Handshake or the `hello` message. These labels are used by
+    the [server monitor](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
+    to avoid clearing the pool. The pool MUST not add the backpressure error labels during an authentication step
+    after the `hello` message. If the driver cannot distinguish between TLS Handshake and TCP connection or DNS lookup,
+    it MUST add the backpressure error labels to network errors or network timeouts during initial connection
+    establishment.
 
 ```typescript
 interface ConnectionPool {
@@ -1374,6 +1381,8 @@ Exhaust Cursors may require changes to how we close [Connections](#connection) i
 to close and remove from its pool a [Connection](#connection) which has unread exhaust messages.
 
 ## Changelog
+
+- 2025-XX-YY: Add handling of backpressure error labels.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
