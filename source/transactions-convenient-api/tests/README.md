@@ -41,10 +41,10 @@ If possible, drivers should implement these tests without requiring the test run
 the retry timeout. This might be done by internally modifying the timeout value used by `withTransaction` with some
 private API or using a mock timer.
 
-### Retry Backoff is Enforced
+### Retry Backoff is Random
 
-Drivers should test that retries within `withTransaction` do not occur immediately. Optionally, set BACKOFF_INITIAL to a
-higher value to decrease flakiness of this test. Configure a fail point that forces 30 retries like so:
+Drivers should test that retries within `withTransaction` do not occur immediately. Configure a fail point that forces
+30 retries like so:
 
 ```json
 {
@@ -59,8 +59,29 @@ higher value to decrease flakiness of this test. Configure a fail point that for
 }
 ```
 
-Additionally, let the callback for the transaction be a simple `insertOne` command. Check that the total time for all
-retries exceeded 1.25 seconds.
+Let the callback for the transaction be a simple `insertOne` command. Check that the total time for all retries exceeded
+3.5 seconds.
+
+### Retry Backoff is Enforced
+
+Drivers should test that retries within `withTransaction` do not occur immediately. Configure the random number
+generator used for jitter to always return `1`. Configure a fail point that forces 30 retries like so:
+
+```json
+{
+    "configureFailPoint": "failCommand",
+    "mode": {
+        "times": 30
+    },
+    "data": {
+        "failCommands": ["commitTransaction"],
+        "errorCode": 24,
+    },
+}
+```
+
+Let the callback for the transaction be a simple `insertOne` command. Check that the total time for all retries exceeded
+3.5 seconds.
 
 ## Changelog
 
