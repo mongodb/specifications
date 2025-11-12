@@ -594,13 +594,13 @@ response data is drained and the connection is ready to send the next command.
 1. **Persist and update timestamp**: The connection must record the current time immediately after the original timeout.
     This timestamp MUST be updated to the current time whenever any bytes are successfully read, received, or consumed
     while draining of the pending response.
-2. **Aliveness check**: If driver uses synchronous read from the socket and the timestamp is older than 3 seconds, the
-    driver MUST perform aliveness check either performing a non-blocking read or using the minimal possible timeout to
-    check if at least one byte can be read/received. If at least one byte can be read the timestamp must be updated and
-    connection SHOULD be drained. If no bytes can be read, the connection MUST be closed.
+2. **Aliveness check**: If driver uses synchronous read from the socket and the timestamp is older than 3 seconds, then
+    the driver MUST do an aliveness check by either performing a non-blocking read or using the minimal possible
+    timeout to check if at least one byte can be read/received. If at least one byte can be read, then the timestamp
+    must be updated and the connection SHOULD be drained. If no bytes can be read, the connection MUST be closed.
 3. **User-provided timeout**: If a user-provided timeout is specified for the operation, the driver MUST use the minimum
-    of (a) the remaining time before the 3 second "pending response" window elapses and (b) the remaining of
-    user-provided timeout as the effective timeout for the draining.
+    of (a) the remaining time before the 3 second "pending response" window elapses and (b) the remaining user-provided
+    timeout as the effective timeout for the draining.
 4. **Default timeout**: If no user-provided timeout is specified, the driver MUST use the minimum of (a) the remaining 3
     second "pending response" window and (b) remaining timeout for connection checkout.
 5. **On Timeout**: if timeout occurred while draining the pending response and the 3 seconds pending-response window was
@@ -662,7 +662,10 @@ This subsection outlines the pseudocode steps for acquiring a connection from th
 connection = Null
 tConnectionCheckOutStarted = current instant (use a monotonic clock if possible)
 emit ConnectionCheckOutStartedEvent and equivalent log message
-checkout_timeout = timeoutMS is set ? remaining computedServerSelectionTimeout : waitQueueTimeoutMS
+if timeoutMS is not set and waitQueueTimeoutMS is supported and configured:
+    checkout_timeout = waitQueueTimeoutMS
+else:
+    checkout_timeout = remaining computedServerSelectionTimeout
 try:
   while connection is Null:
     try:
@@ -1620,7 +1623,10 @@ encounter avoidable delays.
 
 By refreshing the timeout after each successful draining, we acknowledge that progress is being made, and we provide a
 new time window for the next segment of data to arrive. Refreshing is less costly than re-establishing a connection
-since there is no reason to believe that a new connection would reduce latency.
+since there is no reason to believe that a new connection would reduce latency. Such approach might cause a problem in
+case of extremely slow server response (1 byte each 3 seconds) what could lead to constant moving of the pending
+response expiration window. The decision was made to ignore the "very slowly receiving data" problem for now under the
+assumption that it's extremely unlikely to occur.
 
 ### Why are exhaust cursors prohibited from transitioning a connection to the "pending response" state?
 

@@ -31,7 +31,7 @@ non-ssl, non-auth, and non-compression connections.
 #### Recover Partially Read Response
 
 This test verifies that if only part of a response was read before the timeout, the driver can drain the rest of the
-response and reuse the connection for the next operation. This test has 3 variation, see step 4, `sendBytes` parameter.
+response and reuse the connection for the next operation. This test has 3 variations, see step 4, `sendBytes` parameter.
 
 1. Setup mongoproxy.
 
