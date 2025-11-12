@@ -287,9 +287,9 @@ Endpoint. The pool has the following properties:
 - **Backpressure-enabled** - The pool MUST add the error labels `SystemOverloadedError` and `RetryableError` to network
     errors or network timeouts it encounters during the connection establishment or the `hello` message. These labels
     are used by the
-    [server monitor](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode) to
-    avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step after the
-    `hello` message.
+    [SDAM error handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
+    to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
+    after the `hello` message.
 
 ```typescript
 interface ConnectionPool {

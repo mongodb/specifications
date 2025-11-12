@@ -1056,8 +1056,8 @@ def handleError(error):
                 if isNotWritablePrimary(error):
                     check failing server
         elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
-            # Ignore errors that have backpressure error labels applied.
-            if error.hasLabel("SystemOverloadedError") and error.hasLabel("RetryableError"):
+            # Ignore errors that have a backpressure error label applied.
+            if error.hasLabel("SystemOverloadedError"):
                 continue
             if type != LoadBalanced
               # Mark the server Unknown
@@ -1262,10 +1262,10 @@ and [other transient errors](#other-transient-errors) and
 
 ##### Authentication and Handshake errors
 
-If the driver encounters errors that do not have the backpressure error labels (`SystemOverloadedError` and
-`RetryableError`) applied when establishing application connections (this includes the initial handshake and
-authentication), the driver MUST mark the server Unknown and clear the server's connection pool if the TopologyType is
-not LoadBalanced. (See [Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
+If the driver encounters errors that do not have the backpressure error label (`SystemOverloadedError`) applied when
+establishing application connections (this includes the initial handshake and authentication), the driver MUST mark the
+server Unknown and clear the server's connection pool if the TopologyType is not LoadBalanced. (See
+[Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
 
 ### Monitoring SDAM events
 
@@ -1724,10 +1724,10 @@ error handling:
 
 1. Two concurrent writes begin on application threads A and B.
 2. The server restarts.
-3. Thread A receives the first error with no backpressure labels, and the client marks the server Unknown, and clears
-    the server's pool.
+3. Thread A receives the first non-timeout network error, and the client marks the server Unknown, and clears the
+    server's pool.
 4. The client re-checks the server and marks it Primary.
-5. Thread B receives the second an error with no backpressure labels and the client marks the server Unknown again.
+5. Thread B receives the second non-timeout network error and the client marks the server Unknown again.
 
 The core issue is that the client processes errors in arbitrary order and may overwrite fresh information about the
 server's status with stale information. Using CMAP's generation number avoids the race condition because the duplicate
@@ -1735,10 +1735,10 @@ server's status with stale information. Using CMAP's generation number avoids th
 
 1. Two concurrent writes begin on application threads A and B, **with generation 1**.
 2. The server restarts.
-3. Thread A receives the first error with no backpressure labels, and the client marks the server Unknown, and clears
-    the server's pool. **The pool's generation is now 2.**
+3. Thread A receives the first non-timeout network error, and the client marks the server Unknown, and clears the
+    server's pool. **The pool's generation is now 2.**
 4. The client re-checks the server and marks it Primary.
-5. Thread B receives the second error with no backpressure labels, **and the client ignores the error because the error
+5. Thread B receives the second non-timeout network error, **and the client ignores the error because the error
     originated from a connection with generation 1.**
 
 ### Why synchronize clearing a server's pool with updating the topology?
@@ -1748,7 +1748,7 @@ the previous example:
 
 1. A write begins on an application thread.
 2. The server restarts.
-3. The application thread receives an error with no backpressure labels..
+3. The application thread receives a non-timeout network error.
 4. The application thread acquires the lock on the TopologyDescription, marks the Server as Unknown, and releases the
     lock.
 5. The monitor re-checks the server and marks it Primary and its pool as "ready".
