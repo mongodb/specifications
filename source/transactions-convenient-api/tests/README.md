@@ -41,47 +41,33 @@ If possible, drivers should implement these tests without requiring the test run
 the retry timeout. This might be done by internally modifying the timeout value used by `withTransaction` with some
 private API or using a mock timer.
 
-### Retry Backoff is Random
-
-Drivers should test that retries within `withTransaction` do not occur immediately. Configure a fail point that forces
-30 retries like so:
-
-```json
-{
-    "configureFailPoint": "failCommand",
-    "mode": {
-        "times": 30
-    },
-    "data": {
-        "failCommands": ["commitTransaction"],
-        "errorCode": 24,
-    },
-}
-```
-
-Let the callback for the transaction be a simple `insertOne` command. Check that the total time for all retries exceeded
-3.5 seconds.
-
 ### Retry Backoff is Enforced
 
-Drivers should test that retries within `withTransaction` do not occur immediately. Configure the random number
-generator used for jitter to always return `1`. Configure a fail point that forces 30 retries like so:
+Drivers should test that retries within `withTransaction` do not occur immediately. First, run transactions without
+backoff. To do so, configure the random number generator used for jitter to always return `0` -- this effectively
+disables backoff. Then, configure a fail point that forces 30 retries like so:
 
 ```json
 {
     "configureFailPoint": "failCommand",
     "mode": {
-        "times": 30
+        "times": 13
     },
     "data": {
         "failCommands": ["commitTransaction"],
-        "errorCode": 24,
+        "errorCode": 251,  // NoSuchTransaction
     },
 }
 ```
 
-Let the callback for the transaction be a simple `insertOne` command. Check that the total time for all retries exceeded
-3.5 seconds.
+Let the callback for the transaction be a simple `insertOne` command. Let `no_backoff_time` be the time it took for the
+command to succeed.
+
+Next, we will run the transactions again with backoff. Configure the random number generator used for jitter to always
+return `1`. Set the fail point to force 13 retries using the same command as before. Using the same callback as before,
+check that the total time for the withTransaction command is within +/-1 second of `no_backoff_time` plus 2.2 seconds.
+Note that 2.2 seconds is the sum of backoff 13 consecutive backoff values and the 1-second window is just to account for
+potential networking differences between the two runs.
 
 ## Changelog
 
