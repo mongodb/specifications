@@ -367,9 +367,10 @@ supports.
 
 ### Benchmark Server
 
-The MongoDB ODM Performance Benchmark must be run against a MongoDB replica set of size 1 running the latest stable
-database version without authentication or SSL enabled. The Benchmark should be run on the established internal
-performance distro for the sake of consistency.
+The MongoDB ODM Performance Benchmark must be run against a MongoDB replica set of size 1 patch-pinned to the latest
+stable database version without authentication or SSL enabled. This database version should be updated as needed to
+better differentiate between ODM performance changes and server performance changes. The Benchmark should be run on the
+established internal performance distro for the sake of consistency.
 
 ### Benchmark placement and scheduling
 
