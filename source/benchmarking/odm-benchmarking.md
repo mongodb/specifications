@@ -1,5 +1,6 @@
 # ODM Performance Benchmarking
 
+- Version: 1.0
 - Status: In progress
 - Minimum Server Version: N/A
 
@@ -52,13 +53,14 @@ be the median score of the iterations. A range of percentiles will also be recor
 
 Data sets will vary by task. In most cases, data sets will be synthetic line-delimited JSON files to be constructed by
 the ODM being benchmarked into the appropriate model. Some tasks will require additional modifications to these
-constructed models, such as adding generated ObjectIds.
+constructed models, such as adding generated ObjectIds. See the
+[Benchmark task definitions](#benchmark-task-definitions) section for details.
 
 ### Versioning
 
 The MongoDB ODM Performance Benchmark will have vX.Y versioning. Minor updates and clarifications will increment "Y" and
-should have little impact on score comparison. Major changes, such as task modifications, MongoDB version tested
-against, or hardware used, will increment "X" to indicate that older version scores are unlikely to be comparable.
+MUST have little impact on score comparison. Major changes, such as task modifications, MongoDB version tested against,
+or hardware used, MUST increment "X" to indicate that older version scores are unlikely to be comparable.
 
 ## Benchmark execution phases and measurement
 
@@ -102,13 +104,13 @@ given in a subsequent section:
     database
 
 The wall-clock execution time of each "do operation" phase will be recorded. We use wall clock time to model user
-experience and as a lowest-common denominator across ODMs. Iteration timing should be done with a high-resolution
+experience and as a lowest-common denominator across ODMs. Iteration timing SHOULD be done with a high-resolution
 monotonic timer (or best language approximation).
 
 Unless otherwise specified, the number of iterations to measure per task is variable:
 
-- iterations should loop for at least 30 seconds cumulative execution time
-- once this 30 second minimum execution time is reached, iterations should stop after at least 10 iterations or 1 minute
+- iterations MUST loop for at least 30 seconds cumulative execution time
+- once this 30 second minimum execution time is reached, iterations SHOULD stop after at least 10 iterations or 1 minute
     cumulative execution time, whichever is shorter
 
 This balances measurement stability with a timing cap to ensure all tasks can complete in a reasonable time.
@@ -116,9 +118,9 @@ This balances measurement stability with a timing cap to ensure all tasks can co
 For each task, the 10th, 25th, 50th, 75th, 90th, 95th, 98th and 99th percentiles will be recorded using the following
 algorithm:
 
-- Given a 0-indexed array A of N iteration wall clock times
+- Given a 0-indexed array `A` of `N` iteration wall clock times
 - Sort the array into ascending order (i.e. shortest time first)
-- Let the index i for percentile p in the range [1,100] be defined as: `i = int(N * p / 100) - 1`
+- Let the index `i` for percentile `p` in the range [1,100] be defined as: `i = int(N * p / 100) - 1`
 
 *N.B. This is the [Nearest Rank](https://en.wikipedia.org/wiki/Percentile#The_nearest-rank_method) algorithm, chosen for
 its utter simplicity given that it needs to be implemented identically across a wide variety of ODMs and languages.*
@@ -140,12 +142,12 @@ line-delimited JSON use CRLF delimiters, but this benchmark uses only LF.)
 
 ### Flat models
 
-Datasets are in the `flat_models` tarball.
+Datasets are in the `flat_models.tgz` tarball.
 
 Flat model tests focus on flatly-structured model reads and writes across data sizes. They are designed to give insights
 into the efficiency of the ODM's implementation of basic data operations.
 
-The data will be stored as strict JSON with no extended types. These JSON representations must be converted into
+The data will be stored as strict JSON with no extended types. These JSON representations MUST be converted into
 equivalent models as part of each benchmark task.
 
 Flat model benchmark tasks include:
@@ -215,12 +217,12 @@ operations, which equals 2,250,000 bytes or 2.5 MB.
 
 #### Small model find foreign key by filter
 
-Summary: This benchmark tests ODM performance finding documents by foreign keys. This benchmark must only be run by ODMs
+Summary: This benchmark tests ODM performance finding documents by foreign keys. This benchmark MUST only be run by ODMs
 that support join ($lookup) operations.
 
 Dataset: The dataset (SMALL_DOC) is contained within `small_doc.json` and consists of a sample document stored as strict
 JSON with an encoded length of approximately 250 bytes. An additional model (FOREIGN_KEY) representing the foreign key,
-consisting of only a string field called `name`, must also be created.
+consisting of only a string field called `name`, MUST also be created.
 
 Dataset size: For scoring purposes, the dataset size is the size of the `small_doc` source file (250 bytes) times 10,000
 operations, which equals 2,250,000 bytes or 2.5 MB.
@@ -271,12 +273,12 @@ Dataset size: For scoring purposes, the dataset size is the size of the `updated
 
 ### Nested models
 
-Datasets are in the `nested_models` tarball.
+Datasets are in the `nested_models.tgz` tarball.
 
 Nested model tests focus performing reads and writes on models containing nested (embedded) documents. They are designed
 to give insights into the efficiency of operations on the more complex data structures enabled by the document model.
 
-The data will be stored as strict JSON with no extended types. These JSON representations must be converted into
+The data will be stored as strict JSON with no extended types. These JSON representations MUST be converted into
 equivalent ODM models as part of each benchmark task.
 
 Nested model benchmark tasks include:s
@@ -362,21 +364,21 @@ times 10,000 operations, which equals 80,000,000 bytes or 80 MB.
 
 ### Benchmark Client
 
-The benchmarks should be run with the most recent stable version of the ODM and the newest version of the driver it
+The benchmarks SHOULD be run with the most recent stable version of the ODM and the newest version of the driver it
 supports.
 
 ### Benchmark Server
 
-The MongoDB ODM Performance Benchmark must be run against a MongoDB replica set of size 1 patch-pinned to the latest
-stable database version without authentication or SSL enabled. This database version should be updated as needed to
-better differentiate between ODM performance changes and server performance changes. The Benchmark should be run on the
+The MongoDB ODM Performance Benchmark MUST be run against a MongoDB replica set of size 1 patch-pinned to the latest
+stable database version without authentication or SSL enabled. This database version SHOULD be updated as needed to
+better differentiate between ODM performance changes and server performance changes. The Benchmark MUST be run on the
 established internal performance distro for the sake of consistency.
 
 ### Benchmark placement and scheduling
 
-The MongoDB ODM Performance Benchmark should be placed in one of two places. For first-party ODMs, the Benchmark should
+The MongoDB ODM Performance Benchmark SHOULD be placed in one of two places. For first-party ODMs, the Benchmark SHOULD
 be placed within the ODM's test directory as an independent test suite. For third-party ODMs, if the external
-maintainers do not wish to have the Benchmark included as part of the in-repo test suite, it should be included in the
+maintainers do not wish to have the Benchmark included as part of the in-repo test suite, it SHOULD be included in the
 ODM performance testing repository created explicitly for this purpose.
 
 Due to the relatively long runtime of the benchmarks, including them as part of an automated suite that runs against
@@ -387,7 +389,9 @@ automating this suite of tests.
 
 As discussed earlier in this document, ODM feature sets vary significantly across libraries. Many ODMs have features
 unique to them or their niche in the wider ecosystem, which makes specifying concrete benchmark test cases for every
-possible API unfeasible. Instead, ODM authors should determine what mainline use cases of their library are not covered
+possible API unfeasible. Instead, ODM authors SHOULD determine what mainline use cases of their library are not covered
 by the benchmarks specified above and expand this testing suite with additional benchmarks to cover those areas.
 
 ## Changelog
+
+- 2025-11-14: Release initial 1.0 version
