@@ -282,7 +282,7 @@
                   "isMaster",
                   "hello"
                 ],
-                "errorCode": "11600",
+                "errorCode": 11600,
                 "appName": "lbSDAMErrorTestClient"
               }
             }
