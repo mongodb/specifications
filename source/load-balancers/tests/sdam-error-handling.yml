@@ -153,7 +153,7 @@ tests:
             mode: { times: 1 }
             data:
               failCommands: [isMaster, hello]
-              errorCode: 11600,
+              errorCode: 11600
               appName: *singleClientAppName
       - name: insertOne
         object: *singleColl
