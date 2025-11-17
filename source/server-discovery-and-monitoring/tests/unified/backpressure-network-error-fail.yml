@@ -18,7 +18,7 @@ initialData:
       - _id: 1
       - _id: 2
 tests:
-  - description: Apply backpressure on network connection errors during connection establishment
+  - description: apply backpressure on network connection errors during connection establishment
     operations:
       - name: createEntities
         object: testRunner
