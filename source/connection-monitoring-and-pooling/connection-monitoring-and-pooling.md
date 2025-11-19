@@ -289,7 +289,9 @@ Endpoint. The pool has the following properties:
     are used by the
     [SDAM error handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
     to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
-    after the `hello` message.
+    after the `hello` message. For errors that the driver can distinguish as never occurring due to server overload,
+    such as DNS lookup failures, TLS related errors, or errors encountered establishing a connection to a socks5 proxy,
+    the driver MUST NOT clear the connection pool and MUST NOT mark the server Unknown.
 
 ```typescript
 interface ConnectionPool {
