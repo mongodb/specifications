@@ -60,14 +60,14 @@ disables backoff. Then, configure a fail point that forces 30 retries like so:
 }
 ```
 
-Let the callback for the transaction be a simple `insertOne` command. Let `no_backoff_time` be the time it took for the
-command to succeed.
+Let the callback for the transaction be a simple `insertOne` withTransaction call. Let `no_backoff_time` be the time it
+took for the command to succeed.
 
 Next, we will run the transactions again with backoff. Configure the random number generator used for jitter to always
 return `1`. Set the fail point to force 13 retries using the same command as before. Using the same callback as before,
 check that the total time for the withTransaction command is within +/-1 second of `no_backoff_time` plus 2.2 seconds.
-Note that 2.2 seconds is the sum of backoff 13 consecutive backoff values and the 1-second window is just to account for
-potential networking differences between the two runs.
+Note that 2.2 seconds is the sum of backoff 13 consecutive backoff values and the 1-second window accounts for potential
+variance between the two runs.
 
 ## Changelog
 

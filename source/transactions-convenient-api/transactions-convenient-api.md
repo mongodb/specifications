@@ -132,11 +132,11 @@ This method should perform the following sequence of actions:
 
     2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
         less than 120 seconds, calculate the backoffMS to be
-        `jitter * min(BACKOFF_INITIAL * (1.25**retry), BACKOFF_MAX)` where:
+        `jitter * min(BACKOFF_INITIAL * (1.5**retry), BACKOFF_MAX)` where:
 
         1. jitter is a random float between \[0, 1)
         2. retry is one less than the number of times Step 2 has been executed since Step 1 was executed
-        3. BACKOFF_INITIAL is 1ms
+        3. BACKOFF_INITIAL is 5ms
         4. BACKOFF_MAX is 500ms
 
         If timeoutMS is set and remainingTimeMS < backoffMS or timoutMS is not set and elapsed time + backoffMS > 120
