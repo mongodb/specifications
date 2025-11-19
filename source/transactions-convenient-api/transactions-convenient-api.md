@@ -114,7 +114,11 @@ needed (e.g. user data to pass as a parameter to the callback).
 
 This method should perform the following sequence of actions:
 
-1. Record the current monotonic time, which will be used to enforce the 120-second timeout before later retry attempts.
+1. Define the following:
+    1. Record the current monotonic time, which will be used to enforce the 120-second / CSOT timeout before later retry
+        attempts.
+    2. Set `retry` to `0`. This will be used for backoff later in step 7.
+    3. Set `TIMEOUT_MS` to be `timeoutMS` if given, otherwise 120-seconds.
 2. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session. If TransactionOptions
     were specified in the call to `withTransaction`, those MUST be used for `startTransaction`. Note that
     `ClientSession.defaultTransactionOptions` will be used in the absence of any explicit TransactionOptions.
@@ -131,16 +135,16 @@ This method should perform the following sequence of actions:
         [abortTransaction](../transactions/transactions.md#aborttransaction) on the session.
 
     2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
-        less than 120 seconds, calculate the backoffMS to be
-        `jitter * min(BACKOFF_INITIAL * (1.5**retry), BACKOFF_MAX)` where:
+        less than TIMEOUT_MS, calculate the backoffMS to be `jitter * min(BACKOFF_INITIAL * (1.5**retry), BACKOFF_MAX)`
+        where:
 
         1. jitter is a random float between \[0, 1)
-        2. retry is one less than the number of times Step 2 has been executed since Step 1 was executed
-        3. BACKOFF_INITIAL is 5ms
-        4. BACKOFF_MAX is 500ms
+        2. retry is the variable defined in step 1.
+        3. `BACKOFF_INITIAL` is 5ms
+        4. `BACKOFF_MAX` is 500ms
 
-        If timeoutMS is set and remainingTimeMS < backoffMS or timoutMS is not set and elapsed time + backoffMS > 120
-        seconds then, raise last known error. Otherwise, sleep for backoffMS and jump back to step two.
+        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise last known error. Otherwise, sleep for `backoffMS`,
+        increment `retry`, and jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
@@ -152,12 +156,12 @@ This method should perform the following sequence of actions:
 8. Invoke [commitTransaction](../transactions/transactions.md#committransaction) on the session.
 9. If `commitTransaction` reported an error:
     1. If the `commitTransaction` error includes a "UnknownTransactionCommitResult" label and the error is not
-        MaxTimeMSExpired and the elapsed time of `withTransaction` is less than 120 seconds, jump back to step eight.
-        We will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
+        MaxTimeMSExpired and the elapsed time of `withTransaction` is less than TIMEOUT_MS, jump back to step eight. We
+        will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
         [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label and the elapsed time of
-        `withTransaction` is less than 120 seconds, jump back to step two.
+        `withTransaction` is less than TIMEOUT_MS, jump back to step two.
 
     3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
 10. The transaction was committed successfully. Return immediately.
@@ -172,16 +176,15 @@ var BACKOFF_MAX = 500  // 500ms max backoff
 withTransaction(callback, options) {
     // Note: drivers SHOULD use a monotonic clock to determine elapsed time
     var startTime = Date.now(); // milliseconds since Unix epoch
+    var TIMEOUT_MS = timeoutMS is None ? 120000 : TIMEOUT_MS
     var retry = 0;
 
     retryTransaction: while (true) {
         if (retry > 0) {
             var backoff = Math.random() * min(BACKOFF_INITIAL * (1.25**retry), 
                                               BACKOFF_MAX);
-            if (timeoutMS is None) {
-                timeoutMS = 120000
-            }
-            if (Date.now() + backoff - startTime >= timeoutMS) {
+
+            if (Date.now() + backoff - startTime >= TIMEOUT_MS) {
                 throw last_error;
             }
             sleep(backoff);
@@ -199,7 +202,7 @@ withTransaction(callback, options) {
             }
 
             if (error.hasErrorLabel("TransientTransactionError") &&
-                Date.now() - startTime < 120000) {
+                Date.now() - startTime < TIMEOUT_MS) {
                 continue retryTransaction;
             }
 
@@ -227,12 +230,12 @@ withTransaction(callback, options) {
                  */
                 if (!isMaxTimeMSExpiredError(error) &&
                     error.hasErrorLabel("UnknownTransactionCommitResult") &&
-                    Date.now() - startTime < 120000) {
+                    Date.now() - startTime < TIMEOUT_MS) {
                     continue retryCommit;
                 }
 
                 if (error.hasErrorLabel("TransientTransactionError") &&
-                    Date.now() - startTime < 120000) {
+                    Date.now() - startTime < TIMEOUT_MS) {
                     continue retryTransaction;
                 }
 
@@ -396,7 +399,7 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 
 ## Changelog
 
-- 2025-10-17: withTransaction applies exponential backoff when retrying.
+- 2025-11-18: withTransaction applies exponential backoff when retrying.
 
 - 2024-09-06: Migrated from reStructuredText to Markdown.
 

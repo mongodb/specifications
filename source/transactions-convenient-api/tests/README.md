@@ -43,35 +43,71 @@ private API or using a mock timer.
 
 ### Retry Backoff is Enforced
 
-Drivers should test that retries within `withTransaction` do not occur immediately. First, run transactions without
-backoff. To do so, configure the random number generator used for jitter to always return `0` -- this effectively
-disables backoff. Then, configure a fail point that forces 30 retries like so:
+Drivers should test that retries within `withTransaction` do not occur immediately.
 
-```json
-{
-    "configureFailPoint": "failCommand",
-    "mode": {
-        "times": 13
-    },
-    "data": {
-        "failCommands": ["commitTransaction"],
-        "errorCode": 251,  // NoSuchTransaction
-    },
-}
-```
+1. let `client` be a `MongoClient`
+2. let `coll` be a collection
+3. Now, run transactions without backoff:
+    1. Configure the random number generator used for jitter to always return `0` -- this effectively disables backoff.
 
-Let the callback for the transaction be a simple `insertOne` withTransaction call. Let `no_backoff_time` be the time it
-took for the command to succeed.
+    2. Configure a fail point that forces 13 retries like so:
 
-Next, we will run the transactions again with backoff. Configure the random number generator used for jitter to always
-return `1`. Set the fail point to force 13 retries using the same command as before. Using the same callback as before,
-check that the total time for the withTransaction command is within +/-1 second of `no_backoff_time` plus 2.2 seconds.
-Note that 2.2 seconds is the sum of backoff 13 consecutive backoff values and the 1-second window accounts for potential
-variance between the two runs.
+        ```python
+           set_fail_point(
+              {
+                  "configureFailPoint": "failCommand",
+                  "mode": {
+                      "times": 13
+                  },  # sufficiently high enough such that the time effect of backoff is noticeable
+                  "data": {
+                      "failCommands": ["commitTransaction"],
+                      "errorCode": 251,
+                  },
+              }
+           )
+        ```
+
+        > [!NOTE]
+        > errorCode 251 is NoSuchTransaction.
+
+    3. Define the callback for the transaction as follows:
+
+        ```python
+           def callback(session):
+              coll.insert_one({}, session=session)
+        ```
+
+    4. Let `no_backoff_time` be the duration of the withTransaction API call:
+
+        ```python
+           start = time.monotonic()
+           with client.start_session() as s:
+              s.with_transaction(callback)
+           end = time.monotonic()
+           no_backoff_time = end - start
+        ```
+4. Now run the command with backoff:
+    1. Configure the random number generator used for jitter to always return `1`.
+    2. Configure a fail point that forces 13 retries like in step 3.2.
+    3. Use the same callback defined in 3.3.
+    4. Let `with_backoff_time` be the duration of the withTransaction API call:
+        ```python
+           start = time.monotonic()
+           with client.start_session() as s:
+              s.with_transaction(callback)
+           end = time.monotonic()
+           no_backoff_time = end - start
+        ```
+5. Compare the two time between the two runs.
+    ```python
+    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 2.2 seconds)) < 1)
+    ```
+    The sum of 13 backoffs is roughly 2.2 seconds. There is a 1-second window to account for potential variance between
+    the two runs.
 
 ## Changelog
 
-- 2025-10-17: Added Backoff test.
+- 2025-11-18: Added Backoff test.
 - 2024-09-06: Migrated from reStructuredText to Markdown.
 - 2024-02-08: Converted legacy tests to unified format.
 - 2021-04-29: Remove text about write concern timeouts from prose test.
