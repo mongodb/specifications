@@ -1055,7 +1055,7 @@ def handleError(error):
                 # next full scan.
                 if isNotWritablePrimary(error):
                     check failing server
-        elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+        elif isNetworkError(error) or (not error.completedHandshake):
             # Ignore errors that have a backpressure error label applied.
             if error.hasLabel("SystemOverloadedError"):
                 continue
@@ -1260,7 +1260,7 @@ if and only if the error is "node is shutting down" or the error originated from
 and [other transient errors](#other-transient-errors) and
 [Why close connections when a node is shutting down?](#why-close-connections-when-a-node-is-shutting-down).)
 
-##### Authentication and Handshake errors
+##### MongoDB Handshake errors
 
 If the driver encounters errors that do not have the backpressure error label (`SystemOverloadedError`) applied when
 establishing application connections (this includes the initial handshake and authentication), the driver MUST mark the

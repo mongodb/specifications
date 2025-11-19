@@ -273,6 +273,11 @@ minHeartbeatFrequencyMS (500ms).
 
 (See [heartbeatFrequencyMS in the main SDAM spec](server-discovery-and-monitoring.md#heartbeatFrequencyMS).)
 
+#### Handling of backpressure labels
+
+Because the scan may occur on an authenticated connection, the server may apply backpressure by failing the command with
+a `SystemOverloadedError` label. The driver MUST not close the connection when this label is encountered.
+
 ### Awaitable hello or legacy hello Server Specification
 
 As of MongoDB 4.4 the hello or legacy hello command can wait to reply until there is a topology change or a maximum time
@@ -573,6 +578,8 @@ class Monitor(Thread):
               topology.onServerDescriptionChanged(description, connection pool for server)
               if description.error != Null:
                   # Clear the connection pool only after the server description is set to Unknown.
+                  # Note: for single-threaded monitors, only clear if the `SystemOverloadedError` is not applied to the
+                  # error.
                   clear(interruptInUseConnections: isNetworkTimeout(description.error)) connection pool for server
 
           # Immediately proceed to the next check if the previous response
