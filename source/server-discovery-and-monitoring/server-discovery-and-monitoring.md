@@ -1153,7 +1153,7 @@ connecting to a server and using it for application operations:
 If there is a network error or timeout on the connection establishment or the hello, the client MUST NOT change the
 server's description.
 
-If there is an network error or timeout during the authentication step,, the client MUST replace the server's
+If there is an network error or timeout during the authentication step, the client MUST replace the server's
 description with a default ServerDescription of type Unknown when the TopologyType is not LoadBalanced, and fill the
 ServerDescription's error field with useful information.
 
