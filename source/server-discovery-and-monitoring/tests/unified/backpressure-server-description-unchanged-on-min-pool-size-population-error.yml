@@ -1,4 +1,4 @@
-description: backpressure-pool-not-cleared-on-min-pool-size-population-error
+description: backpressure-server-description-unchanged-on-min-pool-size-population-error
 schemaVersion: "1.4"
 runOnRequirements:
   - minServerVersion: "4.4"
@@ -10,7 +10,7 @@ createEntities:
       id: setupClient
       useMultipleMongoses: false
 tests:
-  - description: Pool is not cleared on handshake error during minPoolSize population
+  - description: the server description is not changed on handshake error during minPoolSize population
     operations:
       - name: createEntities
         object: testRunner
@@ -20,10 +20,7 @@ tests:
                 id: client
                 observeEvents:
                   - serverDescriptionChangedEvent
-                  - connectionCreatedEvent
-                  - poolClearedEvent
                   - connectionClosedEvent
-                  - connectionReadyEvent
                 uriOptions:
                   appname: authErrorTest
                   minPoolSize: 5
@@ -60,9 +57,6 @@ tests:
           count: 1
     expectEvents:
       - client: client
-        eventType: cmap
+        eventType: sdam
         events:
-          - connectionCreatedEvent: {}
-          - connectionReadyEvent: {}
-          - connectionCreatedEvent: {}
-          - connectionClosedEvent: {}
+          - serverDescriptionChangedEvent: {}
