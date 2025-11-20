@@ -29,14 +29,11 @@ tests:
                 useMultipleMongoses: false
                 observeEvents:
                   - serverHeartbeatSucceededEvent
-                  - serverDescriptionChangedEvent
-                  - poolReadyEvent
                   - poolClearedEvent
                 uriOptions:
                   retryWrites: false
-                  heartbeatFrequencyMS: 10000
+                  heartbeatFrequencyMS: 1000000
                   serverMonitoringMode: poll
-                  directConnection: true
                   appname: backpressureNetworkErrorFailTest
             - database:
                 id: database
@@ -52,13 +49,6 @@ tests:
           client: client
           event:
             serverHeartbeatSucceededEvent: {}
-          count: 1
-      - name: waitForEvent
-        object: testRunner
-        arguments:
-          client: client
-          event:
-            serverDescriptionChangedEvent: {}
           count: 1
       - name: failPoint
         object: testRunner
@@ -87,11 +77,4 @@ tests:
     expectEvents:
       - client: client
         eventType: cmap
-        events:
-          - poolReadyEvent: {}
-      - client: client
-        eventType: sdam
-        ignoreExtraEvents: false
-        events:
-          - serverHeartbeatSucceededEvent: {}
-          - serverDescriptionChangedEvent: {}
+        events: []

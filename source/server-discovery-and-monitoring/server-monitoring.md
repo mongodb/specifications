@@ -163,7 +163,8 @@ MUST be used to satisfy the check and update the topology.
 When a client successfully calls hello or legacy hello to handshake a new connection for application operations, it
 SHOULD use the hello or legacy hello reply to update the ServerDescription and TopologyDescription, the same as with a
 hello or legacy hello reply on a monitoring socket. If the hello or legacy hello call fails, the client SHOULD mark the
-server Unknown and update its TopologyDescription, the same as a failed server check on monitoring socket.
+server Unknown and update its TopologyDescription, the same as a failed server check on monitoring socket, unless the
+connection pool has added the `SystemOverloadedError` to the error.
 
 ##### Clients use the streaming protocol when supported
 

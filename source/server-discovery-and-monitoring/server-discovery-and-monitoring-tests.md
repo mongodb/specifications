@@ -182,7 +182,12 @@ cleared.
 
 This test requires MongoDB 7.0+.
 
-1. Create a setup client and run the following commands to set up the rate limiter:
+1. Create a test client that listens to CMAP events, with maxConnecting=100 and minPoolSize=10.\
+    This will ensure the pool is partially filled but also sees contention.
+
+2. Create a setup client and run the following commands to set up the rate limiter. The setup client is used to ensure
+    that it has an open connection and does not get rate limited when it unsets the parameters. If not running on
+    standalone, create a client for each mongod in a replica set or each mongos in a sharded cluster.
 
     ```python
     db = admin_client.admin
@@ -192,19 +197,16 @@ This test requires MongoDB 7.0+.
     db.command("setParameter", 1, ingressConnectionEstablishmentMaxQueueDepth=1)
     ```
 
-2. Create a separate client that listens to CMAP events, with maxConnecting=100.
-
 3. Add a document to the test collection so that the sleep operations will actually block:
     `client.test.test.insert_one({})`.
 
-4. Run the following find command on the collection in 10 parallel threads/coroutines:
+4. Run the following find command on the collection in 100 parallel threads/coroutines. Run these commands concurrently
+    but block on their completion, and ignore errors raised by the command.
     `client.test.test.find_one({"$where": "function() { sleep(2000); return true; }})`
 
-5. Run the same find command on the collection in 100 parallel threads/coroutines.
+5. Assert that at least 10 ConnectionCheckOutFailedEvents occurred.
 
-6. Assert that at least 10 ConnectionCheckOutFailedEvents occurred.
+6. Assert that 0 PoolClearedEvents occurred.
 
-7. Assert that 0 PoolClearedEvents occurred.
-
-8. Ensure that the following command runs at test teardown even if the test fails:
-    `admin_client.admin("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=False)`.
+7. Ensure that the following command runs at test teardown even if the test fails, on all of the admin clients that were
+    created. `admin_client.admin("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=False)`.
