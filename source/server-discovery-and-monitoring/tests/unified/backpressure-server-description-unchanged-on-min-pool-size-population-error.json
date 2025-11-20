@@ -1,6 +1,6 @@
 {
   "description": "backpressure-server-description-unchanged-on-min-pool-size-population-error",
-  "schemaVersion": "1.4",
+  "schemaVersion": "1.17",
   "runOnRequirements": [
     {
       "minServerVersion": "4.4",
