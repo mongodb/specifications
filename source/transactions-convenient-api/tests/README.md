@@ -67,8 +67,7 @@ Drivers should test that retries within `withTransaction` do not occur immediate
            )
         ```
 
-        > [!NOTE]
-        > errorCode 251 is NoSuchTransaction.
+        > Note: errorCode 251 is NoSuchTransaction.
 
     3. Define the callback for the transaction as follows:
 
