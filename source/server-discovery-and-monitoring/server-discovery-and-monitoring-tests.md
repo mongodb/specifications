@@ -182,19 +182,16 @@ cleared.
 
 This test requires MongoDB 7.0+.
 
-1. Create a test client that listens to CMAP events, with maxConnecting=100 and minPoolSize=10.\
-    This will ensure the pool is partially filled but also sees contention.
+1. Create a test client that listens to CMAP events, with maxConnecting=100. The higher maxConnecting will help ensure
+    contention for creating connections.
 
-2. Create a setup client and run the following commands to set up the rate limiter. The setup client is used to ensure
-    that it has an open connection and does not get rate limited when it unsets the parameters. If not running on
-    standalone, create a client for each mongod in a replica set or each mongos in a sharded cluster.
+2. Run the following commands to set up the rate limiter.
 
     ```python
-    db = admin_client.admin
-    db.command("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=True)
-    db.command("setParameter", 1, ingressConnectionEstablishmentRatePerSec=20)
-    db.command("setParameter", 1, ingressConnectionEstablishmentBurstCapacitySecs=1)
-    db.command("setParameter", 1, ingressConnectionEstablishmentMaxQueueDepth=1)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=True)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentRatePerSec=20)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentBurstCapacitySecs=1)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentMaxQueueDepth=1)
     ```
 
 3. Add a document to the test collection so that the sleep operations will actually block:
@@ -204,9 +201,11 @@ This test requires MongoDB 7.0+.
     but block on their completion, and ignore errors raised by the command.
     `client.test.test.find_one({"$where": "function() { sleep(2000); return true; }})`
 
-5. Assert that at least 10 ConnectionCheckOutFailedEvents occurred.
+5. Assert that at least 10 `ConnectionCheckOutFailedEvent` occurred.
 
-6. Assert that 0 PoolClearedEvents occurred.
+6. Assert that 0 `PoolClearedEvent` occurred.
 
-7. Ensure that the following command runs at test teardown even if the test fails, on all of the admin clients that were
-    created. `admin_client.admin("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=False)`.
+7. Sleep for 1 second to clear the rate limiter.
+
+8. Ensure that the following command runs at test teardown even if the test fails.
+    `client.admin("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=False)`.
