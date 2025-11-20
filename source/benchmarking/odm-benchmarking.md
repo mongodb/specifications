@@ -240,10 +240,10 @@ operations, which equals 2,250,000 bytes or 2.5 MB.
 Summary: This benchmark tests ODM performance creating a single large model.
 
 Dataset: The dataset (LARGE_DOC) is contained within `large_doc.json` and consists of a sample document stored as strict
-JSON with an encoded length of approximately 8,000 bytes.
+JSON with an encoded length of approximately 3.2 MB.
 
-Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (8,000 bytes) times
-10,000 operations, which equals 80,000,000 bytes or 80 MB.
+Dataset size: For scoring purposes, the dataset size is the size of the `large_doc` source file (3,226,020 bytes) times
+10,000 operations, which equals 32,260,200,000 bytes or 32.2 GB.
 
 | Phase       | Description                                                                                                                |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -258,7 +258,7 @@ Dataset size: For scoring purposes, the dataset size is the size of the `large_d
 Summary: This benchmark tests ODM performance updating fields on a single large model.
 
 Dataset: The dataset (LARGE_DOC) is contained within `large_doc.json` and consists of a sample document stored as strict
-JSON with an encoded length of approximately 8,000 bytes.
+JSON with an encoded length of approximately 3.2 MB.
 
 Dataset size: For scoring purposes, the dataset size is the size of the `updated_value` string file (13 bytes) times
 10,000 operations, which equals 130,000 bytes or 130 KB.
@@ -281,7 +281,7 @@ to give insights into the efficiency of operations on the more complex data stru
 The data will be stored as strict JSON with no extended types. These JSON representations MUST be converted into
 equivalent ODM models as part of each benchmark task.
 
-Nested model benchmark tasks include:s
+Nested model benchmark tasks include:
 
 - Large model creation
 - Large model update nested field
