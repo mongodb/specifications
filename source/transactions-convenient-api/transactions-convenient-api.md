@@ -171,20 +171,21 @@ This method should perform the following sequence of actions:
 This method can be expressed by the following pseudo-code:
 
 ```typescript
-var BACKOFF_INITIAL = 1  // 1ms initial backoff
+var BACKOFF_INITIAL = 5  // 5ms initial backoff
 var BACKOFF_MAX = 500  // 500ms max backoff
 withTransaction(callback, options) {
     // Note: drivers SHOULD use a monotonic clock to determine elapsed time
     var startTime = Date.now(); // milliseconds since Unix epoch
-    var TIMEOUT_MS = timeoutMS is None ? 120000 : TIMEOUT_MS
+    // See the CSOT specification for information on calculating timeoutMS for a convenient transaction API call.
+    var timeout = getCSOTTimeoutIfSet() ?? 120_000;
     var retry = 0;
 
     retryTransaction: while (true) {
         if (retry > 0) {
-            var backoff = Math.random() * min(BACKOFF_INITIAL * (1.25**retry), 
+            var backoff = Math.random() * min(BACKOFF_INITIAL * (1.5**retry), 
                                               BACKOFF_MAX);
 
-            if (Date.now() + backoff - startTime >= TIMEOUT_MS) {
+            if (Date.now() + backoff - startTime >= timeout) {
                 throw last_error;
             }
             sleep(backoff);
@@ -202,7 +203,7 @@ withTransaction(callback, options) {
             }
 
             if (error.hasErrorLabel("TransientTransactionError") &&
-                Date.now() - startTime < TIMEOUT_MS) {
+                Date.now() - startTime < timeout) {
                 continue retryTransaction;
             }
 
@@ -230,12 +231,12 @@ withTransaction(callback, options) {
                  */
                 if (!isMaxTimeMSExpiredError(error) &&
                     error.hasErrorLabel("UnknownTransactionCommitResult") &&
-                    Date.now() - startTime < TIMEOUT_MS) {
+                    Date.now() - startTime < timeout) {
                     continue retryCommit;
                 }
 
                 if (error.hasErrorLabel("TransientTransactionError") &&
-                    Date.now() - startTime < TIMEOUT_MS) {
+                    Date.now() - startTime < timeout) {
                     continue retryTransaction;
                 }
 
@@ -399,7 +400,7 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 
 ## Changelog
 
-- 2025-11-18: withTransaction applies exponential backoff when retrying.
+- 2025-11-20: withTransaction applies exponential backoff when retrying.
 
 - 2024-09-06: Migrated from reStructuredText to Markdown.
 
