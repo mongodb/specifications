@@ -1384,7 +1384,7 @@ to close and remove from its pool a [Connection](#connection) which has unread e
 
 ## Changelog
 
-- 2025-XX-YY: Add handling of backpressure error labels.
+- 2025-11-21: Add handling of backpressure error labels.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 

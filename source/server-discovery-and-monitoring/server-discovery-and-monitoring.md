@@ -2035,7 +2035,7 @@ oversaw the specification process.
 - 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
     discovered.
 
-- 2025-XX-YY: Add handling of backpressure error labels.
+- 2025-11-21: Add handling of backpressure error labels.
 
 ______________________________________________________________________
 
