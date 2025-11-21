@@ -255,6 +255,12 @@ default lastUpdateTime "infinity ago", so it scans them in random order. This ra
 many clients start at once. A client's subsequent scans of the mongoses are always in the same order, since their
 lastUpdateTimes are always in the same order by the time a scan ends.
 
+##### Handling of backpressure labels
+
+Because the scan may occur on an authenticated connection in single-threaded monitors, the server may apply backpressure
+by failing the command with a `SystemOverloadedError` label. The driver MUST not close the connection when this label is
+encountered.
+
 #### minHeartbeatFrequencyMS
 
 If a client frequently rechecks a server, it MUST wait at least minHeartbeatFrequencyMS milliseconds since the previous
@@ -273,11 +279,6 @@ For both multi- and single-threaded drivers, the driver MUST NOT permit users to
 minHeartbeatFrequencyMS (500ms).
 
 (See [heartbeatFrequencyMS in the main SDAM spec](server-discovery-and-monitoring.md#heartbeatFrequencyMS).)
-
-#### Handling of backpressure labels
-
-Because the scan may occur on an authenticated connection, the server may apply backpressure by failing the command with
-a `SystemOverloadedError` label. The driver MUST not close the connection when this label is encountered.
 
 ### Awaitable hello or legacy hello Server Specification
 
