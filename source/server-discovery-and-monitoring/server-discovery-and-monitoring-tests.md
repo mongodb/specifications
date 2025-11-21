@@ -172,3 +172,40 @@ This test requires failCommand appName support which is only available in MongoD
 5. Then verify that a ServerHeartbeatSucceededEvent and a ConnectionPoolReadyEvent (CMAP) are emitted.
 
 6. Disable the failpoint.
+
+## Connection Pool Backpressure
+
+This test will be used to ensure that connection establishment failures during the TLS handshake do not result in a pool
+clear event. We create a setup client to enable the ingress connection establishment rate limiter, and then induce a
+connection storm. After the storm, we verify that some of the connections failed to checkout, but that the pool was not
+cleared.
+
+This test requires MongoDB 7.0+.
+
+1. Create a test client that listens to CMAP events, with maxConnecting=100. The higher maxConnecting will help ensure
+    contention for creating connections.
+
+2. Run the following commands to set up the rate limiter.
+
+    ```python
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=True)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentRatePerSec=20)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentBurstCapacitySecs=1)
+    client.admin.command("setParameter", 1, ingressConnectionEstablishmentMaxQueueDepth=1)
+    ```
+
+3. Add a document to the test collection so that the sleep operations will actually block:
+    `client.test.test.insert_one({})`.
+
+4. Run the following find command on the collection in 100 parallel threads/coroutines. Run these commands concurrently
+    but block on their completion, and ignore errors raised by the command.
+    `client.test.test.find_one({"$where": "function() { sleep(2000); return true; }})`
+
+5. Assert that at least 10 `ConnectionCheckOutFailedEvent` occurred.
+
+6. Assert that 0 `PoolClearedEvent` occurred.
+
+7. Sleep for 1 second to clear the rate limiter.
+
+8. Ensure that the following command runs at test teardown even if the test fails.
+    `client.admin("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=False)`.

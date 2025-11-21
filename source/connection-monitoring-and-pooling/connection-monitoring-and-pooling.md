@@ -284,6 +284,14 @@ Endpoint. The pool has the following properties:
 - **Rate-limited:** A Pool MUST limit the number of [Connections](#connection) being
     [established](#establishing-a-connection-internal-implementation) concurrently via the **maxConnecting**
     [pool option](#connection-pool-options).
+- **Backpressure-enabled** - The pool MUST add the error labels `SystemOverloadedError` and `RetryableError` to network
+    errors or network timeouts it encounters during the connection establishment or the `hello` message. These labels
+    are used by the
+    [SDAM error handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
+    to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
+    after the `hello` message. For errors that the driver can distinguish as never occurring due to server overload,
+    such as DNS lookup failures, TLS related errors, or errors encountered establishing a connection to a socks5 proxy,
+    the driver MUST clear the connection pool and MUST mark the server Unknown for these error types.
 
 ```typescript
 interface ConnectionPool {
@@ -461,6 +469,7 @@ try:
   return connection
 except error:
   close connection
+  add `SystemOverloadedError` label if appropriate (see "backpressure-enabled" in [Connection Pool](#connection-pool))
   throw error # Propagate error in manner idiomatic to language.
 ```
 
@@ -1374,6 +1383,8 @@ Exhaust Cursors may require changes to how we close [Connections](#connection) i
 to close and remove from its pool a [Connection](#connection) which has unread exhaust messages.
 
 ## Changelog
+
+- 2025-11-21: Add handling of backpressure error labels.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 
