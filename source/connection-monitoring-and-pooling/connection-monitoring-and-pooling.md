@@ -291,7 +291,7 @@ Endpoint. The pool has the following properties:
     to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
     after the `hello` message. For errors that the driver can distinguish as never occurring due to server overload,
     such as DNS lookup failures, TLS related errors, or errors encountered establishing a connection to a socks5 proxy,
-    the driver MUST NOT clear the connection pool and MUST NOT mark the server Unknown.
+    the driver MUST clear the connection pool and MUST mark the server Unknown for these error types.
 
 ```typescript
 interface ConnectionPool {
@@ -469,6 +469,7 @@ try:
   return connection
 except error:
   close connection
+  add `SystemOverloadedError` label if appropriate (see "backpressure-enabled" in [Connection Pool](#connection-pool))
   throw error # Propagate error in manner idiomatic to language.
 ```
 
