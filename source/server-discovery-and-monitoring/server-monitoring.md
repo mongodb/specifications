@@ -580,8 +580,6 @@ class Monitor(Thread):
               topology.onServerDescriptionChanged(description, connection pool for server)
               if description.error != Null:
                   # Clear the connection pool only after the server description is set to Unknown.
-                  # Note: for single-threaded monitors, only clear if the `SystemOverloadedError` is not applied to the
-                  # error.
                   clear(interruptInUseConnections: isNetworkTimeout(description.error)) connection pool for server
 
           # Immediately proceed to the next check if the previous response
