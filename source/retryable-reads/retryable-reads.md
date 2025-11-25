@@ -15,6 +15,10 @@ This specification will
 - outline how an API for retryable read operations will be implemented in drivers
 - define an option to enable retryable reads for an application.
 
+The changes in this specification are related to but distinct from the retryability behaviors defined in the client
+backpressure specification, which defines a retryability mechanism for all commands under certain server conditions.
+Unless otherwise noted, the changes in this specification refer only to the retryability behaviors summarized above.
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -266,6 +270,13 @@ When retrying a read command, drivers MUST NOT resend the original wire protocol
 The following pseudocode for executing retryable read commands has been adapted from
 [the pseudocode for executing retryable write commands](../retryable-writes/retryable-writes.md#executing-retryable-write-commands)
 and reflects the flow described above.
+
+> [!NOTE]
+> The rules above and the pseudocode below only demonstrate the rules for retryable reads as outlined in this
+> specification. For simplicity, and to make the retryable reads rules easier to follow, the pseudocode was
+> intentionally unmodified. For a pseudocode block that contains both retryable reads logic as defined in this
+> specification and backoff retryabilitity as defined in the client backpressure specification, see the pseudocode in
+> the [Backpressure Specification](../client-backpressure/client-backpressure.md).
 
 ```typescript
 /**
@@ -546,6 +557,8 @@ reads because the resilience benefit of retryable reads outweighs the minor risk
 any customers experiencing degraded performance can simply disable `retryableReads`.
 
 ## Changelog
+
+- xxxx-xx-xx: Clarify handling of deprioritized servers in pseudocode.
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 

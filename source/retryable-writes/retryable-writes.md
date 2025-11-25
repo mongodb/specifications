@@ -19,6 +19,10 @@ specification will outline how an API for retryable write operations will be imp
 will define an option to enable retryable writes for an application and describe how a transaction ID will be provided
 to write commands executed therein.
 
+The changes in this specification are related to but distinct from the retryability behaviors defined in the client
+backpressure specification, which defines a retryability mechanism for all commands under certain server conditions.
+Unless otherwise noted, the changes in this specification refer only to the retryability behaviors summarized above.
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -43,10 +47,10 @@ specification. This object is always associated with a server session; however, 
 that creating a ClientSession will not always entail creation of a new server session. The name of this object MAY vary
 across drivers.
 
-**Retryable Error**
+**Retryable Write Error**
 
 An error is considered retryable if it has a RetryableWriteError label in its top-level "errorLabels" field. See
-[Determining Retryable Errors](#determining-retryable-errors) for more information.
+[Determining Retryable Write Errors](#determining-retryable-errors) for more information.
 
 Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.md) specification.
 
@@ -102,7 +106,7 @@ In a sharded cluster, it is possible that mongos may appear to support retryable
 cluster do not (e.g. replica set shard is configured with feature compatibility version 3.4, a standalone is added as a
 new shard). In these rare cases, a write command that fans out to a shard that does not support retryable writes may
 partially fail and an error may be reported in the write result from mongos (e.g. `writeErrors` array in the bulk write
-result). This does not constitute a retryable error. Drivers MUST relay such errors to the user.
+result). This does not constitute a retryable write error. Drivers MUST relay such errors to the user.
 
 #### Supported Write Operations
 
@@ -162,7 +166,7 @@ occurs during a write command within a transaction (excepting `commitTransation`
 
 ### Implementing Retryable Writes
 
-#### Determining Retryable Errors
+#### Determining Retryable Write Errors
 
 When connected to a MongoDB instance that supports retryable writes (versions 3.6+), the driver MUST treat all errors
 with the RetryableWriteError label as retryable. This error label can be found in the top-level "errorLabels" field of
@@ -332,6 +336,13 @@ errors are labeled "NoWritesPerformed", then the first error should be raised.
 
 If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
 that the reported server information corresponds to the server that originated the error.
+
+> [!NOTE]
+> The rules above and the pseudocode below only demonstrate the rules for retryable writes as outlined in this
+> specification. For simplicity, and to make the retryable writes rules easier to follow, the pseudocode was
+> intentionally unmodified. For a pseudocode block that contains both retryable writes logic as defined in this
+> specification and backoff retryabilitity as defined in the client backpressure specification, see the pseudocode in
+> the [Backpressure Specification](../client-backpressure/client-backpressure.md).
 
 The above rules are implemented in the following pseudo-code:
 
