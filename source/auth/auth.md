@@ -1300,7 +1300,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
         The list of allowed hostnames or ip-addresses (ignoring ports) for MongoDB connections. The hostnames may include a
         leading "\*." wildcard, which allows for matching (potentially nested) subdomains. `ALLOWED_HOSTS` is a security
         feature and MUST default to
-        `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1"]`.
+        `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1", "*.mongo.com", "*.mongodbgov.net"]`.
         When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a
         hostname that does not match any of list of allowed hosts, the driver MUST raise a client-side error without
         invoking any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname
@@ -2142,6 +2142,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2025-11-19: Extend `ALLOWED_HOSTS` with `*.mongo.com` and `*.mongodbgov.net`
 
 - 2025-09-30: Remove support for explicitly specifying MONGODDB-AWS authentication properties.
 
