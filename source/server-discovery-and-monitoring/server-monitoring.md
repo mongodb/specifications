@@ -163,7 +163,8 @@ MUST be used to satisfy the check and update the topology.
 When a client successfully calls hello or legacy hello to handshake a new connection for application operations, it
 SHOULD use the hello or legacy hello reply to update the ServerDescription and TopologyDescription, the same as with a
 hello or legacy hello reply on a monitoring socket. If the hello or legacy hello call fails, the client SHOULD mark the
-server Unknown and update its TopologyDescription, the same as a failed server check on monitoring socket.
+server Unknown and update its TopologyDescription, the same as a failed server check on monitoring socket, unless the
+connection pool has added the `SystemOverloadedError` label to the error.
 
 ##### Clients use the streaming protocol when supported
 
@@ -253,6 +254,12 @@ Another common case might be scanning a pool of mongoses. When the client first 
 default lastUpdateTime "infinity ago", so it scans them in random order. This randomness provides some load-balancing if
 many clients start at once. A client's subsequent scans of the mongoses are always in the same order, since their
 lastUpdateTimes are always in the same order by the time a scan ends.
+
+##### Handling of backpressure labels
+
+Because the scan may occur on an authenticated connection in single-threaded monitors, the server may apply backpressure
+by failing the command with a `SystemOverloadedError` label. The driver MUST not close the connection when this label is
+encountered.
 
 #### minHeartbeatFrequencyMS
 

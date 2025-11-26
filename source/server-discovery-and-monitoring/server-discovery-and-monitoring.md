@@ -434,18 +434,18 @@ correspond to [replica set member states](https://www.mongodb.com/docs/manual/re
 some replica set member states like STARTUP and RECOVERING are identical from the client's perspective, so they are
 merged into "RSOther". Additionally, states like Standalone and Mongos are not replica set member states at all.
 
-| State           | Symptoms                                                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Unknown         | Initial, or after a network error or failed hello or legacy hello call, or "ok: 1" not in hello or legacy hello response. |
-| Standalone      | No "msg: isdbgrid", no setName, and no "isreplicaset: true".                                                              |
-| Mongos          | "msg: isdbgrid".                                                                                                          |
-| PossiblePrimary | Not yet checked, but another member thinks it is the primary.                                                             |
-| RSPrimary       | "isWritablePrimary: true" or "ismaster: true", "setName" in response.                                                     |
-| RSSecondary     | "secondary: true", "setName" in response.                                                                                 |
-| RSArbiter       | "arbiterOnly: true", "setName" in response.                                                                               |
-| RSOther         | "setName" in response, "hidden: true" or not primary, secondary, nor arbiter.                                             |
-| RSGhost         | "isreplicaset: true" in response.                                                                                         |
-| LoadBalanced    | "loadBalanced=true" in URI.                                                                                               |
+| State           | Symptoms                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------- |
+| Unknown         | Initial, or after a failed hello or legacy hello call, or "ok: 1" not in hello or legacy hello response. |
+| Standalone      | No "msg: isdbgrid", no setName, and no "isreplicaset: true".                                             |
+| Mongos          | "msg: isdbgrid".                                                                                         |
+| PossiblePrimary | Not yet checked, but another member thinks it is the primary.                                            |
+| RSPrimary       | "isWritablePrimary: true" or "ismaster: true", "setName" in response.                                    |
+| RSSecondary     | "secondary: true", "setName" in response.                                                                |
+| RSArbiter       | "arbiterOnly: true", "setName" in response.                                                              |
+| RSOther         | "setName" in response, "hidden: true" or not primary, secondary, nor arbiter.                            |
+| RSGhost         | "isreplicaset: true" in response.                                                                        |
+| LoadBalanced    | "loadBalanced=true" in URI.                                                                              |
 
 A server can transition from any state to any other. For example, an administrator could shut down a secondary and bring
 up a mongos in its place.
@@ -1055,7 +1055,10 @@ def handleError(error):
                 # next full scan.
                 if isNotWritablePrimary(error):
                     check failing server
-        elif isNetworkError(error) or (not error.completedHandshake and (isNetworkTimeout(error) or isAuthError(error))):
+        elif isNetworkError(error) or (not error.completedHandshake):
+            # Ignore errors that have a backpressure error label applied.
+            if error.hasLabel("SystemOverloadedError"):
+                continue
             if type != LoadBalanced
               # Mark the server Unknown
               unknown = new ServerDescription(type=Unknown, error=error)
@@ -1139,16 +1142,20 @@ errors, network timeout errors, state change errors, and authentication errors.
 
 ##### Network error when reading or writing
 
-To describe how the client responds to network errors during application operations, we distinguish two phases of
+To describe how the client responds to network errors during application operations, we distinguish three phases of
 connecting to a server and using it for application operations:
 
-- *Before the handshake completes*: the client establishes a new connection to the server and completes an initial
-    handshake by calling "hello" or legacy hello and reading the response, and optionally completing authentication
+- *Connection establishment and hello*: the client establishes a new connection to the server and completes an initial
+    handshake by calling "hello" or legacy hello and reading the response
+- *Authentication step*: the client optionally completes an authentication step
 - *After the handshake completes*: the client uses the established connection for application operations
 
-If there is a network error or timeout on the connection before the handshake completes, the client MUST replace the
-server's description with a default ServerDescription of type Unknown when the TopologyType is not LoadBalanced, and
-fill the ServerDescription's error field with useful information.
+If there is a network error or timeout on the connection establishment or the hello, the client MUST NOT change the
+server's description.
+
+If there is an network error or timeout during the authentication step, the client MUST replace the server's description
+with a default ServerDescription of type Unknown when the TopologyType is not LoadBalanced, and fill the
+ServerDescription's error field with useful information.
 
 If there is a network error or timeout on the connection before the handshake completes, and the TopologyType is
 LoadBalanced, the client MUST keep the ServerDescription as LoadBalancer.
@@ -1253,11 +1260,12 @@ if and only if the error is "node is shutting down" or the error originated from
 and [other transient errors](#other-transient-errors) and
 [Why close connections when a node is shutting down?](#why-close-connections-when-a-node-is-shutting-down).)
 
-##### Authentication and Handshake errors
+##### MongoDB Handshake errors
 
-If the driver encounters errors when establishing application connections (this includes the initial handshake and
-authentication), the driver MUST mark the server Unknown and clear the server's connection pool if the TopologyType is
-not LoadBalanced. (See [Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
+If the driver encounters errors that do not have the backpressure error label (`SystemOverloadedError`) applied when
+establishing application connections (this includes the initial handshake and authentication), the driver MUST mark the
+server Unknown and clear the server's connection pool if the TopologyType is not LoadBalanced. (See
+[Why mark a server Unknown after an auth error?](#why-mark-a-server-unknown-after-an-auth-error))
 
 ### Monitoring SDAM events
 
@@ -2026,6 +2034,8 @@ oversaw the specification process.
 
 - 2025-01-22: Add error messages when a new primary is elected or a primary with a stale electionId or setVersion is
     discovered.
+
+- 2025-11-21: Add handling of backpressure error labels.
 
 ______________________________________________________________________
 
