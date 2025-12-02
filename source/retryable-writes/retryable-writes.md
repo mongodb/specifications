@@ -50,7 +50,7 @@ across drivers.
 **Retryable Write Error**
 
 An error is considered retryable if it has a RetryableWriteError label in its top-level "errorLabels" field. See
-[Determining Retryable Write Errors](#determining-retryable-errors) for more information.
+[Determining Retryable Write Errors](#determining-retryable-write-errors) for more information.
 
 Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.md) specification.
 
