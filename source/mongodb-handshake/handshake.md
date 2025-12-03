@@ -84,6 +84,7 @@ if stable_api_configured or client_options.load_balanced:
 else:
     cmd = {"legacy hello": 1, "helloOk": 1}
     conn.supports_op_msg = False  # Send the initial command via OP_QUERY.
+cmd["backpressure"] = True
 cmd["client"] = client_metadata
 if client_options.compressors:
     cmd["compression"] = client_options.compressors

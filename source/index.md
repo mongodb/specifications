@@ -12,6 +12,7 @@
 - [CRUD API](crud/crud.md)
 - [Causal Consistency Specification](causal-consistency/causal-consistency.md)
 - [Change Streams](change-streams/change-streams.md)
+- [Client Backpressure](client-backpressure/client-backpressure.md)
 - [Client Side Encryption](client-side-encryption/client-side-encryption.md)
 - [Client Side Operations Timeout](client-side-operations-timeout/client-side-operations-timeout.md)
 - [Collation](collation/collation.md)
