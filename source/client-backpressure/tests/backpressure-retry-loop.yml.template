@@ -108,7 +108,6 @@ tests:
         {%- if operation.operation_name == "createChangeStream" %}
         saveResultAsEntity: changeStream
         {%- endif %}
-        expectError: false
 
     expectEvents:
       - client: "client"
