@@ -19,9 +19,10 @@ specification will outline how an API for retryable write operations will be imp
 will define an option to enable retryable writes for an application and describe how a transaction ID will be provided
 to write commands executed therein.
 
-The changes in this specification are related to but distinct from the retryability behaviors defined in the client
-backpressure specification, which defines a retryability mechanism for all commands under certain server conditions.
-Unless otherwise noted, the changes in this specification refer only to the retryability behaviors summarized above.
+The changes in this specification are related to but distinct from the retryability behaviors defined in the
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), which defines a retryability
+mechanism for all commands under certain server conditions. Unless otherwise noted, the changes in this specification
+refer only to the retryability behaviors summarized above.
 
 ## META
 

@@ -15,9 +15,10 @@ This specification will
 - outline how an API for retryable read operations will be implemented in drivers
 - define an option to enable retryable reads for an application.
 
-The changes in this specification are related to but distinct from the retryability behaviors defined in the client
-backpressure specification, which defines a retryability mechanism for all commands under certain server conditions.
-Unless otherwise noted, the changes in this specification refer only to the retryability behaviors summarized above.
+The changes in this specification are related to but distinct from the retryability behaviors defined in the
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), which defines a retryability
+mechanism for all commands under certain server conditions. Unless otherwise noted, the changes in this specification
+refer only to the retryability behaviors summarized above.
 
 ## META
 

@@ -67,6 +67,13 @@ closed").
 When a new connection attempt is queued by the server for so long that the driver-side timeout expires, drivers will
 observe this as a network timeout error.
 
+#### Goodput
+
+The throughput of positive, useful output. In the context of drivers, this refers to the number of non-error results
+that the driver processes per unit of time.
+
+See [goodput](https://en.wikipedia.org/wiki/Goodput).
+
 ### Requirements for Client Backpressure
 
 #### Overload retry policy
