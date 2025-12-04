@@ -111,7 +111,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 **3.3 Unexpected error code does not clear the cache**
 
-- Create a `MongoClient` with an OIDC callback that returns a valid token.
+- Create an OIDC configured client.
 - Set a fail point for `saslStart` commands of the form:
 
 ```javascript
