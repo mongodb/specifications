@@ -216,6 +216,7 @@ source the `secrets-export.sh` file and use the associated env variables in your
 
 - Create an OIDC configured client.
 - Populate the *Client Cache* with a valid access token to enforce Speculative Authentication.
+    - This may be done by authenticating a temporary OIDC configured client and copying the cached token.
 - Perform an `insert` operation that succeeds.
 - Assert that the callback was not called.
 - Assert there were no `saslStart` commands executed.
