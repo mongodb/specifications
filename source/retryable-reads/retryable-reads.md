@@ -547,6 +547,8 @@ any customers experiencing degraded performance can simply disable `retryableRea
 
 ## Changelog
 
+- 2026-12-08: Clarified that server deprioritization during retries must use a list.
+
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
 - 2023-12-05: Add that any server information associated with retryable exceptions MUST reflect the originating server,

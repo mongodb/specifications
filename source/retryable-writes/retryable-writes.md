@@ -680,6 +680,8 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 ## Changelog
 
+- 2026-12-08: Clarified that server deprioritization during retries must use a list.
+
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 
 - 2024-05-02: Migrated from reStructuredText to Markdown.
