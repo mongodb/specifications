@@ -95,7 +95,7 @@ Drivers MUST support configuring where log messages should be output, including 
     > - If the value is "stdout" (case-insensitive), log to stdout.
     > - If the value is "stderr" (case-insensitive), log to stderr.
     > - Else, if direct logging to files is supported, log to a file at the specified path. If the file already exists, it
-    > MUST be appended to.
+    >     MUST be appended to.
     >
     > If the variable is not provided or is set to an invalid value (which could be invalid for any reason, e.g. the path
     > does not exist or is not writeable), the driver MUST log to stderr and the driver MAY attempt to warn the user about
