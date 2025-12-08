@@ -317,8 +317,8 @@ Drivers MUST then retry the operation as many times as necessary until any one o
 
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. In a sharded cluster, the server on which the operation
-failed MUST be provided to the server selection mechanism as a deprioritized server.
+For each retry attempt, drivers MUST select a writable server. The server on which the operation failed MUST be provided
+to the server selection mechanism as a member of the deprioritized server list.
 
 If the driver cannot select a server for a retry attempt or the selected server does not support retryable writes,
 retrying is not possible and drivers MUST raise the retryable error from the previous attempt. In both cases, the caller
@@ -418,13 +418,13 @@ function executeRetryableWrite(command, session) {
     }
 
     /*
-     * We try to select server that is not the one that failed by passing the
-     * failed server as a deprioritized server.
+     * We try to select a server that has not already failed by adding the
+     * failed server to the passed list of deprioritized servers.
      * If we cannot select a writable server, do not proceed with retrying and
      * throw the previous error. The caller can then infer that an attempt was
      * made and failed. */
     try {
-      deprioritizedServers = [ server ];
+      deprioritizedServers.push(server);
       server = selectServer("writable", deprioritizedServers);
     } catch (Exception ignoredError) {
       throw previousError;

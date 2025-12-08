@@ -708,9 +708,8 @@ For multi-threaded clients, the server selection algorithm is as follows:
     ["Server selection started" message](#server-selection-started-message).
 2. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-3. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
-    topology is a sharded cluster, these servers should be selected only if there are no other suitable servers. The
-    server selection algorithm MUST ignore the deprioritized servers if the topology is not a sharded cluster.
+3. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, these
+    servers MUST be selected only if there are no other suitable servers.
 4. Filter the suitable servers by calling the optional, application-provided server selector.
 5. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
@@ -756,9 +755,9 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
         longer stale)
 5. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-6. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
-    topology is a sharded cluster, these servers should be selected only if there are no other suitable servers. The
-    server selection algorithm MUST ignore the deprioritized servers if the topology is not a sharded cluster.
+6. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, these
+    servers MUST be selected only if there are no other suitable servers. Read and write preferences MUST only be
+    applied after the deprioritized servers are filtered out, if present.
 7. Filter the suitable servers by calling the optional, application-provided server selector.
 8. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
@@ -1613,6 +1612,9 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
     specification
 
 ## Changelog
+
+- 2025-12-04: Require server deprioritization for all topology types and clarify the order of server candidate
+    filtering.
 
 - 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 

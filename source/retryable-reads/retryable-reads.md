@@ -207,8 +207,8 @@ capture this original retryable error. Drivers should then proceed with selectin
 
 ###### 3a. Selecting the server for retry
 
-In a sharded cluster, the server on which the operation failed MUST be provided to the server selection mechanism as a
-deprioritized server.
+The server on which the operation failed MUST be provided to the server selection mechanism as a member of the
+deprioritized server list.
 
 If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
 retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer
@@ -294,7 +294,7 @@ function executeRetryableRead(command, session) {
       } else {
         // If a previous attempt was made, deprioritize the previous server
         // where the command failed.
-        deprioritizedServers = [ previousServer ];
+        deprioritizedServers.push(previousServer);
         server = selectServer(deprioritizedServers);
       }
     } catch (ServerSelectionException exception) {
