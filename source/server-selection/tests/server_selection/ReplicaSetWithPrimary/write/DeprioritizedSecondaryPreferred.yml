@@ -24,5 +24,7 @@ read_preference:
   - data_center: nyc
 deprioritized_servers:
 - *1
-suitable_servers: []
-in_latency_window: []
+suitable_servers:
+- *3
+in_latency_window:
+- *3

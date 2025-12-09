@@ -24,5 +24,7 @@ read_preference:
   mode: Primary
 deprioritized_servers:
 - *3
-suitable_servers: []
-in_latency_window: []
+suitable_servers:
+- *3
+in_latency_window:
+- *3

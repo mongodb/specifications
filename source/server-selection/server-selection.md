@@ -708,9 +708,10 @@ For multi-threaded clients, the server selection algorithm is as follows:
     ["Server selection started" message](#server-selection-started-message).
 2. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-3. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, these
-    servers MUST be selected only if there are no other suitable servers. Read and write preferences MUST only be
-    applied after the deprioritized servers are filtered out, if present.
+3. Find suitable servers as follows:
+    - Filter out any deprioritized servers.
+    - Find suitable servers from the filtered list by topology type and operation type.
+    - If there are no suitable servers, perform the previous step again without filtering out deprioritized servers.
 4. Filter the suitable servers by calling the optional, application-provided server selector.
 5. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
@@ -756,9 +757,10 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
         longer stale)
 5. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-6. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, these
-    servers MUST be selected only if there are no other suitable servers. Read and write preferences MUST only be
-    applied after the deprioritized servers are filtered out, if present.
+6. Find suitable servers as follows:
+    - Filter out any deprioritized servers.
+    - Find suitable servers from the filtered list by topology type and operation type.
+    - If there are no suitable servers, perform the previous step again without filtering out deprioritized servers.
 7. Filter the suitable servers by calling the optional, application-provided server selector.
 8. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
