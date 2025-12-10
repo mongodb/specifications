@@ -399,7 +399,18 @@ attempt. Note that the second `CommandStartedEvent` and "command started" log me
 
 ### Backwards Compatibility
 
-TODO
+The server's rate limiting can introduce higher error rates than previously would have been exposed to users under
+periods of extreme server overload. The increased error rates is a tradeoff: given the choice between an overloaded
+server (potential crash), or at minimum dramatically slower query execution time and a stable but lowered throughput
+with higher error rate as the server load sheds, we have chosen the latter.
+
+The changes in this specification help smooth out the impact of the server's rate limiting on users by reducing the
+number of errors users see during spikes or burst workloads and help prevent retry storms by spacing out retries.
+However, older drivers do not have this benefit. Drivers MUST document that:
+
+- Users SHOULD upgrade to driver versions that officially support backpressure to avoid any impacts of server changes.
+- Users who do not upgrade might see increased might need to update application error handling to handle higher error
+    rates of SystemOverloadedErrors.
 
 ## Test Plan
 
