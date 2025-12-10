@@ -709,7 +709,7 @@ For multi-threaded clients, the server selection algorithm is as follows:
 2. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
 3. Find suitable servers as follows:
-    - Filter out any deprioritized servers.
+    - Filter out any deprioritized server addresses.
     - Find suitable servers from the filtered list by topology type and operation type.
     - If there are no suitable servers, perform the previous step again without filtering out deprioritized servers.
 4. Filter the suitable servers by calling the optional, application-provided server selector.
@@ -758,7 +758,7 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
 5. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
 6. Find suitable servers as follows:
-    - Filter out any deprioritized servers.
+    - Filter out any deprioritized server addresses.
     - Find suitable servers from the filtered list by topology type and operation type.
     - If there are no suitable servers, perform the previous step again without filtering out deprioritized servers.
 7. Filter the suitable servers by calling the optional, application-provided server selector.
