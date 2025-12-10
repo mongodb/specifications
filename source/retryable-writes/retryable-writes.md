@@ -317,8 +317,8 @@ Drivers MUST then retry the operation as many times as necessary until any one o
 
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. The server on which the operation failed MUST be provided
-to the server selection mechanism as a member of the deprioritized server list.
+For each retry attempt, drivers MUST select a writable server. The server address on which the operation failed MUST be
+provided to the server selection mechanism as a member of the deprioritized server address list.
 
 If the driver cannot select a server for a retry attempt or the selected server does not support retryable writes,
 retrying is not possible and drivers MUST raise the retryable error from the previous attempt. In both cases, the caller
@@ -424,7 +424,7 @@ function executeRetryableWrite(command, session) {
      * throw the previous error. The caller can then infer that an attempt was
      * made and failed. */
     try {
-      deprioritizedServers.push(server);
+      deprioritizedServers.push(server.address);
       server = selectServer("writable", deprioritizedServers);
     } catch (Exception ignoredError) {
       throw previousError;
@@ -680,7 +680,7 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 ## Changelog
 
-- 2026-12-08: Clarified that server deprioritization during retries must use a list.
+- 2026-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 

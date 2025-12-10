@@ -207,8 +207,8 @@ capture this original retryable error. Drivers should then proceed with selectin
 
 ###### 3a. Selecting the server for retry
 
-The server on which the operation failed MUST be provided to the server selection mechanism as a member of the
-deprioritized server list.
+The server address on which the operation failed MUST be provided to the server selection mechanism as a member of the
+deprioritized server address list.
 
 If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
 retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer
@@ -292,9 +292,9 @@ function executeRetryableRead(command, session) {
       if (previousServer == null) {
         server = selectServer();
       } else {
-        // If a previous attempt was made, deprioritize the previous server
+        // If a previous attempt was made, deprioritize the previous server address
         // where the command failed.
-        deprioritizedServers.push(previousServer);
+        deprioritizedServers.push(previousServer.address);
         server = selectServer(deprioritizedServers);
       }
     } catch (ServerSelectionException exception) {
@@ -547,7 +547,7 @@ any customers experiencing degraded performance can simply disable `retryableRea
 
 ## Changelog
 
-- 2026-12-08: Clarified that server deprioritization during retries must use a list.
+- 2026-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 

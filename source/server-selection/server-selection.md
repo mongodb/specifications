@@ -1607,6 +1607,16 @@ filter it out because it is too stale, and be left with no eligible servers.
 The user's intent in specifying two tag sets was to fall back to the second set if needed, so we filter by
 maxStalenessSeconds first, then tag_sets, and select Node 2.
 
+### Why does server deprioritization use only server addresses and not ServerDescription objects?
+
+A server's address is the minimum identifying attribute that stays constant for across topology changes. Drivers create
+new ServerDescription objects on each topology change, and since ServerDescription objects check multiple attributes to
+determine equality comparisons, a deprioritized server could become non-equal to itself after a change and therefore
+incorrectly be considered suitable for a retry operation.
+
+By using addresses, we ensure that once a server is marked as deprioritized by an operation, it cannot be used again for
+a retry on that operation unless there are no other suitable servers.
+
 ## References
 
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) specification
