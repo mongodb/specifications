@@ -14,23 +14,23 @@ createEntities:
     client:
       id: &client client
       useMultipleMongoses: false
-      observeEvents: [ 'commandStartedEvent', 'commandSucceededEvent', 'commandFailedEvent' ]
+      observeEvents: [commandStartedEvent, commandSucceededEvent, commandFailedEvent]
 
   -
     client:
-      id: &failPointClient failPointClient
+      id: &internal_client internal_client
       useMultipleMongoses: false
 
   -
     database:
-      id: &utilDb utilDb
-      client: *failPointClient
+      id: &internal_db database
+      client: *internal_client
       databaseName: &database_name retryable-writes-tests
 
   -
     collection:
-      id: &utilCollection utilCollection
-      database: *utilDb
+      id: &internal_collection retryable-writes-tests
+      database: *internal_db
       collectionName: &collection_name coll
 
   -
@@ -38,19 +38,12 @@ createEntities:
       id: &database database
       client: *client
       databaseName: &database_name retryable-writes-tests
+      
   -
     collection:
       id: &collection collection
       database: *database
-      collectionName: &collection_name coll
-
-initialData:
-  -
-    collectionName: *collection_name
-    databaseName: *database_name
-    documents:
-      - { _id: 1, x: 11 }
-      - { _id: 2, x: 22 }
+      collectionName: *collection_name
 
 tests:
 {% for operation in operations %}
@@ -62,14 +55,14 @@ tests:
     {%- endif %}
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}
 
         {%- if operation.operation_name == "dropIndex" %}
       -
-        object: *utilCollection
+        object: *internal_collection
         name: createIndex
         arguments:
           keys: { x: 11 }
@@ -80,13 +73,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [{{operation.command_name}}]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -

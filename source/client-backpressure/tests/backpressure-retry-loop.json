@@ -25,21 +25,21 @@
     },
     {
       "client": {
-        "id": "failPointClient",
+        "id": "internal_client",
         "useMultipleMongoses": false
       }
     },
     {
       "database": {
-        "id": "utilDb",
-        "client": "failPointClient",
+        "id": "database",
+        "client": "internal_client",
         "databaseName": "retryable-writes-tests"
       }
     },
     {
       "collection": {
-        "id": "utilCollection",
-        "database": "utilDb",
+        "id": "retryable-writes-tests",
+        "database": "database",
         "collectionName": "coll"
       }
     },
@@ -58,28 +58,12 @@
       }
     }
   ],
-  "initialData": [
-    {
-      "collectionName": "coll",
-      "databaseName": "retryable-writes-tests",
-      "documents": [
-        {
-          "_id": 1,
-          "x": 11
-        },
-        {
-          "_id": 2,
-          "x": 22
-        }
-      ]
-    }
-  ],
   "tests": [
     {
       "description": "client.listDatabases retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -89,7 +73,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -168,7 +152,7 @@
       "description": "client.listDatabaseNames retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -178,7 +162,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -254,7 +238,7 @@
       "description": "client.createChangeStream retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -264,7 +248,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -349,7 +333,7 @@
       ],
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -359,7 +343,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -448,7 +432,7 @@
       "description": "database.aggregate retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -458,7 +442,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -544,7 +528,7 @@
       "description": "database.listCollections retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -554,7 +538,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -633,7 +617,7 @@
       "description": "database.listCollectionNames retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -643,7 +627,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -722,7 +706,7 @@
       "description": "database.runCommand retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -732,7 +716,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -814,7 +798,7 @@
       "description": "database.createChangeStream retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -824,7 +808,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -904,7 +888,7 @@
       "description": "collection.aggregate retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -914,7 +898,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -993,7 +977,7 @@
       "description": "collection.countDocuments retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1003,7 +987,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1082,7 +1066,7 @@
       "description": "collection.estimatedDocumentCount retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1092,7 +1076,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1168,7 +1152,7 @@
       "description": "collection.distinct retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1178,7 +1162,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1258,7 +1242,7 @@
       "description": "collection.find retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1268,7 +1252,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1347,7 +1331,7 @@
       "description": "collection.findOne retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1357,7 +1341,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1436,7 +1420,7 @@
       "description": "collection.listIndexes retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1446,7 +1430,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1522,7 +1506,7 @@
       "description": "collection.listIndexNames retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1532,7 +1516,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1608,7 +1592,7 @@
       "description": "collection.createChangeStream retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1618,7 +1602,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1698,7 +1682,7 @@
       "description": "collection.insertOne retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1708,7 +1692,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1790,7 +1774,7 @@
       "description": "collection.insertMany retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1800,7 +1784,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1884,7 +1868,7 @@
       "description": "collection.deleteOne retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1894,7 +1878,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -1973,7 +1957,7 @@
       "description": "collection.deleteMany retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -1983,7 +1967,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2062,7 +2046,7 @@
       "description": "collection.replaceOne retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2072,7 +2056,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2154,7 +2138,7 @@
       "description": "collection.updateOne retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2164,7 +2148,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2248,7 +2232,7 @@
       "description": "collection.updateMany retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2258,7 +2242,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2342,7 +2326,7 @@
       "description": "collection.findOneAndDelete retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2352,7 +2336,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2431,7 +2415,7 @@
       "description": "collection.findOneAndReplace retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2441,7 +2425,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2523,7 +2507,7 @@
       "description": "collection.findOneAndUpdate retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2533,7 +2517,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2617,7 +2601,7 @@
       "description": "collection.bulkWrite retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2627,7 +2611,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2715,7 +2699,7 @@
       "description": "collection.createIndex retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2725,7 +2709,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2807,14 +2791,14 @@
       "description": "collection.dropIndex retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
           }
         },
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "createIndex",
           "arguments": {
             "keys": {
@@ -2827,7 +2811,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {
@@ -2906,7 +2890,7 @@
       "description": "collection.dropIndexes retries using operation loop",
       "operations": [
         {
-          "object": "utilCollection",
+          "object": "retryable-writes-tests",
           "name": "deleteMany",
           "arguments": {
             "filter": {}
@@ -2916,7 +2900,7 @@
           "name": "failPoint",
           "object": "testRunner",
           "arguments": {
-            "client": "failPointClient",
+            "client": "internal_client",
             "failPoint": {
               "configureFailPoint": "failCommand",
               "mode": {

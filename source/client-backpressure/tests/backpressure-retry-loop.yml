@@ -14,23 +14,23 @@ createEntities:
     client:
       id: &client client
       useMultipleMongoses: false
-      observeEvents: [ 'commandStartedEvent', 'commandSucceededEvent', 'commandFailedEvent' ]
+      observeEvents: [commandStartedEvent, commandSucceededEvent, commandFailedEvent]
 
   -
     client:
-      id: &failPointClient failPointClient
+      id: &internal_client internal_client
       useMultipleMongoses: false
 
   -
     database:
-      id: &utilDb utilDb
-      client: *failPointClient
+      id: &internal_db database
+      client: *internal_client
       databaseName: &database_name retryable-writes-tests
 
   -
     collection:
-      id: &utilCollection utilCollection
-      database: *utilDb
+      id: &internal_collection retryable-writes-tests
+      database: *internal_db
       collectionName: &collection_name coll
 
   -
@@ -38,19 +38,12 @@ createEntities:
       id: &database database
       client: *client
       databaseName: &database_name retryable-writes-tests
+      
   -
     collection:
       id: &collection collection
       database: *database
-      collectionName: &collection_name coll
-
-initialData:
-  -
-    collectionName: *collection_name
-    databaseName: *database_name
-    documents:
-      - { _id: 1, x: 11 }
-      - { _id: 2, x: 22 }
+      collectionName: *collection_name
 
 tests:
 
@@ -58,7 +51,7 @@ tests:
     description: 'client.listDatabases retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -67,13 +60,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [listDatabases]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -106,7 +99,7 @@ tests:
     description: 'client.listDatabaseNames retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -115,13 +108,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [listDatabases]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -152,7 +145,7 @@ tests:
     description: 'client.createChangeStream retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -161,13 +154,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [aggregate]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -203,7 +196,7 @@ tests:
       - minServerVersion: '8.0' # client bulk write added to server in 8.0
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -212,13 +205,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [bulkWrite]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -254,7 +247,7 @@ tests:
     description: 'database.aggregate retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -263,13 +256,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [aggregate]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -302,7 +295,7 @@ tests:
     description: 'database.listCollections retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -311,13 +304,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [listCollections]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -350,7 +343,7 @@ tests:
     description: 'database.listCollectionNames retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -359,13 +352,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [listCollections]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -398,7 +391,7 @@ tests:
     description: 'database.runCommand retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -407,13 +400,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [ping]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -447,7 +440,7 @@ tests:
     description: 'database.createChangeStream retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -456,13 +449,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [aggregate]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -496,7 +489,7 @@ tests:
     description: 'collection.aggregate retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -505,13 +498,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [aggregate]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -544,7 +537,7 @@ tests:
     description: 'collection.countDocuments retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -553,13 +546,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [aggregate]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -592,7 +585,7 @@ tests:
     description: 'collection.estimatedDocumentCount retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -601,13 +594,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [count]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -638,7 +631,7 @@ tests:
     description: 'collection.distinct retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -647,13 +640,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [distinct]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -687,7 +680,7 @@ tests:
     description: 'collection.find retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -696,13 +689,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [find]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -735,7 +728,7 @@ tests:
     description: 'collection.findOne retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -744,13 +737,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [find]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -783,7 +776,7 @@ tests:
     description: 'collection.listIndexes retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -792,13 +785,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [listIndexes]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -829,7 +822,7 @@ tests:
     description: 'collection.listIndexNames retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -838,13 +831,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [listIndexes]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -875,7 +868,7 @@ tests:
     description: 'collection.createChangeStream retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -884,13 +877,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [aggregate]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -924,7 +917,7 @@ tests:
     description: 'collection.insertOne retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -933,13 +926,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [insert]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -972,7 +965,7 @@ tests:
     description: 'collection.insertMany retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -981,13 +974,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [insert]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1021,7 +1014,7 @@ tests:
     description: 'collection.deleteOne retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1030,13 +1023,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [delete]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1069,7 +1062,7 @@ tests:
     description: 'collection.deleteMany retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1078,13 +1071,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [delete]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1117,7 +1110,7 @@ tests:
     description: 'collection.replaceOne retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1126,13 +1119,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [update]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1166,7 +1159,7 @@ tests:
     description: 'collection.updateOne retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1175,13 +1168,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [update]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1215,7 +1208,7 @@ tests:
     description: 'collection.updateMany retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1224,13 +1217,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [update]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1264,7 +1257,7 @@ tests:
     description: 'collection.findOneAndDelete retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1273,13 +1266,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [findAndModify]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1312,7 +1305,7 @@ tests:
     description: 'collection.findOneAndReplace retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1321,13 +1314,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [findAndModify]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1361,7 +1354,7 @@ tests:
     description: 'collection.findOneAndUpdate retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1370,13 +1363,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [findAndModify]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1410,7 +1403,7 @@ tests:
     description: 'collection.bulkWrite retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1419,13 +1412,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [insert]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1460,7 +1453,7 @@ tests:
     description: 'collection.createIndex retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1469,13 +1462,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [createIndexes]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1509,12 +1502,12 @@ tests:
     description: 'collection.dropIndex retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}
       -
-        object: *utilCollection
+        object: *internal_collection
         name: createIndex
         arguments:
           keys: { x: 11 }
@@ -1524,13 +1517,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [dropIndexes]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -1563,7 +1556,7 @@ tests:
     description: 'collection.dropIndexes retries using operation loop'
     operations:
       -
-        object: *utilCollection
+        object: *internal_collection
         name: deleteMany
         arguments:
           filter: {}      
@@ -1572,13 +1565,13 @@ tests:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *internal_client
           failPoint:
             configureFailPoint: failCommand
             mode: { times: 3 }
             data:
               failCommands: [dropIndexes]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
