@@ -1,6 +1,11 @@
 topology_description:
   type: ReplicaSetWithPrimary
   servers:
+  - address: a:27017
+    avg_rtt_ms: 26
+    type: RSPrimary
+    tags:
+    data_center: nyc
   - address: b:27017
     avg_rtt_ms: 5
     type: RSSecondary
@@ -11,12 +16,6 @@ topology_description:
     type: RSSecondary
     tags:
       data_center: nyc
-  - &1
-    address: a:27017
-    avg_rtt_ms: 26
-    type: RSPrimary
-    tags:
-      data_center: nyc
 operation: write
 read_preference:
   mode: SecondaryPreferred
@@ -25,6 +24,6 @@ read_preference:
 deprioritized_servers:
 - *1
 suitable_servers:
-- *3
+- *1
 in_latency_window:
-- *3
+- *1
