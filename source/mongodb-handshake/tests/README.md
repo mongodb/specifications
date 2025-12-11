@@ -486,3 +486,17 @@ Before each test case, perform the setup.
 7. Store the response as `updatedClientMetadata`.
 
 8. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+
+### Test 9: Handshake documents include `backpressure: true`
+
+These tests require a mechanism for observing handshake documents sent to the server.
+
+1. Create a `MongoClient` that is configured to record all handshake documents sent to the server as a part of
+    connection establishment.
+
+2. Send a `ping` command to the server and verify that the command succeeds. This ensure that a connection is
+    established on all topologies.
+
+3. Assert that for every handshake document intercepted:
+
+    1. the document has a field `backpressure` whose value is `true`.
