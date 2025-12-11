@@ -76,7 +76,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: listDatabases
@@ -122,7 +122,7 @@ tests:
         name: listDatabaseNames
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: listDatabases
@@ -170,7 +170,7 @@ tests:
           pipeline: []
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: aggregate
@@ -223,7 +223,7 @@ tests:
               document: { _id: 8, x: 88 }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: bulkWrite
@@ -271,7 +271,7 @@ tests:
           pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: aggregate
@@ -319,7 +319,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: listCollections
@@ -367,7 +367,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: listCollections
@@ -416,7 +416,7 @@ tests:
           commandName: ping
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: ping
@@ -464,7 +464,7 @@ tests:
           pipeline: []
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: aggregate
@@ -512,7 +512,7 @@ tests:
           pipeline: []
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: aggregate
@@ -560,7 +560,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: aggregate
@@ -606,7 +606,7 @@ tests:
         name: estimatedDocumentCount
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: count
@@ -655,7 +655,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: distinct
@@ -703,7 +703,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: find
@@ -751,7 +751,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: find
@@ -797,7 +797,7 @@ tests:
         name: listIndexes
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: listIndexes
@@ -843,7 +843,7 @@ tests:
         name: listIndexNames
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: listIndexes
@@ -891,7 +891,7 @@ tests:
           pipeline: []
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: aggregate
@@ -939,7 +939,7 @@ tests:
           document: { _id: 2, x: 22 }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: insert
@@ -988,7 +988,7 @@ tests:
             - { _id: 2, x: 22 }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: insert
@@ -1036,7 +1036,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: delete
@@ -1084,7 +1084,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: delete
@@ -1133,7 +1133,7 @@ tests:
           replacement: { x: 22 }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: update
@@ -1182,7 +1182,7 @@ tests:
           update: { $set: { x: 22 } }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: update
@@ -1231,7 +1231,7 @@ tests:
           update: { $set: { x: 22 } }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: update
@@ -1279,7 +1279,7 @@ tests:
           filter: {}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: findAndModify
@@ -1328,7 +1328,7 @@ tests:
           replacement: { x: 22 }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: findAndModify
@@ -1377,7 +1377,7 @@ tests:
           update: { $set: { x: 22 } }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: findAndModify
@@ -1427,7 +1427,7 @@ tests:
                 document: { _id: 2, x: 22 }
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: insert
@@ -1476,7 +1476,7 @@ tests:
           name: "x_11"
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: createIndexes
@@ -1530,7 +1530,7 @@ tests:
           name: "x_11"
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: dropIndexes
@@ -1576,7 +1576,7 @@ tests:
         name: dropIndexes
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: dropIndexes

@@ -93,7 +93,7 @@ tests:
         {%- endif %}
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
           - commandStartedEvent:
               commandName: {{operation.command_name}}
