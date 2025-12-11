@@ -272,8 +272,7 @@
           "name": "createChangeStream",
           "arguments": {
             "pipeline": []
-          },
-          "saveResultAsEntity": "changeStream"
+          }
         }
       ],
       "expectEvents": [
@@ -832,8 +831,7 @@
           "name": "createChangeStream",
           "arguments": {
             "pipeline": []
-          },
-          "saveResultAsEntity": "changeStream"
+          }
         }
       ],
       "expectEvents": [
@@ -1626,8 +1624,7 @@
           "name": "createChangeStream",
           "arguments": {
             "pipeline": []
-          },
-          "saveResultAsEntity": "changeStream"
+          }
         }
       ],
       "expectEvents": [

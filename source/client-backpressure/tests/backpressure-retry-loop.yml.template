@@ -91,9 +91,6 @@ tests:
           {{arg}}
           {%- endfor -%}
         {%- endif %}
-        {%- if operation.operation_name == "createChangeStream" %}
-        saveResultAsEntity: changeStream
-        {%- endif %}
 
     expectEvents:
       - client: "client"
