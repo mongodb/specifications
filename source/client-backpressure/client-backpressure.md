@@ -40,6 +40,9 @@ the connection and request rate limiters to prevent and mitigate overloading the
 An error is considered retryable if it includes the "RetryableError" label. This error label indicates that an operation
 is safely retryable regardless of the type of operation, its metadata, or any of its arguments.
 
+Note that for the initial draft of the spec, only errors that have both the RetryableError label and the
+SystemOverloadedError label are eligible for the retry backoff loop.
+
 #### SystemOverloadedError label
 
 An error is considered overloaded if it includes the "SystemOverloadError" label. This error label indicates that the
@@ -67,6 +70,9 @@ closed").
 When a new connection attempt is queued by the server for so long that the driver-side timeout expires, drivers will
 observe this as a network timeout error.
 
+Note that there is no guarantee that all SystemOverloaded errors are retryable or that all RetryableErrors also have the
+SystemOverloaded error label.
+
 #### Goodput
 
 The throughput of positive, useful output. In the context of drivers, this refers to the number of non-error results
@@ -78,30 +84,38 @@ See [goodput](https://en.wikipedia.org/wiki/Goodput).
 
 #### Overload retry policy
 
-This specification expands the driver's retry ability to all commands, including those not currently considered
-retryable such as updateMany, create collection, getMore, and generic runCommand. The new command execution method obeys
-the following rules:
+This specification expands the driver's retry ability to all commands if the error indicates that is both an overload
+error and that it is retryable, including those not currently considered retryable such as updateMany, create
+collection, getMore, and generic runCommand. The new command execution method obeys the following rules:
 
 1. If the command succeeds on the first attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE` tokens.
     - The value is 0.1 and non-configurable.
 2. If the command succeeds on a retry attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE`+1 tokens.
 3. If a retry attempt fails with an error that does not include `SystemOverloadedError` label, drivers MUST deposit 1
     token.
-4. A retry attempt will only be permitted if the error includes the `RetryableError` label, we have not reached
-    `MAX_ATTEMPTS`, the CSOT deadline has not expired, and a token can be acquired from the token bucket.
+    - A non-SystemOverloaded error indicates that the server is healthy enough to handle requests. For the purposes of
+        retry budget tracking, this counts as a success.
+4. A retry attempt will only be permitted if the error includes the `RetryableError` label, the error has a
+    `SystemOverloadedError` label, we have not reached `MAX_ATTEMPTS`, the CSOT deadline has not expired, and a token
+    can be acquired from the token bucket.
     - The value of `MAX_ATTEMPTS` is 5 and non-configurable.
     - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within the
         timeout to avoid retry storms.
+    - Note: Future work will add support for RetryableErrors to regular retryability logic (see the future work section).
 5. If a retry attempt is to be attempted, a token will be consumed from the token bucket.
-6. If the previous error includes the `SystemOverloadedError` label, the client MUST apply exponential backoff according
-    to the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
-    - `i` is the retry attempt (starting with 0 for the first retry).
+6. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
+    the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
+    - `i` is the retry attempt number (starting with 0 for the first retry).
     - `j` is a random jitter value between 0 and 1.
     - `baseBackoff` is constant 100ms.
     - `maxBackoff` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-7. If the previous error contained the `SystemOverloadedError` error label, the node will be added to the set of
-    deprioritized servers.
+7. If the request is eligible for retry (as outlined in step 4), the client MUST add the server's address to the list of
+    deprioritized server address for server selection. This behavior is the same as existing behavior for retryable
+    reads and writes.
+
+Note: drivers MUST share deprioritized servers between retries used for the exponential backoff loop and regular
+retryable reads and writes.
 
 #### Pseudocode
 
@@ -111,6 +125,7 @@ The following pseudocode describes the overload retry policy:
 BASE_BACKOFF = 0.1
 MAX_BACKOFF = 10
 RETRY_TOKEN_RETURN_RATE = 0.1
+MAX_ATTEMPTS = 5
 
 def execute_command_retryable(command, ...):
     deprioritized_servers = []
@@ -127,19 +142,21 @@ def execute_command_retryable(command, ...):
             token_bucket.deposit(tokens)
             return res
         except PyMongoError as exc:
-            backoff = 0
+            # if a retry fails with a non-System overloaded error, deposit 1 token
+            if attempt > 0 and not exc.has_error_label("SystemOverloadedError"):
+                tokens += 1
+
             attempt += 1
 
-            if attempt > MAX_ATTEMPTS:
+            if attempt >= MAX_ATTEMPTS:
                 raise
 
-            # Raise if the error is non retryable.
-            is_retryable = exc.has_error_label("RetryableError") or is_retryable_write_error() or is_retryable_read_error()
-            if not is_retryable:
-                raise error
-            if exc.has_error_label("SystemOverloadedError"):
-                jitter = random.random() # Random float between [0.0, 1.0).
-                backoff = jitter * min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
+            # Raise if the error if non retryable.
+            if exc.has_error_label("RetryableError") and exc.has_error_label("SystemOverloadedError"):
+                raise
+
+            jitter = random.random() # Random float between [0.0, 1.0).
+            backoff = jitter * min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
 		   
             # If the delay exceeds the deadline, bail early before consuming a token.
             if _csot.get_timeout():
@@ -151,6 +168,7 @@ def execute_command_retryable(command, ...):
 
             if backoff:
                 time.sleep(backoff)
+
             deprioritized_servers.append(server)
             continue
 ```
@@ -161,6 +179,7 @@ that demonstrates a combined retryable reads/writes implementation with the corr
 from the Node driver's implementation):
 
 ```typescript
+// TODO: update pseudocode with updated implementation
 async function tryOperation<T extends AbstractOperation, TResult = ResultTypeFromOperation<T>>(
   operation: T,
   { topology, timeoutContext, session, readPreference }: RetryOptions
@@ -327,10 +346,10 @@ async function tryOperation<T extends AbstractOperation, TResult = ResultTypeFro
 
 ### Token Bucket
 
-The overload retry policy introduces a per-client token bucket to limit retry attempts. Although the server rejects
-excess operations as quickly as possible, doing so costs CPU and creates extra contention on the connection pool which
-can eventually negatively affect goodput. To reduce this risk, the token bucket will limit retry attempts during a
-prolonged overload.
+The overload retry policy introduces a per-client token bucket to limit SystemOverloaded retry attempts. Although the
+server rejects excess operations as quickly as possible, doing so costs CPU and creates extra contention on the
+connection pool which can eventually negatively affect goodput. To reduce this risk, the token bucket will limit retry
+attempts during a prolonged overload.
 
 The token bucket capacity is set to 1000 for consistency with the server.
 
@@ -439,6 +458,15 @@ The Node and Python drivers will provide the reference implementations. See
 
 1. [DRIVERS-3333](https://jira.mongodb.org/browse/DRIVERS-3333) Add a backoff state into the connection pool.
 2. [DRIVERS-3241](https://jira.mongodb.org/browse/DRIVERS-3241) Add diagnostic metadata to retried commands.
+3. [DRIVERS-3352](https://jira.mongodb.org/browse/DRIVERS-3352) Add support for RetryableError labels to retryable reads
+    and writes.
+
+## Q&A
+
+### Why are drivers not required to work around timing limitations in their language's sleep() APIs?
+
+The client backpressure retry loop is primarily concerned with spreading out retries to avoid retry storms. The exact
+sleep duration is not critical to the intended behavior, so long as we sleep at least as long as we say we will.
 
 ## Changelog
 
