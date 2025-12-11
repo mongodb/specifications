@@ -14,11 +14,11 @@ createEntities:
     client:
       id: &client client
       useMultipleMongoses: false
-      observeEvents: [ 'commandStartedEvent', 'commandSucceededEvent', 'commandFailedEvent' ]
+      observeEvents: [commandStartedEvent, commandSucceededEvent, commandFailedEvent]
 
   -
     client:
-      id: &failPointClient failPointClient
+      id: &fail_point_client fail_point_client
       useMultipleMongoses: false
 
   -
@@ -48,17 +48,18 @@ tests:
     runOnRequirements:
       - minServerVersion: '8.0' # client bulk write added to server in 8.0
     {%- endif %}
+    
     operations:
       - name: failPoint
         object: testRunner
         arguments:
-          client: *failPointClient
+          client: *fail_point_client
           failPoint:
             configureFailPoint: failCommand
             mode: alwaysOn
             data:
               failCommands: [{{operation.command_name}}]
-              errorLabels: ["RetryableError", "SystemOverloadedError"]
+              errorLabels: [RetryableError, SystemOverloadedError]
               errorCode: 2
       
       -
@@ -72,12 +73,13 @@ tests:
         {%- endif %}
         expectError: 
           isError: true
+          isClientError: false
 
     expectEvents:
-      - client: "client"
+      - client: *client
         events:
-          # we expect 6 pairs of command started and succeeded events: 1 initial 
-          # attempt and 5 retries.
+          # we expect 6 pairs of command started and succeeded events: 
+          #   1 initial attempt and 5 retries.
           - commandStartedEvent:
               commandName: {{operation.command_name}}
           - commandFailedEvent:

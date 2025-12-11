@@ -16,8 +16,8 @@ be manually implemented by each driver.
 
 Drivers should test that retries do not occur immediately when a SystemOverloadedError is encountered.
 
-1. let `client` be a `MongoClient`
-2. let `collection` be a collection
+1. Let `client` be a `MongoClient`
+2. Let `collection` be a collection
 3. Now, run transactions without backoff:
     1. Configure the random number generator used for jitter to always return `0` -- this effectively disables backoff.
 
@@ -28,14 +28,14 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
                 configureFailPoint: 'failCommand',
                 mode: 'alwaysOn',
                 data: {
-                failCommands: ['insert'],
-                errorCode: 2,
-                errorLabels: ['SystemOverloadedError', 'RetryableError']
+                    failCommands: ['insert'],
+                    errorCode: 2,
+                    errorLabels: ['SystemOverloadedError', 'RetryableError']
                 }
             }
         ```
 
-    3. Execute the following command. Expect that the command errors. Measure the duration of the command execution.
+    3. Execute the document `{ a: 1 }`. Expect that the command errors. Measure the duration of the command execution.
 
         ```javascript
            const start = performance.now();
