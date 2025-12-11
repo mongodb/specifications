@@ -62,7 +62,7 @@ This test applies to drivers with session pools.
     commands/replies in another idiomatic way, such as monkey-patching or a mock server.
 - Send a `ping` command to the server with the generic `runCommand` method.
 - Assert that the command passed to the command-started listener includes `$clusterTime` if and only if `maxWireVersion`
-    > = 6.
+    \>= 6.
 - Record the `$clusterTime`, if any, in the reply passed to the command-succeeded APM listener.
 - Send another `ping` command.
 - Assert that `$clusterTime` in the command passed to the command-started listener, if any, equals the `$clusterTime` in
