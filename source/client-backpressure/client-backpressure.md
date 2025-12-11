@@ -92,14 +92,15 @@ the following rules:
     - The value of `MAX_ATTEMPTS` is 5 and non-configurable.
     - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within the
         timeout to avoid retry storms.
-5. If the previous error includes the `SystemOverloadedError` label, the client MUST apply exponential backoff according
-    to according to the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
+5. If a retry attempt is to be attempted, a token will be consumed from the token bucket.
+6. If the previous error includes the `SystemOverloadedError` label, the client MUST apply exponential backoff according
+    to the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
     - `i` is the retry attempt (starting with 0 for the first retry).
     - `j` is a random jitter value between 0 and 1.
     - `baseBackoff` is constant 100ms.
     - `maxBackoff` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-6. If the previous error contained the `SystemOverloadedError` error label, the node will be added to the set of
+7. If the previous error contained the `SystemOverloadedError` error label, the node will be added to the set of
     deprioritized servers.
 
 #### Pseudocode
@@ -212,6 +213,8 @@ async function tryOperation<T extends AbstractOperation, TResult = ResultTypeFro
     100, // base backoff
     2 // backoff rate
   );
+
+  const RETRY_COST = 1;
 
   while (true) {
     if (previousOperationError) {
@@ -368,7 +371,7 @@ Drivers conforming to this spec MUST add `“backpressure”: True` to the conne
 to identify clients which do and do not support backpressure. Currently, this flag is unused but in the future the
 server may offer different rate limiting behavior for clients that do not support backpressure.
 
-##### Implementation notes
+#### Implementation notes
 
 On some platforms sleep() can have a very low precision, meaning an attempt to sleep for 50ms may actually sleep for a
 much larger time frame. Drivers are not required to work around this limitation.
@@ -436,10 +439,6 @@ The Node and Python drivers will provide the reference implementations. See
 
 1. [DRIVERS-3333](https://jira.mongodb.org/browse/DRIVERS-3333) Add a backoff state into the connection pool.
 2. [DRIVERS-3241](https://jira.mongodb.org/browse/DRIVERS-3241) Add diagnostic metadata to retried commands.
-
-## Q&A
-
-TODO
 
 ## Changelog
 
