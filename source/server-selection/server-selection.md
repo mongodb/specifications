@@ -849,11 +849,11 @@ details on each step, and
 
 If `mode` is 'secondaryPreferred', attempt the selection algorithm with `mode` 'secondary' and the user's
 `maxStalenessSeconds` and `tag_sets`. If no server matches, select the primary. Note that if all secondaries are
-deprioritized, the primary MUST be selected.
+deprioritized, the primary MUST be selected if it is available.
 
 If `mode` is 'primaryPreferred', select the primary if it is known, otherwise attempt the selection algorithm with
 `mode` 'secondary' and the user's `maxStalenessSeconds` and `tag_sets`. Note that if the primary is deprioritized, a
-secondary MUST be selected.
+secondary MUST be selected if one is available.
 
 For all read preferences modes except 'primary', clients MUST set the `SecondaryOk` wire protocol flag (OP_QUERY) or
 `$readPreference` global command argument (OP_MSG) to ensure that any suitable server can handle the request. If the
