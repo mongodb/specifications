@@ -377,6 +377,7 @@ function executeRetryableWrite(command, session) {
 
   Exception previousError = null;
   retrying = false;
+  deprioritizedServers = [];
   while true {
     try {
       return executeCommand(server, retryableCommand);
@@ -419,7 +420,7 @@ function executeRetryableWrite(command, session) {
 
     /*
      * We try to select a server that has not already failed by adding the
-     * failed server to the passed list of deprioritized servers.
+     * failed server to the list of deprioritized servers passed to selectServer.
      * If we cannot select a writable server, do not proceed with retrying and
      * throw the previous error. The caller can then infer that an attempt was
      * made and failed. */

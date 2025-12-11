@@ -284,6 +284,7 @@ function executeRetryableRead(command, session) {
   Exception previousError = null;
   retrying = false;
   Server previousServer = null;
+  deprioritizedServers = [];
   while true {
     if (previousError != null) {
       retrying = true;

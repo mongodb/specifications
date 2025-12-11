@@ -848,10 +848,12 @@ details on each step, and
 [why is maxStalenessSeconds applied before tag_sets?](#why-is-maxstalenessseconds-applied-before-tag_sets).)
 
 If `mode` is 'secondaryPreferred', attempt the selection algorithm with `mode` 'secondary' and the user's
-`maxStalenessSeconds` and `tag_sets`. If no server matches, select the primary.
+`maxStalenessSeconds` and `tag_sets`. If no server matches, select the primary. Note that if all secondaries are
+deprioritized, the primary MUST be selected.
 
 If `mode` is 'primaryPreferred', select the primary if it is known, otherwise attempt the selection algorithm with
-`mode` 'secondary' and the user's `maxStalenessSeconds` and `tag_sets`.
+`mode` 'secondary' and the user's `maxStalenessSeconds` and `tag_sets`. Note that if the primary is deprioritized, a
+secondary MUST be selected.
 
 For all read preferences modes except 'primary', clients MUST set the `SecondaryOk` wire protocol flag (OP_QUERY) or
 `$readPreference` global command argument (OP_MSG) to ensure that any suitable server can handle the request. If the
