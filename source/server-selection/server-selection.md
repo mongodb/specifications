@@ -708,9 +708,10 @@ For multi-threaded clients, the server selection algorithm is as follows:
     ["Server selection started" message](#server-selection-started-message).
 2. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-3. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
-    topology is a sharded cluster, these servers should be selected only if there are no other suitable servers. The
-    server selection algorithm MUST ignore the deprioritized servers if the topology is not a sharded cluster.
+3. Find suitable servers as follows:
+    - Filter out any deprioritized server addresses.
+    - Find suitable servers from the filtered list by topology type and operation type.
+    - If there are no suitable servers, perform the previous step again without filtering out deprioritized servers.
 4. Filter the suitable servers by calling the optional, application-provided server selector.
 5. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
@@ -756,9 +757,10 @@ Therefore, for single-threaded clients, the server selection algorithm is as fol
         longer stale)
 5. If the topology wire version is invalid, raise an error and log a
     ["Server selection failed" message](#server-selection-failed-message).
-6. Find suitable servers by topology type and operation type. If a list of deprioritized servers is provided, and the
-    topology is a sharded cluster, these servers should be selected only if there are no other suitable servers. The
-    server selection algorithm MUST ignore the deprioritized servers if the topology is not a sharded cluster.
+6. Find suitable servers as follows:
+    - Filter out any deprioritized server addresses.
+    - Find suitable servers from the filtered list by topology type and operation type.
+    - If there are no suitable servers, perform the previous step again without filtering out deprioritized servers.
 7. Filter the suitable servers by calling the optional, application-provided server selector.
 8. If there are any suitable servers, filter them according to
     [Filtering suitable servers based on the latency window](#filtering-suitable-servers-based-on-the-latency-window)
@@ -846,10 +848,12 @@ details on each step, and
 [why is maxStalenessSeconds applied before tag_sets?](#why-is-maxstalenessseconds-applied-before-tag_sets).)
 
 If `mode` is 'secondaryPreferred', attempt the selection algorithm with `mode` 'secondary' and the user's
-`maxStalenessSeconds` and `tag_sets`. If no server matches, select the primary.
+`maxStalenessSeconds` and `tag_sets`. If no server matches, select the primary. Note that if all secondaries are
+deprioritized, the primary MUST be selected if it is available.
 
 If `mode` is 'primaryPreferred', select the primary if it is known, otherwise attempt the selection algorithm with
-`mode` 'secondary' and the user's `maxStalenessSeconds` and `tag_sets`.
+`mode` 'secondary' and the user's `maxStalenessSeconds` and `tag_sets`. Note that if the primary is deprioritized, a
+secondary MUST be selected if one is available.
 
 For all read preferences modes except 'primary', clients MUST set the `SecondaryOk` wire protocol flag (OP_QUERY) or
 `$readPreference` global command argument (OP_MSG) to ensure that any suitable server can handle the request. If the
@@ -1605,6 +1609,16 @@ filter it out because it is too stale, and be left with no eligible servers.
 The user's intent in specifying two tag sets was to fall back to the second set if needed, so we filter by
 maxStalenessSeconds first, then tag_sets, and select Node 2.
 
+### Why does server deprioritization use only server addresses and not ServerDescription objects?
+
+A server's address is the minimum identifying attribute that stays constant for across topology changes. Drivers create
+new ServerDescription objects on each topology change, and since ServerDescription objects check multiple attributes to
+determine equality comparisons, a deprioritized server could become non-equal to itself after a change and therefore
+incorrectly be considered suitable for a retry operation.
+
+By using addresses, we ensure that once a server is marked as deprioritized by an operation, it cannot be used again for
+a retry on that operation unless there are no other suitable servers.
+
 ## References
 
 - [Server Discovery and Monitoring](../server-discovery-and-monitoring/server-discovery-and-monitoring.md) specification
@@ -1613,6 +1627,9 @@ maxStalenessSeconds first, then tag_sets, and select Node 2.
     specification
 
 ## Changelog
+
+- 2025-12-08: Require server deprioritization for all topology types and clarify the order of server candidate
+    filtering.
 
 - 2015-06-26: Updated single-threaded selection logic with "stale" and serverSelectionTryOnce.
 
