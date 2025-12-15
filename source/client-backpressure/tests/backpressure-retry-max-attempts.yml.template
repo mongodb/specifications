@@ -32,6 +32,9 @@ createEntities:
       database: *database
       collectionName: &collection_name coll
 
+_yamlAnchors:
+  bulkWriteInsertNamespace: &client_bulk_write_ns retryable-writes-tests.coll
+
 initialData:
   -
     collectionName: *collection_name

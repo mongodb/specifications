@@ -58,6 +58,9 @@
       }
     }
   ],
+  "_yamlAnchors": {
+    "bulWriteInsertNamespace": "retryable-writes-tests.coll"
+  },
   "tests": [
     {
       "description": "client.listDatabases retries using operation loop",

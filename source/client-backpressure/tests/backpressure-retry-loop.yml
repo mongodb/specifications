@@ -37,13 +37,16 @@ createEntities:
     database:
       id: &database database
       client: *client
-      databaseName: &database_name retryable-writes-tests
+      databaseName: *database_name
       
   -
     collection:
       id: &collection collection
       database: *database
       collectionName: *collection_name
+
+_yamlAnchors:
+  bulWriteInsertNamespace: &client_bulk_write_ns retryable-writes-tests.coll
 
 tests:
 
@@ -219,7 +222,7 @@ tests:
         arguments:
           models:
           - insertOne:
-              namespace: retryable-writes-tests.coll
+              namespace: *client_bulk_write_ns
               document: { _id: 8, x: 88 }
 
     expectEvents:

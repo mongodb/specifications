@@ -32,6 +32,9 @@ createEntities:
       database: *database
       collectionName: &collection_name coll
 
+_yamlAnchors:
+  bulkWriteInsertNamespace: &client_bulk_write_ns retryable-writes-tests.coll
+
 initialData:
   -
     collectionName: *collection_name
@@ -232,7 +235,7 @@ tests:
         arguments:
           models:
           - insertOne:
-              namespace: retryable-writes-tests.coll
+              namespace: *client_bulk_write_ns
               document: { _id: 8, x: 88 }
         expectError: 
           isError: true

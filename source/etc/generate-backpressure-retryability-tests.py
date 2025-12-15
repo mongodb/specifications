@@ -8,7 +8,7 @@ Operation = namedtuple(
 
 CLIENT_BULK_WRITE_ARGUMENTS = '''models:
           - insertOne:
-              namespace: retryable-writes-tests.coll
+              namespace: *client_bulk_write_ns
               document: { _id: 8, x: 88 }'''
 
 CLIENT_OPERATIONS = [
