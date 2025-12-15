@@ -499,4 +499,4 @@ These tests require a mechanism for observing handshake documents sent to the se
 
 3. Assert that for every handshake document intercepted:
 
-    1. the document has a field `backpressure` whose value is `true`.
+    1. The document has a field `backpressure` whose value is `true`.

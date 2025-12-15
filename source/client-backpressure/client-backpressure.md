@@ -95,13 +95,12 @@ collection, getMore, and generic runCommand. The new command execution method ob
     token.
     - A non-SystemOverloaded error indicates that the server is healthy enough to handle requests. For the purposes of
         retry budget tracking, this counts as a success.
-4. A retry attempt will only be permitted if the error includes the `RetryableError` label, the error has a
+4. A retry attempt will only be permitted if the error is eligible for retryable reads or writes, the error has a
     `SystemOverloadedError` label, we have not reached `MAX_ATTEMPTS`, the CSOT deadline has not expired, and a token
     can be acquired from the token bucket.
     - The value of `MAX_ATTEMPTS` is 5 and non-configurable.
     - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within the
         timeout to avoid retry storms.
-    - Note: Future work will add support for RetryableErrors to regular retryability logic (see the future work section).
 5. If a retry attempt is to be attempted, a token will be consumed from the token bucket.
 6. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
     the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
@@ -110,26 +109,35 @@ collection, getMore, and generic runCommand. The new command execution method ob
     - `baseBackoff` is constant 100ms.
     - `maxBackoff` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-7. If the request is eligible for retry (as outlined in step 4), the client MUST add the server's address to the list of
-    deprioritized server address for server selection. This behavior is the same as existing behavior for retryable
-    reads and writes.
+7. If the request is eligible for retry (as outlined in step 4), the client MUST add the previously used server's
+    address to the list of deprioritized server addresses for server selection.
 
-Note: drivers MUST share deprioritized servers between retries used for the exponential backoff loop and regular
-retryable reads and writes.
+#### Interaction with Existing Retry Behavior
+
+The retryability API defined in this specification is separate from the existing retryability behaviors defined in the
+retryable reads and retryable writes specifications. Drivers MUST:
+
+- Only retryable errors with the `SystemOverloadedError` consume tokens from the token bucket before retrying.
+- Only retryable errors with the `SystemOverloadedError` label apply backoff and jitter.
 
 #### Pseudocode
 
 The following pseudocode describes the overload retry policy:
 
 ```python
-BASE_BACKOFF = 0.1
-MAX_BACKOFF = 10
+# Note: the values below have been scaled down by a factor of 1000 because
+# Python's sleep API takes a duration in seconds, not milliseconds.
+BASE_BACKOFF = 0.1 # 100ms
+MAX_BACKOFF = 10   # 10s
+
 RETRY_TOKEN_RETURN_RATE = 0.1
 MAX_ATTEMPTS = 5
 
 def execute_command_retryable(command, ...):
     deprioritized_servers = []
     attempt = 0
+    attempts = if is_csot then 1 else math.inf
+
     while True:
         try:
             server = select_server(deprioritized_servers)
@@ -142,206 +150,39 @@ def execute_command_retryable(command, ...):
             token_bucket.deposit(tokens)
             return res
         except PyMongoError as exc:
+            is_retryable = is_retryable_read() or is_retryable_write() or (exc.has_error_label("RetryableError") and exc.has_error_label("SystemOverloadedError"))
+            is_overload = exc.has_error_label("SystemOverloadedError")
+
             # if a retry fails with a non-System overloaded error, deposit 1 token
-            if attempt > 0 and not exc.has_error_label("SystemOverloadedError"):
-                tokens += 1
+            if attempt > 0 and not is_overload:
+                token_bucket.deposit(1)
+
+            # Raise if the error is non-retryable.
+            if not is_retryable:
+                raise
 
             attempt += 1
+            if is_overload:
+                attempts = MAX_ATTEMPTS
 
-            if attempt >= MAX_ATTEMPTS:
+            if attempt >= attempts:
                 raise
 
-            # Raise if the error if non retryable.
-            if exc.has_error_label("RetryableError") and exc.has_error_label("SystemOverloadedError"):
-                raise
+            deprioritized_servers.append(server.address)
 
-            jitter = random.random() # Random float between [0.0, 1.0).
-            backoff = jitter * min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
-		   
-            # If the delay exceeds the deadline, bail early before consuming a token.
-            if _csot.get_timeout():
-                if time.monotonic() + backoff > _csot.get_deadline():
+            if is_overload:
+                jitter = random.random() # Random float between [0.0, 1.0).
+                backoff = jitter * min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
+          
+                # If the delay exceeds the deadline, bail early.
+                if _csot.get_timeout():
+                    if time.monotonic() + backoff > _csot.get_deadline():
+                        raise
+
+                if not token_bucket.consume(1):
                     raise
 
-            if not token_bucket.consume(1):
-                raise
-
-            if backoff:
                 time.sleep(backoff)
-
-            deprioritized_servers.append(server)
-            continue
-```
-
-Some drivers might not have retryability implementations that allow easy separation of the existing retryable
-reads/writes mechanisms from the exponential backoff and jitter retry algorithm. An example pseudocode is defined below
-that demonstrates a combined retryable reads/writes implementation with the corresponding backpressure changes (adapted
-from the Node driver's implementation):
-
-```typescript
-// TODO: update pseudocode with updated implementation
-async function tryOperation<T extends AbstractOperation, TResult = ResultTypeFromOperation<T>>(
-  operation: T,
-  { topology, timeoutContext, session, readPreference }: RetryOptions
-): Promise<TResult> {
-  const serverSelector = getServerSelectorForReadPreference(operation, readPreference);
-
-  let server = await topology.selectServer(selector, {
-    session,
-  });
-
-  const hasReadAspect = operation.hasAspect(Aspect.READ_OPERATION);
-  const hasWriteAspect = operation.hasAspect(Aspect.WRITE_OPERATION);
-  const inTransaction = session?.inTransaction() ?? false;
-
-  const willRetryRead = topology.s.options.retryReads && !inTransaction && operation.canRetryRead;
-
-  const willRetryWrite =
-    topology.s.options.retryWrites &&
-    !inTransaction &&
-    supportsRetryableWrites(server) &&
-    operation.canRetryWrite;
-
-  const willRetry =
-    operation.hasAspect(Aspect.RETRYABLE) &&
-    session != null &&
-    ((hasReadAspect && willRetryRead) || (hasWriteAspect && willRetryWrite));
-
-  if (hasWriteAspect && willRetryWrite && session != null) {
-    operation.options.willRetryWrite = true;
-    session.incrementTransactionNumber();
-  }
-
-  // The maximum number of retry attempts using regular retryable reads/writes logic (not including
-  // SystemOverLoad error retries).
-  const maxNonOverloadRetryAttempts = willRetry 
-    ? timeoutMS != null 
-        ? Infinity 
-        : 2 
-    : 1;
-
-  let previousOperationError: MongoError | undefined;
-  let previousServer: ServerDescription | undefined;
-
-  let nonOverloadRetryAttempt = 0;
-  let systemOverloadRetryAttempt = 0;
-
-  const maxSystemOverloadRetryAttempts = 5;
-  const backoffDelayProvider = exponentialBackoffDelayProvider(
-    10_000, // MAX_BACKOFF
-    100, // base backoff
-    2 // backoff rate
-  );
-
-  const RETRY_COST = 1;
-
-  while (true) {
-    if (previousOperationError) {
-      if (previousOperationError.hasErrorLabel("SystemOverloadError")) {
-        systemOverloadRetryAttempt += 1;
-
-        if (
-          // if the SystemOverloadError is not retryable, throw.
-          !previousOperationError.hasErrorLabel("RetryableError") ||
-          !(
-            // if retryable writes or reads are not configured, throw.
-            (
-              (hasReadAspect && topology.s.options.retryReads) ||
-              (hasWriteAspect && topology.s.options.retryWrites)
-            )
-          )
-        ) {
-          throw previousOperationError;
-        }
-
-        // if we have exhausted overload retry attempts, throw.
-        if (systemOverloadRetryAttempt > maxSystemOverloadRetryAttempts) {
-          throw previousOperationError;
-        }
-
-        const { value: delayMS } = backoffDelayProvider.next();
-
-        // if the delay would exhaust the CSOT timeout, short-circuit.
-        if (timeoutContext.csotEnabled() && delayMS > timeoutContext.remainingTimeMS) {
-          throw previousError;
-        }
-
-        await setTimeout(delayMS);
-
-        // attempt to consume a retry token, throw if we don't have budget.
-        if (!topology.tokenBucket.consume(RETRY_COST)) {
-          throw previousOperationError;
-        }
-
-        server = await topology.selectServer(selector, { session });
-      } else {
-        nonOverloadRetryAttempt++;
-        // we have no more retry attempts, throw.
-        if (nonOverloadRetryAttempt > maxNonOverloadRetryAttempts) {
-          throw previousOperationError;
-        }
-
-        // Handle MMAPv1 not supporting retryable writes.
-        if (hasWriteAspect && previousOperationError.code === MMAPv1_RETRY_WRITES_ERROR_CODE) {
-          throw new MongoServerError({
-            message: MMAPv1_RETRY_WRITES_ERROR_MESSAGE,
-            errmsg: MMAPv1_RETRY_WRITES_ERROR_MESSAGE,
-            originalError: previousOperationError
-          });
-        }
-
-        // handle non-retryable errors
-        if (
-          (hasWriteAspect && !isRetryableWriteError(previousOperationError)) ||
-          (hasReadAspect && !isRetryableReadError(previousOperationError))
-        ) {
-          throw previousOperationError;
-        }
-
-        server = await topology.selectServer(selector, { session });
-
-        // handle rare downgrade scenarios where some nodes don't support 
-        // retryable writes but others do.
-        if (hasWriteAspect && !supportsRetryableWrites(server)) {
-          throw new MongoUnexpectedServerResponseError(
-            'Selected server does not support retryable writes'
-          );
-        }
-      }
-    }
-
-    try {
-      try {
-        const result = await server.command(operation, timeoutContext);
-        const isRetry = nonOverloadRetryAttempt > 0 || systemOverloadRetryAttempt > 0;
-        topology.tokenBucket.deposit(
-          isRetry
-            ? // on successful retry, deposit the retry cost + the refresh rate.
-              TOKEN_REFRESH_RATE + RETRY_COST
-            : // otherwise, just deposit the refresh rate.
-              TOKEN_REFRESH_RATE
-        );
-        return operation.handleOk(result);
-      } catch (error) {
-        return operation.handleError(error);
-      }
-    } catch (operationError) {
-      if (!operationError.hasErrorLabel("SystemOverloadError")) {
-        // if an operation fails with an error that does not contain the SystemOverloadError, deposit 1 token.
-        topology.tokenBucket.deposit(RETRY_COST);
-      }
-
-      if (
-        previousOperationError != null &&
-        operationError.hasErrorLabel("NoWritesPerformed")
-      ) {
-        throw previousOperationError;
-      }
-      previousServer = server.description;
-      previousOperationError = operationError;
-    }
-  }
-}
 ```
 
 ### Token Bucket
@@ -431,8 +272,8 @@ number of errors users see during spikes or burst workloads and help prevent ret
 However, older drivers do not have this benefit. Drivers MUST document that:
 
 - Users SHOULD upgrade to driver versions that officially support backpressure to avoid any impacts of server changes.
-- Users who do not upgrade might see increased might need to update application error handling to handle higher error
-    rates of SystemOverloadedErrors.
+- Users who do not upgrade might need to update application error handling to handle higher error rates of
+    SystemOverloadedErrors.
 
 ## Test Plan
 
