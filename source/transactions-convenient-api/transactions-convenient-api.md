@@ -143,7 +143,7 @@ This method should perform the following sequence of actions:
         3. `BACKOFF_INITIAL` is 5ms
         4. `BACKOFF_MAX` is 500ms
 
-        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise last known error. Otherwise, sleep for `backoffMS`,
+        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the callback's error. Otherwise, sleep for `backoffMS`,
         increment `retry`, and jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
@@ -161,7 +161,16 @@ This method should perform the following sequence of actions:
         [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label and the elapsed time of
-        `withTransaction` is less than TIMEOUT_MS, jump back to step two.
+        `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
+        `jitter * min(BACKOFF_INITIAL * (1.5**retry), BACKOFF_MAX)` where:
+
+        1. jitter is a random float between \[0, 1)
+        2. retry is the variable defined in step 1.
+        3. `BACKOFF_INITIAL` is 5ms
+        4. `BACKOFF_MAX` is 500ms
+
+        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the commit transaction error. Otherwise, sleep for
+        `backoffMS`, increment `retry`, and jump back to step two.
 
     3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
 10. The transaction was committed successfully. Return immediately.
@@ -179,6 +188,7 @@ withTransaction(callback, options) {
     // See the CSOT specification for information on calculating timeoutMS for a convenient transaction API call.
     var timeout = getCSOTTimeoutIfSet() ?? 120_000;
     var retry = 0;
+    var last_error = null;
 
     retryTransaction: while (true) {
         if (retry > 0) {
@@ -196,7 +206,7 @@ withTransaction(callback, options) {
         try {
             callback(this);
         } catch (error) {
-            var last_error = error;
+            last_error = error;
             if (this.transactionState == STARTING ||
                 this.transactionState == IN_PROGRESS) {
                 this.abortTransaction();
@@ -237,6 +247,7 @@ withTransaction(callback, options) {
 
                 if (error.hasErrorLabel("TransientTransactionError") &&
                     Date.now() - startTime < timeout) {
+                    last_error = error;
                     continue retryTransaction;
                 }
 
