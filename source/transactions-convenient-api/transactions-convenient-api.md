@@ -117,11 +117,12 @@ This method should perform the following sequence of actions:
 1. Define the following:
     1. Record the current monotonic time, which will be used to enforce the 120-second / CSOT timeout before later retry
         attempts.
-    2. Set `attempt` to `0`. This will be used for backoff later in steps 6.2 and 9.2.
+    2. Set `transactionAttempt` to `0`. This will be used for backoff later in steps 6.2 and 9.2.
     3. Set `TIMEOUT_MS` to be `timeoutMS` if given, otherwise 120-seconds.
-2. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session. If TransactionOptions
-    were specified in the call to `withTransaction`, those MUST be used for `startTransaction`. Note that
-    `ClientSession.defaultTransactionOptions` will be used in the absence of any explicit TransactionOptions.
+2. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session and increment
+    `transactionAttempt`. If TransactionOptions were specified in the call to `withTransaction`, those MUST be used
+    for `startTransaction`. Note that `ClientSession.defaultTransactionOptions` will be used in the absence of any
+    explicit TransactionOptions.
 3. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` and return
     immediately.
 4. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
@@ -136,15 +137,15 @@ This method should perform the following sequence of actions:
 
     2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
         less than TIMEOUT_MS, calculate the backoffMS to be
-        `jitter * min(BACKOFF_INITIAL * (1.5**attempt), BACKOFF_MAX)` where:
+        `jitter * min(BACKOFF_INITIAL * (1.5**transactionAttempt - 1), BACKOFF_MAX)` where:
 
         1. jitter is a random float between \[0, 1)
-        2. attempt is the variable defined in step 1.
+        2. transactionAttempt is the variable defined in step 1.
         3. `BACKOFF_INITIAL` is 5ms
         4. `BACKOFF_MAX` is 500ms
 
         If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the callback's error. Otherwise, sleep for `backoffMS`,
-        increment `attempt`, and jump back to step two.
+        and jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
@@ -162,15 +163,15 @@ This method should perform the following sequence of actions:
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label and the elapsed time of
         `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
-        `jitter * min(BACKOFF_INITIAL * (1.5**attempt), BACKOFF_MAX)` where:
+        `jitter * min(BACKOFF_INITIAL * (1.5**transactionAttempt - 1), BACKOFF_MAX)` where:
 
         1. jitter is a random float between \[0, 1)
-        2. attempt is the variable defined in step 1.
+        2. transactionAttempt is the variable defined in step 1.
         3. `BACKOFF_INITIAL` is 5ms
         4. `BACKOFF_MAX` is 500ms
 
         If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the `commitTransaction` error. Otherwise, sleep for
-        `backoffMS`, increment `attempt`, and jump back to step two.
+        `backoffMS`, and jump back to step two.
 
     3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
 10. The transaction was committed successfully. Return immediately.
@@ -187,12 +188,12 @@ withTransaction(callback, options) {
     var startTime = Date.now(); // milliseconds since Unix epoch
     // See the CSOT specification for information on calculating timeoutMS for a convenient transaction API call.
     var timeout = getCSOTTimeoutIfSet() ?? 120_000;
-    var attempt = 0;
+    var transactionAttempt = 0;
     var lastError = null;
 
     retryTransaction: while (true) {
-        if (attempt > 0) {
-            var backoff = Math.random() * min(BACKOFF_INITIAL * 1.5 ** (attempt - 1), 
+        if (transactionAttempt > 0) {
+            var backoff = Math.random() * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), 
                                               BACKOFF_MAX);
 
             if (Date.now() + backoff - startTime >= timeout) {
@@ -202,6 +203,7 @@ withTransaction(callback, options) {
         }
 
         this.startTransaction(options); // may throw on error
+        transactionAttempt += 1;
 
         try {
             callback(this);
@@ -214,7 +216,6 @@ withTransaction(callback, options) {
 
             if (error.hasErrorLabel("TransientTransactionError") &&
                 Date.now() - startTime < timeout) {
-                attempt += 1
                 continue retryTransaction;
             }
 
@@ -248,7 +249,6 @@ withTransaction(callback, options) {
 
                 if (error.hasErrorLabel("TransientTransactionError") &&
                     Date.now() - startTime < timeout) {
-                    attempt += 1
                     lastError = error;
                     continue retryTransaction;
                 }
