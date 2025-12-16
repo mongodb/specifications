@@ -117,7 +117,7 @@ This method should perform the following sequence of actions:
 1. Define the following:
     1. Record the current monotonic time, which will be used to enforce the 120-second / CSOT timeout before later retry
         attempts.
-    2. Set `retry` to `0`. This will be used for backoff later in step 7.
+    2. Set `retry` to `0`. This will be used for backoff later in steps 6.2 and 9.2.
     3. Set `TIMEOUT_MS` to be `timeoutMS` if given, otherwise 120-seconds.
 2. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session. If TransactionOptions
     were specified in the call to `withTransaction`, those MUST be used for `startTransaction`. Note that
