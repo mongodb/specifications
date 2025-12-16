@@ -169,7 +169,7 @@ This method should perform the following sequence of actions:
         3. `BACKOFF_INITIAL` is 5ms
         4. `BACKOFF_MAX` is 500ms
 
-        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the commit transaction error. Otherwise, sleep for
+        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the `commitTransaction` error. Otherwise, sleep for
         `backoffMS`, increment `retry`, and jump back to step two.
 
     3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
