@@ -40,9 +40,6 @@ the connection and request rate limiters to prevent and mitigate overloading the
 An error is considered retryable if it includes the "RetryableError" label. This error label indicates that an operation
 is safely retryable regardless of the type of operation, its metadata, or any of its arguments.
 
-Note that for the initial draft of the spec, only errors that have both the RetryableError label and the
-SystemOverloadedError label are eligible for the retry backoff loop.
-
 #### SystemOverloadedError label
 
 An error is considered overloaded if it includes the "SystemOverloadError" label. This error label indicates that the
@@ -84,7 +81,7 @@ See [goodput](https://en.wikipedia.org/wiki/Goodput).
 
 #### Overload retry policy
 
-This specification expands the driver's retry ability to all commands if the error indicates that is both an overload
+This specification expands the driver's retry ability to all commands if the error indicates that it is both an overload
 error and that it is retryable, including those not currently considered retryable such as updateMany, create
 collection, getMore, and generic runCommand. The new command execution method obeys the following rules:
 
@@ -95,9 +92,11 @@ collection, getMore, and generic runCommand. The new command execution method ob
     token.
     - A non-SystemOverloaded error indicates that the server is healthy enough to handle requests. For the purposes of
         retry budget tracking, this counts as a success.
-4. A retry attempt will only be permitted if the error is eligible for retryable reads or writes, the error has a
-    `SystemOverloadedError` label, we have not reached `MAX_ATTEMPTS`, the CSOT deadline has not expired, and a token
-    can be acquired from the token bucket.
+4. A retry attempt will only be permitted if:
+    1. The error has both the `SystemOverloadedError` and the `RetryableError` label.
+    2. We have not reached `MAX_ATTEMPTS`.
+    3. (CSOT-only): `timeoutMS` has not expired.
+    4. (`SystemOverloadedError` errors only) a token can be acquired from the token bucket.
     - The value of `MAX_ATTEMPTS` is 5 and non-configurable.
     - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within the
         timeout to avoid retry storms.
@@ -115,10 +114,16 @@ collection, getMore, and generic runCommand. The new command execution method ob
 #### Interaction with Existing Retry Behavior
 
 The retryability API defined in this specification is separate from the existing retryability behaviors defined in the
-retryable reads and retryable writes specifications. Drivers MUST:
+retryable reads and retryable writes specifications. Drivers MUST ensure:
 
 - Only retryable errors with the `SystemOverloadedError` consume tokens from the token bucket before retrying.
 - Only retryable errors with the `SystemOverloadedError` label apply backoff and jitter.
+- All retryable errors apply backoff if they also contain a `SystemOverloadedError` label. This includes:
+    - Errors defined as retryable in the retryable reads specification.
+    - Errors defined as retryable in the retryable writes specification.
+    - Errors with the `RetryableError` label.
+- Any retryable error is retried at most MAX_ATTEMPTS (default=5) times, if any attempts has failed with a
+    `SystemOverloadedError`.
 
 #### Pseudocode
 
@@ -136,7 +141,7 @@ MAX_ATTEMPTS = 5
 def execute_command_retryable(command, ...):
     deprioritized_servers = []
     attempt = 0
-    attempts = if is_csot then 1 else math.inf
+    attempts = if is_csot then math.inf else 1
 
     while True:
         try:
@@ -150,7 +155,7 @@ def execute_command_retryable(command, ...):
             token_bucket.deposit(tokens)
             return res
         except PyMongoError as exc:
-            is_retryable = is_retryable_read() or is_retryable_write() or (exc.has_error_label("RetryableError") and exc.has_error_label("SystemOverloadedError"))
+            is_retryable = is_retryable_write() or is_retryable_read() or (exc.has_error_label("RetryableError") and exc.has_error_label("SystemOverloadedError"))
             is_overload = exc.has_error_label("SystemOverloadedError")
 
             # if a retry fails with a non-System overloaded error, deposit 1 token
@@ -165,14 +170,14 @@ def execute_command_retryable(command, ...):
             if is_overload:
                 attempts = MAX_ATTEMPTS
 
-            if attempt >= attempts:
+            if attempt > attempts:
                 raise
 
             deprioritized_servers.append(server.address)
 
             if is_overload:
                 jitter = random.random() # Random float between [0.0, 1.0).
-                backoff = jitter * min(BASE_BACKOFF * (2 ** attempt), MAX_BACKOFF)
+                backoff = jitter * min(BASE_BACKOFF * (2 ** attempt - 1), MAX_BACKOFF)
           
                 # If the delay exceeds the deadline, bail early.
                 if _csot.get_timeout():
@@ -308,6 +313,24 @@ The Node and Python drivers will provide the reference implementations. See
 
 The client backpressure retry loop is primarily concerned with spreading out retries to avoid retry storms. The exact
 sleep duration is not critical to the intended behavior, so long as we sleep at least as long as we say we will.
+
+### Why override existing maximum number of retry attempt defaults for retryable reads and writes if a `SystemOverloadedError` is received?
+
+Load-shedded errors indicate that the request was rejected by the server to minimize load, not that the operation failed
+for logical reasons. So, when determining the number of retries an operation should attempt:
+
+- Any load-shedded errors should be retried to give them a real attempt at success
+- If the command ultimately would have failed if it had not been load shed by the server, returning an actionable error
+    message is preferable to a generic SystemOverloadedError.
+
+The maximum retry attempt logic in this specification balances legacy retryability behavior with load-shedding behavior:
+
+- Relying on either 1 or infinite timeouts (depending on CSOT) preserves existing retry behavior.
+- Adjusting the maximum number of retry attempts to 5 if a `SystemOverloadedError` error is returned from the server
+    gives requests more opportunities to succeed and helps reduce application errors.
+- An alternative approach would be to retry once if we don't receive a SystemOverloadedError, in which case we'd retry 5
+    times. The approach chosen allows for additional retries in scenarios where a non-`SystemOverloadedError` fails on a
+    retry with a `SystemOverloadedError`.
 
 ## Changelog
 
