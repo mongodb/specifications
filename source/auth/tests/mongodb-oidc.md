@@ -18,7 +18,7 @@ ______________________________________________________________________
 
 ## Machine Authentication Flow Prose Tests
 
-Drivers MUST run these tests for in all supported OIDC environments:
+Drivers MUST run these tests in all supported OIDC environments:
 
 - A callback that reads the token file for `ENVIRONMENT:test`. A callback enables testing additional behaviors. Tests
     and assertions limited to a callback are noted with `[callback-only]`.
