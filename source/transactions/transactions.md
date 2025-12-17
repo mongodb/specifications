@@ -578,11 +578,12 @@ all preceding commands in the transaction.
 
 All commands in a transaction are subject to the
 [Client Backpressure Specification](../client-backpressure/client-backpressure.md), and MUST be retried accordingly when
-the appropriate error labels are added by the server. This includes the `startTransaction`, `abortTransaction`,
-`commitTransaction` commands as well as any read or write commands attempted during the transaction.
+the appropriate error labels are added by the server. This includes the initial command with `startTransaction` set, the
+`abortTransaction` and `commitTransaction` commands, as well as any read or write commands attempted during the
+transaction.
 
-In the case that the first command in a transaction has backpressure applied, it will eventually fail because the server
-will not have started a transaction.
+If a command fails with backpressure labels and it has `startTransaction` field set to `true`, the retried command MUST
+also set `startTransaction` to `true`.
 
 ### **Server Commands**
 

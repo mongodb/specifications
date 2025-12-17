@@ -1,31 +1,37 @@
 description: backpressure-retryable-reads
 schemaVersion: "1.3"
 runOnRequirements:
-  - minServerVersion: 4.1.8
+  - minServerVersion: "4.4"
     topologies:
       - replicaset
       - sharded
       - load-balanced
 createEntities:
-  - client:
+  -
+    client:
       id: &client0 client0
       useMultipleMongoses: false
       observeEvents:
         - commandStartedEvent
-  - database:
+  -
+    database:
       id: &database0 database0
       client: *client0
-      databaseName: &databaseName transaction-tests
-  - collection:
+      databaseName: &database_name transaction-tests
+  -
+    collection:
       id: &collection0 collection0
       database: *database0
-      collectionName: &collectionName test
-  - session:
+      collectionName: &collection_name test
+  -
+    session:
       id: &session0 session0
       client: *client0
+
 initialData:
-  - collectionName: *collectionName
-    databaseName: *databaseName
+  -
+    collectionName: *collection_name
+    databaseName: *database_name
     documents: []
 tests:
   - description: reads are retried if backpressure labels are added
@@ -84,7 +90,7 @@ tests:
                 writeConcern:
                   $$exists: false
               commandName: insert
-              databaseName: *databaseName
+              databaseName: *database_name
           - commandStartedEvent:
               command:
                 find: test
@@ -98,7 +104,7 @@ tests:
                 writeConcern:
                   $$exists: false
               commandName: find
-              databaseName: *databaseName
+              databaseName: *database_name
           - commandStartedEvent:
               command:
                 find: test
@@ -112,7 +118,7 @@ tests:
                 writeConcern:
                   $$exists: false
               commandName: find
-              databaseName: *databaseName
+              databaseName: *database_name
           - commandStartedEvent:
               command:
                 abortTransaction:
@@ -129,8 +135,8 @@ tests:
               commandName: commitTransaction
               databaseName: admin
     outcome:
-      - collectionName: *collectionName
-        databaseName: *databaseName
+      - collectionName: *collection_name
+        databaseName: *database_name
         documents: []
   - description: reads are retried maxAttempts=5 times if backpressure labels are added
     operations:
@@ -189,47 +195,6 @@ tests:
           - commandStartedEvent:
               commandName: abortTransaction
     outcome:
-      - collectionName: *collectionName
-        databaseName: *databaseName
-        documents: []
-  - description: retry fails if backpressure labels are added to the first operation in a transaction
-    operations:
-      - object: *session0
-        name: startTransaction
-      - object: testRunner
-        name: failPoint
-        arguments:
-          client: *client0
-          failPoint:
-            configureFailPoint: failCommand
-            mode:
-              times: 1
-            data:
-              failCommands:
-                - find
-              errorLabels:
-                - RetryableError
-                - SystemOverloadedError
-              errorCode: 112
-      - object: *collection0
-        name: find
-        arguments:
-          filter: {}
-          session: *session0
-        expectError:
-          isError: true
-      - object: *session0
-        name: abortTransaction
-    expectEvents:
-      - client: *client0
-        events:
-          - commandStartedEvent:
-              commandName: find
-          - commandStartedEvent:
-              commandName: find
-          - commandStartedEvent:
-              commandName: abortTransaction
-    outcome:
-      - collectionName: *collectionName
-        databaseName: *databaseName
+      - collectionName: *collection_name
+        databaseName: *database_name
         documents: []
