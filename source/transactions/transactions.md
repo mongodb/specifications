@@ -48,6 +48,10 @@ including (but not limited to) creating, updating, or deleting databases, collec
 
 An error considered retryable by the [Retryable Writes Specification](../retryable-writes/retryable-writes.md).
 
+#### Backpressure Error
+
+An error considered retryable by the [Client Backpressure Specification](../client-backpressure/client-backpressure.md).
+
 #### Command Error
 
 A server response with ok:0. A server response with ok:1 and writeConcernError or writeErrors is not considered a
@@ -555,9 +559,10 @@ a transaction.
 
 In MongoDB 4.0 the only supported retryable write commands within a transaction are commitTransaction and
 abortTransaction. Therefore drivers MUST NOT retry write commands within transactions even when retryWrites has been
-enabled on the MongoClient. In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs
-during a write command within a transaction (excepting commitTransation and abortTransaction), even when retryWrites has
-been enabled on the MongoClient.
+enabled on the MongoClient, unless the command has backpressure error labels applied. In addition, drivers MUST NOT add
+the RetryableWriteError label to any error that occurs during a write command within a transaction (excepting
+commitTransation and abortTransaction), even when retryWrites has been enabled on the MongoClient, unless the command
+has backpressure error labels applied.
 
 Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
 MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
@@ -568,6 +573,16 @@ Retryable writes and transactions both use the `txnNumber` associated with a Ser
 incremented at the start and then stays constant, even for retryable operations within the transaction. When executing
 the commitTransaction and abortTransaction commands within a transaction drivers MUST use the same `txnNumber` used for
 all preceding commands in the transaction.
+
+### **Interaction with Client Backpressure**
+
+All commands in a transaction are subject to the
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), and MUST be retried accordingly when
+the appropriate error labels are added by the server. This includes the `startTransaction`, `abortTransaction`,
+`commitTransaction` commands as well as any read or write commands attempted during the transaction.
+
+In the case that the first command in a transaction has backpressure applied, it will eventually fail because the server
+will not have started a transaction.
 
 ### **Server Commands**
 
