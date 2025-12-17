@@ -180,7 +180,7 @@ clear event. We create a setup client to enable the ingress connection establish
 connection storm. After the storm, we verify that some of the connections failed to checkout, but that the pool was not
 cleared.
 
-This test requires MongoDB 8.0.12+. See the
+This test requires MongoDB 7.0+. See the
 [MongoDB Server Parameters](https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.ingressConnectionEstablishmentRateLimiterEnabled)
 for more details.
 
