@@ -375,7 +375,7 @@ When connected to MongoDB 3.2 or earlier:
 
 - source
 
-    MUST be "$external". Defaults to `$external\`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
@@ -445,7 +445,7 @@ proprietary implementation called SSPI which is compatible with both Windows and
 
 - source
 
-    MUST be "$external". Defaults to `$external\`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
@@ -943,7 +943,7 @@ Examples are provided below.
 
 - source
 
-    MUST be "$external". Defaults to `$external\`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
@@ -1252,7 +1252,7 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
 
 - source
 
-    MUST be "$external". Defaults to `$external\`.
+    MUST be "$external". Defaults to `$external`.
 
 - password
 
