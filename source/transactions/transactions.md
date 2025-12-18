@@ -1061,9 +1061,11 @@ transaction.
 
 ### Majority write concern is used when retrying commitTransaction
 
-Drivers should apply a majority write concern when retrying commitTransaction to guard against a transaction being
-applied twice. Note that this does not apply when retrying commitTransaction after a backpressure retry, since we are
-sure that the transaction has not been applied.
+Drivers SHOULD apply a majority write concern when retrying commitTransaction to guard against a transaction being
+applied twice.
+
+Drivers SHOULD NOT modify the write concern on commit transaction commands when retrying a backpressure error, since we
+are sure that the transaction has not been applied.
 
 Consider the following scenario:
 
@@ -1107,6 +1109,8 @@ has been disabled, drivers can readily trust that a majority write concern is du
 objective of avoiding duplicate commits.
 
 ## **Changelog**
+
+- 2025-12-18: Specify the handling of client backpressure.
 
 - 2024-11-01: Clarify collection options inside txn.
 
