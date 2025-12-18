@@ -1,4 +1,4 @@
-description: retryable-commit
+description: backpressure-retryable-commit
 schemaVersion: "1.4"
 runOnRequirements:
   - minServerVersion: "4.4"
