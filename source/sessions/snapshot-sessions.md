@@ -270,6 +270,7 @@ C# driver will provide the reference implementation. The corresponding ticket is
 
 ## Changelog
 
+- 2025-12-17: Allow ambiguous snapshotTime access.
 - 2025-09-23: Exposed snapshotTime to applications.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2021-06-15: Initial version.
