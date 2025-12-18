@@ -35,7 +35,7 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
             }
         ```
 
-    3. Execute the document `{ a: 1 }`. Expect that the command errors. Measure the duration of the command execution.
+    3. Insert the document `{ a: 1 }`. Expect that the command errors. Measure the duration of the command execution.
 
         ```javascript
            const start = performance.now();
@@ -55,7 +55,3 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
     ```
     The sum of 5 backoffs is 3.1 seconds. There is a 1-second window to account for potential variance between the two
     runs.
-
-## Changelog
-
-- 2025-XX-XX: Initial version.

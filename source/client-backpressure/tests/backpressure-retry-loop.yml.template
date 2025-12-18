@@ -45,6 +45,11 @@ createEntities:
       database: *database
       collectionName: *collection_name
 
+initialData:
+- collectionName: *collection_name
+  databaseName: *database_name
+  documents: []
+
 _yamlAnchors:
   bulWriteInsertNamespace: &client_bulk_write_ns retryable-writes-tests.coll
 
@@ -57,12 +62,6 @@ tests:
       - minServerVersion: '8.0' # client bulk write added to server in 8.0
     {%- endif %}
     operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}
-
         {%- if operation.operation_name == "dropIndex" %}
       -
         object: *internal_collection

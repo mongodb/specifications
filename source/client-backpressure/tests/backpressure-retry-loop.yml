@@ -45,6 +45,11 @@ createEntities:
       database: *database
       collectionName: *collection_name
 
+initialData:
+- collectionName: *collection_name
+  databaseName: *database_name
+  documents: []
+
 _yamlAnchors:
   bulWriteInsertNamespace: &client_bulk_write_ns retryable-writes-tests.coll
 
@@ -52,12 +57,7 @@ tests:
 
   -
     description: 'client.listDatabases retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -100,12 +100,7 @@ tests:
 
   -
     description: 'client.listDatabaseNames retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -146,12 +141,7 @@ tests:
 
   -
     description: 'client.createChangeStream retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -196,12 +186,7 @@ tests:
     description: 'client.clientBulkWrite retries using operation loop'
     runOnRequirements:
       - minServerVersion: '8.0' # client bulk write added to server in 8.0
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -247,12 +232,7 @@ tests:
 
   -
     description: 'database.aggregate retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -295,12 +275,7 @@ tests:
 
   -
     description: 'database.listCollections retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -343,12 +318,7 @@ tests:
 
   -
     description: 'database.listCollectionNames retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -391,12 +361,7 @@ tests:
 
   -
     description: 'database.runCommand retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -440,12 +405,7 @@ tests:
 
   -
     description: 'database.createChangeStream retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -488,12 +448,7 @@ tests:
 
   -
     description: 'collection.aggregate retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -536,12 +491,7 @@ tests:
 
   -
     description: 'collection.countDocuments retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -584,12 +534,7 @@ tests:
 
   -
     description: 'collection.estimatedDocumentCount retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -630,12 +575,7 @@ tests:
 
   -
     description: 'collection.distinct retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -679,12 +619,7 @@ tests:
 
   -
     description: 'collection.find retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -727,12 +662,7 @@ tests:
 
   -
     description: 'collection.findOne retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -775,12 +705,7 @@ tests:
 
   -
     description: 'collection.listIndexes retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -821,12 +746,7 @@ tests:
 
   -
     description: 'collection.listIndexNames retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -867,12 +787,7 @@ tests:
 
   -
     description: 'collection.createChangeStream retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -915,12 +830,7 @@ tests:
 
   -
     description: 'collection.insertOne retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -963,12 +873,7 @@ tests:
 
   -
     description: 'collection.insertMany retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1012,12 +917,7 @@ tests:
 
   -
     description: 'collection.deleteOne retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1060,12 +960,7 @@ tests:
 
   -
     description: 'collection.deleteMany retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1108,12 +1003,7 @@ tests:
 
   -
     description: 'collection.replaceOne retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1157,12 +1047,7 @@ tests:
 
   -
     description: 'collection.updateOne retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1206,12 +1091,7 @@ tests:
 
   -
     description: 'collection.updateMany retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1255,12 +1135,7 @@ tests:
 
   -
     description: 'collection.findOneAndDelete retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1303,12 +1178,7 @@ tests:
 
   -
     description: 'collection.findOneAndReplace retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1352,12 +1222,7 @@ tests:
 
   -
     description: 'collection.findOneAndUpdate retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1401,12 +1266,7 @@ tests:
 
   -
     description: 'collection.bulkWrite retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1451,12 +1311,7 @@ tests:
 
   -
     description: 'collection.createIndex retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint
@@ -1501,11 +1356,6 @@ tests:
   -
     description: 'collection.dropIndex retries using operation loop'
     operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}
       -
         object: *internal_collection
         name: createIndex
@@ -1554,12 +1404,7 @@ tests:
 
   -
     description: 'collection.dropIndexes retries using operation loop'
-    operations:
-      -
-        object: *internal_collection
-        name: deleteMany
-        arguments:
-          filter: {}      
+    operations:      
 
 
       - name: failPoint

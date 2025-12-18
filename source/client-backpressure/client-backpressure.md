@@ -100,7 +100,7 @@ collection, getMore, and generic runCommand. The new command execution method ob
     - The value of `MAX_ATTEMPTS` is 5 and non-configurable.
     - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within the
         timeout to avoid retry storms.
-5. If a retry attempt is to be attempted, a token will be consumed from the token bucket.
+5. A retry attempt consumes 1 token from the token bucket.
 6. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
     the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
     - `i` is the retry attempt number (starting with 0 for the first retry).
