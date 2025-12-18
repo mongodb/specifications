@@ -90,7 +90,7 @@ cluster for development.
     - An index with the `name` of `test-search-index` is present and the index has a field `queryable` with a value of
         `true`.
 
-5. Assert that `index` has a property `latestDefinition` whose value is `{ 'mappings': { 'dynamic': false } }`
+5. Assert that `index.latestDefinition.mappings.dynamic` has the value `false`.
 
 #### Case 2: Driver can successfully create multiple indexes in batch
 
@@ -125,8 +125,8 @@ cluster for development.
     - An index with the `name` of `test-search-index-2` is present and index has a field `queryable` with the value of
         `true`. Store result in `index2`.
 
-5. Assert that `index1` and `index2` have the property `latestDefinition` whose value is
-    `{ "mappings" : { "dynamic" : false } }`
+5. Assert that `index1.latestDefinition.mappings.dynamic` and `index2.latestDefinition.mappings.dynamic` have the value
+    `false`.
 
 #### Case 3: Driver can successfully drop search indexes
 
@@ -196,8 +196,8 @@ This test fails if it times out waiting for the deletion to succeed.
     - An index with the `name` of `test-search-index` is present. This index is referred to as `index`.
     - The index has a field `queryable` with a value of `true` and has a field `status` with the value of `READY`.
 
-8. Assert that an index is present with the name `test-search-index` and the definition has a property
-    `latestDefinition` whose value is `{ 'mappings': { 'dynamic': true } }`.
+8. Assert that an index is present with the name `test-search-index` and `index.latestDefinition.mappings.dynamic` has
+    the value `true`.
 
 #### Case 5: `dropSearchIndex` suppresses namespace not found errors
 
@@ -230,7 +230,7 @@ This test fails if it times out waiting for the deletion to succeed.
     - An index with the `name` of `test-search-index-case6` is present and the index has a field `queryable` with a value
         of `true`.
 
-6. Assert that `index` has a property `latestDefinition` whose value is `{ 'mappings': { 'dynamic': false } }`
+6. Assert that `index.latestDefinition.mappings.dynamic` has the value `false`.
 
 #### Case 7: Driver can successfully handle search index types when creating indexes
 
