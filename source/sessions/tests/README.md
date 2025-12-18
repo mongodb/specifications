@@ -270,22 +270,27 @@ Snapshot sessions tests require server of version 5.0 or higher and replica set 
 
 Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
 
-- Start a session by calling `startSession` with `snapshot = false`.
-
-Drivers SHOULD implement one of the following approaches:
-
-**Approach 1: Validation (preferred if idiomatic)**
-
+- Start a session by calling `startSession` on with `snapshot = false`.
 - Try to access the session's snapshot time.
 - Assert that a client side error was raised.
+- Assert that the session's `snapshotTime` is unset.
 
-**Approach 2: Ensure Read-Only (if error-returning getters are not idiomatic)**
+Drivers MAY skip this test if they choose not to implement a getter for `snapshotTime`.
 
+### 23. Ensure `snapshotTime` is Read-Only
+
+Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
+
+- Start a session by calling `startSession` on with `snapshot = false`.
+- Assert that the session's `snapshotTime` is unset.
 - Attempt to mutate the session's `snapshotTime` field through any publicly accessible API.
 - Assert that the original session's `snapshotTime` remains unchanged.
 
+Drivers MAY skip this test if they choose to expose a read-only `snapshotTime` property using an accessor method only.
+
 ## Changelog
 
+- 2025-12-18: Make snapshot getter prose test optional.
 - 2025-09-25: Added tests for snapshotTime.
 - 2025-02-24: Test drivers do not gossip $clusterTime on SDAM.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
