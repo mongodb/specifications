@@ -273,12 +273,16 @@ Snapshot sessions tests require server of version 5.0 or higher and replica set 
 - Start a session by calling `startSession` on with `snapshot = false`.
 - Try to access the session's snapshot time.
 - Assert that a client side error was raised.
+- Assert that the session's `snapshotTime` is unset.
 
 Drivers MAY skip this test if they choose not to implement a getter for `snapshotTime`.
 
 ### 23. Ensure `snapshotTime` is Read-Only
 
+Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
+
 - Start a session by calling `startSession` on with `snapshot = false`.
+- Assert that the session's `snapshotTime` is unset.
 - Attempt to mutate the session's `snapshotTime` field through any publicly accessible API.
 - Assert that the original session's `snapshotTime` remains unchanged.
 
