@@ -1062,7 +1062,8 @@ transaction.
 ### Majority write concern is used when retrying commitTransaction
 
 Drivers should apply a majority write concern when retrying commitTransaction to guard against a transaction being
-applied twice.
+applied twice. Note that this does not apply when retrying commitTransaction after a backpressure retry, since we are
+sure that the transaction has not been applied.
 
 Consider the following scenario:
 
