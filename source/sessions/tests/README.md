@@ -282,8 +282,7 @@ Drivers MAY skip this test if they choose not to implement a getter for `snapsho
 - Attempt to mutate the session's `snapshotTime` field through any publicly accessible API.
 - Assert that the original session's `snapshotTime` remains unchanged.
 
-Drivers MAY skip this test if they choose to expose a read-only `snapshotTime` property using an accessor method
-only.
+Drivers MAY skip this test if they choose to expose a read-only `snapshotTime` property using an accessor method only.
 
 ## Changelog
 

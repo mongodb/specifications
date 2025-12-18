@@ -260,8 +260,8 @@ be best served by a session-based approach, as no API changes will be required.
 ### `snapshotTimeout` must be read-only
 
 Allowing callers to mutate `snapshotTime` enables misuse patterns where applications overwrite `snapshotTime` on an
-existing session and then use that session in transactions, combining an inconsistent timestamp with an existing
-server session and triggering hard-to-diagnose write conflicts.
+existing session and then use that session in transactions, combining an inconsistent timestamp with an existing server
+session and triggering hard-to-diagnose write conflicts.
 
 ## Backwards Compatibility
 
