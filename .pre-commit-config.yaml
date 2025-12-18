@@ -28,11 +28,16 @@ repos:
     - id: mdformat
       args: ["--wrap=120", "--number"]
       additional_dependencies:
-        - mdformat-footnote
-        - mdformat-frontmatter
-        - mdformat-gfm
-        - mdformat-gfm-alerts
-        - mdformat-mkdocs
+        - mdformat-footnote==0.1.2
+        - mdformat-frontmatter==2.0.8
+        - mdformat-gfm==1.0.0
+        - mdformat-gfm-alerts==2.0.0
+        - mdformat-mkdocs==5.1.1
+        - markdown-it-py==3.0.0
+      # Files that mdformat cannot parse:
+      exclude: |
+        (?x)^(source/extended-json/extended-json.md
+        )$
 
 - repo: local
   hooks:
