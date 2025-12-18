@@ -137,7 +137,7 @@ class ClientSession {
 }
 ```
 
-On a non-snapshot session, the value of snapshotTime is undefined. Drivers SHOULD either raise an error when the
+On a non-snapshot session, the value of `snapshotTime` is undefined. Drivers SHOULD either raise an error when the
 property is accessed or return an unset value.
 
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
