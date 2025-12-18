@@ -23,7 +23,7 @@ createEntities:
 
   -
     database:
-      id: &internal_db database
+      id: &internal_db internal_db
       client: *internal_client
       databaseName: &database_name retryable-writes-tests
 
