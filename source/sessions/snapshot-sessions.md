@@ -137,7 +137,7 @@ class ClientSession {
 }
 ```
 
-Getting the value of `snapshotTime` on a non-snapshot session MUST raise an error.
+Getting the value of `snapshotTime` on a non-snapshot session SHOULD raise an error.
 
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
 MUST raise an error.
