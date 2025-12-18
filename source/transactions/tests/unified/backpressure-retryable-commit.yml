@@ -147,8 +147,7 @@ tests:
           client: *client0
           failPoint:
             configureFailPoint: failCommand
-            mode:
-              times: 5
+            mode: alwaysOn
             data:
               failCommands:
                 - commitTransaction
@@ -170,6 +169,8 @@ tests:
               $$unsetOrMatches: 1
       - object: *session0
         name: commitTransaction
+        expectError:
+          isError: true
     expectEvents:
       - client: *client0
         events:
@@ -218,5 +219,4 @@ tests:
     outcome:
       - collectionName: *collection_name
         databaseName: *database_name
-        documents:
-          - _id: 1
+        documents: []
