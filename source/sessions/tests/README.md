@@ -279,7 +279,7 @@ Drivers SHOULD implement one of the following approaches:
 - Try to access the session's snapshot time.
 - Assert that a client side error was raised.
 
-**Approach 2: Immutability (if error-returning getters are not idiomatic)**
+**Approach 2: Ensure Read-Only (if error-returning getters are not idiomatic)**
 
 - Attempt to mutate the session's `snapshotTime` field through any publicly accessible API.
 - Assert that the original session's `snapshotTime` remains unchanged.
