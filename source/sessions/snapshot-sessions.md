@@ -137,7 +137,8 @@ class ClientSession {
 }
 ```
 
-Getting the value of `snapshotTime` on a non-snapshot session SHOULD raise an error.
+The `snapshotTime` field MUST be immutable; in APIs that expose `snapshotTime` with  a getter, attempting to read it on a
+non-snapshot session MUST raise an error.
 
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
 MUST raise an error.
@@ -270,7 +271,7 @@ C# driver will provide the reference implementation. The corresponding ticket is
 
 ## Changelog
 
-- 2025-12-17: Allow ambiguous snapshotTime access.
+- 2025-12-17: Clarify snapshotTime semantics: the field is immutable, and accessing it on a non-snapshot session is an error.
 - 2025-09-23: Exposed snapshotTime to applications.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2021-06-15: Initial version.
