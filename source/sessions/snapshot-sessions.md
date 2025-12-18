@@ -137,7 +137,8 @@ class ClientSession {
 }
 ```
 
-Getting the value of `snapshotTime` on a non-snapshot session MUST raise an error.
+On a non-snapshot session, the value of snapshotTime is undefined. Drivers SHOULD either raise an error when the
+property is accessed or return an unset value.
 
 Transactions are not allowed with snapshot sessions. Calling `session.startTransaction(options)` on a snapshot session
 MUST raise an error.
@@ -256,6 +257,12 @@ don't have to be changed. This goal is met by defining a `SessionOptions` field 
 it aligns better with the existing API, and requires minimal API changes. Future extensibility for snapshot reads would
 be best served by a session-based approach, as no API changes will be required.
 
+### `snapshotTimeout` must be read-only
+
+Allowing callers to mutate `snapshotTime` enables misuse patterns where applications overwrite `snapshotTime` on an
+existing session and then use that session in transactions, combining an inconsistent timestamp with an existing
+server session and triggering hard-to-diagnose write conflicts.
+
 ## Backwards Compatibility
 
 The API changes to support snapshot reads extend the existing API but do not introduce any backward breaking changes.
@@ -270,6 +277,7 @@ C# driver will provide the reference implementation. The corresponding ticket is
 
 ## Changelog
 
+- 2025-12-18: Make snapshot getter optional.
 - 2025-09-23: Exposed snapshotTime to applications.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2021-06-15: Initial version.
