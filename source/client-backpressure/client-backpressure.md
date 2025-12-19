@@ -102,8 +102,8 @@ collection, getMore, and generic runCommand. The new command execution method ob
         timeout to avoid retry storms.
 5. A retry attempt consumes 1 token from the token bucket.
 6. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
-    the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^i)`
-    - `i` is the retry attempt number (starting with 0 for the first retry).
+    the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^(i - 1))`
+    - `i` is the retry attempt number (starting with 1 for the first retry).
     - `j` is a random jitter value between 0 and 1.
     - `baseBackoff` is constant 100ms.
     - `maxBackoff` is 10000ms.
