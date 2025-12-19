@@ -1,6 +1,8 @@
 description: getMore-retries-backpressure
 schemaVersion: "1.3"
-
+runOnRequirements:
+  -
+    minServerVersion: '4.4' # failCommand
 createEntities:
   - client:
       id: &client client0
