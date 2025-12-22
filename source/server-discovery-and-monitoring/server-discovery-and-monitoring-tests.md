@@ -180,7 +180,9 @@ clear event. We create a setup client to enable the ingress connection establish
 connection storm. After the storm, we verify that some of the connections failed to checkout, but that the pool was not
 cleared.
 
-This test requires MongoDB 7.0+.
+This test requires MongoDB 7.0+. See the
+[MongoDB Server Parameters](https://www.mongodb.com/docs/manual/reference/parameters/#mongodb-parameter-param.ingressConnectionEstablishmentRateLimiterEnabled)
+for more details.
 
 1. Create a test client that listens to CMAP events, with maxConnecting=100. The higher maxConnecting will help ensure
     contention for creating connections.
@@ -205,7 +207,9 @@ This test requires MongoDB 7.0+.
 
 6. Assert that 0 `PoolClearedEvent` occurred.
 
-7. Sleep for 1 second to clear the rate limiter.
+7. Ensure that the following steps run at test teardown even if the test fails:
 
-8. Ensure that the following command runs at test teardown even if the test fails.
+    7.1. Sleep for 1 second to clear the rate limiter.
+
+    7.2. Execute the following command:
     `client.admin("setParameter", 1, ingressConnectionEstablishmentRateLimiterEnabled=False)`.

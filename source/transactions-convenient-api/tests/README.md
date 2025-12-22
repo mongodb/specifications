@@ -97,7 +97,7 @@ Drivers should test that retries within `withTransaction` do not occur immediate
            end = time.monotonic()
            no_backoff_time = end - start
         ```
-5. Compare the two time between the two runs.
+5. Compare the durations of the two runs.
     ```python
     assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 2.2 seconds)) < 1)
     ```
