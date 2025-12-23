@@ -127,7 +127,10 @@ retryable reads and retryable writes specifications. Drivers MUST ensure:
 
 #### Pseudocode
 
-The following pseudocode describes the overload retry policy:
+The following pseudocode demonstrates the unified retry behavior, combining the overload retry policy defined in this
+specification with the existing retry behaviors from [Retryable Reads](../retryable-reads/retryable-reads.md) and
+[Retryable Writes](../retryable-reads/retryable-writes.md). For brevity, some error handling details such as the
+handling of "NoWritesPerformed" are omitted.
 
 ```python
 # Note: the values below have been scaled down by a factor of 1000 because
