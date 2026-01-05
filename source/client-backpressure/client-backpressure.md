@@ -94,12 +94,12 @@ collection, getMore, and generic runCommand. The new command execution method ob
         retry budget tracking, this counts as a success.
 4. A retry attempt will only be permitted if:
     1. The error has both the `SystemOverloadedError` and the `RetryableError` label.
-    2. We have not reached `MAX_ATTEMPTS`.
+    2. We have not reached `MAX_RETRIES`.
+        - The value of `MAX_RETRIES` is 5 and non-configurable.
+        - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within
+            the timeout to avoid retry storms.
     3. (CSOT-only): `timeoutMS` has not expired.
     4. (`SystemOverloadedError` errors only) a token can be acquired from the token bucket.
-    - The value of `MAX_ATTEMPTS` is 5 and non-configurable.
-    - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within the
-        timeout to avoid retry storms.
 5. A retry attempt consumes 1 token from the token bucket.
 6. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
     the following formula: `delayMS = j * min(maxBackoff, baseBackoff * 2^(i - 1))`
@@ -113,17 +113,18 @@ collection, getMore, and generic runCommand. The new command execution method ob
 
 #### Interaction with Existing Retry Behavior
 
-The retryability API defined in this specification is separate from the existing retryability behaviors defined in the
-retryable reads and retryable writes specifications. Drivers MUST ensure:
+The retry policy in this specification is separate from the existing retryability policies defined in the
+[retryable reads](../retryable-reads/retryable-reads.md) and [retryable writes](../retryable-writes/retryable-writes.md)
+specifications. Drivers MUST ensure:
 
 - Only retryable errors with the `SystemOverloadedError` consume tokens from the token bucket before retrying.
-- Only retryable errors with the `SystemOverloadedError` label apply backoff and jitter.
+- Only retryable errors with the `SystemOverloadedError` label apply backoff.
 - All retryable errors apply backoff if they also contain a `SystemOverloadedError` label. This includes:
-    - Errors defined as retryable in the retryable reads specification.
-    - Errors defined as retryable in the retryable writes specification.
+    - Errors defined as retryable in the [retryable reads specification](../retryable-reads/retryable-reads.md).
+    - Errors defined as retryable in the [retryable writes specification](../retryable-writes/retryable-writes.md).
     - Errors with the `RetryableError` label.
-- Any retryable error is retried at most MAX_ATTEMPTS (default=5) times, if any attempts has failed with a
-    `SystemOverloadedError`.
+- Any command is retried at most MAX_ATTEMPTS (default=5) times, if any attempt has failed with a
+    `SystemOverloadedError`, regardless of which retry policy the current or future retry attempts are caused by.
 
 #### Pseudocode
 
@@ -136,10 +137,10 @@ handling of "NoWritesPerformed" are omitted.
 # Note: the values below have been scaled down by a factor of 1000 because
 # Python's sleep API takes a duration in seconds, not milliseconds.
 BASE_BACKOFF = 0.1 # 100ms
-MAX_BACKOFF = 10   # 10s
+MAX_BACKOFF = 10   # 10000ms
 
 RETRY_TOKEN_RETURN_RATE = 0.1
-MAX_ATTEMPTS = 5
+MAX_RETRIES = 5
 
 def execute_command_retryable(command, ...):
     deprioritized_servers = []
@@ -151,7 +152,7 @@ def execute_command_retryable(command, ...):
             server = select_server(deprioritized_servers)
             connection = server.getConnection()
             res = execute_command(connection, command)
-            # Return tokens to the bucket on success.
+            # Deposit tokens into the bucket on success.
             tokens = RETRY_TOKEN_RETURN_RATE
             if attempt > 0:
                 tokens += 1
@@ -171,7 +172,7 @@ def execute_command_retryable(command, ...):
 
             attempt += 1
             if is_overload:
-                attempts = MAX_ATTEMPTS
+                attempts = MAX_RETRIES
 
             if attempt > attempts:
                 raise
