@@ -48,7 +48,7 @@ including (but not limited to) creating, updating, or deleting databases, collec
 
 An error considered retryable by the [Retryable Writes Specification](../retryable-writes/retryable-writes.md).
 
-#### Backpressure Error
+#### Retryable Backpressure Error
 
 An error considered retryable by the [Client Backpressure Specification](../client-backpressure/client-backpressure.md).
 
@@ -559,11 +559,11 @@ a transaction.
 
 In MongoDB 4.0 the only supported retryable write commands within a transaction are commitTransaction and
 abortTransaction. Therefore drivers MUST NOT retry write commands within transactions even when retryWrites has been
-enabled on the MongoClient, unless the server response has backpressure error labels applied.
+enabled on the MongoClient, unless the server response is a retryable backpressure error.
 
 In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs during a write command within a
 transaction (excepting commitTransation and abortTransaction), even when retryWrites has been enabled on the
-MongoClient, unless the server response has backpressure error labels applied.
+MongoClient, unless the server response is a retryable backpressure error.
 
 Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
 MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
@@ -578,15 +578,14 @@ all preceding commands in the transaction.
 ### **Interaction with Client Backpressure**
 
 All commands in a transaction are subject to the
-[Client Backpressure Specification](../client-backpressure/client-backpressure.md), and MUST be retried accordingly when
-the appropriate error labels are added by the server. This includes the initial command with `startTransaction:true`,
-the `abortTransaction` and `commitTransaction` commands, as well as any read or write commands attempted during the
-transaction.
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), and MUST be retried accordingly.
+This includes the initial command with `startTransaction:true`, the `abortTransaction` and `commitTransaction` commands,
+as well as any read or write commands attempted during the transaction.
 
-If a command fails with backpressure labels and it includes `startTransaction:true`, the retried command MUST also
-include `startTransaction:true`.
+If a command fails with a retryable backpressure error and it includes `startTransaction:true`, the retried command MUST
+also include `startTransaction:true`.
 
-If a command fails backpressure retries `MAX_ATTEMPTS` times, it MUST not be retried again, including the
+If a command fails backpressure retries `MAX_RETRIES` times, it MUST not be retried again, including the
 `commitTransaction` command.
 
 ### **Server Commands**
@@ -1064,8 +1063,9 @@ transaction.
 Drivers SHOULD apply a majority write concern when retrying commitTransaction to guard against a transaction being
 applied twice.
 
-Drivers SHOULD NOT modify the write concern on commit transaction commands when retrying a backpressure error, since we
-are sure that the transaction has not been applied.
+Drivers SHOULD NOT modify the write concern on commit transaction commands when retrying a retryable backpressure error.
+A retryable backpressure error indicates no work was performed by the server, and the rationale outlined in this section
+for using majority write concern on retries is therefore irrelevant.
 
 Consider the following scenario:
 
