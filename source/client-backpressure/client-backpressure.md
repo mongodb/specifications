@@ -21,7 +21,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 #### Ingress Connection Rate Limiter
 
-A token-bucket based system introduced in MongoDB 8.2 to admit, reject or queue connection requests. It aims to prevent
+A token bucket based system introduced in MongoDB 8.2 to admit, reject or queue connection requests. It aims to prevent
 connection spikes from overloading the system.
 
 #### Ingress Request Rate Limiter
