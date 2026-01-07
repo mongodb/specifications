@@ -26,7 +26,7 @@ connection spikes from overloading the system.
 
 #### Ingress Request Rate Limiter
 
-A token bucket based system introduced in MongoDB 8.2 to admit an command or reject it with a System Overload Error at
+A token bucket based system introduced in MongoDB 8.2 to admit a command or reject it with a System Overload Error at
 the front door of a mongod/s. It aims to prevent command spikes from overloading the system.
 
 #### MongoTune
