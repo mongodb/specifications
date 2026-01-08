@@ -99,10 +99,10 @@ Drivers should test that retries within `withTransaction` do not occur immediate
         ```
 5. Compare the durations of the two runs.
     ```python
-    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 1.8 seconds)) < 1)
+    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 1.8 seconds)) < 0.5 seconds)
     ```
-    The sum of 13 backoffs is roughly 1.8 seconds. There is a 1-second window to account for potential variance between
-    the two runs.
+    The sum of 13 backoffs is roughly 1.8 seconds. There is a half-second window to account for potential variance
+    between the two runs.
 
 ## Changelog
 
