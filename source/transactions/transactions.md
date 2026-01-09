@@ -350,7 +350,8 @@ transaction, drivers MUST NOT run the commitTransaction command.
 
 commitTransaction is a retryable write command. Drivers MUST retry once after commitTransaction fails with a retryable
 error, including a handshake network error, according to the Retryable Writes Specification, regardless of whether
-retryWrites is set on the MongoClient or not.
+retryWrites is set on the MongoClient or not. If a commitTransaction fails with a retryable backpressure error, the
+command MUST be retried as specified in [Interaction with Client Backpressure](#interaction-with-client-backpressure).
 
 When commitTransaction is retried, either by the driver's internal retry logic or explicitly by the user calling
 commitTransaction again, drivers MUST apply `w: majority` to the write concern of the commitTransaction command. If the
@@ -390,10 +391,11 @@ abortTransaction is a retryable write command. Drivers MUST retry after abortTra
 according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.md), including a handshake
 network error, regardless of whether retryWrites is set on the MongoClient or not.
 
-If the operation times out or fails with a non-retryable error, drivers MUST ignore all errors from the abortTransaction
-command. Errors from abortTransaction are meaningless to the application because they cannot do anything to recover from
-the error. The transaction will ultimately be aborted by the server anyway either upon reaching an age limit or when the
-application starts a new transaction on this session, see
+If the operation times out or fails with a non-retryable error, drivers MUST ignore all errors except for retryable
+backpressure errors (see [Interaction With Client Backpressure](#interaction-with-client-backpressure)) from the
+abortTransaction command. Errors from abortTransaction are meaningless to the application because they cannot do
+anything to recover from the error. The transaction will ultimately be aborted by the server anyway either upon reaching
+an age limit or when the application starts a new transaction on this session, see
 [Drivers ignore all abortTransaction errors](#drivers-ignore-all-aborttransaction-errors).
 
 #### endSession changes
@@ -585,8 +587,9 @@ as well as any read or write commands attempted during the transaction.
 If a command fails with a retryable backpressure error and it includes `startTransaction:true`, the retried command MUST
 also include `startTransaction:true`.
 
-If a command fails backpressure retries `MAX_RETRIES` times, it MUST not be retried again, including the
-`commitTransaction` command.
+If a command fails backpressure retries `MAX_RETRIES` times (see
+[Overload Retry Policy](../client-backpressure/client-backpressure.md#overload-retry-policy)), it MUST NOT be retried
+again, including the `commitTransaction` command.
 
 ### **Server Commands**
 
@@ -1110,7 +1113,7 @@ objective of avoiding duplicate commits.
 
 ## **Changelog**
 
-- 2025-12-18: Specify the handling of client backpressure.
+- 2026-01-09: Specify the handling of client backpressure.
 
 - 2024-11-01: Clarify collection options inside txn.
 
