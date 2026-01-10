@@ -91,14 +91,9 @@ Repeat the above for all methods that take a session parameter.
 
 ### 5. Session argument is for the right client
 
-- Create `client1` and `client2`
-- Get `database` from `client1`
-- Get `collection` from `database`
-- Start `session` from `client2`
-- Call `collection.insertOne(session,...)`
-- Assert that an error was reported because `session` was not started from `client1`
+Removed.
 
-Repeat the above for all methods that take a session parameter.
+Tested in the unified test "driver-sessions-argument-for-correct-client".
 
 ### 6. No further operations can be performed using a session after `endSession` has been called
 
