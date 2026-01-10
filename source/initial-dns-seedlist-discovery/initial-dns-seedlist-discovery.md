@@ -129,6 +129,12 @@ addition, SRV records with fewer than three `.` separated parts, the returned ho
 domain level than the SRV record hostname. Drivers MUST raise an error and MUST NOT initiate a connection to any
 returned hostname which does not fulfill these requirements.
 
+> [!IMPORTANT]
+> The driver verification requirement of host names returned through SRV records sharing the original SRV's `{domainname}`
+> helps ensure that SRV-discovered hosts remain within the same parent domain as the URI. DNS records can be compromised,
+> and without this check, an attacker could redirect clients to a malicious MongoDB instance under a different domain. \
+> Requiring the same parent domain helps ensure that only hosts you control are trusted.
+
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 
 If `srvMaxHosts` is zero or greater than or equal to the number of hosts in the DNS result, the driver MUST populate the
@@ -282,6 +288,9 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2025-10-30: Add an admonition clarifying the design decision from [SPEC-998](https://jira.mongodb.org/browse/SPEC-998)
+    that motivated the `{domainname}` validation requirement for host names within the SRV.
 
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
     matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
