@@ -290,10 +290,10 @@ Endpoint. The pool has the following properties:
     [SDAM error handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling-pseudocode)
     to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
     after the `hello` message. For errors that the driver can distinguish as never occurring due to server overload,
-    such as DNS lookup failures, TLS related errors, or errors encountered establishing a connection to a socks5 proxy,
-    the driver MUST clear the connection pool and MUST mark the server Unknown for these error types. Note that I/O
-    errors such as EOF errors encountered during the TLS handshake MUST be considered retryable and have the error
-    labels applied.
+    such as DNS lookup failures, non I/O-related TLS related errors, or errors encountered establishing a connection to
+    a socks5 proxy, the driver MUST clear the connection pool and MUST mark the server Unknown for these error types.
+    Note that the driver MUST add the backpressure error labels if I/O errors such as EOF errors are encountered during
+    the TLS handshake.
 
 ```typescript
 interface ConnectionPool {
