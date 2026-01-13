@@ -20,21 +20,6 @@ initialData:
 tests:
   - description: apply backpressure on network connection errors during connection establishment
     operations:
-      - name: failPoint
-        object: testRunner
-        arguments:
-          client: setupClient
-          failPoint:
-            configureFailPoint: failCommand
-            mode:
-              # skip first hello to let heartbeat set server to connected state
-              skip: 1
-            data:
-              failCommands:
-                - isMaster
-                - hello
-              appName: backpressureNetworkErrorFailTest
-              closeConnection: true
       - name: createEntities
         object: testRunner
         arguments:
@@ -58,6 +43,26 @@ tests:
                 id: collection
                 database: database
                 collectionName: backpressure-network-error-fail
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: client
+          event:
+            serverHeartbeatSucceededEvent: {}
+          count: 1
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: setupClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: alwaysOn
+            data:
+              failCommands:
+                - isMaster
+                - hello
+              appName: backpressureNetworkErrorFailTest
+              closeConnection: true
       - name: insertMany
         object: collection
         arguments:

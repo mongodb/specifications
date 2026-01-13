@@ -39,28 +39,6 @@
       "description": "apply backpressure on network timeout error during connection establishment",
       "operations": [
         {
-          "name": "failPoint",
-          "object": "testRunner",
-          "arguments": {
-            "client": "setupClient",
-            "failPoint": {
-              "configureFailPoint": "failCommand",
-              "mode": {
-                "skip": 1
-              },
-              "data": {
-                "failCommands": [
-                  "isMaster",
-                  "hello"
-                ],
-                "blockConnection": true,
-                "blockTimeMS": 500,
-                "appName": "backpressureNetworkTimeoutErrorTest"
-              }
-            }
-          }
-        },
-        {
           "name": "createEntities",
           "object": "testRunner",
           "arguments": {
@@ -98,6 +76,37 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "name": "waitForEvent",
+          "object": "testRunner",
+          "arguments": {
+            "client": "client",
+            "event": {
+              "serverDescriptionChangedEvent": {}
+            },
+            "count": 1
+          }
+        },
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "setupClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": "alwaysOn",
+              "data": {
+                "failCommands": [
+                  "isMaster",
+                  "hello"
+                ],
+                "blockConnection": true,
+                "blockTimeMS": 500,
+                "appName": "backpressureNetworkTimeoutErrorTest"
+              }
+            }
           }
         },
         {
