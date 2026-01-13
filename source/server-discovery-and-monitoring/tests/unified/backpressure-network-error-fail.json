@@ -39,6 +39,27 @@
       "description": "apply backpressure on network connection errors during connection establishment",
       "operations": [
         {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "setupClient",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "skip": 1
+              },
+              "data": {
+                "failCommands": [
+                  "isMaster",
+                  "hello"
+                ],
+                "appName": "backpressureNetworkErrorFailTest",
+                "closeConnection": true
+              }
+            }
+          }
+        },
+        {
           "name": "createEntities",
           "object": "testRunner",
           "arguments": {
@@ -74,36 +95,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "name": "waitForEvent",
-          "object": "testRunner",
-          "arguments": {
-            "client": "client",
-            "event": {
-              "serverHeartbeatSucceededEvent": {}
-            },
-            "count": 1
-          }
-        },
-        {
-          "name": "failPoint",
-          "object": "testRunner",
-          "arguments": {
-            "client": "setupClient",
-            "failPoint": {
-              "configureFailPoint": "failCommand",
-              "mode": "alwaysOn",
-              "data": {
-                "failCommands": [
-                  "isMaster",
-                  "hello"
-                ],
-                "appName": "backpressureNetworkErrorFailTest",
-                "closeConnection": true
-              }
-            }
           }
         },
         {
