@@ -683,7 +683,9 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 ## Changelog
 
-- 2026-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
+- 2026-01-14: Clarified that server deprioritization during retries must use a list of server addresses.
+
+- 2025-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 
