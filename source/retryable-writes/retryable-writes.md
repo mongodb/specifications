@@ -325,10 +325,12 @@ retrying is not possible and drivers MUST raise the retryable error from the pre
 is able to infer that an attempt was made.
 
 If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
-[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)). If an error
-would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
-driver) or the error is labeled "NoWritesPerformed", the error from the previous attempt should be raised. If all server
-errors are labeled "NoWritesPerformed", then the first error should be raised.
+[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)).
+
+If an error would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating
+from the driver) or the error is labeled "NoWritesPerformed", the most recently encountered error that does not contain
+a "NoWritesPerformed" label MUST be returned instead. If all server errors are labeled "NoWritesPerformed", then the
+first error should be raised.
 
 If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
 that the reported server information corresponds to the server that originated the error.
@@ -681,7 +683,9 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 ## Changelog
 
-- 2026-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
+- 2026-01-14: Clarify which error to return when more than one error with the `NoWritesPerformed` label is encountered.
+
+- 2025-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 
