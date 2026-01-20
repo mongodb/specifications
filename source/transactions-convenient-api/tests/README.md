@@ -97,15 +97,16 @@ Drivers should test that retries within `withTransaction` do not occur immediate
            end = time.monotonic()
            no_backoff_time = end - start
         ```
-5. Compare the two time between the two runs.
+5. Compare the durations of the two runs.
     ```python
-    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 2.2 seconds)) < 1)
+    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 1.8 seconds)) < 0.5 seconds)
     ```
-    The sum of 13 backoffs is roughly 2.2 seconds. There is a 1-second window to account for potential variance between
-    the two runs.
+    The sum of 13 backoffs is roughly 1.8 seconds. There is a half-second window to account for potential variance
+    between the two runs.
 
 ## Changelog
 
+- 2026-01-07: Fixed Retry Backoff is Enforced test accordingly to the updated spec.
 - 2025-11-18: Added Backoff test.
 - 2024-09-06: Migrated from reStructuredText to Markdown.
 - 2024-02-08: Converted legacy tests to unified format.

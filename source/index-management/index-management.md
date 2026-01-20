@@ -1198,6 +1198,8 @@ from mistakenly specifying this option, drivers manually verify it is only sent 
 
 #### Changelog
 
+- 2025-12-18: Search index tests only assert `latestDefinition.mappings.dynamic` values.
+
 - 2025-09-09: Clarify that `rawData` is for internal use only.
 
 - 2025-06-27: Added `rawData` option to CreateIndexOptions, DropIndexOptions and ListIndexesOptions.
