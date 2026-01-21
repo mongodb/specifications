@@ -732,7 +732,7 @@ TBD: generated datasets should be park in S3 or somewhere for retrieval by URL
 
 ## Changelog
 
-- 2026-01-21: Update deep_bson.json for compatibility with strong typed benchmarks.
+- 2026-01-21: Update `deep_bson.json` for compatibility with strong typed benchmarks.
 
 - 2024-12-23: Add Client and Collection BulkWrite benchmarks
 
