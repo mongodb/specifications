@@ -26,8 +26,10 @@ connection spikes from overloading the system.
 
 #### Ingress Request Rate Limiter
 
-A token bucket based system introduced in MongoDB 8.2 to admit a command or reject it with a System Overload Error at
-the front door of a mongod/s. It aims to prevent command spikes from overloading the system.
+A token bucket based system introduced in MongoDB 8.2 to admit a command or reject it with an overload error at the
+front door of a mongod/s. It aims to prevent command spikes from overloading the system.
+
+The ingress operation rate limiter only applies to commands sent on authenticated connections.
 
 #### MongoTune
 
@@ -42,13 +44,15 @@ metadata, or any of its arguments.
 
 #### SystemOverloadedError label
 
-An error is considered overloaded if it includes the `SystemOverloadedError` label. This error label indicates that the
-server is overloaded. If this error label is present, drivers will backoff before attempting a retry.
+An error is considered to be an overload error if it contains the `SystemOverloadedError` label. This error label
+indicates that the server is overloaded. If this error label is present, drivers will backoff before attempting a retry.
 
-#### Overload Errors
+#### Retryable Overload Error
 
-An overload error is any command or network error that occurs due to a server overload. For example, when a request
-exceeds the ingress request rate limit:
+An error which indicates that it is an overload error (contains the `SystemOverloadedError` label) and contains the
+`RetryableError` label.
+
+For example, when a request exceeds the ingress request rate limit, the following error may be returned:
 
 ```js
 {
@@ -60,8 +64,8 @@ exceeds the ingress request rate limit:
 }
 ```
 
-Note that there is no guarantee that all errors with the `SystemOverloadedError` label can be retried nor that all
-errors with the `RetryableError` label also have the `SystemOverloadedError` error label.
+Note that an error is not guaranteed to contain both the SystemOverloadedError and the RetryableError labels, if it has
+one of them.
 
 #### Goodput
 
@@ -74,20 +78,24 @@ See [goodput](https://en.wikipedia.org/wiki/Goodput).
 
 #### Overload retry policy
 
-This specification expands the driver's retry ability to all commands if the error indicates that it is both an overload
-error and that it is retryable, including those not eligible for retry under the read/write retry policies such as
+This specification expands the driver's retry ability to all commands if the error indicates that it is a retryable
+overload error, including those not eligible for retry under the
+[read](../retryable-writes/retryable-reads.md)/[write](../retryable-writes/retryable-writes.md) retry policies such as
 updateMany, create collection, getMore, and generic runCommand. The new command execution method obeys the following
 rules:
 
-1. If the command succeeds on the first attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE` tokens.
+1. `attempt` is the execution attempt number (starting with 0). Note that `attempt` includes retries for errors that do
+    not contain the `SystemOverloadedError` error label (this might include attempts under other retry policies, see
+    [Interactions with Other Retry Policies](./client-backpressure.md#interaction-with-other-retry-policies)).
+2. If the command succeeds on the first attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE` tokens.
     - The value is 0.1 and non-configurable.
-2. If the command succeeds on a retry attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE`+1 tokens.
-3. If a retry attempt fails with an error that does not include `SystemOverloadedError` label, drivers MUST deposit 1
+3. If the command succeeds on a retry attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE`+1 tokens.
+4. If a retry attempt fails with an error that does not contain `SystemOverloadedError` label, drivers MUST deposit 1
     token.
-    - An error without the `SystemOverloaded` error label indicates that the server is healthy enough to handle requests.
-        For the purposes of retry budget tracking, this counts as a success.
-4. A retry attempt will only be permitted if:
-    1. The error has both the `SystemOverloadedError` and the `RetryableError` error labels.
+    - An error that does not contain the `SystemOverloadedError` error label indicates that the server is healthy enough
+        to handle requests. For the purposes of retry budget tracking, this counts as a success.
+5. A retry attempt will only be permitted if:
+    1. The error is a retryable overload error.
     2. We have not reached `MAX_RETRIES`.
         - The value of `MAX_RETRIES` is 5 and non-configurable.
         - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within
@@ -96,24 +104,39 @@ rules:
         [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md)
         specification.
     4. A token can be consumed from the token bucket.
-5. A retry attempt consumes 1 token from the token bucket.
-6. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
-    the following formula: `backoff = j * min(maxBackoff, baseBackoff * 2^(i - 1))`
-    - `i` is the retry attempt number (starting with 1 for the first retry). Note that `i` includes retries for errors
-        without the `SystemOverloaded` error label.
+6. A retry attempt consumes 1 token from the token bucket.
+7. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
+    the following formula: `backoff = jitter * min(maxBackoff, baseBackoff * 2^(attempt - 1))`
     - `jitter` is a random jitter value between 0 and 1.
-    - `BASE_BACKOFF` is constant 100ms.
-    - `MAX_BACKOFF` is 10000ms.
+    - `baseBackoff` is constant 100ms.
+    - `maxBackoff` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-7. If the request is eligible for retry (as outlined in step 4), the client MUST add the previously used server's
+8. If the request is eligible for retry (as outlined in step 4), the client MUST add the previously used server's
     address to the list of deprioritized server addresses for server selection.
-8. If the request is eligible for retry (as outlined in step 4) and is a retryable write:
-    1. If the command is a part of a transaction, it MUST NOT be modified for retry, as outlined in the
-        [transactions](../transactions/transactions.md#interaction-with-retryable-writes).
-    2. If the command is a not a part of a transaction, it MUST be modified for retry, as outlined
+9. If the request is eligible for retry (as outlined in step 4) and is a retryable write:
+    1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
+        transactions MUST be followed, as outlined in the
+        [transactions](../transactions/transactions.md#interaction-with-retryable-writes) specification.
+    2. If the command is a not a part of a transaction, the instructions for command modification on retry for commands
+        in for retryable writes MUST be followed, as outlined in the
         [retryable writes](../retryable-writes/retryable-writes.md) specifications.
-9. If the request is not eligible for any retries, then the client MUST propagate the most recently encountered error
-    that does not have the NoWritesPerformed error label.
+10. If the request is not eligible for any retries, then the client MUST propagate errors following the behaviors
+    described in the [retryable reads](../retryable-reads/retryable-reads.md) and
+    [retryable writes](../retryable-writes/retryable-writes.md).
+
+##### Relevant driver processes
+
+The retry policy defined above is only relevant for commands sent on authenticated connections, which
+
+- any user-facing API which wraps a server command (i.e., a CRUD command or runCommand)
+- cursors and change streams (including getMores and killCursors)
+- APIs which might perform multiple operations internally (such rewrapManyDataKey(), which performs a find() and a bulk
+    update)
+
+APIs not subject to the overload retry policy include commands executed on unauthenticated connections:
+
+- monitoring commands and round-trip time pingers
+- commands executed during authentication (i.e., `saslStart`)
 
 #### Interaction with Other Retry Policies
 
@@ -121,19 +144,17 @@ The retry policy in this specification is separate from the other retry policies
 [retryable reads](../retryable-reads/retryable-reads.md) and [retryable writes](../retryable-writes/retryable-writes.md)
 specifications. Drivers MUST ensure:
 
-- When a failed attempt is retried, backoff must be applied if and only if the attempt error has the
+- Only errors with the `SystemOverloadedError` consume tokens from the token bucket before retrying.
+- When a failed attempt is retried, backoff must be applied if and only if the attempt error contains the
     `SystemOverloadedError` label.
-- All retryable errors apply backoff if they also contain a `SystemOverloadedError` label. This includes:
-    - Errors defined as retryable in the [retryable reads specification](../retryable-reads/retryable-reads.md).
-    - Errors defined as retryable in the [retryable writes specification](../retryable-writes/retryable-writes.md).
-    - Errors with the `RetryableError` label.
-- Any command may be retried at most MAX_RETRIES (default=5) times, if any attempt has failed with a
-    `SystemOverloadedError`, regardless of which retry policy the current or future retry attempts are caused by.
+- If an overload error is encountered, a command may be retried at most `MAX_RETRIES` times, regardless of which retry
+    policy the current or future retry attempts are caused by. If a command under CSOT has already retried more than
+    `MAX_RETRIES` times before encountering a retryable overload error, the command must not be retried further.
 
 #### Pseudocode
 
 The following pseudocode demonstrates the unified retry policy, combining the overload retry policy defined in this
-specification with the existing retry policies from [Retryable Reads](../retryable-reads/retryable-reads.md) and
+specification with the retry policies from [Retryable Reads](../retryable-reads/retryable-reads.md) and
 [Retryable Writes](../retryable-writes/retryable-writes.md). For brevity, some error handling details such as the
 handling of "NoWritesPerformed" are omitted.
 
@@ -163,8 +184,8 @@ def execute_command_retryable(command, ...):
             token_bucket.deposit(tokens)
             return res
         except PyMongoError as exc:
-            is_retryable = is_retryable_write() or is_retryable_read() or (exc.has_error_label("RetryableError") and exc.has_error_label("SystemOverloadedError"))
-            is_overload = exc.has_error_label("SystemOverloadedError")
+            is_retryable = is_retryable_write() or is_retryable_read() or (exc.contains_error_label("RetryableError") and exc.contains_error_label("SystemOverloadedError"))
+            is_overload = exc.contains_error_label("SystemOverloadedError")
 
             # if a retry fails with an error which is not an overload error, deposit 1 token
             if attempt > 0 and not is_overload:
@@ -200,10 +221,10 @@ def execute_command_retryable(command, ...):
 
 ### Token Bucket
 
-The overload retry policy introduces a per-client token bucket to limit overload error retry attempts. Although the
-server rejects excess commands as quickly as possible, doing so costs CPU and creates extra contention on the connection
-pool which can eventually negatively affect goodput. To reduce this risk, the token bucket will limit retry attempts
-during a prolonged overload.
+The overload retry policy introduces a per-client [token bucket](https://en.wikipedia.org/wiki/Token_bucket) to limit
+overload error retry attempts. Although the server rejects excess commands as quickly as possible, doing so costs CPU
+and creates extra contention on the connection pool which can eventually negatively affect goodput. To reduce this risk,
+the token bucket will limit retry attempts during a prolonged overload.
 
 The token bucket capacity is set to 1000 for consistency with the server.
 
@@ -260,11 +281,11 @@ retry attempts for load shed commands. This specification does not define a form
 [Command Logging and Monitoring](../command-logging-and-monitoring/command-logging-and-monitoring.md) specification,
 drivers MUST guarantee that each `CommandStartedEvent` has either a correlating `CommandSucceededEvent` or
 `CommandFailedEvent` and that every "command started" log message has either a correlating "command succeeded" log
-message or "command failed" log message. If the first attempt of a retryable command encounters a retryable error,
-drivers MUST fire a `CommandFailedEvent` and emit a "command failed" log message for the retryable error and fire a
-separate `CommandStartedEvent` and emit a separate "command started" log message when executing the subsequent retry
-attempt. Note that the second `CommandStartedEvent` and "command started" log message may have a different
-`connectionId`, since a server is reselected for a retry attempt.
+message or "command failed" log message. If an attempt of a retryable command encounters a retryable error, drivers MUST
+fire a `CommandFailedEvent` and emit a "command failed" log message for the retryable error and fire a separate
+`CommandStartedEvent` and emit a separate "command started" log message when executing the subsequent retry attempt.
+Note that for retries, `CommandStartedEvent`s and "command started" log message may have different `connectionId`s,
+since a server is reselected for a retry attempt.
 
 ### Documentation
 
@@ -285,8 +306,7 @@ number of errors users see during spikes or burst workloads and help prevent ret
 However, older drivers do not have this benefit. Drivers MUST document that:
 
 - Users SHOULD upgrade to driver versions that officially support backpressure to avoid any impacts of server changes.
-- Users who do not upgrade might need to update application error handling to handle higher error rates of overload
-    errors.
+- Users who do not upgrade might need to update application error handling to handle higher rates of overload errors.
 
 ## Test Plan
 
@@ -333,8 +353,11 @@ for logical reasons. So, when determining the number of retries an operation sho
 
 The maximum retry attempt logic in this specification balances legacy retryability behavior with load-shedding behavior:
 
-- Relying on either 1 or infinite retries (depending on whether CSOT enabled or not) preserves existing retry behavior
-    when no overload errors are encountered.
+- Relying on either 1 or infinite retries (depending on whether CSOT enabled or not) preserves retry behaviors defined
+    in the [retryable reads](../retryable-reads/retryable-reads.md),
+    [retryable writes](../retryable-writes/retryable-writes.md) and
+    [CSOT](../client-side-operations-timeout/client-side-operations-timeout.md) specifications when no overload errors are
+    encountered.
 - Adjusting the maximum number of retry attempts to 5 if an overload error is returned from the server gives requests
     more opportunities to succeed and helps reduce application errors.
 - An alternative approach would be to retry once if we don't receive an overload error, in which case we'd retry 5
