@@ -327,10 +327,13 @@ is able to infer that an attempt was made.
 If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
 [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)).
 
-If an error would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating
-from the driver) or the error is labeled "NoWritesPerformed", the most recently encountered error that does not contain
-a "NoWritesPerformed" label MUST be returned instead. If all server errors are labeled "NoWritesPerformed", then the
-first error should be raised.
+If the driver is unable to retry an operation, an error MUST be returned to the user in the following manner:
+
+- If the most recently encountered error would not allow the caller to infer that an attempt was made (e.g. connection
+    pool exception originating from the driver) or the error is labeled "NoWritesPerformed", the most recently
+    encountered error that does not contain a "NoWritesPerformed" label MUST be returned instead.
+- If all server errors are labeled "NoWritesPerformed", then the first error should be raised.
+- Otherwise, return the most recently encountered error.
 
 If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
 that the reported server information corresponds to the server that originated the error.
