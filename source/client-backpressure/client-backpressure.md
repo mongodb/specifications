@@ -106,10 +106,10 @@ rules:
     4. A token can be consumed from the token bucket.
 6. A retry attempt consumes 1 token from the token bucket.
 7. If the request is eligible for retry (as outlined in step 4), the client MUST apply exponential backoff according to
-    the following formula: `backoff = jitter * min(maxBackoff, baseBackoff * 2^(attempt - 1))`
+    the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
     - `jitter` is a random jitter value between 0 and 1.
-    - `baseBackoff` is constant 100ms.
-    - `maxBackoff` is 10000ms.
+    - `BASE_BACKOFF` is constant 100ms.
+    - `MAX_BACKOFF` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
 8. If the request is eligible for retry (as outlined in step 4), the client MUST add the previously used server's
     address to the list of deprioritized server addresses for server selection.
@@ -117,12 +117,13 @@ rules:
     1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
         transactions MUST be followed, as outlined in the
         [transactions](../transactions/transactions.md#interaction-with-retryable-writes) specification.
-    2. If the command is a not a part of a transaction, the instructions for command modification on retry for commands
-        in for retryable writes MUST be followed, as outlined in the
-        [retryable writes](../retryable-writes/retryable-writes.md) specifications.
+    2. If the command is a not a part of a transaction, the instructions for command modification on retry for retryable
+        writes MUST be followed, as outlined in the [retryable writes](../retryable-writes/retryable-writes.md)
+        specification.
 10. If the request is not eligible for any retries, then the client MUST propagate errors following the behaviors
-    described in the [retryable reads](../retryable-reads/retryable-reads.md) and
-    [retryable writes](../retryable-writes/retryable-writes.md).
+    described in the [retryable reads](../retryable-reads/retryable-reads.md),
+    [retryable writes](../retryable-writes/retryable-writes.md) and the
+    [transactions](../transactions/transactions.md) specifications.
 
 ##### Relevant driver processes
 
@@ -144,12 +145,11 @@ The retry policy in this specification is separate from the other retry policies
 [retryable reads](../retryable-reads/retryable-reads.md) and [retryable writes](../retryable-writes/retryable-writes.md)
 specifications. Drivers MUST ensure:
 
-- Only errors with the `SystemOverloadedError` consume tokens from the token bucket before retrying.
+- Only errors that contain the `SystemOverloadedError` consume tokens from the token bucket before retrying.
 - When a failed attempt is retried, backoff must be applied if and only if the attempt error contains the
     `SystemOverloadedError` label.
-- If an overload error is encountered, a command may be retried at most `MAX_RETRIES` times, regardless of which retry
-    policy the current or future retry attempts are caused by. If a command under CSOT has already retried more than
-    `MAX_RETRIES` times before encountering a retryable overload error, the command must not be retried further.
+- If an overload error is encountered, the maximum number of retries for any retry policy becomes MAX_RETRIES. If CSOT
+    is enabled and a command has already retried more than MAX_RETRIES times, it MUST NOT be retried further.
 
 #### Pseudocode
 
@@ -206,7 +206,7 @@ def execute_command_retryable(command, ...):
 
             if is_overload:
                 jitter = random.random() # Random float between [0.0, 1.0).
-                backoff = jitter * min(BASE_BACKOFF * (2 ** attempt - 1), MAX_BACKOFF)
+                backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2 ** (attempt - 1))
           
                 # If the delay exceeds the deadline, bail early.
                 if _csot.get_timeout():
@@ -351,7 +351,9 @@ for logical reasons. So, when determining the number of retries an operation sho
 - If the command ultimately would have failed if it had not been load shed by the server, returning an actionable error
     message is preferable to a generic overload error.
 
-The maximum retry attempt logic in this specification balances legacy retryability behavior with load-shedding behavior:
+The maximum retry attempt logic in this specification balances retry policies described in the
+[retryable reads](../retryable-reads/retryable-reads.md) and [retryable writes](../retryable-writes/retryable-writes.md)
+specifications with load-shedding behavior:
 
 - Relying on either 1 or infinite retries (depending on whether CSOT enabled or not) preserves retry behaviors defined
     in the [retryable reads](../retryable-reads/retryable-reads.md),

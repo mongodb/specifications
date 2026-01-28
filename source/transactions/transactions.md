@@ -386,7 +386,9 @@ transaction, drivers MUST NOT run the abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry after abortTransaction fails with a retryable error
 according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.md), including a handshake
-network error, regardless of whether retryWrites is set on the MongoClient or not.
+network error, regardless of whether retryWrites is set on the MongoClient or not. If a abortTransaction fails with a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), the command MUST be
+retried as specified in [Interaction with Client Backpressure](#interaction-with-client-backpressure).
 
 If the operation times out or fails with a non-retryable error, drivers MUST NOT propagate errors from the
 `abortTransaction` abortTransaction command. Errors from abortTransaction are meaningless to the application because
@@ -585,10 +587,6 @@ as well as any read or write commands attempted during the transaction.
 If executing the first command within a transaction fails with a
 [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), and another attempt
 is executed, the command executed in the retry attempt must be treated as the first command within a transaction.
-
-If a command fails backpressure retries `MAX_RETRIES` times (see
-[Overload Retry Policy](../client-backpressure/client-backpressure.md#overload-retry-policy)), it MUST NOT be retried
-again, including the `commitTransaction` command.
 
 ### **Server Commands**
 
