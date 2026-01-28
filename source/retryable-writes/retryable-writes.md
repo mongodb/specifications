@@ -327,13 +327,20 @@ is able to infer that an attempt was made.
 If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
 [Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)).
 
-If the driver is unable to retry an operation, an error MUST be returned to the user in the following manner:
+If the driver is unable to retry an operation, an error MUST be returned to the user. Some errors that a driver
+encounters indicate that no writes were attempted (i.e., the operation is a no-op). These errors include any client-side
+error that occurs before a command is sent (e.g., a server selection or connection checkout error) or any server error
+with the `NoWritesPerformed` error label. When the driver encounters multiple errors, the driver MUST ensure that if an
+error has been encountered which indicates that a write was attempted, this error is returned. This behavior is
+summarized below in the following rules:
 
-- If the most recently encountered error would not allow the caller to infer that an attempt was made (e.g. connection
-    pool exception originating from the driver) or the error is labeled "NoWritesPerformed", the most recently
-    encountered error that does not contain a "NoWritesPerformed" label MUST be returned instead.
-- If all server errors are labeled "NoWritesPerformed", then the first error should be raised.
-- Otherwise, return the most recently encountered error.
+- If the driver has encountered only errors that indicate write attempts were made, the most recently encountered error
+    must be returned.
+- If all errors indicate no attempt was made (e.g., all errors contain the `NoWritesPerformed` error label or are
+    client-side errors before a command is sent), the first error encountered must be returned.
+- If the driver has encountered some errors which indicate a write attempt was made and some which indicate no write
+    attempt was made (e.g., a retryable server error followed by a checkout error), the most recently encountered error
+    which indicates a write attempt occurred must be returned.
 
 If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
 that the reported server information corresponds to the server that originated the error.
