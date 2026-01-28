@@ -346,7 +346,9 @@ transaction, drivers MUST NOT run the commitTransaction command.
 
 commitTransaction is a retryable write command. Drivers MUST retry once after commitTransaction fails with a retryable
 error, including a handshake network error, according to the Retryable Writes Specification, regardless of whether
-retryWrites is set on the MongoClient or not.
+retryWrites is set on the MongoClient or not. If a commitTransaction fails with a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), the command MUST be
+retried as specified in [Interaction with Client Backpressure](#interaction-with-client-backpressure).
 
 When commitTransaction is retried, either by the driver's internal retry logic or explicitly by the user calling
 commitTransaction again, drivers MUST apply `w: majority` to the write concern of the commitTransaction command. If the
@@ -384,12 +386,14 @@ transaction, drivers MUST NOT run the abortTransaction command.
 
 abortTransaction is a retryable write command. Drivers MUST retry after abortTransaction fails with a retryable error
 according to the [Retryable Writes Specification](../retryable-writes/retryable-writes.md), including a handshake
-network error, regardless of whether retryWrites is set on the MongoClient or not.
+network error, regardless of whether retryWrites is set on the MongoClient or not. If a abortTransaction fails with a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), the command MUST be
+retried as specified in [Interaction with Client Backpressure](#interaction-with-client-backpressure).
 
-If the operation times out or fails with a non-retryable error, drivers MUST ignore all errors from the abortTransaction
-command. Errors from abortTransaction are meaningless to the application because they cannot do anything to recover from
-the error. The transaction will ultimately be aborted by the server anyway either upon reaching an age limit or when the
-application starts a new transaction on this session, see
+If the operation times out or fails with a non-retryable error, drivers MUST NOT propagate errors from the
+`abortTransaction` abortTransaction command. Errors from abortTransaction are meaningless to the application because
+they cannot do anything to recover from the error. The transaction will ultimately be aborted by the server anyway
+either upon reaching an age limit or when the application starts a new transaction on this session, see
 [Drivers ignore all abortTransaction errors](#drivers-ignore-all-aborttransaction-errors).
 
 #### endSession changes
@@ -555,9 +559,13 @@ a transaction.
 
 In MongoDB 4.0 the only supported retryable write commands within a transaction are commitTransaction and
 abortTransaction. Therefore drivers MUST NOT retry write commands within transactions even when retryWrites has been
-enabled on the MongoClient. In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs
-during a write command within a transaction (excepting commitTransation and abortTransaction), even when retryWrites has
-been enabled on the MongoClient.
+enabled on the MongoClient, unless the server response is a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error).
+
+In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs during a write command within a
+transaction (excepting commitTransation and abortTransaction), even when retryWrites has been enabled on the
+MongoClient, unless the server response is a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error).
 
 Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
 MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
@@ -568,6 +576,17 @@ Retryable writes and transactions both use the `txnNumber` associated with a Ser
 incremented at the start and then stays constant, even for retryable operations within the transaction. When executing
 the commitTransaction and abortTransaction commands within a transaction drivers MUST use the same `txnNumber` used for
 all preceding commands in the transaction.
+
+### **Interaction with Client Backpressure**
+
+All commands in a transaction are subject to the
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), and MUST be retried accordingly.
+This includes the initial command with `startTransaction:true`, the `abortTransaction` and `commitTransaction` commands,
+as well as any read or write commands attempted during the transaction.
+
+If executing the first command within a transaction fails with a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), and another attempt
+is executed, the command executed in the retry attempt must be treated as the first command within a transaction.
 
 ### **Server Commands**
 
@@ -1041,8 +1060,12 @@ transaction.
 
 ### Majority write concern is used when retrying commitTransaction
 
-Drivers should apply a majority write concern when retrying commitTransaction to guard against a transaction being
-applied twice.
+When retrying commitTransaction, drivers SHOULD use a majority write concern to ensure the transaction is not applied
+twice. However, drivers SHOULD NOT use a majority write concern when retrying after a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), unless a prior
+commitTransaction attempt failed with another error type. Since a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error) means the server did
+not perform any work, the need for majority write concern on retries is not relevant.
 
 Consider the following scenario:
 
@@ -1086,6 +1109,8 @@ has been disabled, drivers can readily trust that a majority write concern is du
 objective of avoiding duplicate commits.
 
 ## **Changelog**
+
+- 2026-01-09: Specify the handling of client backpressure.
 
 - 2024-11-01: Clarify collection options inside txn.
 
