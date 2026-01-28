@@ -262,6 +262,66 @@ debugger, code coverage tool, etc.
 
 7. Disable the fail point on `s0`.
 
+### 6. Test that drivers return the original error after encountering multiple WriteConcernErrors with a RetryableWriteError label.
+
+This test MUST:
+
+- be implemented by any driver that implements the Command Monitoring specification,
+- only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
+- be run against server versions 6.0 and above.
+- be implemented by any driver that has implemented the Client Backpressure specification.
+
+Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the subsequent
+retry. Drivers that are unable to set a failCommand after the CommandFailedEvent SHOULD use mocking or write a unit test
+to cover the same sequence of events.
+
+1. Create a client with `retryWrites=true`.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError", "NoWritesPerformed"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `10107` (NotWritablePrimary)
+    and a NoWritesPerformed label:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["insert"],
+            errorCode: 10107,
+            errorLabels: ["RetryableError", "SystemOverloadedError", , "NoWritesPerformed"]
+        }
+    }
+    ```
+
+    Drivers SHOULD only configure the `10107` fail point command if the the failed event is for the `91` error configured
+    in step 2.
+
+4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
+    server error. Assert that the error code of the server error is 91.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
 ## Changelog
 
 - 2024-10-29: Convert command construction tests to unified format.
