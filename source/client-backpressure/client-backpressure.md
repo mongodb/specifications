@@ -10,6 +10,12 @@ ______________________________________________________________________
 This specification adds the ability for drivers to automatically retry requests that fail due to server overload errors
 while applying backpressure to avoid further overloading the server.
 
+The retry behaviors defined in this specification are separate from and complementary to the retry behaviors defined in
+the [Retryable Reads](../retryable-reads/retryable-reads.md) and
+[Retryable Writes](../retryable-writes/retryable-writes.md) specifications. This specification expands retry support to
+all commands when specific server overload conditions are encountered, regardless of whether the command would normally
+be retryable under those specifications.
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -64,8 +70,8 @@ For example, when a request exceeds the ingress request rate limit, the followin
 }
 ```
 
-Note that an error is not guaranteed to contain both the `SystemOverloadedError` and the `RetryableError` labels, if it
-contains one of them.
+Note that an error is not guaranteed to contain both the `SystemOverloadedError` and the `RetryableError` labels just
+because it contains one of them.
 
 #### Goodput
 
@@ -75,6 +81,24 @@ that the driver processes per unit of time.
 See [goodput](https://en.wikipedia.org/wiki/Goodput).
 
 ### Requirements for Client Backpressure
+
+#### Driver mechanisms subject to the retry policy
+
+Commands sent by the driver to the server are subject to the retry policy defined in this specification unless the
+command is included in the exceptions below.
+
+Driver commands not subject to the overload retry policy:
+
+- [monitoring commands](../server-discovery-and-monitoring/server-monitoring.md#monitoring) and
+    [round-trip time pingers](../server-discovery-and-monitoring/server-monitoring.md#measuring-rtt) (see
+    [Why not apply the overload retry policy to monitoring and RTT connections?](./client-backpressure.md#why-not-apply-the-overload-retry-policy-to-monitoring-and-rtt-connections))
+- commands executed during [authentication](../auth/auth.md) (see
+    [Why not apply the overload policy to authentication commands or reauthentication commands?](./client-backpressure.md#why-not-apply-the-overload-policy-to-authentication-commands-or-reauthentication-commands))
+
+Note: Drivers communicate with [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) using the
+driver's `runCommand()` API. Consequently, drivers will implicitly apply the retry policy to communication with
+mongocryptd, although practice the retry policy would never be unused because mongocryptd connections are not
+authenticated.
 
 #### Overload retry policy
 
@@ -112,9 +136,10 @@ rules:
     - `BASE_BACKOFF` is constant 100ms.
     - `MAX_BACKOFF` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-8. If the request is eligible for retry (as outlined in step 4), the client MUST add the previously used server's
-    address to the list of deprioritized server addresses for server selection.
-9. If the request is eligible for retry (as outlined in step 4) and is a retryable write:
+8. If the request is eligible for retry (as outlined in step 5), the client MUST add the previously used server's
+    address to the list of deprioritized server addresses for
+    [server selection](../server-selection/server-selection.md).
+9. If the request is eligible for retry (as outlined in step 5) and is a retryable write:
     1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
         transactions MUST be followed, as outlined in the
         [transactions](../transactions/transactions.md#interaction-with-retryable-writes) specification.
@@ -125,20 +150,6 @@ rules:
     described in the [retryable reads](../retryable-reads/retryable-reads.md),
     [retryable writes](../retryable-writes/retryable-writes.md) and the
     [transactions](../transactions/transactions.md) specifications.
-
-##### Relevant driver processes
-
-The retry policy defined above is only relevant for commands sent on authenticated connections, which
-
-- any user-facing API which wraps a server command (i.e., a CRUD command or runCommand)
-- cursors and change streams (including getMores and killCursors)
-- APIs which might perform multiple operations internally (such rewrapManyDataKey(), which performs a find() and a bulk
-    update)
-
-Driver processes not subject to the overload retry policy include commands executed on unauthenticated connections:
-
-- monitoring commands and round-trip time pingers
-- commands executed during authentication (i.e., `saslStart`)
 
 #### Interaction with Other Retry Policies
 
@@ -157,8 +168,8 @@ specifications. Drivers MUST ensure:
 
 The following pseudocode demonstrates the unified retry policy, combining the overload retry policy defined in this
 specification with the retry policies from [Retryable Reads](../retryable-reads/retryable-reads.md) and
-[Retryable Writes](../retryable-writes/retryable-writes.md). For brevity, some error handling details such as the
-handling of "NoWritesPerformed" are omitted.
+[Retryable Writes](../retryable-writes/retryable-writes.md). For brevity, some interactions with other specs are not
+included, such as error handling with `NoWritesPerformed` labels.
 
 ```python
 # Note: the values below have been scaled down by a factor of 1000 because
@@ -230,6 +241,10 @@ the token bucket will limit retry attempts during a prolonged overload.
 
 The token bucket capacity is set to 1000 for consistency with the server.
 
+Each MongoClient instance MUST have its own token bucket. The token bucket MUST be created when the MongoClient is
+initialized and exist for the lifetime of the MongoClient. Drivers MUST ensure the token bucket implementation is
+thread-safe as it may be accessed concurrently by multiple operations.
+
 #### Pseudocode
 
 The token bucket is implemented via a thread safe counter. For languages without atomics, this can be implemented via a
@@ -263,9 +278,10 @@ class TokenBucket:
 
 #### Handshake changes
 
-Drivers conforming to this spec MUST add `“backpressure”: True` to the connection handshake. This flag allows the server
-to identify clients which do and do not support backpressure. Currently, this flag is unused but in the future the
-server may offer different rate limiting behavior for clients that do not support backpressure.
+Drivers conforming to this spec MUST add `"backpressure": True` to the
+[connection handshake](../mongodb-handshake/handshake.rst). This flag allows the server to identify clients which do and
+do not support backpressure. Currently, this flag is unused but in the future the server may offer different rate
+limiting behavior for clients that do not support backpressure.
 
 #### Implementation notes
 
@@ -299,7 +315,7 @@ since a server is reselected for a retry attempt.
 ### Backwards Compatibility
 
 The server's rate limiting can introduce higher error rates than previously would have been exposed to users under
-periods of extreme server overload. The increased error rates is a tradeoff: given the choice between an overloaded
+periods of extreme server overload. The increased error rate is a tradeoff: given the choice between an overloaded
 server (potential crash), or at minimum dramatically slower query execution time and a stable but lowered throughput
 with higher error rate as the server load sheds, we have chosen the latter.
 
@@ -367,6 +383,33 @@ specifications with load-shedding behavior:
 - An alternative approach would be to retry once if we don't receive an overload error, in which case we'd retry 5
     times. The approach chosen allows for additional retries in scenarios where a non-overload error fails on a retry
     with an overload error.
+
+### Why not apply the overload retry policy to monitoring and RTT connections?
+
+The ingress request rate limiter only applies to authenticated connections. Neither the
+[monitoring connection](../server-discovery-and-monitoring/server-monitoring.md#monitoring) nor the
+[RTT pinger](../server-discovery-and-monitoring/server-monitoring.md#measuring-rtt) use authentication, and consequently
+will not encounter ingress operation rate limiter errors.
+
+It is conceivable that a driver attempting to establish a monitoring connection or RTT connection could encounter the
+ingress connection rate limiter. However, in these scenarios, the driver already behaves in an appropriate manner.
+
+If an error is encountered, both the RTT connections and monitoring connections already retry.
+
+- The RTT pinger retries indefinitely until the monitor is reset.
+- Monitoring failures will mark the server unknown, which will reset the monitor, triggering another monitoring request.
+
+Under most circumstances, both monitoring and RTT connections wait at least `minHeartbeatFrequencyMS` between `hello`
+commands, ensuring delays between retries. The notable exception is monitoring connections retrying network errors
+without waiting for `minHeartbeatFrequencyMS`, which is acceptable since re-establishing monitoring is the driver's top
+priority when a monitoring connection disconnects.
+
+### Why not apply the overload policy to authentication commands or reauthentication commands?
+
+The ingress request rate limiter only applies to authenticated connections. The server does not consider a connection to
+be authenticated until after the authentication workflow has completed and during reauthentication a connection is not
+considered authenticated by the server. So, authentication and reauthentication commands will not hit the ingress
+operation rate limiter.
 
 ## Changelog
 
