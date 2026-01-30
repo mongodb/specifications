@@ -129,6 +129,9 @@ rules:
     4. A token can be consumed from the token bucket.
     5. The command is a write and [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) is enabled or the
         command is a read and [retryReads](../retryable-reads/retryable-reads.md#retryreads) is enabled.
+        - To retry `runCommand`, both [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) and
+            [retryReads](../retryable-reads/retryable-reads.md#retryreads) must be enabled. See
+            [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
 6. A retry attempt consumes 1 token from the token bucket.
 7. If the request is eligible for retry (as outlined in step 5), the client MUST apply exponential backoff according to
     the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
@@ -150,6 +153,8 @@ rules:
     described in the [retryable reads](../retryable-reads/retryable-reads.md),
     [retryable writes](../retryable-writes/retryable-writes.md) and the
     [transactions](../transactions/transactions.md) specifications.
+    - For the purposes of error propagation, `runCommand` is considered a write. See
+        [Why is runCommand considered a write for error propagation?](#why-is-runcommand-considered-a-write-for-error-propagation)
 
 #### Interaction with Other Retry Policies
 
@@ -410,6 +415,34 @@ The ingress request rate limiter only applies to authenticated connections. The 
 be authenticated until after the authentication workflow has completed and during reauthentication a connection is not
 considered authenticated by the server. So, authentication and reauthentication commands will not hit the ingress
 operation rate limiter.
+
+### Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?
+
+[`runCommand`](../run-command/run-command.md) is not retryable under the
+[retryable reads](../retryable-reads/retryable-reads.md) and [retryable writes](../retryable-writes/retryable-writes.md)
+specifications and consequently it was not historically classified as a read or write command.
+
+The most flexible approach would be to inspect the user's command and determine if it is a read or a write. However,
+this is problematic for two reasons:
+
+- The runCommand specification specifically forbids drivers from inspecting the user's command.
+- `runCommand` is commonly used to execute commands of which the driver has no knowledge and therefore cannot determine
+    whether it is a read or write.
+
+Another option is to always consider `runCommand` retryable under the overload retry policy, regardless of the setting
+of [`retryReads`](../retryable-reads/retryable-reads.md#retryreads) and
+[`retryWrites`](../retryable-writes/retryable-writes.md#retrywrites). However, this behavior goes against a user's
+expectations: if a user disables both options, they would expect no commands to be retried.
+
+Retrying `runCommand` only when both `retryReads` and `retryWrites` are enabled is a safe default that does not have the
+pitfalls of either approach outlined by above:
+
+- This approach does not require drivers to inspect a user's command document.
+- This approach will not retry commands if a user has disabled both `retryReads` and `retryWrites`.
+
+Additionally, both `retryReads` and `retryWrites` are enabled by default, so for most users `runCommand` will be
+retried. This approach also prevents accidentally retrying a read command when only `retryWrites` is enabled, or
+retrying a write command when only `retryReads` is enabled.
 
 ## Changelog
 
