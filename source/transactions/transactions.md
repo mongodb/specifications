@@ -350,6 +350,12 @@ retryWrites is set on the MongoClient or not. If a commitTransaction fails with 
 [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), the command MUST be
 retried as specified in [Interaction with Client Backpressure](#interaction-with-client-backpressure).
 
+If the previous commitTransaction failed with a
+[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), drivers MUST apply
+the write concern modification rules as outlined in the
+[Interaction With Client Backpressure](#interaction-with-client-backpressure) to determine whether or not to modify the
+command's writeConcern.
+
 When commitTransaction is retried, either by the driver's internal retry logic or explicitly by the user calling
 commitTransaction again, drivers MUST apply `w: majority` to the write concern of the commitTransaction command. If the
 transaction is using a [writeConcern](#writeconcern) that is not the server default (i.e. specified via
@@ -564,8 +570,7 @@ enabled on the MongoClient, unless the server response is a
 
 In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs during a write command within a
 transaction (excepting commitTransation and abortTransaction), even when retryWrites has been enabled on the
-MongoClient, unless the server response is a
-[retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error).
+MongoClient.
 
 Drivers MUST retry the commitTransaction and abortTransaction commands even when retryWrites has been disabled on the
 MongoClient. commitTransaction and abortTransaction are retryable write commands and MUST be retried according to the
@@ -581,8 +586,21 @@ all preceding commands in the transaction.
 
 All commands in a transaction are subject to the
 [Client Backpressure Specification](../client-backpressure/client-backpressure.md), and MUST be retried accordingly.
-This includes the initial command with `startTransaction:true`, the `abortTransaction` and `commitTransaction` commands,
+This includes the initial command with `startTransaction:true`, the `abortTransaction` and commitTransaction commands,
 as well as any read or write commands attempted during the transaction.
+
+When a commitTransaction attempt fails with a retryable backpressure error:
+
+- If a commitTransaction attempt has already failed with an error that is not a
+    [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), drivers MUST
+    follow the instructions for modifying writeConcern as outlined in the [commitTransaction](#committransaction)
+    section for the next retry attempt.
+- Otherwise, drivers MUST retry using the same write concern as was used for the failed commitTransaction attempt.
+
+A [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error) means the server
+did not perform any work, and consequently the
+[need for majority write concern on retries](#majority-write-concern-is-used-when-retrying-committransaction) is not
+relevant until a commitTransaction attempt fails with a retryable error that is not a retryable overload error.
 
 If executing the first command within a transaction fails with a
 [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), and another attempt
@@ -1060,8 +1078,8 @@ transaction.
 
 ### Majority write concern is used when retrying commitTransaction
 
-When retrying commitTransaction, drivers SHOULD use a majority write concern to ensure the transaction is not applied
-twice. However, drivers SHOULD NOT use a majority write concern when retrying after a
+When retrying commitTransaction, drivers use a majority write concern to ensure the transaction is not applied twice.
+However, drivers do use a majority write concern when retrying after a
 [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), unless a prior
 commitTransaction attempt failed with another error type. Since a
 [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error) means the server did

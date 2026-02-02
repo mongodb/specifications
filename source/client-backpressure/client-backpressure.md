@@ -188,7 +188,7 @@ MAX_RETRIES = 5
 def execute_command_retryable(command, ...):
     deprioritized_servers = []
     attempt = 0
-    attempts = if is_csot then math.inf else 1
+    allowed_retries = if is_csot then math.inf else 1
 
     while True:
         try:
@@ -202,7 +202,9 @@ def execute_command_retryable(command, ...):
             token_bucket.deposit(tokens)
             return res
         except PyMongoError as exc:
-            is_retryable = is_retryable_write() or is_retryable_read() or (exc.contains_error_label("RetryableError") and exc.contains_error_label("SystemOverloadedError"))
+            is_retryable = (is_retryable_write(command, exc) 
+                or is_retryable_read(command, exc) 
+                or (exc.contains_error_label("RetryableError") and exc.contains_error_label("SystemOverloadedError")))
             is_overload = exc.contains_error_label("SystemOverloadedError")
 
             # if a retry fails with an error which is not an overload error, deposit 1 token
@@ -215,9 +217,9 @@ def execute_command_retryable(command, ...):
 
             attempt += 1
             if is_overload:
-                attempts = MAX_RETRIES
+                allowed_retries = MAX_RETRIES
 
-            if attempt > attempts:
+            if attempt > allowed_retries:
                 raise
 
             deprioritized_servers.append(server.address)
@@ -365,7 +367,7 @@ The Node and Python drivers will provide the reference implementations. See
 The client backpressure retry loop is primarily concerned with spreading out retries to avoid retry storms. The exact
 sleep duration is not critical to the intended behavior, so long as we sleep at least as long as we say we will.
 
-### Why override existing maximum number of retry attempt defaults for retryable reads and writes if a `SystemOverloadedError` is received?
+### Why override existing maximum number of retry attempt defaults for retryable reads and writes if an overload error is received?
 
 Load-shedded errors indicate that the request was rejected by the server to minimize load, not that the command failed
 for logical reasons. So, when determining the number of retries an operation should attempt:
