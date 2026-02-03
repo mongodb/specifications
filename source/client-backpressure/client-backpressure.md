@@ -89,15 +89,17 @@ command is included in the exceptions below.
 
 Driver commands not subject to the overload retry policy:
 
-- [monitoring commands](../server-discovery-and-monitoring/server-monitoring.md#monitoring) and
+- [Monitoring commands](../server-discovery-and-monitoring/server-monitoring.md#monitoring) and
     [round-trip time pingers](../server-discovery-and-monitoring/server-monitoring.md#measuring-rtt) (see
-    [Why not apply the overload retry policy to monitoring and RTT connections?](./client-backpressure.md#why-not-apply-the-overload-retry-policy-to-monitoring-and-rtt-connections))
-- commands executed during [authentication](../auth/auth.md) (see
-    [Why not apply the overload policy to authentication commands or reauthentication commands?](./client-backpressure.md#why-not-apply-the-overload-policy-to-authentication-commands-or-reauthentication-commands))
+    [Why not apply the overload retry policy to monitoring and RTT connections?](./client-backpressure.md#why-not-apply-the-overload-retry-policy-to-monitoring-and-rtt-connections)).
+- Commands executed during
+    [connection establishment](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#establishing-a-connection-internal-implementation)
+    and [reauthentication](../auth/auth.md) (see
+    [Why not apply the overload policy to authentication commands or reauthentication commands?](./client-backpressure.md#why-not-apply-the-overload-policy-to-authentication-commands-or-reauthentication-commands)).
 
 Note: Drivers communicate with [mongocryptd](../client-side-encryption/client-side-encryption.md#mongocryptd) using the
 driver's `runCommand()` API. Consequently, drivers will implicitly apply the retry policy to communication with
-mongocryptd, although practice the retry policy would never be unused because mongocryptd connections are not
+mongocryptd, although in practice the retry policy would never be used because mongocryptd connections are not
 authenticated.
 
 #### Overload retry policy
