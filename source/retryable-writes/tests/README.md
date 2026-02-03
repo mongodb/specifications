@@ -294,8 +294,7 @@ to cover the same sequence of events.
     }
     ```
 
-3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `10107` (NotWritablePrimary)
-    and a NoWritesPerformed label:
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `10107` (NotWritablePrimary):
 
     ```javascript
     {
@@ -312,7 +311,7 @@ to cover the same sequence of events.
     Configure the `10107` fail point command only if the the failed event is for the `91` error configured in step 2.
 
 4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
-    server error. Assert that the error code of the server error is 91.
+    server error. Assert that the error code of the server error is `10107`.
 
 5. Disable the fail point:
 
@@ -420,13 +419,15 @@ to cover the same sequence of events.
 
 ## Changelog
 
+- 2026-02-03: Add tests for error propagation behavior when multiple errors are encountered.
+
 - 2024-10-29: Convert command construction tests to unified format.
 
 - 2024-05-30: Migrated from reStructuredText to Markdown.
 
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
 
-- 2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code paths.
+- 2024-02-21: Update prosetest 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code paths.
 
 - 2024-01-05: Fix typo in prose test title.
 
