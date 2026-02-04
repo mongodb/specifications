@@ -220,9 +220,12 @@ withTransaction(callback, options) {
                 this.abortTransaction();
             }
 
-            if (error.hasErrorLabel("TransientTransactionError") &&
-                Date.now() - startTime < timeout) {
-                continue retryTransaction;
+            if (error.hasErrorLabel("TransientTransactionError")) {
+                if (Date.now() - startTime < timeout) {
+                    continue retryTransaction;
+                } else {
+                    throw getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(e);
+                }
             }
 
             throw error;
@@ -247,15 +250,17 @@ withTransaction(callback, options) {
                  * {ok:0, code: 50, codeName: "MaxTimeMSExpired"}
                  * {ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}
                  */
+                lastError = error;
+                if (Date.now() - startTime >= timeout) {
+                    throw getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(e);
+                }
+
                 if (!isMaxTimeMSExpiredError(error) &&
-                    error.hasErrorLabel("UnknownTransactionCommitResult") &&
-                    Date.now() - startTime < timeout) {
+                    error.hasErrorLabel("UnknownTransactionCommitResult")) {
                     continue retryCommit;
                 }
 
-                if (error.hasErrorLabel("TransientTransactionError") &&
-                    Date.now() - startTime < timeout) {
-                    lastError = error;
+                if (error.hasErrorLabel("TransientTransactionError")) {
                     continue retryTransaction;
                 }
 
