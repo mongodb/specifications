@@ -645,7 +645,8 @@ It is recommended that drivers run these tests with [jitter](../../transactions-
 **Rationale:** This test verifies that when `withTransaction` encounters transient transaction errors 
 (such as lock acquisition failures with error code 24), the retry attempts share the same timeout budget rather than resetting it.
 Each retry consumes time from the original 200ms timeout, and the cumulative delay from retries exceeds the available time budget, resulting in a timeout error.
-This test als ensures that the driver does not throw the lock acquisition error directly to the user, but instead surfaces a timeout error after exhausting the retry attempts within the specified timeout.
+This test also ensures that the driver does not throw the lock acquisition error directly to the user, but instead surfaces a timeout 
+error after exhausting the retry attempts within the specified timeout.
 The timeout error thrown contains as a cause the last transient error encountered.
 
 ### 11. Multi-batch bulkWrites
