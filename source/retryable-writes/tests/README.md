@@ -262,7 +262,164 @@ debugger, code coverage tool, etc.
 
 7. Disable the fail point on `s0`.
 
+### 6. Test error propagation after encountering multiple errors.
+
+These tests MUST:
+
+- be implemented by any driver that implements the Command Monitoring specification.
+- only run against replica sets as mongos does not propagate the NoWritesPerformed label to the drivers.
+- be run against server versions 6.0 and above.
+- be implemented by any driver that has implemented the Client Backpressure specification.
+
+Additionally, this test requires drivers to set a fail point after an `insertOne` operation but before the subsequent
+retry. Drivers that are unable to set a failCommand after the CommandFailedEvent SHOULD use mocking or write a unit test
+to cover the same sequence of events.
+
+#### Case 1: Test that drivers return the correct error when receiving only errors without `NoWritesPerformed`
+
+1. Create a client with `retryWrites=true`.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `10107` (NotWritablePrimary):
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["insert"],
+            errorCode: 10107,
+            errorLabels: ["RetryableError", "SystemOverloadedError"]
+        }
+    }
+    ```
+
+    Configure the `10107` fail point command only if the the failed event is for the `91` error configured in step 2.
+
+4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
+    server error. Assert that the error code of the server error is `10107`.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
+#### Case 2: Test that drivers return the correct error when receiving only errors with `NoWritesPerformed`
+
+1. Create a client with `retryWrites=true`.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError", "NoWritesPerformed"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `10107` (NotWritablePrimary)
+    and a NoWritesPerformed label:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["insert"],
+            errorCode: 10107,
+            errorLabels: ["RetryableError", "SystemOverloadedError", "NoWritesPerformed"]
+        }
+    }
+    ```
+
+    Configure the `10107` fail point command only if the the failed event is for the `91` error configured in step 2.
+
+4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
+    server error. Assert that the error code of the server error is 91.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
+#### Case 3: Test that drivers return the correct error when receiving some errors with `NoWritesPerformed` and some without `NoWritesPerformed`
+
+1. Create a client with `retryWrites=true` and `monitorCommands=true`.
+
+2. Configure the client to listen to CommandFailedEvents. In the attached listener, configure a fail point with error
+    code `91` (NotWritablePrimary) and the `NoWritesPerformed`, `RetryableError` and `SystemOverloadedError` labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError", "NoWritesPerformed"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels but without the `NoWritesPerformed` error label:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
+    server error. Assert that the error code of the server error is 91. Assert that the error does not contain the
+    error label `NoWritesPerformed`.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
 ## Changelog
+
+- 2026-02-03: Add tests for error propagation behavior when multiple errors are encountered.
 
 - 2024-10-29: Convert command construction tests to unified format.
 
@@ -270,7 +427,8 @@ debugger, code coverage tool, etc.
 
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
 
-- 2024-02-21: Update prose test 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code paths.
+- 2024-02-21: Update prose tests 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code
+    paths.
 
 - 2024-01-05: Fix typo in prose test title.
 
