@@ -427,7 +427,8 @@ to cover the same sequence of events.
 
 - 2024-02-27: Convert legacy retryable writes tests to unified format.
 
-- 2024-02-21: Update prosetest 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code paths.
+- 2024-02-21: Update prose tests 4 and 5 to workaround SDAM behavior preventing execution of deprioritization code
+    paths.
 
 - 2024-01-05: Fix typo in prose test title.
 
