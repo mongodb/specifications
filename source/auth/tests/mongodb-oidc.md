@@ -35,8 +35,8 @@ Drivers MUST implement all prose tests in this section. Unless otherwise noted, 
 configured with `retryReads=false`.
 
 > [!NOTE]
-> For test cases that create fail points, drivers MUST either use a unique `appName` or explicitly remove the fail point
-> callback to prevent interaction between test cases.
+> For test cases that create fail points, drivers MUST use a unique `appName` to prevent interaction with other
+> environment processes, and explicitly remove the fail point to prevent interaction between test runs.
 
 After setting up your OIDC
 [environment](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/auth_oidc/README.md),
