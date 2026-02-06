@@ -291,10 +291,9 @@ Endpoint. The pool has the following properties:
     to avoid clearing the pool. The pool MUST NOT add the backpressure error labels during an authentication step
     after the `hello` message. For errors that the driver can distinguish as never occurring due to server overload,
     such as DNS lookup failures, non‑I/O TLS errors (e.g., certificate validation or hostname‑mismatch failures), or
-    errors encountered while establishing a connection to a SOCKS5 proxy, the driver MUST clear the connection pool and
-    MUST mark the server Unknown for these error types. In contrast, if an I/O error (for example, an EOF error) occurs
-    during the TLS handshake, the driver MUST treat it as a potential overload condition and MUST add the backpressure
-    error labels.
+    errors encountered while establishing a connection to a SOCKS5 proxy, the driver MUST NOT add backpressure error
+    labels for these error types. In contrast, if an I/O error (for example, an EOF error) occurs during the TLS
+    handshake, the driver MUST treat it as a potential overload condition and MUST add the backpressure error labels.
 
 ```typescript
 interface ConnectionPool {
