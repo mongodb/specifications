@@ -472,7 +472,7 @@ try:
   return connection
 except error:
   close connection
-  add `SystemOverloadedError` label if appropriate (see "backpressure-enabled" in [Connection Pool](#connection-pool))
+  add `SystemOverloadedError` and `RetryableError` labels if appropriate (see "backpressure-enabled" in [Connection Pool](#connection-pool))
   throw error # Propagate error in manner idiomatic to language.
 ```
 
