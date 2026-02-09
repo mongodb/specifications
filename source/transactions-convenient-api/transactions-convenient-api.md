@@ -252,9 +252,8 @@ withTransaction(callback, options) {
                  */
                 lastError = error;
                 if (Date.now() - startTime >= timeout) {
-                    throw getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(e);
+                    throw makeTimeoutError(error);
                 }
-
                 if (!isMaxTimeMSExpiredError(error) &&
                     error.hasErrorLabel("UnknownTransactionCommitResult")) {
                     continue retryCommit;
