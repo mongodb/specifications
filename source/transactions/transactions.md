@@ -592,7 +592,7 @@ All commands in a transaction are subject to the
 This includes the initial command with `startTransaction:true`, the abortTransaction and commitTransaction commands, as
 well as any read or write commands attempted during the transaction.
 
-When a commitTransaction attempt fails with a retryable backpressure error:
+When a commitTransaction attempt fails with a retryable overload error:
 
 - If a commitTransaction attempt has already failed with an error that is not a
     [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error), drivers MUST
@@ -1127,9 +1127,9 @@ objective of avoiding duplicate commits.
 
 A [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error) indicates that the
 server performed no work when executing the command. As such, the scenario above is irrelevant for commitTransaction
-attempts which have only failed with retryable backpressure errors. However, after a commitTransaction fails with an
-error that is not a retryable backpressure error, we no longer have the guarantee that the server has performed no work,
-and we must apply a majority write concern to prevent the transaction from being applied twice.
+attempts which have only failed with retryable overload errors. However, after a commitTransaction fails with an error
+that is not a retryable overload error, we no longer have the guarantee that the server has performed no work, and we
+must apply a majority write concern to prevent the transaction from being applied twice.
 
 ## **Changelog**
 

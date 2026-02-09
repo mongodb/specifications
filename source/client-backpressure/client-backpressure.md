@@ -106,7 +106,7 @@ authenticated.
 
 This specification expands the driver's retry ability to all commands if the error indicates that it is a retryable
 overload error, including those not eligible for retry under the
-[read](../retryable-writes/retryable-reads.md)/[write](../retryable-writes/retryable-writes.md) retry policies such as
+[read](../retryable-reads/retryable-reads.md)/[write](../retryable-writes/retryable-writes.md) retry policies such as
 updateMany, create collection, getMore, and generic runCommand. The new command execution method obeys the following
 rules:
 
@@ -155,8 +155,7 @@ rules:
     described in the [retryable reads](../retryable-reads/retryable-reads.md),
     [retryable writes](../retryable-writes/retryable-writes.md) and the
     [transactions](../transactions/transactions.md) specifications.
-    - For the purposes of error propagation, `runCommand` is considered a write. See
-        [Why is runCommand considered a write for error propagation?](#why-is-runcommand-considered-a-write-for-error-propagation)
+    - For the purposes of error propagation, `runCommand` is considered a write.
 
 #### Interaction with Other Retry Policies
 
