@@ -422,3 +422,8 @@ tracing may have unexpected negative outcome.
 Further, we already have two attributes that configure tracing, and we expect there might be more.
 
 A URI options can be added later if we realise our users need it, while the opposite is not easily accomplished.
+
+## Changelog
+
+- 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
+    conventions.
