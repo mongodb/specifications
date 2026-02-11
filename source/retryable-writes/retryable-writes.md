@@ -693,6 +693,9 @@ retryWrites is not true would be inconsistent with the server and potentially co
 
 ## Changelog
 
+- 2026-02-11: Clarified that the retry logic and pseudocode does not include the modifications required by client
+    backpressure.
+
 - 2026-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
