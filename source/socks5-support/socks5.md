@@ -86,7 +86,8 @@ Drivers MUST NOT use the SOCKS5 proxy for connections to - Code:`mongocryptd` pr
 client-side field-level encryption.
 
 Drivers MUST treat a connection failure when connecting to the SOCKS5 proxy or a SOCKS5 handshake or authentication
-failure the same as a network error (e.g. `ECONNREFUSED`).
+failure the same as a network error (e.g. `ECONNREFUSED`) which does not indicate server overload for backpressure
+purposes.
 
 ### Events
 
