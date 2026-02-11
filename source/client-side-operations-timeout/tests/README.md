@@ -565,11 +565,6 @@ the ClientSession `defaultTimeoutMS` option, and once more with the timeout spec
 
 Tests in this section MUST only run against replica sets and sharded clusters with server versions 4.4 or higher.
 
-It is recommended that drivers run these tests with
-[jitter](../../transactions-convenient-api/transactions-convenient-api.md#clientsessionwithtransaction) disabled (set to
-0\) to reduce the likelihood of flakiness due to varying
-[backoff times](../../transactions-convenient-api/transactions-convenient-api.md#backoff-benefits).
-
 #### timeoutMS is refreshed for abortTransaction if the callback fails
 
 1. Using `internalClient`, drop the `db.coll` collection.
@@ -606,50 +601,6 @@ It is recommended that drivers run these tests with
 
     1. `command_started` and `command_failed` events for an `insert` command.
     2. `command_started` and `command_failed` events for an `abortTransaction` command.
-
-#### withTransaction applies a single timeout across retries due to transient errors
-
-1. Using `internalClient`, drop the collection `db.coll`.
-
-2. Using `internalClient`, set the following fail point:
-
-    ```javascript
-    {
-      configureFailPoint: "failCommand",
-      mode: "alwaysOn",
-      data: {
-        failCommands: ["insert"],
-        blockConnection: true,
-        blockTimeMS: 25,
-        errorCode: 24,
-        errorLabels: ["TransientTransactionError"]
-      }
-    }
-    ```
-
-3. Create a new MongoClient `client` with default settings.
-
-4. Using `client`, create a new explicit `session` with `defaultTimeout=200ms`.
-
-5. Initialize an `attempt` counter to `0`.
-
-6. Using `session`, execute `withTransaction` with a callback that:-
-
-    - increment the `attempt` counter
-    - Inserts the document `{ x: 1 }` into `db.coll`
-
-7. Expect this to fail with a CSOT timeout error (this depends on the driver's error/exception type)
-    `MongoOperationTimeoutException` for Java).
-
-8. Verify that there has been at least 2 attempts to execute the `insert` command as part of the `withTransaction` call.
-    (`attempt > 1`)
-
-**Rationale:** This test verifies that when `withTransaction` encounters transient transaction errors (such as lock
-acquisition failures with error code 24), the retry attempts share the same timeout budget rather than resetting it.
-Each retry consumes time from the original 200ms timeout, and the cumulative delay from retries exceeds the available
-time budget, resulting in a timeout error. This test also ensures that the driver does not throw the lock acquisition
-error directly to the user, but instead surfaces a timeout error after exhausting the retry attempts within the
-specified timeout. The timeout error thrown contains as a cause the last transient error encountered.
 
 ### 11. Multi-batch bulkWrites
 

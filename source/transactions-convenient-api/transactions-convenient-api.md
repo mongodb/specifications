@@ -203,7 +203,7 @@ withTransaction(callback, options) {
                                               BACKOFF_MAX);
 
             if (Date.now() + backoff - startTime >= timeout) {
-                throw lastError;
+                throw makeTimeoutError(lastError);
             }
             sleep(backoff);
         }
@@ -224,7 +224,7 @@ withTransaction(callback, options) {
                 if (Date.now() - startTime < timeout) {
                     continue retryTransaction;
                 } else {
-                    throw getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(e);
+                    throw makeTimeoutError(error)
                 }
             }
 
@@ -269,6 +269,10 @@ withTransaction(callback, options) {
         }
         break; // Transaction was successful
     }
+}
+
+function makeTimeoutError(error) {
+    return getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(error);
 }
 ```
 
