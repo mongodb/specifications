@@ -247,7 +247,7 @@ overload error retry attempts. Although the server rejects excess commands as qu
 and creates extra contention on the connection pool which can eventually negatively affect goodput. To reduce this risk,
 the token bucket will limit retry attempts during a prolonged overload.
 
-The token bucket capacity is set to 1000 for consistency with the server.
+The token bucket starts at its maximum capacity of 1000 for consistency with the server.
 
 Each MongoClient instance MUST have its own token bucket. The token bucket MUST be created when the MongoClient is
 initialized and exist for the lifetime of the MongoClient. Drivers MUST ensure the token bucket implementation is
