@@ -123,10 +123,9 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the previously encountered
-        error[<sup>1</sup>](#footnote-error). If the elapsed time of `withTransaction` is less than TIMEOUT_MS,
-        calculate the backoffMS to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`.
-        sleep for `backoffMS`.
+    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the previously encountered error (see Note 1 below). If
+        the elapsed time of `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
+        `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. sleep for `backoffMS`.
 
         1. jitter is a random float between \[0, 1)
 
@@ -163,8 +162,8 @@ This method should perform the following sequence of actions:
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
         immediately.
 
-    4. Otherwise, propagate the callback's error[<sup>1</sup>](#footnote-error) to the caller of `withTransaction` and
-        return immediately.
+    4. Otherwise, propagate the callback's error (see Note 1 below) to the caller of `withTransaction` and return
+        immediately.
 
 8. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
@@ -180,14 +179,16 @@ This method should perform the following sequence of actions:
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label, jump back to step two.
 
-    3. Otherwise, propagate the `commitTransaction` error[<sup>1</sup>](#footnote-error) to the caller of
-        `withTransaction` and return immediately.
+    3. Otherwise, propagate the `commitTransaction` error (see Note 1 below) to the caller of `withTransaction` and
+        return immediately.
 
 11. The transaction was committed successfully. Return immediately.
 
-<a id="footnote-error"></a><sup>1</sup>When the `TIMEOUT_MS` (calculated in step [1.3](#sequence-of-actions)) is reached
-we MUST report a timeout error wrapping the last error that was encountered which triggered the retry behavior. If
-`timeoutMS` is set, then timeout error is a special type which is defined in CSOT
+______________________________________________________________________
+
+**Note 1:** When the `TIMEOUT_MS` (calculated in step [1.3](#sequence-of-actions)) is reached we MUST report a timeout
+error wrapping the last error that was encountered which triggered the retry behavior. If `timeoutMS` is set, then
+timeout error is a special type which is defined in CSOT
 [specification](https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#errors)
 , If `timeoutMS` is not set, then propagate it as timeout error if the language allows to expose the underlying error as
 a cause of a timeout error (see `makeTimeoutError` below in [pseudo-code](#pseudo-code)). If timeout error is thrown
