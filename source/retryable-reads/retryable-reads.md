@@ -207,8 +207,13 @@ capture this original retryable error. Drivers should then proceed with selectin
 
 ###### 3a. Selecting the server for retry
 
-The server address on which the operation failed MUST be provided to the server selection mechanism as a member of the
-deprioritized server address list.
+For sharded clusters, the server address on which the operation failed MUST be provided to the server selection
+mechanism as a member of the deprioritized server address list.
+
+For all other topologies, the server address on which the operation failed MUST be provided to the server selection
+mechanism as a member of the deprioritized server address list only if the error is labelled with
+`SystemOverloadedError`. All other retryable errors MUST NOT cause the server address to be added to the deprioritized
+server address list.
 
 If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
 retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer
@@ -295,7 +300,11 @@ function executeRetryableRead(command, session) {
       } else {
         // If a previous attempt was made, deprioritize the previous server address
         // where the command failed.
-        deprioritizedServers.push(previousServer.address);
+        // Sharded clusters deprioritize on all retryable errors.
+        // Other topologies only deprioritize on overload errors.
+        if previousServer.isSharded || previousError.hasLabel("SystemOverloadedError") {
+          deprioritizedServers.push(previousServer.address);
+        }
         server = selectServer(deprioritizedServers);
       }
     } catch (ServerSelectionException exception) {

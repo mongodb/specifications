@@ -123,6 +123,70 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 7. Disable the fail point on `s0`.
 
+### 3. Retrying Reads in a Replica Set
+
+These tests will be used to ensure drivers properly retry reads against a replica set.
+
+#### 3.1 Retryable Reads Caused by Overload Errors Are Retried on a Different Replicaset Server When One is Available
+
+This test MUST be executed against a replica set that has at least one secondary, supports `retryReads=true`, and has
+enabled the `configureFailPoint` command (MongoDB 4.2+).
+
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
+    enabled.
+
+2. Configure the following fail point for `client`:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"]
+            errorCode: 6
+        }
+    }
+    ```
+
+3. Reset the command event monitor to clear the failpoint command from its stored events.
+
+4. Execute a `find` command with `client`.
+
+5. Assert that one failed command event and one successful command event occurred.
+
+6. Assert that both events occurred on different servers.
+
+#### 3.2 Retryable Reads Caused by Non-Overload Errors Are Retried on the Same Replicaset Server
+
+This test MUST be executed against a replica set that has at least one secondary, supports `retryReads=true`, and has
+enabled the `configureFailPoint` command (MongoDB 4.2+).
+
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
+    enabled.
+
+2. Configure the following fail point for `client`:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError"]
+            errorCode: 6
+        }
+    }
+    ```
+
+3. Reset the command event monitor to clear the failpoint command from its stored events.
+
+4. Execute a `find` command with `client`.
+
+5. Assert that one failed command event and one successful command event occurred.
+
+6. Assert that both events occurred on the same server.
+
 ## Changelog
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
