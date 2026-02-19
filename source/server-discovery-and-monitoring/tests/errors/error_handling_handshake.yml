@@ -38,6 +38,8 @@ phases:
   outcome: *outcome
 
 - description: Ignore network timeout application error (beforeHandshakeCompletes)
+  # The test runner may need to add the SystemOverloadedError label for the pre-handshake network timeout.
+  # The SystemOverloadedError label causes the error to be ignored.
   applicationErrors:
   - address: a:27017
     when: beforeHandshakeCompletes
