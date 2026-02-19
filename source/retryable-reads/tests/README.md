@@ -189,6 +189,8 @@ enabled the `configureFailPoint` command (MongoDB 4.2+).
 
 ## Changelog
 
+- 2026-02-19: Add prose tests for retrying against a replica set.
+
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 
 - 2024-03-06: Convert legacy retryable reads tests to unified format.
