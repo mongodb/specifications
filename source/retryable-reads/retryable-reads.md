@@ -321,6 +321,10 @@ function executeRetryableRead(command, session) {
       if (timeoutMS != null && isExpired(timeoutMS) {
         throw previousError;
       }
+      /* CSOT is not enabled, and we have already tried once */
+      if (timeoutMS == null && retrying) {
+        throw previousError;
+      }
       continue;
     }
 
@@ -358,6 +362,12 @@ function executeRetryableRead(command, session) {
     } catch (NotWritablePrimaryException notPrimaryError) {
       updateTopologyDescriptionForNotWritablePrimaryError(server, notPrimaryError);
       previousError = notPrimaryError;
+      previousServer = server;
+    } catch (Exception error when error.code in RETRYABLE_ERROR_CODES) {
+      /* Catches remaining server errors with retryable error codes as defined
+       * in the Retryable Error section. */
+      updateTopologyDescriptionForError(server, error);
+      previousError = error;
       previousServer = server;
     } catch (DriverException error) {
       if ( previousError != null ) {
