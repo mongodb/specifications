@@ -129,8 +129,8 @@ These tests will be used to ensure drivers properly retry reads against a replic
 
 #### 3.1 Retryable Reads Caused by Overload Errors Are Retried on a Different Replicaset Server When One is Available
 
-This test MUST be executed against a replica set that has at least one secondary, supports `retryReads=true`, and has
-enabled the `configureFailPoint` command (MongoDB 4.2+).
+This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
+`retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
     enabled.
@@ -159,8 +159,8 @@ enabled the `configureFailPoint` command (MongoDB 4.2+).
 
 #### 3.2 Retryable Reads Caused by Non-Overload Errors Are Retried on the Same Replicaset Server
 
-This test MUST be executed against a replica set that has at least one secondary, supports `retryReads=true`, and has
-enabled the `configureFailPoint` command (MongoDB 4.2+).
+This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
+`retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
     enabled.
