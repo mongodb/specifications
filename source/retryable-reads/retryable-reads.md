@@ -213,7 +213,8 @@ mechanism as a member of the deprioritized server address list.
 For all other topologies, the server address on which the operation failed MUST be provided to the server selection
 mechanism as a member of the deprioritized server address list only if the error is labelled with
 `SystemOverloadedError`. All other retryable errors MUST NOT cause the server address to be added to the deprioritized
-server address list.
+server address list. This requirement preserves the existing behavior of retryable reads for non-overload errors and
+avoids unintended consequences for operations utilizing primaryPreferred and secondaryPreferred read preferences.
 
 If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
 retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer

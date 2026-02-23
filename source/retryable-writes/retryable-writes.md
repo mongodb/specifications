@@ -321,7 +321,7 @@ For each retry attempt, drivers MUST select a writable server. For sharded clust
 operation failed MUST be provided to the server selection mechanism as a member of the deprioritized server address
 list. For all other topologies, the server address on which the operation failed MUST be provided to the server
 selection mechanism as a member of the deprioritized server address list only if the error is labelled with
-`SystemOverloadedError`.
+`SystemOverloadedError`. This requirement preserves the existing behavior of retryable writes for non-overload errors.
 
 If the driver cannot select a server for a retry attempt or the selected server does not support retryable writes,
 retrying is not possible and drivers MUST raise the retryable error from the previous attempt. In both cases, the caller
