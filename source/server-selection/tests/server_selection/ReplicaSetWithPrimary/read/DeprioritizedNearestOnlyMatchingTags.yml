@@ -1,4 +1,4 @@
-# Expect a deprioritized server is selected on retry if it is the only server with matching tags.
+# Test when the deprioritized server is the only server with matching tags.
 # Serves as a regression test for CDRIVER-6248.
 topology_description:
   type: ReplicaSetWithPrimary
