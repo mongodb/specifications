@@ -64,8 +64,8 @@ string error labels. Drivers may also add error labels to errors that they retur
 
 #### Transient Transaction Error
 
-Any command, network, or driver error that includes the "TransientTransactionError" error label in the "errorLabels"
-field.
+Any command or network error (including "PoolClearedError") that includes the "TransientTransactionError" error label in
+the "errorLabels" field.
 
 ### **Naming variations**
 
@@ -688,13 +688,12 @@ string error labels.
 
 ### Transient Transaction Error
 
-- Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. In the case of
-    command errors, the server adds the label.
-- Any network error or server selection error encountered running any command besides commitTransaction in a
-    transaction. In the case of network errors or server selection errors where the client receives no server reply, the
-    client MUST add the label. If a network error occurs while running the commitTransaction command then it is not
-    known whether the transaction committed or not, and thus the "TransientTransactionError" label MUST NOT be added.
-- `PoolClearedError`. Driver MUST add the label to this error.
+Any command error that includes the "TransientTransactionError" error label in the "errorLabels" field. Any network
+error (including "PoolClearedError") or server selection error encountered running any command besides commitTransaction
+in a transaction. In the case of command errors, the server adds the label; in the case of network errors or server
+selection errors where the client receives no server reply, the client MUST add the label. If a network error occurs
+while running the commitTransaction command then it is not known whether the transaction committed or not, and thus the
+"TransientTransactionError" label MUST NOT be added.
 
 #### Retrying transactions that fail with TransientTransactionError
 
