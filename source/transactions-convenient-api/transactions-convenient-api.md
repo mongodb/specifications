@@ -419,6 +419,8 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 
 ## Changelog
 
+- 2026-02-20: Fix initial backoff and growth value parameters.
+
 - 2025-11-20: withTransaction applies exponential backoff when retrying.
 
 - 2024-09-06: Migrated from reStructuredText to Markdown.
