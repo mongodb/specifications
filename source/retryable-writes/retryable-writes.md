@@ -317,8 +317,11 @@ Drivers MUST then retry the operation as many times as necessary until any one o
 
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. The server address on which the operation failed MUST be
-provided to the server selection mechanism as a member of the deprioritized server address list.
+For each retry attempt, drivers MUST select a writable server. For sharded clusters, the server address on which the
+operation failed MUST be provided to the server selection mechanism as a member of the deprioritized server address
+list. For all other topologies, the server address on which the operation failed MUST be provided to the server
+selection mechanism as a member of the deprioritized server address list only if the error is labelled with
+`SystemOverloadedError`. This requirement preserves the existing behavior of retryable writes for non-overload errors.
 
 If the driver cannot select a server for a retry attempt or the selected server does not support retryable writes,
 retrying is not possible and drivers MUST raise the retryable error from the previous attempt. In both cases, the caller
@@ -436,8 +439,12 @@ function executeRetryableWrite(command, session) {
      * If we cannot select a writable server, do not proceed with retrying and
      * throw the previous error. The caller can then infer that an attempt was
      * made and failed. */
+    // Sharded clusters deprioritize on all retryable errors.
+    // Other topologies only deprioritize on overload errors.
     try {
-      deprioritizedServers.push(server.address);
+      if server.isSharded || previousError.hasLabel("SystemOverloadedError") {
+        deprioritizedServers.push(server.address);
+      }
       server = selectServer("writable", deprioritizedServers);
     } catch (Exception ignoredError) {
       throw previousError;
@@ -692,6 +699,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
 
 - 2026-01-14: Clarify which error to return when more than one error with the `NoWritesPerformed` label is encountered.
 
