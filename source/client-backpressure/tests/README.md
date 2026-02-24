@@ -95,7 +95,7 @@ Drivers should test that without adaptive retries enabled, overload errors are r
 
 4. Perform a find operation with `coll` that fails.
 
-5. Assert that the raised error contains both the `RetryableError` and `SystemOverLoadedError` error labels.
+5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
 6. Assert that the total number of started commands is MAX_RETRIES + 1 (6).
 
