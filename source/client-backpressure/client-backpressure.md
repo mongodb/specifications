@@ -125,7 +125,7 @@ rules:
     4. The command is a write and [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) is enabled or the
         command is a read and [retryReads](../retryable-reads/retryable-reads.md#retryreads) is enabled.
         - To retry `runCommand`, both [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) and
-            [retryReads](../retryable-reads/retryable-reads.md#retryreads) must be enabled. See
+            [retryReads](../retryable-reads/retryable-reads.md#retryreads) MUST be enabled. See
             [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
 3. If the request is eligible for retry (as outlined in step 5), the client MUST apply exponential backoff according to
     the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
@@ -149,7 +149,7 @@ rules:
     specifications.
     - For the purposes of error propagation, `runCommand` is considered a write.
 
-If the opt-in token bucket adaptive retry system is enabled, the following rules must also be obeyed:
+If the opt-in token bucket adaptive retry system is enabled, the following rules MUST also be obeyed:
 
 1. If the command succeeds on the first attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE` tokens.
     - The value is 0.1 and non-configurable.
@@ -167,7 +167,7 @@ The retry policy in this specification is separate from the other retry policies
 specifications. Drivers MUST ensure:
 
 - Only overload errors consume tokens from the token bucket before retrying.
-- When a failed attempt is retried, backoff must be applied if and only if the error is an overload error.
+- When a failed attempt is retried, backoff MUST be applied if and only if the error is an overload error.
 - If an overload error is encountered:
     - Regardless of whether CSOT is enabled or not, the maximum number of retries for any retry policy becomes
         `MAX_RETRIES`.
@@ -251,14 +251,14 @@ limit overload error retry attempts. Although the server rejects excess commands
 CPU and creates extra contention on the connection pool which can eventually negatively affect goodput. To reduce this
 risk, the token bucket will limit retry attempts during a prolonged overload.
 
-The token bucket must be disabled by default and can be enabled through the `adaptiveRetries=True` connection and client
+The token bucket MUST be disabled by default and can be enabled through the `adaptiveRetries=True` connection and client
 options.
 
 The token bucket starts at its maximum capacity of 1000 for consistency with the server.
 
-Each MongoClient instance MUST have its own token bucket. The token bucket MUST be created when the MongoClient is
-initialized and exist for the lifetime of the MongoClient. Drivers MUST ensure the token bucket implementation is
-thread-safe as it may be accessed concurrently by multiple operations.
+Each MongoClient instance MUST have its own token bucket. When adaptive retries are enabled, the token bucket MUST be
+created when the MongoClient is initialized and exist for the lifetime of the MongoClient. Drivers MUST ensure the token
+bucket implementation is thread-safe as it may be accessed concurrently by multiple operations.
 
 #### Pseudocode
 
