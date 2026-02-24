@@ -62,7 +62,7 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
 
 Drivers should test that retry token buckets are created at their maximum capacity and that that capacity is enforced.
 
-1. Let `client` be a `MongoClient`.
+1. Let `client` be a `MongoClient` with `adaptiveRetries=True`.
 2. Assert that the client's retry token bucket is at full capacity and that the capacity is
     `DEFAULT_RETRY_TOKEN_CAPACITY`.
 3. Using `client`, execute a successful `ping` command.
