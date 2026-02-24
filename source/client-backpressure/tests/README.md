@@ -127,6 +127,6 @@ Drivers should test that when enabled, adaptive retries are limited by the numbe
 
 5. Perform a find operation with `coll` that fails.
 
-6. Assert that the raised error contains both the `RetryableError` and `SystemOverLoadedError` error labels.
+6. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
 7. Assert that the total number of started commands is 3: one for the initial attempt and two for the retries.
