@@ -48,6 +48,11 @@ For this test, run each of the following cases:
 - the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
+### 5. Do not throw when return address is identical to SRV hostname and SRV hostname has three or more `.` separated parts
+
+- the SRV `mongodb+srv://build.10gen.cc` resolving to `build.10gen.cc`
+- the SRV `mongodb+srv://test.build.10gen.cc` resolving to `test.build.10gen.cc`
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,

@@ -283,6 +283,9 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
+- 2025-04-22: Add test for SRV hostname validation when resolver and resolved hostnames are identical with three domain
+    levels.
+
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
     matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
     refers to the entire hostname, not just the `{subdomain}`.
