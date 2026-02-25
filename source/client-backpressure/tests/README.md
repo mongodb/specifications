@@ -79,19 +79,17 @@ Drivers should test that without adaptive retries enabled, overload errors are r
 
 3. Configure the following failpoint:
 
-    ````
-        ```javascript
-            {
-                configureFailPoint: 'failCommand',
-                mode: 'alwaysOn',
-                data: {
-                    failCommands: ['find'],
-                    errorCode: 462,  // IngressRequestRateLimitExceeded
-                    errorLabels: ['SystemOverloadedError', 'RetryableError']
-                }
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: 'alwaysOn',
+            data: {
+                failCommands: ['find'],
+                errorCode: 462,  // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
             }
-        ```
-    ````
+        }
+    ```
 
 4. Perform a find operation with `coll` that fails.
 
@@ -111,19 +109,17 @@ Drivers should test that when enabled, adaptive retries are limited by the numbe
 
 4. Configure the following failpoint:
 
-    ````
-        ```javascript
-            {
-                configureFailPoint: 'failCommand',
-                mode: {times: 3},
-                data: {
-                    failCommands: ['find'],
-                    errorCode: 462,  // IngressRequestRateLimitExceeded
-                    errorLabels: ['SystemOverloadedError', 'RetryableError']
-                }
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: {times: 3},
+            data: {
+                failCommands: ['find'],
+                errorCode: 462,  // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
             }
-        ```
-    ````
+        }
+    ```
 
 5. Perform a find operation with `coll` that fails.
 

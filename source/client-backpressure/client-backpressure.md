@@ -127,16 +127,20 @@ rules:
         - To retry `runCommand`, both [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) and
             [retryReads](../retryable-reads/retryable-reads.md#retryreads) MUST be enabled. See
             [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
-3. If the request is eligible for retry (as outlined in step 5), the client MUST apply exponential backoff according to
-    the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
+3. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
+    [adaptive retry requirements](client-backpressure.md#adaptive-retry-policy) below), the client MUST apply
+    exponential backoff according to the following formula:
+    `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
     - `jitter` is a random jitter value between 0 and 1.
     - `BASE_BACKOFF` is constant 100ms.
     - `MAX_BACKOFF` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-4. If the request is eligible for retry (as outlined in step 5), the client MUST add the previously used server's
-    address to the list of deprioritized server addresses for
+4. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
+    [adaptive retry requirements](client-backpressure.md#adaptive-retry-policy) below), the client MUST add the
+    previously used server's address to the list of deprioritized server addresses for
     [server selection](../server-selection/server-selection.md).
-5. If the request is eligible for retry (as outlined in step 5) and is a retryable write:
+5. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
+    [adaptive retry requirements](client-backpressure.md#adaptive-retry-policy) below) and is a retryable write:
     1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
         transactions MUST be followed, as outlined in the
         [transactions](../transactions/transactions.md#interaction-with-retryable-writes) specification.
@@ -149,7 +153,9 @@ rules:
     specifications.
     - For the purposes of error propagation, `runCommand` is considered a write.
 
-If the opt-in token bucket adaptive retry system is enabled, the following rules MUST also be obeyed:
+##### Adaptive retry policy
+
+If adaptive retries are enabled, the following rules MUST also be obeyed:
 
 1. If the command succeeds on the first attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE` tokens.
     - The value is 0.1 and non-configurable.
