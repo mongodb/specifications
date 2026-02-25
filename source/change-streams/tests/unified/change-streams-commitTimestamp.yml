@@ -1,7 +1,7 @@
 description: "change-streams-commitTimestamp"
 schemaVersion: "1.7"
 runOnRequirements:
-  - minServerVersion: "8.2.0"
+  - minServerVersion: "8.3.0"
     topologies: [ replicaset, sharded ]
     serverless: forbid
 
