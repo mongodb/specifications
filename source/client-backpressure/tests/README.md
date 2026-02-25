@@ -62,9 +62,67 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
 
 Drivers should test that retry token buckets are created at their maximum capacity and that that capacity is enforced.
 
-1. Let `client` be a `MongoClient`.
+1. Let `client` be a `MongoClient` with `adaptiveRetries=True`.
 2. Assert that the client's retry token bucket is at full capacity and that the capacity is
     `DEFAULT_RETRY_TOKEN_CAPACITY`.
 3. Using `client`, execute a successful `ping` command.
 4. Assert that the successful command did not increase the number of tokens in the bucket above
     `DEFAULT_RETRY_TOKEN_CAPACITY`.
+
+#### Test 3: Overload Errors are Retried a Maximum of MAX_RETRIES times
+
+Drivers should test that without adaptive retries enabled, overload errors are retried a maximum of five times.
+
+1. Let `client` be a `MongoClient` with command event monitoring enabled.
+
+2. Let `coll` be a collection.
+
+3. Configure the following failpoint:
+
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: 'alwaysOn',
+            data: {
+                failCommands: ['find'],
+                errorCode: 462,  // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
+            }
+        }
+    ```
+
+4. Perform a find operation with `coll` that fails.
+
+5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
+
+6. Assert that the total number of started commands is MAX_RETRIES + 1 (6).
+
+#### Test 4: Adaptive Retries are Limited by Token Bucket Tokens
+
+Drivers should test that when enabled, adaptive retries are limited by the number of tokens in the bucket.
+
+1. Let `client` be a `MongoClient` with `adaptiveRetries=True` and command event monitoring enabled.
+
+2. Set `client`'s retry token bucket to have 2 tokens.
+
+3. Let `coll` be a collection.
+
+4. Configure the following failpoint:
+
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: {times: 3},
+            data: {
+                failCommands: ['find'],
+                errorCode: 462,  // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
+            }
+        }
+    ```
+
+5. Perform a find operation with `coll` that fails.
+
+6. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
+
+7. Assert that the total number of started commands is 3: one for the initial attempt and two for the retries.
