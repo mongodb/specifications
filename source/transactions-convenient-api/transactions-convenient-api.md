@@ -396,7 +396,7 @@ Previously, the driver would retry transactions immediately, which is fine for l
 server load increases, immediate retries can result in retry storms, unnecessarily further overloading the server.
 
 Exponential backoff is well-researched and accepted backoff strategy that is simple to implement. A low initial backoff
-(1-millisecond) and growth value (1.25x) were chosen specifically to mitigate latency in low levels of contention.
+(5-milliseconds) and growth value (1.5x) were chosen specifically to mitigate latency in low levels of contention.
 Empirical evidence suggests that 500-millisecond max backoff ensured that a transaction did not wait so long as to
 exceed the 120-second timeout and reduced load spikes.
 
@@ -418,6 +418,8 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
+
+- 2026-02-20: Fix initial backoff and growth value parameters in "Design Rationale" section.
 
 - 2025-11-20: withTransaction applies exponential backoff when retrying.
 
