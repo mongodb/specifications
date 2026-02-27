@@ -239,11 +239,21 @@ tests:
       - client: *client0
         events:
           - commandStartedEvent:
+              command:
+                startTransaction: true
               commandName: insert
+              databaseName: *database_name
           - commandStartedEvent:
+              command:
+                startTransaction: true
               commandName: insert
+              databaseName: *database_name
           - commandStartedEvent:
+              command:
+                startTransaction:
+                  $$exists: false
               commandName: abortTransaction
+              databaseName: admin
     outcome:
       - collectionName: *collection_name
         databaseName: *database_name
