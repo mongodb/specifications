@@ -227,6 +227,12 @@ class ChangeStreamDocument {
    */
   clusterTime: Timestamp;
 
+  /**
+   * When this operation was committed.
+   * Only present for events in a transaction and only when the `showExpandedEvents` change stream option is enabled.
+   */
+  commitTimestamp: Optional<Timestamp>;
+
 }
 
 class UpdateDescription {
@@ -1025,6 +1031,8 @@ There should be no backwards compatibility concerns.
 - RUBY (RUBY-1228)
 
 ## Changelog
+
+- 2026-01-30: Add `commitTimestamp` to `ChangeStreamDocument`.
 
 - 2025-09-08: Clarify resume behavior.
 
