@@ -153,7 +153,7 @@ rules:
     specifications.
     - For the purposes of error propagation, `runCommand` is considered a write.
 
-##### Adaptive retry policy
+##### Adaptive retry requirements
 
 If adaptive retries are enabled, the following rules MUST also be obeyed:
 
@@ -257,8 +257,8 @@ limit overload error retry attempts. Although the server rejects excess commands
 CPU and creates extra contention on the connection pool which can eventually negatively affect goodput. To reduce this
 risk, the token bucket will limit retry attempts during a prolonged overload.
 
-The token bucket MUST be disabled by default and can be enabled through the `adaptiveRetries=True` connection and client
-options.
+The token bucket MUST be disabled by default and can be enabled through the
+[adaptiveRetries=True](../uri-options/uri-options.md) connection and client options.
 
 The token bucket starts at its maximum capacity of 1000 for consistency with the server.
 
