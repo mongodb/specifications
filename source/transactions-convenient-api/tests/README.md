@@ -106,6 +106,7 @@ Drivers should test that retries within `withTransaction` do not occur immediate
 
 ## Changelog
 
+- 2026-03-03: Clarify exponential backoff jitter upper bound.
 - 2026-01-07: Fixed Retry Backoff is Enforced test accordingly to the updated spec.
 - 2025-11-18: Added Backoff test.
 - 2024-09-06: Migrated from reStructuredText to Markdown.
