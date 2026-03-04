@@ -86,7 +86,7 @@ Drivers should test that retries within `withTransaction` do not occur immediate
            no_backoff_time = end - start
         ```
 4. Now run the command with backoff:
-    1. Configure the random number generator used for jitter to always return `1`.
+    1. Configure the random number generator used for jitter to always return a number as close as possible to `1`.
     2. Configure a fail point that forces 13 retries like in step 3.2.
     3. Use the same callback defined in 3.3.
     4. Let `with_backoff_time` be the duration of the withTransaction API call:
@@ -106,6 +106,7 @@ Drivers should test that retries within `withTransaction` do not occur immediate
 
 ## Changelog
 
+- 2026-03-03: Clarify exponential backoff jitter upper bound.
 - 2026-01-07: Fixed Retry Backoff is Enforced test accordingly to the updated spec.
 - 2025-11-18: Added Backoff test.
 - 2024-09-06: Migrated from reStructuredText to Markdown.
