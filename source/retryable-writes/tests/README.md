@@ -326,8 +326,8 @@ to cover the same sequence of events.
 
 1. Create a client with `retryWrites=true`.
 
-2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
-    `SystemOverloadedError` error labels:
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError`, `SystemOverloadedError`,
+    and `NoWritesPerformed` error labels:
 
     ```javascript
     {
@@ -380,7 +380,7 @@ to cover the same sequence of events.
     ```javascript
     {
         configureFailPoint: "failCommand",
-        mode: {times: 1},
+        mode: "alwaysOn",
         data: {
             failCommands: ["insert"],
             errorLabels: ["RetryableError", "SystemOverloadedError", "NoWritesPerformed"],
@@ -418,6 +418,8 @@ to cover the same sequence of events.
     ```
 
 ## Changelog
+
+- 2026-02-17: Fix test for error propagation behavior when multiple errors are encountered.
 
 - 2026-02-03: Add tests for error propagation behavior when multiple errors are encountered.
 
