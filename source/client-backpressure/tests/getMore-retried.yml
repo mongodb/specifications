@@ -12,6 +12,7 @@ createEntities:
         - commandSucceededEvent
   - client:
       id: &failPointClient failPointClient
+      useMultipleMongoses: false
   - database:
       id: db
       client: *client

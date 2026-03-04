@@ -20,7 +20,8 @@
     },
     {
       "client": {
-        "id": "failPointClient"
+        "id": "failPointClient",
+        "useMultipleMongoses": false
       }
     },
     {
