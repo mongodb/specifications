@@ -123,8 +123,8 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the previously encountered error. If the elapsed time of
-        `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
+    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the previously encountered error (see Note 1 below). If
+        the elapsed time of `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
         `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. sleep for `backoffMS`.
 
         1. jitter is a random float between \[0, 1), optionally including 1, depending on what is most natural for the
@@ -163,7 +163,8 @@ This method should perform the following sequence of actions:
         committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
         immediately.
 
-    4. Otherwise, propagate the callback's error to the caller of `withTransaction` and return immediately.
+    4. Otherwise, propagate the callback's error (see Note 1 below) to the caller of `withTransaction` and return
+        immediately.
 
 8. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
@@ -179,9 +180,20 @@ This method should perform the following sequence of actions:
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label, jump back to step two.
 
-    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
+    3. Otherwise, propagate the `commitTransaction` error (see Note 1 below) to the caller of `withTransaction` and
+        return immediately.
 
 11. The transaction was committed successfully. Return immediately.
+
+______________________________________________________________________
+
+**Note 1:** When the `TIMEOUT_MS` (calculated in step [1.3](#sequence-of-actions)) is reached we MUST report a timeout
+error wrapping the last error that was encountered which triggered the retry behavior. If `timeoutMS` is set, then
+timeout error is a special type which is defined in CSOT
+[specification](https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#errors)
+, If `timeoutMS` is not set, then propagate it as timeout error if the language allows to expose the underlying error as
+a cause of a timeout error (see `makeTimeoutError` below in [pseudo-code](#pseudo-code)). If timeout error is thrown
+then it SHOULD expose error label(s) from the transient error.
 
 ##### Pseudo-code
 
@@ -204,7 +216,7 @@ withTransaction(callback, options) {
                                               BACKOFF_MAX);
 
             if (Date.now() + backoff - startTime >= timeout) {
-                throw lastError;
+                throw makeTimeoutError(lastError);
             }
             sleep(backoff);
         }
@@ -221,9 +233,12 @@ withTransaction(callback, options) {
                 this.abortTransaction();
             }
 
-            if (error.hasErrorLabel("TransientTransactionError") &&
-                Date.now() - startTime < timeout) {
-                continue retryTransaction;
+            if (error.hasErrorLabel("TransientTransactionError")) {
+                if (Date.now() - startTime < timeout) {
+                    continue retryTransaction;
+                } else {
+                    throw makeTimeoutError(error)
+                }
             }
 
             throw error;
@@ -248,15 +263,16 @@ withTransaction(callback, options) {
                  * {ok:0, code: 50, codeName: "MaxTimeMSExpired"}
                  * {ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}
                  */
+                lastError = error;
+                if (Date.now() - startTime >= timeout) {
+                    throw makeTimeoutError(error);
+                }
                 if (!isMaxTimeMSExpiredError(error) &&
-                    error.hasErrorLabel("UnknownTransactionCommitResult") &&
-                    Date.now() - startTime < timeout) {
+                    error.hasErrorLabel("UnknownTransactionCommitResult")) {
                     continue retryCommit;
                 }
 
-                if (error.hasErrorLabel("TransientTransactionError") &&
-                    Date.now() - startTime < timeout) {
-                    lastError = error;
+                if (error.hasErrorLabel("TransientTransactionError")) {
                     continue retryTransaction;
                 }
 
@@ -266,6 +282,10 @@ withTransaction(callback, options) {
         }
         break; // Transaction was successful
     }
+}
+
+function makeTimeoutError(error) {
+    return getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(error);
 }
 ```
 
@@ -397,7 +417,7 @@ Previously, the driver would retry transactions immediately, which is fine for l
 server load increases, immediate retries can result in retry storms, unnecessarily further overloading the server.
 
 Exponential backoff is well-researched and accepted backoff strategy that is simple to implement. A low initial backoff
-(1-millisecond) and growth value (1.25x) were chosen specifically to mitigate latency in low levels of contention.
+(5-milliseconds) and growth value (1.5x) were chosen specifically to mitigate latency in low levels of contention.
 Empirical evidence suggests that 500-millisecond max backoff ensured that a transaction did not wait so long as to
 exceed the 120-second timeout and reduced load spikes.
 
@@ -421,6 +441,11 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ## Changelog
 
 - 2026-03-03: Clarify exponential backoff jitter upper bound.
+
+- 2026-02-20: Fix initial backoff and growth value parameters in "Design Rationale" section.
+
+- 2026-02-17: Clarify expected error when timeout is reached
+    [DRIVERS-3391](https://jira.mongodb.org/browse/DRIVERS-3391).
 
 - 2025-11-20: withTransaction applies exponential backoff when retrying.
 
