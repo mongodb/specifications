@@ -127,7 +127,8 @@ This method should perform the following sequence of actions:
         the elapsed time of `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
         `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. sleep for `backoffMS`.
 
-        1. jitter is a random float between \[0, 1)
+        1. jitter is a random float between \[0, 1), optionally including 1, depending on what is most natural for the
+            given driver language.
 
         2. `transactionAttempt` is the variable defined in step 1.
 
@@ -438,6 +439,8 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
+
+- 2026-03-03: Clarify exponential backoff jitter upper bound.
 
 - 2026-02-20: Fix initial backoff and growth value parameters in "Design Rationale" section.
 
