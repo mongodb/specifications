@@ -59,6 +59,68 @@
         "database": "database",
         "collectionName": "coll"
       }
+    },
+    {
+      "client": {
+        "id": "client_retryReads_false",
+        "useMultipleMongoses": false,
+        "observeEvents": [
+          "commandStartedEvent",
+          "commandSucceededEvent",
+          "commandFailedEvent"
+        ],
+        "ignoreCommandMonitoringEvents": [
+          "killCursors"
+        ],
+        "uriOptions": {
+          "retryReads": false
+        }
+      }
+    },
+    {
+      "database": {
+        "id": "database_retryReads_false",
+        "client": "client_retryReads_false",
+        "databaseName": "retryable-writes-tests"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection_retryReads_false",
+        "database": "database_retryReads_false",
+        "collectionName": "coll"
+      }
+    },
+    {
+      "client": {
+        "id": "client_retryWrites_false",
+        "useMultipleMongoses": false,
+        "observeEvents": [
+          "commandStartedEvent",
+          "commandSucceededEvent",
+          "commandFailedEvent"
+        ],
+        "ignoreCommandMonitoringEvents": [
+          "killCursors"
+        ],
+        "uriOptions": {
+          "retryWrites": false
+        }
+      }
+    },
+    {
+      "database": {
+        "id": "database_retryWrites_false",
+        "client": "client_retryWrites_false",
+        "databaseName": "backpressure-db"
+      }
+    },
+    {
+      "collection": {
+        "id": "collection_retryWrites_false",
+        "database": "database_retryWrites_false",
+        "collectionName": "coll"
+      }
     }
   ],
   "initialData": [
@@ -155,6 +217,62 @@
       ]
     },
     {
+      "description": "client.listDatabases (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listDatabases"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "listDatabases",
+          "object": "client_retryReads_false",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "listDatabases"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "listDatabases"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "client.listDatabaseNames retries using operation loop",
       "operations": [
         {
@@ -226,6 +344,59 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "listDatabases"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "client.listDatabaseNames (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listDatabases"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "listDatabaseNames",
+          "object": "client_retryReads_false",
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "listDatabases"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "listDatabases"
               }
             }
@@ -308,6 +479,62 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "aggregate"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "client.createChangeStream (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "aggregate"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "createChangeStream",
+          "object": "client_retryReads_false",
+          "arguments": {
+            "pipeline": []
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "aggregate"
               }
             }
@@ -502,6 +729,69 @@
       ]
     },
     {
+      "description": "database.aggregate (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "aggregate"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "aggregate",
+          "object": "database_retryReads_false",
+          "arguments": {
+            "pipeline": [
+              {
+                "$listLocalSessions": {}
+              },
+              {
+                "$limit": 1
+              }
+            ]
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "aggregate"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "database.listCollections retries using operation loop",
       "operations": [
         {
@@ -584,6 +874,62 @@
       ]
     },
     {
+      "description": "database.listCollections (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listCollections"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "listCollections",
+          "object": "database_retryReads_false",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "listCollections"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "listCollections"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "database.listCollectionNames retries using operation loop",
       "operations": [
         {
@@ -658,6 +1004,62 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "listCollections"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "database.listCollectionNames (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listCollections"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "listCollectionNames",
+          "object": "database_retryReads_false",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "listCollections"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "listCollections"
               }
             }
@@ -751,6 +1153,65 @@
       ]
     },
     {
+      "description": "database.runCommand (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "ping"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "runCommand",
+          "object": "database_retryReads_false",
+          "arguments": {
+            "command": {
+              "ping": 1
+            },
+            "commandName": "ping"
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "ping"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "ping"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "database.createChangeStream retries using operation loop",
       "operations": [
         {
@@ -825,6 +1286,62 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "aggregate"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "database.createChangeStream (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "aggregate"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "createChangeStream",
+          "object": "database_retryReads_false",
+          "arguments": {
+            "pipeline": []
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "aggregate"
               }
             }
@@ -915,6 +1432,62 @@
       ]
     },
     {
+      "description": "collection.aggregate (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "aggregate"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "aggregate",
+          "object": "collection_retryReads_false",
+          "arguments": {
+            "pipeline": []
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "aggregate"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "collection.countDocuments retries using operation loop",
       "operations": [
         {
@@ -997,6 +1570,62 @@
       ]
     },
     {
+      "description": "collection.countDocuments (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "aggregate"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "countDocuments",
+          "object": "collection_retryReads_false",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "aggregate"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "collection.estimatedDocumentCount retries using operation loop",
       "operations": [
         {
@@ -1068,6 +1697,59 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "collection.estimatedDocumentCount (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "count"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "estimatedDocumentCount",
+          "object": "collection_retryReads_false",
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "count"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "count"
               }
             }
@@ -1159,6 +1841,63 @@
       ]
     },
     {
+      "description": "collection.distinct (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "distinct"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "distinct",
+          "object": "collection_retryReads_false",
+          "arguments": {
+            "fieldName": "x",
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "distinct"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "distinct"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "collection.find retries using operation loop",
       "operations": [
         {
@@ -1233,6 +1972,62 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "find"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "collection.find (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "find"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "find",
+          "object": "collection_retryReads_false",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "find"
               }
             }
@@ -1323,6 +2118,62 @@
       ]
     },
     {
+      "description": "collection.findOne (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "find"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "findOne",
+          "object": "collection_retryReads_false",
+          "arguments": {
+            "filter": {}
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "find"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "collection.listIndexes retries using operation loop",
       "operations": [
         {
@@ -1394,6 +2245,59 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "listIndexes"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "collection.listIndexes (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listIndexes"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "listIndexes",
+          "object": "collection_retryReads_false",
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "listIndexes"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "listIndexes"
               }
             }
@@ -1481,6 +2385,59 @@
       ]
     },
     {
+      "description": "collection.listIndexNames (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "listIndexes"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "listIndexNames",
+          "object": "collection_retryReads_false",
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "listIndexes"
+              }
+            },
+            {
+              "commandFailedEvent": {
+                "commandName": "listIndexes"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "description": "collection.createChangeStream retries using operation loop",
       "operations": [
         {
@@ -1555,6 +2512,62 @@
             },
             {
               "commandSucceededEvent": {
+                "commandName": "aggregate"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "collection.createChangeStream (read) does not retry if retryReads=false",
+      "operations": [
+        {
+          "name": "failPoint",
+          "object": "testRunner",
+          "arguments": {
+            "client": "internal_client",
+            "failPoint": {
+              "configureFailPoint": "failCommand",
+              "mode": {
+                "times": 1
+              },
+              "data": {
+                "failCommands": [
+                  "aggregate"
+                ],
+                "errorLabels": [
+                  "RetryableError",
+                  "SystemOverloadedError"
+                ],
+                "errorCode": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "createChangeStream",
+          "object": "collection_retryReads_false",
+          "arguments": {
+            "pipeline": []
+          },
+          "expectError": {
+            "isError": true,
+            "isClientError": false
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client_retryReads_false",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "aggregate"
+              }
+            },
+            {
+              "commandFailedEvent": {
                 "commandName": "aggregate"
               }
             }

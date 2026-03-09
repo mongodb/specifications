@@ -39,6 +39,24 @@ createEntities:
       database: *database
       collectionName: *collection_name
 
+  - client:
+      id: &client_retryReads_false client_retryReads_false
+      useMultipleMongoses: false
+      observeEvents: [commandStartedEvent, commandSucceededEvent, commandFailedEvent]
+      ignoreCommandMonitoringEvents: [killCursors]
+      uriOptions:
+        retryReads: false
+
+  - database:
+      id: &database_retryReads_false database_retryReads_false
+      client: *client_retryReads_false
+      databaseName: *database_name
+
+  - collection:
+      id: &collection_retryReads_false collection_retryReads_false
+      database: *database_retryReads_false
+      collectionName: *collection_name
+
 initialData:
 - collectionName: *collection_name
   databaseName: *database_name
@@ -99,4 +117,41 @@ tests: {% for operation in operations %}
               commandName: {{operation.command_name}}
           - commandSucceededEvent:
               commandName: {{operation.command_name}}
+
+  {%- if operation.operation_type == 'read' %}
+  - description: '{{operation.object}}.{{operation.operation_name}} (read) does not retry if retryReads=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [{{operation.command_name}}]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: {{operation.operation_name}}
+        object: *{{operation.object}}_retryReads_false
+        {%- if operation.arguments|length > 0 %}
+        arguments:
+          {%- for arg in operation.arguments %}
+          {{arg}}
+          {%- endfor -%}
+        {%- endif %}
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryReads_false
+        events:
+          - commandStartedEvent:
+              commandName: {{operation.command_name}}
+          - commandFailedEvent:
+              commandName: {{operation.command_name}}
+  {%- endif %}
+
 {% endfor -%}
