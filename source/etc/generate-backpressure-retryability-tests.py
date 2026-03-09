@@ -76,6 +76,7 @@ COLLECTION_WRITE_OPERATIONS = [
               ['keys: { x: 11 }', 'name: "x_11"'], 'write'),
     Operation('dropIndex', 'dropIndexes', 'collection', ['name: "x_11"'], 'write'),
     Operation('dropIndexes', 'dropIndexes', 'collection', [], 'write'),
+    Operation('aggregate', 'aggregate', 'collection', ['pipeline: [{$out: "output"}]'], 'write'),
 ]
 
 COLLECTION_OPERATIONS = COLLECTION_READ_OPERATIONS + COLLECTION_WRITE_OPERATIONS
