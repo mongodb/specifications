@@ -711,6 +711,7 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
 - 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
 
 - 2026-02-11: Clarified that the retry logic and pseudocode does not include the modifications required by client
