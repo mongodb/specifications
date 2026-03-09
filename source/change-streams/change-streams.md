@@ -229,7 +229,7 @@ class ChangeStreamDocument {
 
   /**
    * When this operation was committed.
-   * Only present for events in a transaction and only when the `showExpandedEvents` change stream option is enabled.
+   * Only present for events in a prepared transaction and only when the `showExpandedEvents` change stream option is enabled.
    */
   commitTimestamp: Optional<Timestamp>;
 
@@ -1032,7 +1032,7 @@ There should be no backwards compatibility concerns.
 
 ## Changelog
 
-- 2026-01-30: Add `commitTimestamp` to `ChangeStreamDocument`.
+- 2026-03-09: Add `commitTimestamp` to `ChangeStreamDocument`.
 
 - 2025-09-08: Clarify resume behavior.
 
