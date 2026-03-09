@@ -330,6 +330,40 @@ tests:
               commandName: bulkWrite
           - commandSucceededEvent:
               commandName: bulkWrite
+  - description: 'client.clientBulkWrite (write) does not retry if retryWrites=false'
+    runOnRequirements:
+      - minServerVersion: '8.0' # client bulk write added to server in 8.0
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [bulkWrite]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: clientBulkWrite
+        object: *client_retryWrites_false
+        arguments:
+          models:
+          - insertOne:
+              namespace: *client_bulk_write_ns
+              document: { _id: 8, x: 88 }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: bulkWrite
+          - commandFailedEvent:
+              commandName: bulkWrite
 
 
   - description: 'database.aggregate retries using operation loop'
@@ -1328,6 +1362,35 @@ tests:
               commandName: insert
           - commandSucceededEvent:
               commandName: insert
+  - description: 'collection.insertOne (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [insert]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: insertOne
+        object: *collection_retryWrites_false
+        arguments:
+          document: { _id: 2, x: 22 }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandFailedEvent:
+              commandName: insert
 
 
   - description: 'collection.insertMany retries using operation loop'
@@ -1369,6 +1432,36 @@ tests:
               commandName: insert
           - commandSucceededEvent:
               commandName: insert
+  - description: 'collection.insertMany (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [insert]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: insertMany
+        object: *collection_retryWrites_false
+        arguments:
+          documents:
+            - { _id: 2, x: 22 }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandFailedEvent:
+              commandName: insert
 
 
   - description: 'collection.deleteOne retries using operation loop'
@@ -1409,6 +1502,35 @@ tests:
               commandName: delete
           - commandSucceededEvent:
               commandName: delete
+  - description: 'collection.deleteOne (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [delete]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: deleteOne
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: delete
+          - commandFailedEvent:
+              commandName: delete
 
 
   - description: 'collection.deleteMany retries using operation loop'
@@ -1448,6 +1570,35 @@ tests:
           - commandStartedEvent:
               commandName: delete
           - commandSucceededEvent:
+              commandName: delete
+  - description: 'collection.deleteMany (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [delete]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: deleteMany
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: delete
+          - commandFailedEvent:
               commandName: delete
 
 
@@ -1490,6 +1641,36 @@ tests:
               commandName: update
           - commandSucceededEvent:
               commandName: update
+  - description: 'collection.replaceOne (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [update]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: replaceOne
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+          replacement: { x: 22 }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: update
+          - commandFailedEvent:
+              commandName: update
 
 
   - description: 'collection.updateOne retries using operation loop'
@@ -1530,6 +1711,36 @@ tests:
           - commandStartedEvent:
               commandName: update
           - commandSucceededEvent:
+              commandName: update
+  - description: 'collection.updateOne (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [update]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: updateOne
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+          update: { $set: { x: 22 } }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: update
+          - commandFailedEvent:
               commandName: update
 
 
@@ -1572,6 +1783,36 @@ tests:
               commandName: update
           - commandSucceededEvent:
               commandName: update
+  - description: 'collection.updateMany (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [update]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: updateMany
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+          update: { $set: { x: 22 } }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: update
+          - commandFailedEvent:
+              commandName: update
 
 
   - description: 'collection.findOneAndDelete retries using operation loop'
@@ -1611,6 +1852,35 @@ tests:
           - commandStartedEvent:
               commandName: findAndModify
           - commandSucceededEvent:
+              commandName: findAndModify
+  - description: 'collection.findOneAndDelete (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [findAndModify]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: findOneAndDelete
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: findAndModify
+          - commandFailedEvent:
               commandName: findAndModify
 
 
@@ -1653,6 +1923,36 @@ tests:
               commandName: findAndModify
           - commandSucceededEvent:
               commandName: findAndModify
+  - description: 'collection.findOneAndReplace (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [findAndModify]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: findOneAndReplace
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+          replacement: { x: 22 }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: findAndModify
+          - commandFailedEvent:
+              commandName: findAndModify
 
 
   - description: 'collection.findOneAndUpdate retries using operation loop'
@@ -1693,6 +1993,36 @@ tests:
           - commandStartedEvent:
               commandName: findAndModify
           - commandSucceededEvent:
+              commandName: findAndModify
+  - description: 'collection.findOneAndUpdate (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [findAndModify]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: findOneAndUpdate
+        object: *collection_retryWrites_false
+        arguments:
+          filter: {}
+          update: { $set: { x: 22 } }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: findAndModify
+          - commandFailedEvent:
               commandName: findAndModify
 
 
@@ -1736,6 +2066,37 @@ tests:
               commandName: insert
           - commandSucceededEvent:
               commandName: insert
+  - description: 'collection.bulkWrite (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [insert]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: bulkWrite
+        object: *collection_retryWrites_false
+        arguments:
+          requests:
+            - insertOne:
+                document: { _id: 2, x: 22 }
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandFailedEvent:
+              commandName: insert
 
 
   - description: 'collection.createIndex retries using operation loop'
@@ -1776,6 +2137,36 @@ tests:
           - commandStartedEvent:
               commandName: createIndexes
           - commandSucceededEvent:
+              commandName: createIndexes
+  - description: 'collection.createIndex (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [createIndexes]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: createIndex
+        object: *collection_retryWrites_false
+        arguments:
+          keys: { x: 11 }
+          name: "x_11"
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: createIndexes
+          - commandFailedEvent:
               commandName: createIndexes
 
 
@@ -1822,6 +2213,40 @@ tests:
               commandName: dropIndexes
           - commandSucceededEvent:
               commandName: dropIndexes
+  - description: 'collection.dropIndex (write) does not retry if retryWrites=false'
+    operations:
+      - name: createIndex
+        object: *internal_collection
+        arguments:
+          keys: { x: 11 }
+          name: "x_11"
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [dropIndexes]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: dropIndex
+        object: *collection_retryWrites_false
+        arguments:
+          name: "x_11"
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: dropIndexes
+          - commandFailedEvent:
+              commandName: dropIndexes
 
 
   - description: 'collection.dropIndexes retries using operation loop'
@@ -1859,5 +2284,32 @@ tests:
           - commandStartedEvent:
               commandName: dropIndexes
           - commandSucceededEvent:
+              commandName: dropIndexes
+  - description: 'collection.dropIndexes (write) does not retry if retryWrites=false'
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *internal_client
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [dropIndexes]
+              errorLabels: [RetryableError, SystemOverloadedError]
+              errorCode: 2
+
+      - name: dropIndexes
+        object: *collection_retryWrites_false
+        expectError:
+          isError: true
+          isClientError: false
+
+    expectEvents:
+      - client: *client_retryWrites_false
+        events:
+          - commandStartedEvent:
+              commandName: dropIndexes
+          - commandFailedEvent:
               commandName: dropIndexes
 
