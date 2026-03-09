@@ -1,7 +1,6 @@
 from collections import namedtuple
 from jinja2 import Template
 import os
-import sys
 
 Operation = namedtuple(
     'Operation', ['operation_name', 'command_name', 'object', 'arguments'])
