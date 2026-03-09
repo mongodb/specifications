@@ -136,7 +136,7 @@ tests: {% for operation in operations %}
           - commandSucceededEvent:
               commandName: {{operation.command_name}}
 
-  {%- if operation.operation_type == 'read' %}
+  {%- if operation.operation_type == 'read' or operation.operation_name == "runCommand" %}
   - description: '{{operation.object}}.{{operation.operation_name}} (read) does not retry if retryReads=false'
     operations:
       - name: failPoint
@@ -172,7 +172,7 @@ tests: {% for operation in operations %}
               commandName: {{operation.command_name}}
   {%- endif %}
 
-  {%- if operation.operation_type == 'write' %}
+  {%- if operation.operation_type == 'write' or operation.operation_name == "runCommand" %}
   - description: '{{operation.object}}.{{operation.operation_name}} (write) does not retry if retryWrites=false' {%- if ((operation.operation_name == 'clientBulkWrite')) %}
     runOnRequirements:
       - minServerVersion: '8.0' # client bulk write added to server in 8.0
