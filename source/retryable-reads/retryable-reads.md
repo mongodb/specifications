@@ -579,6 +579,7 @@ reads because the resilience benefit of retryable reads outweighs the minor risk
 any customers experiencing degraded performance can simply disable `retryableReads`.
 
 ## Changelog
+
 - 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
 
 - 2026-02-11: Clarified that the retry logic and pseudocode does not include the modifications required by client
