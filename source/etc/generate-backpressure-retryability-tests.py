@@ -1,10 +1,9 @@
 from collections import namedtuple
 from jinja2 import Template
 import os
-import sys
 
 Operation = namedtuple(
-    'Operation', ['operation_name', 'command_name', 'object', 'arguments'])
+    'Operation', ['operation_name', 'command_name', 'object', 'arguments', 'operation_type'])
 
 CLIENT_BULK_WRITE_ARGUMENTS = '''models:
           - insertOne:
@@ -12,10 +11,10 @@ CLIENT_BULK_WRITE_ARGUMENTS = '''models:
               document: { _id: 8, x: 88 }'''
 
 CLIENT_OPERATIONS = [
-    Operation('listDatabases', 'listDatabases', 'client', ['filter: {}']),
-    Operation('listDatabaseNames', 'listDatabases', 'client', []),
-    Operation('createChangeStream', 'aggregate', 'client', ['pipeline: []']),
-    Operation('clientBulkWrite', 'bulkWrite', 'client', [CLIENT_BULK_WRITE_ARGUMENTS])
+    Operation('listDatabases', 'listDatabases', 'client', ['filter: {}'], 'read'),
+    Operation('listDatabaseNames', 'listDatabases', 'client', [], 'read'),
+    Operation('createChangeStream', 'aggregate', 'client', ['pipeline: []'], 'read'),
+    Operation('clientBulkWrite', 'bulkWrite', 'client', [CLIENT_BULK_WRITE_ARGUMENTS], 'write')
 ]
 
 RUN_COMMAND_ARGUMENTS = '''command: { ping: 1 }
@@ -23,13 +22,13 @@ RUN_COMMAND_ARGUMENTS = '''command: { ping: 1 }
 
 DB_OPERATIONS = [
     Operation('aggregate', 'aggregate', 'database', [
-              'pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]']),
+              'pipeline: [ { $listLocalSessions: {} }, { $limit: 1 } ]'], 'read'),
     Operation('listCollections', 'listCollections',
-              'database', ['filter: {}']),
+              'database', ['filter: {}'], 'read'),
     Operation('listCollectionNames', 'listCollections',
-              'database', ['filter: {}']), # Optional.
-    Operation('runCommand', 'ping', 'database', [RUN_COMMAND_ARGUMENTS]),
-    Operation('createChangeStream', 'aggregate', 'database', ['pipeline: []'])
+              'database', ['filter: {}'], 'read'), # Optional.
+    Operation('runCommand', 'ping', 'database', [RUN_COMMAND_ARGUMENTS], 'read'),
+    Operation('createChangeStream', 'aggregate', 'database', ['pipeline: []'], 'read')
 ]
 
 INSERT_MANY_ARGUMENTS = '''documents:
@@ -40,43 +39,44 @@ BULK_WRITE_ARGUMENTS = '''requests:
                 document: { _id: 2, x: 22 }'''
 
 COLLECTION_READ_OPERATIONS = [
-    Operation('aggregate', 'aggregate', 'collection', ['pipeline: []']),
-    # Operation('count', 'count', 'collection', ['filter: {}']),  # Deprecated.
-    Operation('countDocuments', 'aggregate', 'collection', ['filter: {}']),
-    Operation('estimatedDocumentCount', 'count', 'collection', []),
+    Operation('aggregate', 'aggregate', 'collection', ['pipeline: []'], 'read'),
+    # Operation('count', 'count', 'collection', ['filter: {}'], 'read'),  # Deprecated.
+    Operation('countDocuments', 'aggregate', 'collection', ['filter: {}'], 'read'),
+    Operation('estimatedDocumentCount', 'count', 'collection', [], 'read'),
     Operation('distinct', 'distinct', 'collection',
-              ['fieldName: x', 'filter: {}']),
-    Operation('find', 'find', 'collection', ['filter: {}']),
-    Operation('findOne', 'find', 'collection', ['filter: {}']),  # Optional.
-    Operation('listIndexes', 'listIndexes', 'collection', []),
-    Operation('listIndexNames', 'listIndexes', 'collection', []),  # Optional.
+              ['fieldName: x', 'filter: {}'], 'read'),
+    Operation('find', 'find', 'collection', ['filter: {}'], 'read'),
+    Operation('findOne', 'find', 'collection', ['filter: {}'], 'read'),  # Optional.
+    Operation('listIndexes', 'listIndexes', 'collection', [], 'read'),
+    Operation('listIndexNames', 'listIndexes', 'collection', [], 'read'),  # Optional.
     Operation('createChangeStream', 'aggregate',
-              'collection', ['pipeline: []']),
+              'collection', ['pipeline: []'], 'read'),
 ]
 
 COLLECTION_WRITE_OPERATIONS = [
     Operation('insertOne', 'insert', 'collection',
-              ['document: { _id: 2, x: 22 }']),
-    Operation('insertMany', 'insert', 'collection', [INSERT_MANY_ARGUMENTS]),
-    Operation('deleteOne', 'delete', 'collection', ['filter: {}']),
-    Operation('deleteMany', 'delete', 'collection', ['filter: {}']),
+              ['document: { _id: 2, x: 22 }'], 'write'),
+    Operation('insertMany', 'insert', 'collection', [INSERT_MANY_ARGUMENTS], 'write'),
+    Operation('deleteOne', 'delete', 'collection', ['filter: {}'], 'write'),
+    Operation('deleteMany', 'delete', 'collection', ['filter: {}'], 'write'),
     Operation('replaceOne', 'update', 'collection', [
-              'filter: {}', 'replacement: { x: 22 }']),
+              'filter: {}', 'replacement: { x: 22 }'], 'write'),
     Operation('updateOne', 'update', 'collection', [
-              'filter: {}', 'update: { $set: { x: 22 } }']),
+              'filter: {}', 'update: { $set: { x: 22 } }'], 'write'),
     Operation('updateMany', 'update', 'collection', [
-              'filter: {}', 'update: { $set: { x: 22 } }']),
+              'filter: {}', 'update: { $set: { x: 22 } }'], 'write'),
     Operation('findOneAndDelete', 'findAndModify',
-              'collection', ['filter: {}']),
+              'collection', ['filter: {}'], 'write'),
     Operation('findOneAndReplace', 'findAndModify', 'collection',
-              ['filter: {}', 'replacement: { x: 22 }']),
+              ['filter: {}', 'replacement: { x: 22 }'], 'write'),
     Operation('findOneAndUpdate', 'findAndModify', 'collection',
-              ['filter: {}', 'update: { $set: { x: 22 } }']),
-    Operation('bulkWrite', 'insert', 'collection', [BULK_WRITE_ARGUMENTS]),
+              ['filter: {}', 'update: { $set: { x: 22 } }'], 'write'),
+    Operation('bulkWrite', 'insert', 'collection', [BULK_WRITE_ARGUMENTS], 'write'),
     Operation('createIndex', 'createIndexes', 'collection',
-              ['keys: { x: 11 }', 'name: "x_11"']),
-    Operation('dropIndex', 'dropIndexes', 'collection', ['name: "x_11"']),
-    Operation('dropIndexes', 'dropIndexes', 'collection', []),
+              ['keys: { x: 11 }', 'name: "x_11"'], 'write'),
+    Operation('dropIndex', 'dropIndexes', 'collection', ['name: "x_11"'], 'write'),
+    Operation('dropIndexes', 'dropIndexes', 'collection', [], 'write'),
+    Operation('aggregate', 'aggregate', 'collection', ['pipeline: [{$out: "output"}]'], 'write'),
 ]
 
 COLLECTION_OPERATIONS = COLLECTION_READ_OPERATIONS + COLLECTION_WRITE_OPERATIONS
