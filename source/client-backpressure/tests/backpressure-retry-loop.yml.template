@@ -84,7 +84,7 @@ _yamlAnchors:
   bulWriteInsertNamespace: &client_bulk_write_ns retryable-writes-tests.coll
 
 tests: {% for operation in operations %}
-  - description: '{{operation.object}}.{{operation.operation_name}} retries using operation loop' {%- if ((operation.operation_name == 'clientBulkWrite')) %}
+  - description: '{{operation.object}}.{{operation.operation_name}}{{ " " + operation.operation_type + "" if operation.operation_name == "aggregate" else "" }} retries using operation loop' {%- if ((operation.operation_name == 'clientBulkWrite')) %}
     runOnRequirements:
       - minServerVersion: '8.0' # client bulk write added to server in 8.0
     {%- endif %}
