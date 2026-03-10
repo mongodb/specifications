@@ -68,7 +68,7 @@ createEntities:
   - database:
       id: &database_retryWrites_false database_retryWrites_false
       client: *client_retryWrites_false
-      databaseName: backpressure-db
+      databaseName: *database_name
 
   - collection:
       id: &collection_retryWrites_false collection_retryWrites_false
