@@ -480,37 +480,63 @@
           }
         },
         "^azure(:[a-zA-Z0-9_]+)?$": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "tenantId": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "tenantId": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                },
+                "clientId": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                },
+                "clientSecret": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                },
+                "identityPlatformEndpoint": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                }
+              }
             },
-            "clientId": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
-            },
-            "clientSecret": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
-            },
-            "identityPlatformEndpoint": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "accessToken": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                }
+              }
             }
-          }
+          ]
         },
         "^gcp(:[a-zA-Z0-9_]+)?$": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "email": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "email": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                },
+                "privateKey": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                },
+                "endpoint": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                }
+              }
             },
-            "privateKey": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
-            },
-            "endpoint": {
-              "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "accessToken": {
+                  "$ref": "#/definitions/kmsProviders/$defs/stringOrPlaceholder"
+                }
+              }
             }
-          }
+          ]
         },
         "^kmip(:[a-zA-Z0-9_]+)?$": {
           "type": "object",
