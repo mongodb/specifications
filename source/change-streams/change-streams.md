@@ -1027,7 +1027,7 @@ There should be no backwards compatibility concerns.
 
 ## Changelog
 
-- 2025-09-09: Revert expanded field visibility change.
+- 2026-03-18: Revert expanded field visibility change.
 
 - 2025-09-08: Clarify resume behavior.
 
