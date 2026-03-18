@@ -10,7 +10,7 @@ createEntities:
       autoEncryptOpts:
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          gcp: { accessToken: { $$placeholder: 1 } }
+          gcp: { accessToken: { $$placeholder: 1 } } # Use csfle/setup-secrets.sh from drivers-evergreen-tools to obtain token.
   - database:
       id: &db "db"
       client: *client
@@ -25,7 +25,7 @@ createEntities:
         keyVaultClient: *client
         keyVaultNamespace: keyvault.datakeys
         kmsProviders:
-          gcp: { accessToken: { $$placeholder: 1 } }
+          gcp: { accessToken: { $$placeholder: 1 } } # Use csfle/setup-secrets.sh from drivers-evergreen-tools to obtain token.
 initialData:
   - databaseName: *db
     collectionName: *coll
