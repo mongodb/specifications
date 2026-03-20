@@ -97,7 +97,7 @@
           "type": "string"
         },
         "csfle": {
-          "anyOf": [
+          "oneOf": [
             {
               "type": "boolean"
             },

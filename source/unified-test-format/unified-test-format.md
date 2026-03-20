@@ -3462,7 +3462,7 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2026-03-17: **Schema version 1.28.**
 
-    Add `accessToken` to `kmsProviders` (Azure and GCP).
+    Add `accessToken` to `kmsProviders` (Azure and GCP). Replace unnecessary `anyOf` with `oneOf` for `csfle`.
 
 - 2026-01-08: Remove Future Work entry for log message assertions (implemented in schema version 1.13).
 
