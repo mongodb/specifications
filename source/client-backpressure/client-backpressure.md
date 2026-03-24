@@ -474,9 +474,6 @@ retrying a write command when only `retryReads` is enabled.
 
 ## Changelog
 
-- 2026-03-23: Change `MAX_RETRIES` default to 2 with configurable `maxAdaptiveRetries` option. Add
-    `enableOverloadRetargeting` option (default `false`). Add retry metadata (`"retry"` field) to retried commands.
-
 - 2026-02-20: Disable token buckets by default.
 
 - 2026-01-09: Initial version.
