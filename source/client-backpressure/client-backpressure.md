@@ -122,7 +122,8 @@ rules:
 2. A retry attempt will only be permitted if:
     1. The error is a retryable overload error.
     2. We have not reached `MAX_RETRIES`.
-        - The value of `MAX_RETRIES` is 5 and non-configurable.
+        - The default value of `MAX_RETRIES` is 2. Drivers MUST expose this as a configurable option named
+            `maxAdaptiveRetries`.
         - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within
             the timeout to avoid retry storms.
     3. (CSOT-only): There is still time for a retry attempt according to the
@@ -142,10 +143,15 @@ rules:
     - `MAX_BACKOFF` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
 4. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
-    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below), the client MUST add the
-    previously used server's address to the list of deprioritized server addresses for
-    [server selection](../server-selection/server-selection.md).
+    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below) and
+    `enableOverloadRetargeting` is enabled, the client MUST add the previously used server's address to the list of
+    deprioritized server addresses for [server selection](../server-selection/server-selection.md). Drivers MUST expose
+    this as a configurable boolean option named `enableOverloadRetargeting` defaulting to `false`.
 5. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
+    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below), the client MUST add a
+    `"retry"` field to the outgoing command body containing the current attempt number (starting at 1 for the first
+    retry). This allows the server to observe the impact of retry storms.
+6. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
     [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below) and is a retryable write:
     1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
         transactions MUST be followed, as outlined in the
@@ -153,7 +159,7 @@ rules:
     2. If the command is a not a part of a transaction, the instructions for command modification on retry for retryable
         writes MUST be followed, as outlined in the [retryable writes](../retryable-writes/retryable-writes.md)
         specification.
-6. If the request is not eligible for any retries, then the client MUST propagate errors following the behaviors
+7. If the request is not eligible for any retries, then the client MUST propagate errors following the behaviors
     described in the [retryable reads](../retryable-reads/retryable-reads.md),
     [retryable writes](../retryable-writes/retryable-writes.md) and the [transactions](../transactions/transactions.md)
     specifications.
@@ -467,6 +473,9 @@ retried. This approach also prevents accidentally retrying a read command when o
 retrying a write command when only `retryReads` is enabled.
 
 ## Changelog
+
+- 2026-03-23: Change `MAX_RETRIES` default to 2 with configurable `maxAdaptiveRetries` option. Add
+    `enableOverloadRetargeting` option (default `false`). Add retry metadata (`"retry"` field) to retried commands.
 
 - 2026-02-20: Disable token buckets by default.
 
