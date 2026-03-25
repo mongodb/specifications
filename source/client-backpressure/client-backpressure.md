@@ -122,7 +122,7 @@ rules:
 2. A retry attempt will only be permitted if:
     1. The error is a retryable overload error.
     2. We have not reached `MAX_RETRIES`.
-        - The default value of `MAX_RETRIES` is 2. Drivers MUST expose this as a configurable option.
+        - The default value of `MAX_RETRIES` is 2. Drivers MUST expose this as a configurable option `maxRetries`.
         - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within
             the timeout to avoid retry storms.
     3. (CSOT-only): There is still time for a retry attempt according to the
