@@ -433,7 +433,7 @@ Before each test case, perform the setup.
 
 3. Send a `ping` command to the server and verify that the command succeeds.
 
-4. Save intercepted `client` document as `initialClientMetadata`.
+4. Save intercepted `client` document as `clientMetadata`.
 
 5. Wait 5ms for the connection to become idle.
 
@@ -443,7 +443,7 @@ Before each test case, perform the setup.
 
 8. Store the response as `updatedClientMetadata`.
 
-9. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+9. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 8: Empty strings are considered unset when appending metadata identical to initial metadata
 
