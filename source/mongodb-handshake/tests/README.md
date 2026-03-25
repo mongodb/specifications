@@ -402,29 +402,34 @@ Before each test case, perform the setup.
 
 ##### Parameterized test cases
 
-###### Initial metadata
+###### Appended metadata
+
+| Case | Name      | Version | Platform          |
+| ---- | --------- | ------- | ----------------- |
+| 1    | framework | null    | Library Framework |
+| 2    | framework | 2.0     | null              |
+
+###### Duplicate Metadata
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
-| 1    | null    | 1.2     | Library Platform |
-| 2    | library | null    | Library Platform |
-| 3    | library | 1.2     | null             |
-
-###### Appended Metadata
-
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | ""      | 1.2     | Library Platform |
-| 2    | library | ""      | Library Platform |
-| 3    | library | 1.2     | ""               |
+| 1    | library | ""      | Library Platform |
+| 2    | library | 1.2     | ""               |
 
 ##### Running a test case
 
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - `driverInfo` set to the following:
 
-2. Append the `DriverInfoOptions` from the selected test case from the initial metadata section.
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
 3. Send a `ping` command to the server and verify that the command succeeds.
 
@@ -432,7 +437,7 @@ Before each test case, perform the setup.
 
 5. Wait 5ms for the connection to become idle.
 
-6. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+6. Append the `DriverInfoOptions` from the selected test case from the duplicate metadata section.
 
 7. Send a `ping` command to the server and verify the command succeeds.
 
@@ -454,17 +459,15 @@ Before each test case, perform the setup.
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
-| 1    | null    | 1.2     | Library Platform |
-| 2    | library | null    | Library Platform |
-| 3    | library | 1.2     | null             |
+| 1    | library | null    | Library Platform |
+| 2    | library | 1.2     | null             |
 
 ###### Appended Metadata
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
-| 1    | ""      | 1.2     | Library Platform |
-| 2    | library | ""      | Library Platform |
-| 3    | library | 1.2     | ""               |
+| 1    | library | ""      | Library Platform |
+| 2    | library | 1.2     | ""               |
 
 ##### Running a test case
 
