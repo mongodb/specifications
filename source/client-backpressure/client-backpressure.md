@@ -147,10 +147,6 @@ rules:
     deprioritized server addresses for [server selection](../server-selection/server-selection.md). Drivers MUST expose
     this as a configurable boolean option named `enableOverloadRetargeting` defaulting to `false`.
 5. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
-    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below), the client MUST add a
-    `"retry"` field to the outgoing command body containing the current attempt number (starting at 1 for the first
-    retry). This allows the server to observe the impact of retry storms.
-6. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
     [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below) and is a retryable write:
     1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
         transactions MUST be followed, as outlined in the
@@ -158,7 +154,7 @@ rules:
     2. If the command is a not a part of a transaction, the instructions for command modification on retry for retryable
         writes MUST be followed, as outlined in the [retryable writes](../retryable-writes/retryable-writes.md)
         specification.
-7. If the request is not eligible for any retries, then the client MUST propagate errors following the behaviors
+6. If the request is not eligible for any retries, then the client MUST propagate errors following the behaviors
     described in the [retryable reads](../retryable-reads/retryable-reads.md),
     [retryable writes](../retryable-writes/retryable-writes.md) and the [transactions](../transactions/transactions.md)
     specifications.
