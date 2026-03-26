@@ -101,8 +101,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with the following:
 
     - `maxIdleTimeMS` set to `1ms`
-
-    - Wrapping library metadata:
+    - `driverInfo` set to the following initial value:
 
         | Field    | Value            |
         | -------- | ---------------- |
@@ -161,6 +160,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - `driverInfo` set to its default initial value.
 
 2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
@@ -172,7 +172,7 @@ Before each test case, perform the setup.
 
 3. Send a `ping` command to the server and verify that the command succeeds.
 
-4. Save intercepted `client` document as `updatedClientMetadata`.
+4. Save intercepted `client` document as `clientMetadata`.
 
 5. Wait 5ms for the connection to become idle.
 
@@ -206,7 +206,7 @@ Before each test case, perform the setup.
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
 
-    - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
+    - All other subfields in the `client` document remain unchanged from `clientMetadata`.
 
 ### Test 3: Multiple Successive Metadata Updates with Duplicate Data
 
@@ -218,6 +218,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - `driverInfo` set to its default initial value.
 
 2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
@@ -273,6 +274,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - `driverInfo` set to its default initial value.
 
 2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
@@ -319,7 +321,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following:
+    - `driverInfo` set to the following initial value:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -352,7 +354,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following:
+    - `driverInfo` set to the following initial value:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -404,10 +406,10 @@ Before each test case, perform the setup.
 
 ###### Appended metadata
 
-| Case | Name      | Version | Platform          |
-| ---- | --------- | ------- | ----------------- |
-| 1    | framework | null    | Library Framework |
-| 2    | framework | 2.0     | null              |
+| Case | Name    | Version | Platform         |
+| ---- | ------- | ------- | ---------------- |
+| 2    | library | null    | Library Platform |
+| 3    | library | 1.2     | null             |
 
 ###### Duplicate Metadata
 
@@ -421,13 +423,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following:
-
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
+    - `driverInfo` set to its default initial value.
 
 2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
