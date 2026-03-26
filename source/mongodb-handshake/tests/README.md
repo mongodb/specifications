@@ -408,8 +408,8 @@ Before each test case, perform the setup.
 
 | Case | Name    | Version | Platform         |
 | ---- | ------- | ------- | ---------------- |
-| 2    | library | null    | Library Platform |
-| 3    | library | 1.2     | null             |
+| 1    | library | null    | Library Platform |
+| 2    | library | 1.2     | null             |
 
 ###### Duplicate Metadata
 
