@@ -101,19 +101,20 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with the following:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following initial value:
 
-        | Field    | Value            |
-        | -------- | ---------------- |
-        | name     | library          |
-        | version  | 1.2              |
-        | platform | Library Platform |
+2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
-2. Send a `ping` command to the server and verify that the command succeeds.
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
 
-3. Save intercepted `client` document as `initialClientMetadata`.
+3. Send a `ping` command to the server and verify that the command succeeds.
 
-4. Wait 5ms for the connection to become idle.
+4. Save intercepted `client` document as `initialClientMetadata`.
+
+5. Wait 5ms for the connection to become idle.
 
 #### Parameterized test cases
 
@@ -160,7 +161,6 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to its default initial value.
 
 2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
@@ -218,7 +218,6 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to its default initial value.
 
 2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
@@ -274,7 +273,6 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to its default initial value.
 
 2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
@@ -321,7 +319,8 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following initial value:
+
+2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -329,9 +328,41 @@ Before each test case, perform the setup.
     | version  | 1.2              |
     | platform | Library Platform |
 
-2. Send a `ping` command to the server and verify that the command succeeds.
+3. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Save intercepted `client` document as `clientMetadata`.
+4. Save intercepted `client` document as `clientMetadata`.
+
+5. Wait 5ms for the connection to become idle.
+
+6. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+7. Send a `ping` command to the server and verify that the command succeeds.
+
+8. Save intercepted `client` document as `updatedClientMetadata`.
+
+9. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+
+### Test 6: Metadata is not appended if identical to initial metadata (separated by non-identical metadata)
+
+1. Create a `MongoClient` instance with:
+
+    - `maxIdleTimeMS` set to `1ms`
+
+2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+
+    | Field    | Value            |
+    | -------- | ---------------- |
+    | name     | library          |
+    | version  | 1.2              |
+    | platform | Library Platform |
+
+3. Send a `ping` command to the server and verify that the command succeeds.
 
 4. Wait 5ms for the connection to become idle.
 
@@ -339,22 +370,17 @@ Before each test case, perform the setup.
 
     | Field    | Value            |
     | -------- | ---------------- |
-    | name     | library          |
+    | name     | framework        |
     | version  | 1.2              |
     | platform | Library Platform |
 
 6. Send a `ping` command to the server and verify that the command succeeds.
 
-7. Save intercepted `client` document as `updatedClientMetadata`.
+7. Save intercepted `client` document as `clientMetadata`.
 
-8. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+8. Wait 5ms for the connection to become idle.
 
-### Test 6: Metadata is not appended if identical to initial metadata (separated by non-identical metadata)
-
-1. Create a `MongoClient` instance with:
-
-    - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following initial value:
+9. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -362,37 +388,11 @@ Before each test case, perform the setup.
     | version  | 1.2              |
     | platform | Library Platform |
 
-2. Send a `ping` command to the server and verify that the command succeeds.
+10. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Wait 5ms for the connection to become idle.
+11. Save intercepted `client` document as `updatedClientMetadata`.
 
-4. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
-
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | framework        |
-    | version  | 1.2              |
-    | platform | Library Platform |
-
-5. Send a `ping` command to the server and verify that the command succeeds.
-
-6. Save intercepted `client` document as `clientMetadata`.
-
-7. Wait 5ms for the connection to become idle.
-
-8. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
-
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
-
-9. Send a `ping` command to the server and verify that the command succeeds.
-
-10. Save intercepted `client` document as `updatedClientMetadata`.
-
-11. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+12. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 7: Empty strings are considered unset when appending duplicate metadata
 
@@ -425,7 +425,6 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to its default initial value.
 
 2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
@@ -453,7 +452,7 @@ Before each test case, perform the setup.
 
 ##### Parameterized test cases
 
-###### Initial metadata
+###### Appended metadata
 
 | Case  | Name     | Version | Platform             |
 | ----- | -------- | ------- | -------------------- |
@@ -461,7 +460,7 @@ Before each test case, perform the setup.
 | 2     | library  | null    | Library Platform     |
 | 3     | library  | 1.2     | null                 |
 
-###### Appended Metadata
+###### Duplicate Metadata
 
 | Case  | Name     | Version | Platform             |
 | ----- | -------- | ------- | -------------------- |
@@ -474,21 +473,22 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the `DriverInfoOptions` from the selected test case from the initial metadata section.
+
+2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
 2. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Save intercepted `client` document as `initialClientMetadata`.
+3. Save intercepted `client` document as `clientMetadata`.
 
 4. Wait 5ms for the connection to become idle.
 
-5. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+5. Append the `DriverInfoOptions` from the selected test case from the duplicate metadata section.
 
 6. Send a `ping` command to the server and verify the command succeeds.
 
 7. Store the response as `updatedClientMetadata`.
 
-8. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+8. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 9: Handshake documents include `backpressure: true`
 
