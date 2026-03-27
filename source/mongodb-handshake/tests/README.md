@@ -107,6 +107,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with the following:
 
     - `maxIdleTimeMS` set to `1ms`
+
     - Client metadata appended with the following `DriverInfoOptions`:
 
         | Field    | Value            |
@@ -324,6 +325,7 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+
     - Client metadata appended with the following `DriverInfoOptions`:
 
         | Field    | Value            |
@@ -332,13 +334,13 @@ Before each test case, perform the setup.
         | version  | 1.2              |
         | platform | Library Platform |
 
-3. Send a `ping` command to the server and verify that the command succeeds.
+2. Send a `ping` command to the server and verify that the command succeeds.
 
-4. Save intercepted `client` document as `clientMetadata`.
+3. Save intercepted `client` document as `clientMetadata`.
 
-5. Wait 5ms for the connection to become idle.
+4. Wait 5ms for the connection to become idle.
 
-6. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+5. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -346,17 +348,18 @@ Before each test case, perform the setup.
     | version  | 1.2              |
     | platform | Library Platform |
 
-7. Send a `ping` command to the server and verify that the command succeeds.
+6. Send a `ping` command to the server and verify that the command succeeds.
 
-8. Save intercepted `client` document as `updatedClientMetadata`.
+7. Save intercepted `client` document as `updatedClientMetadata`.
 
-9. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+8. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 6: Metadata is not appended if identical to initial metadata (separated by non-identical metadata)
 
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+
     - Client metadata appended with the following `DriverInfoOptions`:
 
         | Field    | Value            |
@@ -479,7 +482,8 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - Client metadata appended with the `DriverInfoOptions` from the selected test case from the initial metadata section.
+    - Client metadata appended with the `DriverInfoOptions` from the selected test case from the initial metadata
+        section.
 
 2. Send a `ping` command to the server and verify that the command succeeds.
 
