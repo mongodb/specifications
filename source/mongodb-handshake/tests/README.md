@@ -406,17 +406,19 @@ Before each test case, perform the setup.
 
 ###### Appended metadata
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | library | null    | Library Platform |
-| 2    | library | 1.2     | null             |
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~null~~ | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | null    | Library Platform     |
+| 3     | library  | 1.2     | null                 |
 
 ###### Duplicate Metadata
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | library | ""      | Library Platform |
-| 2    | library | 1.2     | ""               |
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~""~~   | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | ""      | Library Platform     |
+| 3     | library  | 1.2     | ""                   |
 
 ##### Running a test case
 
@@ -453,17 +455,19 @@ Before each test case, perform the setup.
 
 ###### Initial metadata
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | library | null    | Library Platform |
-| 2    | library | 1.2     | null             |
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~null~~ | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | null    | Library Platform     |
+| 3     | library  | 1.2     | null                 |
 
 ###### Appended Metadata
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | library | ""      | Library Platform |
-| 2    | library | 1.2     | ""               |
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~null~~ | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | ""      | Library Platform     |
+| 3     | library  | 1.2     | ""                   |
 
 ##### Running a test case
 
