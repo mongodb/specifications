@@ -414,11 +414,11 @@ Before each test case, perform the setup.
 
 ###### Duplicate Metadata
 
-| Case  | Name     | Version | Platform             |
-| ----- | -------- | ------- | -------------------- |
-| ~~1~~ | ~~""~~   | ~~1.2~~ | ~~Library Platform~~ |
-| 2     | library  | ""      | Library Platform     |
-| 3     | library  | 1.2     | ""                   |
+| Case  | Name    | Version | Platform             |
+| ----- | ------- | ------- | -------------------- |
+| ~~1~~ | ~~""~~  | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library | ""      | Library Platform     |
+| 3     | library | 1.2     | ""                   |
 
 ##### Running a test case
 
@@ -476,19 +476,19 @@ Before each test case, perform the setup.
 
 2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
-2. Send a `ping` command to the server and verify that the command succeeds.
+3. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Save intercepted `client` document as `clientMetadata`.
+4. Save intercepted `client` document as `clientMetadata`.
 
-4. Wait 5ms for the connection to become idle.
+5. Wait 5ms for the connection to become idle.
 
-5. Append the `DriverInfoOptions` from the selected test case from the duplicate metadata section.
+6. Append the `DriverInfoOptions` from the selected test case from the duplicate metadata section.
 
-6. Send a `ping` command to the server and verify the command succeeds.
+7. Send a `ping` command to the server and verify the command succeeds.
 
-7. Store the response as `updatedClientMetadata`.
+8. Store the response as `updatedClientMetadata`.
 
-8. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+9. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 9: Handshake documents include `backpressure: true`
 
