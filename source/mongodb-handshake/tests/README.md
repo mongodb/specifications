@@ -88,6 +88,12 @@ the following sets of environment variables:
 Drivers that do not emit events for commands issued as part of the handshake with the server will need to create a
 test-only backdoor mechanism to intercept the handshake `hello` command for verification purposes.
 
+Client metadata specified as part of a "Create a `MongoClient` instance" step MUST use an API which appends the
+specified metadata _during_ `MongoClient` initialization.
+
+Client metadata specified as part of an "Append the `DriverInfoOptions`" step MUST use an API which appends the
+specified metadata _after_ `MongoClient` initialization.
+
 ### Test 1: Test that the driver updates metadata
 
 Drivers should verify that metadata provided after `MongoClient` initialization is appended, not replaced, and is
@@ -101,20 +107,19 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with the following:
 
     - `maxIdleTimeMS` set to `1ms`
+    - Client metadata appended with the following `DriverInfoOptions`:
 
-2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+        | Field    | Value            |
+        | -------- | ---------------- |
+        | name     | library          |
+        | version  | 1.2              |
+        | platform | Library Platform |
 
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
+2. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Send a `ping` command to the server and verify that the command succeeds.
+3. Save intercepted `client` document as `initialClientMetadata`.
 
-4. Save intercepted `client` document as `initialClientMetadata`.
-
-5. Wait 5ms for the connection to become idle.
+4. Wait 5ms for the connection to become idle.
 
 #### Parameterized test cases
 
@@ -319,14 +324,13 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - Client metadata appended with the following `DriverInfoOptions`:
 
-2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
-
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
+        | Field    | Value            |
+        | -------- | ---------------- |
+        | name     | library          |
+        | version  | 1.2              |
+        | platform | Library Platform |
 
 3. Send a `ping` command to the server and verify that the command succeeds.
 
@@ -353,20 +357,19 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - Client metadata appended with the following `DriverInfoOptions`:
 
-2. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+        | Field    | Value            |
+        | -------- | ---------------- |
+        | name     | library          |
+        | version  | 1.2              |
+        | platform | Library Platform |
 
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
+2. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Send a `ping` command to the server and verify that the command succeeds.
+3. Wait 5ms for the connection to become idle.
 
-4. Wait 5ms for the connection to become idle.
-
-5. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+4. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -374,13 +377,13 @@ Before each test case, perform the setup.
     | version  | 1.2              |
     | platform | Library Platform |
 
-6. Send a `ping` command to the server and verify that the command succeeds.
+5. Send a `ping` command to the server and verify that the command succeeds.
 
-7. Save intercepted `client` document as `clientMetadata`.
+6. Save intercepted `client` document as `clientMetadata`.
 
-8. Wait 5ms for the connection to become idle.
+7. Wait 5ms for the connection to become idle.
 
-9. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
+8. Append the following `DriverInfoOptions` to the `MongoClient` metadata:
 
     | Field    | Value            |
     | -------- | ---------------- |
@@ -388,11 +391,11 @@ Before each test case, perform the setup.
     | version  | 1.2              |
     | platform | Library Platform |
 
-10. Send a `ping` command to the server and verify that the command succeeds.
+9. Send a `ping` command to the server and verify that the command succeeds.
 
-11. Save intercepted `client` document as `updatedClientMetadata`.
+10. Save intercepted `client` document as `updatedClientMetadata`.
 
-12. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+11. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 7: Empty strings are considered unset when appending duplicate metadata
 
@@ -403,6 +406,9 @@ There are multiple test cases parameterized with `DriverInfoOptions` to be appen
 Before each test case, perform the setup.
 
 ##### Parameterized test cases
+
+> [!NOTE]
+> Drivers whose API allows `client.driver.name` to be unset MAY implement Case 1.
 
 ###### Appended metadata
 
@@ -452,7 +458,7 @@ Before each test case, perform the setup.
 
 ##### Parameterized test cases
 
-###### Appended metadata
+###### Initial metadata
 
 | Case  | Name     | Version | Platform             |
 | ----- | -------- | ------- | -------------------- |
@@ -460,7 +466,7 @@ Before each test case, perform the setup.
 | 2     | library  | null    | Library Platform     |
 | 3     | library  | 1.2     | null                 |
 
-###### Duplicate Metadata
+###### Appended Metadata
 
 | Case  | Name     | Version | Platform             |
 | ----- | -------- | ------- | -------------------- |
@@ -473,22 +479,21 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
+    - Client metadata appended with the `DriverInfoOptions` from the selected test case from the initial metadata section.
 
-2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+2. Send a `ping` command to the server and verify that the command succeeds.
 
-3. Send a `ping` command to the server and verify that the command succeeds.
+3. Save intercepted `client` document as `initialClientMetadata`.
 
-4. Save intercepted `client` document as `clientMetadata`.
+4. Wait 5ms for the connection to become idle.
 
-5. Wait 5ms for the connection to become idle.
+5. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
-6. Append the `DriverInfoOptions` from the selected test case from the duplicate metadata section.
+6. Send a `ping` command to the server and verify the command succeeds.
 
-7. Send a `ping` command to the server and verify the command succeeds.
+7. Store the response as `updatedClientMetadata`.
 
-8. Store the response as `updatedClientMetadata`.
-
-9. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
+8. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 9: Handshake documents include `backpressure: true`
 
