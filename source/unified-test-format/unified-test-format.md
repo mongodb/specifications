@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.27.0
+- Current Schema Version: 1.28.0
 
 ______________________________________________________________________
 
@@ -3459,6 +3459,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-03-17: **Schema version 1.28.**
+
+    Add `accessToken` to `kmsProviders` (Azure and GCP). Replace unnecessary `anyOf` with `oneOf` for `csfle`.
 
 - 2026-01-08: Remove Future Work entry for log message assertions (implemented in schema version 1.13).
 
