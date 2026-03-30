@@ -139,7 +139,7 @@ rules:
     - `jitter` is a random jitter value between 0 and 1.
     - `BASE_BACKOFF` is constant 100ms.
     - `MAX_BACKOFF` is 10000ms.
-    - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
+    - This results in delays of 100ms and 200ms before accounting for jitter.
 4. If the request is eligible for retry (as outlined in step 2 above) and `enableOverloadRetargeting` is enabled, the
     client MUST add the previously used server's address to the list of deprioritized server addresses for
     [server selection](../server-selection/server-selection.md). Drivers MUST expose `enableOverloadRetargeting` as a
