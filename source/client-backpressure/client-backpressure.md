@@ -122,7 +122,8 @@ rules:
 2. A retry attempt will only be permitted if:
     1. The error is a retryable overload error.
     2. We have not reached `MAX_RETRIES`.
-        - The value of `MAX_RETRIES` is 5 and non-configurable.
+        - The default value of `MAX_RETRIES` is 2. Drivers MUST expose `maxAdaptiveRetries` as a configurable option for
+            this maximum.
         - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within
             the timeout to avoid retry storms.
     3. (CSOT-only): There is still time for a retry attempt according to the
@@ -133,20 +134,17 @@ rules:
         - To retry `runCommand`, both [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) and
             [retryReads](../retryable-reads/retryable-reads.md#retryreads) MUST be enabled. See
             [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
-3. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
-    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below), the client MUST apply
-    exponential backoff according to the following formula:
-    `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
+3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply exponential backoff
+    according to the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
     - `jitter` is a random jitter value between 0 and 1.
     - `BASE_BACKOFF` is constant 100ms.
     - `MAX_BACKOFF` is 10000ms.
     - This results in delays of 100ms, 200ms, 400ms, 800ms, and 1600ms before accounting for jitter.
-4. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
-    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below), the client MUST add the
-    previously used server's address to the list of deprioritized server addresses for
-    [server selection](../server-selection/server-selection.md).
-5. If the request is eligible for retry (as outlined in step 2 above and step 4 in the
-    [adaptive retry requirements](client-backpressure.md#adaptive-retry-requirements) below) and is a retryable write:
+4. If the request is eligible for retry (as outlined in step 2 above) and `enableOverloadRetargeting` is enabled, the
+    client MUST add the previously used server's address to the list of deprioritized server addresses for
+    [server selection](../server-selection/server-selection.md). Drivers MUST expose `enableOverloadRetargeting` as a
+    configurable boolean option that defaults to `false`.
+5. If the request is eligible for retry (as outlined in step 2 above) and is a retryable write:
     1. If the command is a part of a transaction, the instructions for command modification on retry for commands in
         transactions MUST be followed, as outlined in the
         [transactions](../transactions/transactions.md#interaction-with-retryable-writes) specification.
@@ -159,26 +157,12 @@ rules:
     specifications.
     - For the purposes of error propagation, `runCommand` is considered a write.
 
-##### Adaptive retry requirements
-
-If adaptive retries are enabled, the following rules MUST also be obeyed:
-
-1. If the command succeeds on the first attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE` tokens.
-    - The value is 0.1 and non-configurable.
-2. If the command succeeds on a retry attempt, drivers MUST deposit `RETRY_TOKEN_RETURN_RATE`+1 tokens.
-3. If a retry attempt fails with an error that is not an overload error, drivers MUST deposit 1 token.
-    - An error that does not contain the `SystemOverloadedError` error label indicates that the server is healthy enough
-        to handle requests. For the purposes of retry budget tracking, this counts as a success.
-4. A retry attempt will only be permitted if a token can be consumed from the token bucket.
-5. A retry attempt consumes 1 token from the token bucket.
-
 #### Interaction with Other Retry Policies
 
 The retry policy in this specification is separate from the other retry policies defined in the
 [retryable reads](../retryable-reads/retryable-reads.md) and [retryable writes](../retryable-writes/retryable-writes.md)
 specifications. Drivers MUST ensure:
 
-- Only overload errors consume tokens from the token bucket before retrying.
 - When a failed attempt is retried, backoff MUST be applied if and only if the error is an overload error.
 - If an overload error is encountered:
     - Regardless of whether CSOT is enabled or not, the maximum number of retries for any retry policy becomes
@@ -198,8 +182,7 @@ included, such as error handling with `NoWritesPerformed` labels.
 BASE_BACKOFF = 0.1 # 100ms
 MAX_BACKOFF = 10   # 10000ms
 
-RETRY_TOKEN_RETURN_RATE = 0.1
-MAX_RETRIES = 5
+MAX_RETRIES = 2
 
 def execute_command_retryable(command, ...):
     deprioritized_servers = []
@@ -211,22 +194,12 @@ def execute_command_retryable(command, ...):
             server = select_server(deprioritized_servers)
             connection = server.getConnection()
             res = execute_command(connection, command)
-            if adaptive_retry:
-                # Deposit tokens into the bucket on success.
-                tokens = RETRY_TOKEN_RETURN_RATE
-                if attempt > 0:
-                    tokens += 1
-                token_bucket.deposit(tokens)
             return res
         except PyMongoError as exc:
             is_retryable = (is_retryable_write(command, exc) 
                 or is_retryable_read(command, exc) 
                 or (exc.contains_error_label("RetryableError") and exc.contains_error_label("SystemOverloadedError")))
             is_overload = exc.contains_error_label("SystemOverloadedError")
-
-            # if a retry fails with an error which is not an overload error, deposit 1 token
-            if adaptive_retry and attempt > 0 and not is_overload:
-                token_bucket.deposit(1)
 
             # Raise if the error is non-retryable.
             if not is_retryable:
@@ -238,8 +211,10 @@ def execute_command_retryable(command, ...):
 
             if attempt > allowed_retries:
                 raise
-
-            deprioritized_servers.append(server.address)
+            
+            # enableOverloadRetargeting is true
+            if overload_retargeting:
+                deprioritized_servers.append(server.address)
 
             if is_overload:
                 jitter = random.random() # Random float between [0.0, 1.0).
@@ -250,57 +225,7 @@ def execute_command_retryable(command, ...):
                     if time.monotonic() + backoff > _csot.get_deadline():
                         raise
 
-                if adaptive_retry and not token_bucket.consume(1):
-                    raise
-
                 time.sleep(backoff)
-```
-
-### Token Bucket
-
-The overload retry policy introduces an opt-in per-client [token bucket](https://en.wikipedia.org/wiki/Token_bucket) to
-limit overload error retry attempts. Although the server rejects excess commands as quickly as possible, doing so costs
-CPU and creates extra contention on the connection pool which can eventually negatively affect goodput. To reduce this
-risk, the token bucket will limit retry attempts during a prolonged overload.
-
-The token bucket MUST be disabled by default and can be enabled through the
-[adaptiveRetries=True](../uri-options/uri-options.md) connection and client options.
-
-The token bucket starts at its maximum capacity of 1000 for consistency with the server.
-
-Each MongoClient instance MUST have its own token bucket. When adaptive retries are enabled, the token bucket MUST be
-created when the MongoClient is initialized and exist for the lifetime of the MongoClient. Drivers MUST ensure the token
-bucket implementation is thread-safe as it may be accessed concurrently by multiple operations.
-
-#### Pseudocode
-
-The token bucket is implemented via a thread safe counter. For languages without atomics, this can be implemented via a
-lock, for example:
-
-```python
-DEFAULT_RETRY_TOKEN_CAPACITY = 1000
-class TokenBucket:
-    """A token bucket implementation for rate limiting."""
-    def __init__(
-        self,
-        capacity: float = DEFAULT_RETRY_TOKEN_CAPACITY,
-    ):
-        self.lock = Lock()
-        self.capacity = capacity
-        self.tokens = capacity
-
-    def consume(self, n: float) -> bool:
-        """Consume n tokens from the bucket if available."""
-        with self.lock:
-            if self.tokens >= n:
-                self.tokens -= n
-                return True
-            return False
-
-   def deposit(self, n: float) -> None:
-        """Deposit n tokens back into the bucket."""
-        with self.lock:
-            self.tokens = min(self.capacity, self.tokens + n)
 ```
 
 #### Handshake changes
@@ -467,6 +392,8 @@ retried. This approach also prevents accidentally retrying a read command when o
 retrying a write command when only `retryReads` is enabled.
 
 ## Changelog
+
+- 2026-03-30: Introduce phase 1 support without token buckets.
 
 - 2026-02-20: Disable token buckets by default.
 
