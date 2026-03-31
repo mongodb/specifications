@@ -1,5 +1,6 @@
 # MongoDB Specifications
 
+- [Atlas Secure Frontend Processor (SFP) Testing](atlas-sfp-testing/atlas-sfp-testing.md)
 - [Atlas Serverless Tests](serverless-testing/README.md)
 - [Authentication](auth/auth.md)
 - [BSON Binary Encrypted](bson-binary-encrypted/binary-encrypted.md)
