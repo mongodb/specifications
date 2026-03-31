@@ -37,25 +37,25 @@ against a normal Atlas cluster.
 
 The following environment variables will be available to run the tests:
 
-| Variable | Description |
-|----------|-------------|
-| `SFP_ATLAS_URI` | MongoDB connection URI for the SFP-proxied cluster |
-| `SFP_ATLAS_USER` | Username for SCRAM authentication |
-| `SFP_ATLAS_PASSWORD` | Password for SCRAM authentication |
+| Variable             | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| `SFP_ATLAS_URI`      | MongoDB connection URI for the SFP-proxied cluster |
+| `SFP_ATLAS_USER`     | Username for SCRAM authentication                  |
+| `SFP_ATLAS_PASSWORD` | Password for SCRAM authentication                  |
 
 For X.509 authentication tests, the following additional variables are required:
 
-| Variable | Description |
-|----------|-------------|
-| `SFP_ATLAS_X509_URI` | MongoDB connection URI for X.509 authentication |
-| `SFP_ATLAS_X509_CERT` | Path to client certificate (PEM format) |
+| Variable              | Description                                     |
+| --------------------- | ----------------------------------------------- |
+| `SFP_ATLAS_X509_URI`  | MongoDB connection URI for X.509 authentication |
+| `SFP_ATLAS_X509_CERT` | Path to client certificate (PEM format)         |
 
 ### Test Isolation and Cleanup
 
 To prevent conflicts between concurrent test runs and avoid unbounded collection growth:
 
-1. Drivers MUST use a unique collection name for each test run, e.g., `sfp_test_<random>` where `<random>` is a UUID
-   or timestamp
+1. Drivers MUST use a unique collection name for each test run, e.g., `sfp_test_<random>` where `<random>` is a UUID or
+    timestamp
 2. Drivers MUST drop the test collection after all tests complete, regardless of test success or failure
 
 ## Required Tests
@@ -115,4 +115,3 @@ following assertions:
 ## Changelog
 
 - 2025-02-27: Initial version
-
