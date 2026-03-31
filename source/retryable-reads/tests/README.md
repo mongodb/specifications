@@ -187,7 +187,7 @@ This test MUST be executed against a MongoDB 4.4+ replica set that has at least 
 
 6. Assert that both events occurred on the same server.
 
-#### 3.3 Retryable Reads Caused by Overload Errors Are Retried on a Different Replicaset Server When One is Available and enableOverloadRetargeting is disabled
+#### 3.3 Retryable Reads Caused by Overload Errors Are Retried on Same Replicaset Server When enableOverloadRetargeting is disabled
 
 This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
 `retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
