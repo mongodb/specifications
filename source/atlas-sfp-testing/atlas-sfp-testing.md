@@ -91,6 +91,9 @@ Create a `MongoClient` configured with `SFP_ATLAS_URI` but without credentials. 
 
 ### Authenticated Tests
 
+Each authenticated test MUST be run twice: once without compression and once with at least one compressor enabled (e.g.,
+zlib, snappy, or zstd).
+
 #### SCRAM-SHA-256
 
 Create a `MongoClient` with the connection string and SCRAM-SHA-256 credentials from environment variables. Run the
