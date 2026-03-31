@@ -85,3 +85,31 @@ Drivers should test that overload errors are retried a maximum of MAX_RETRIES ti
 5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
 6. Assert that the total number of started commands is MAX_RETRIES + 1 (3).
+
+#### Test 4: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
+
+Drivers should test that overload errors are retried a maximum of `maxAdaptiveRetries` times, when configured.
+
+1. Let `client` be a `MongoClient` with `maxAdaptiveRetries=1` and command event monitoring enabled.
+
+2. Let `coll` be a collection.
+
+3. Configure the following failpoint:
+
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: 'alwaysOn',
+            data: {
+                failCommands: ['find'],
+                errorCode: 462,  // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
+            }
+        }
+    ```
+
+4. Perform a find operation with `coll` that fails.
+
+5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
+
+6. Assert that the total number of started commands is `maxAdaptiveRetries` + 1 (2).
