@@ -14,7 +14,8 @@ be manually implemented by each driver.
 
 #### Test 1: Operation Retry Uses Exponential Backoff
 
-Drivers should test that retries do not occur immediately when a SystemOverloadedError is encountered.
+Drivers should test that retries do not occur immediately when a SystemOverloadedError is encountered. This test MUST be
+executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient`
 2. Let `collection` be a collection
@@ -52,7 +53,7 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
     6. Compare the two time between the two runs.
 
         ```python
-        assertTrue(with_backoff_time - no_backoff_time >= 0.3)
+        assertTrue(with_backoff_time - no_backoff_time >= 0)
         ```
 
         The sum of 2 backoffs is 0.3 seconds. There is a 0.3-second window to account for potential variance between the
@@ -60,7 +61,8 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
 
 #### Test 3: Overload Errors are Retried a Maximum of MAX_RETRIES times
 
-Drivers should test that overload errors are retried a maximum of MAX_RETRIES times.
+Drivers should test that overload errors are retried a maximum of MAX_RETRIES times. This test MUST be executed against
+a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient` with command event monitoring enabled.
 
@@ -88,7 +90,9 @@ Drivers should test that overload errors are retried a maximum of MAX_RETRIES ti
 
 #### Test 4: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
 
-Drivers should test that overload errors are retried a maximum of `maxAdaptiveRetries` times, when configured.
+Drivers should test that overload errors are retried a maximum of `maxAdaptiveRetries` times, when configured. This test
+MUST be executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels`
+option.
 
 1. Let `client` be a `MongoClient` with `maxAdaptiveRetries=1` and command event monitoring enabled.
 
