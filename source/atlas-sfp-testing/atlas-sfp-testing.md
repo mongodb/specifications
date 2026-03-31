@@ -54,8 +54,8 @@ For X.509 authentication tests, the following additional variables are required:
 
 To prevent conflicts between concurrent test runs and avoid unbounded collection growth:
 
-1. Drivers MUST use a unique collection name for each test run, e.g., `sfp_test_<random>` where `<random>` is a UUID or
-    timestamp
+1. Drivers MUST use a unique collection name for each test run, e.g., `sfp_test_<random>` where `<random>` is an
+   ObjectID string representation
 2. Drivers MUST drop the test collection after all tests complete, regardless of test success or failure
 
 ## Required Tests
@@ -91,8 +91,11 @@ Create a `MongoClient` configured with `SFP_ATLAS_URI` but without credentials. 
 
 ### Authenticated Tests
 
-Each authenticated test MUST be run twice: once without compression and once with at least one compressor enabled (e.g.,
-zlib, snappy, or zstd).
+Each authenticated test MUST be run under each of the following variations:
+
+1. No additional configuration (baseline)
+2. With at least one compressor enabled (e.g., zlib, snappy, or zstd)
+3. With [Server API](../versioned-api/versioned-api.md#mongoclient-changes) version 1
 
 #### SCRAM-SHA-256
 
