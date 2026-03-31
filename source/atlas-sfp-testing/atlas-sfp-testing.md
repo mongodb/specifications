@@ -55,7 +55,7 @@ For X.509 authentication tests, the following additional variables are required:
 To prevent conflicts between concurrent test runs and avoid unbounded collection growth:
 
 1. Drivers MUST use a unique collection name for each test run, e.g., `sfp_test_<random>` where `<random>` is an
-   ObjectID string representation
+    ObjectID string representation
 2. Drivers MUST drop the test collection after all tests complete, regardless of test success or failure
 
 ## Required Tests
