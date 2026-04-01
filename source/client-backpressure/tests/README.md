@@ -50,7 +50,7 @@ executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint`
 
     5. Execute step 3 again.
 
-    6. Compare the two time between the two runs.
+    6. Compare the time between the two runs.
 
         ```python
         assertTrue(with_backoff_time - no_backoff_time >= 0)
