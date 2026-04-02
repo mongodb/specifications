@@ -372,10 +372,25 @@ to cover the same sequence of events.
 
 #### Case 3: Test that drivers return the correct error when receiving some errors with `NoWritesPerformed` and some without `NoWritesPerformed`
 
-1. Create a client with `retryWrites=true` and `monitorCommands=true`.
+1. Create a client with `retryWrites=true`.
 
-2. Configure the client to listen to CommandFailedEvents. In the attached listener, configure a fail point with error
-    code `91` (NotWritablePrimary) and the `NoWritesPerformed`, `RetryableError` and `SystemOverloadedError` labels:
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `91` (ShutdownInProgress) and
+    the `NoWritesPerformed`, `RetryableError` and `SystemOverloadedError` labels:
 
     ```javascript
     {
@@ -389,20 +404,7 @@ to cover the same sequence of events.
     }
     ```
 
-3. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
-    `SystemOverloadedError` error labels but without the `NoWritesPerformed` error label:
-
-    ```javascript
-    {
-        configureFailPoint: "failCommand",
-        mode: {times: 1},
-        data: {
-            failCommands: ["insert"],
-            errorLabels: ["RetryableError", "SystemOverloadedError"],
-            errorCode: 91
-        }
-    }
-    ```
+    Configure the `91` fail point command only if the failed event is for the `91` error configured in step 2.
 
 4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
     server error. Assert that the error code of the server error is 91. Assert that the error does not contain the
@@ -418,6 +420,8 @@ to cover the same sequence of events.
     ```
 
 ## Changelog
+
+- 2026-04-02: Fix prose test for error propagation behavior when multiple errors are encountered.
 
 - 2026-02-17: Fix test for error propagation behavior when multiple errors are encountered.
 
