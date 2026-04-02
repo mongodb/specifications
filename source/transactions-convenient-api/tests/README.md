@@ -32,8 +32,8 @@ transactions. Specifically, three cases should be checked:
 - If the callback raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
     `withTransaction` should propagate the error as described in the
     [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller.
-- If committing raises an error with the `UnknownTransactionCommitResult` label, and the retry timeout has been exceeded,
-    `withTransaction` should propagate the error to its caller.
+- If committing raises an error with the `UnknownTransactionCommitResult` label, and the retry timeout has been
+    exceeded, `withTransaction` should propagate the error to its caller.
 - If committing raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
     `withTransaction` should propagate the error as described in the
     [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller. This
@@ -111,6 +111,8 @@ Drivers should test that retries within `withTransaction` do not occur immediate
 
 ## Changelog
 
+- 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
+    wrapping semantics and label propagation in spec and prose tests
 - 2026-03-03: Clarify exponential backoff jitter upper bound.
 - 2026-02-17: Clarify expected error when timeout is reached
     [DRIVERS-3391](https://jira.mongodb.org/browse/DRIVERS-3391).

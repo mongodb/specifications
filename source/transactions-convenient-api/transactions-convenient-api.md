@@ -436,6 +436,9 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 
 ## Changelog
 
+- 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
+    wrapping semantics and label propagation in spec and prose tests.
+
 - 2026-03-03: Clarify exponential backoff jitter upper bound.
 
 - 2026-02-20: Fix initial backoff and growth value parameters in "Design Rationale" section.
