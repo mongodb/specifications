@@ -404,7 +404,7 @@ to cover the same sequence of events.
     }
     ```
 
-    Configure the `91` fail point command only if the failed event is for the `91` error configured in step 2.
+    Configure the second fail point command only if the failed event is for the first error configured in step 2.
 
 4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
     server error. Assert that the error code of the server error is 91. Assert that the error does not contain the
@@ -421,7 +421,7 @@ to cover the same sequence of events.
 
 ## Changelog
 
-- 2026-04-02: Fix prose test for error propagation behavior when multiple errors are encountered.
+- 2026-04-02: Fix test for error propagation behavior when multiple errors are encountered.
 
 - 2026-02-17: Fix test for error propagation behavior when multiple errors are encountered.
 
