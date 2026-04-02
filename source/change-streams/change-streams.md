@@ -138,8 +138,15 @@ class ChangeStreamDocument {
   to: Optional<Document>;
 
   /**
-   * Only present for ops of type 'rename', 'create', 'modify', 'createIndexes', 'dropIndexes', 'shardCollection', 'reshardCollection', 'refineCollectionShardKey'.
-   * Only present when the `showExpandedEvents` change stream option is enabled.
+   * * Only present when the `showExpandedEvents` change stream option is enabled and for the following events:
+   *  - 'rename'
+   *  - 'create'
+   *  - 'modify'
+   *  - 'createIndexes'
+   *  - 'dropIndexes'
+   *  - 'shardCollection'
+   *  - 'reshardCollection'
+   *  - 'refineCollectionShardKey'
    *
    * A description of the operation.
    * 
