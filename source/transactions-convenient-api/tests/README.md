@@ -32,10 +32,9 @@ transactions. Specifically, three cases should be checked:
 - If the callback raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
     `withTransaction` should propagate the error as described in the
     [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller.
-- If committing raises an error with the UnknownTransactionCommitResult label, and the retry timeout has been exceeded,
-    `withTransaction` should propagate the error as described in the
-    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller.
-- If committing raises an error with the TransientTransactionError label and the retry timeout has been exceeded,
+- If committing raises an error with the `UnknownTransactionCommitResult` label, and the retry timeout has been exceeded,
+    `withTransaction` should propagate the error to its caller.
+- If committing raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
     `withTransaction` should propagate the error as described in the
     [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller. This
     case may occur if the commit was internally retried against a new primary after a failover and the second primary
