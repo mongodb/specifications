@@ -173,10 +173,15 @@ This method should perform the following sequence of actions:
 
 10. If `commitTransaction` reported an error:
 
-    1. If the `commitTransaction` error includes a "UnknownTransactionCommitResult" label and the error is not
-        MaxTimeMSExpired and the elapsed time of `withTransaction` is less than TIMEOUT_MS, jump back to step nine. We
-        will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
-        [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
+    1. If the `commitTransaction` error includes a `UnknownTransactionCommitResult` label and the error is not
+        `MaxTimeMSExpired`
+
+        1. If the elapsed time of `withTransaction` exceeded `TIMEOUT_MS`, propagate the `commitTransaction` error to the
+            caller of `withTransaction` and return immediately (see
+            [propagation section](transactions-convenient-api.md#timeout-error-propagation-mechanism) below)
+        2. If the elapsed time of `withTransaction` is less than `TIMEOUT_MS`, jump back to step nine. We will trust
+            `commitTransaction` to apply a majority write concern on retry attempts (see:
+            [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label, jump back to step two.
 
@@ -265,6 +270,9 @@ withTransaction(callback, options) {
                 lastError = error;
                 if (!isMaxTimeMSExpiredError(error) &&
                     error.hasErrorLabel("UnknownTransactionCommitResult")) {
+                    if (Date.now() - startTime >= timeout) {
+                        throw makeTimeoutError(error);
+                    }
                     continue retryCommit;
                 }
 
