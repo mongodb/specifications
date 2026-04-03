@@ -391,6 +391,39 @@ Additionally, both `retryReads` and `retryWrites` are enabled by default, so for
 retried. This approach also prevents accidentally retrying a read command when only `retryWrites` is enabled, or
 retrying a write command when only `retryReads` is enabled.
 
+### Why make `maxAdaptiveRetries` configurable?
+
+Modelling and the underpinning theory for backpressure shows that the n-retries approach (retry up to N times on
+overload errors without a token bucket) can introduce retry storms as overload increases. However, the specifics of the
+workload and cluster serving that workload significantly impacts the threshold at which retry volume becomes an
+additional burden rather than a throughput improvement. Some applications and clusters may be very tolerant of many
+additional retries, while others may want to break out of the loop much earlier.
+
+The selection of 2 as a default attempts to broadly pick a sensible default for most users that will on average be a
+benefit rather than a negative during overload. However, savvy users, the users expected to be most affected by overload
+and have the most insight into the specifics of their workload and cluster, will likely find that tweaking this value on
+a per-workload basis produces better results. Additionally, there are situations where disabling overload retries
+entirely is optimal. Without a knob, those situations will cause users to either have a strictly worse experience with a
+new driver, or force them to downgrade to an older driver to avoid the issue. These are two strong motivations to add a
+knob for `maxAdaptiveRetries`.
+
+### Why make `enableOverloadRetargeting` configurable?
+
+The current contract we've made with users utilizing `primaryPreferred` is that reads will only go to a secondary if the
+primary is unavailable. The documentation does not explicitly define unavailable, but in practice that means the primary
+is unselectable. Overload retargeting makes the primary unselectable for a retry operation if it returned an overload
+error on a previous attempt. This materially changes how often secondary reads occur. Since secondary reads can result
+in stale data, enabling overload retargeting increases the chance that users of `primaryPreferred` will get stale data
+when they did not previously. This is a semantic change, and so retargeting is disabled by default, with a knob to
+enable it.
+
+Overload retargeting significantly increases availability during overload, but it does increase the risk of getting
+stale data when used with `primaryPreferred`. Users of `primaryPreferred` may widely end up preferring that behavior. If
+that is the case, overload retargeting may be enabled by default in the future.
+
+`secondaryPreferred` does not have this same staleness issue, but it still materially changes what the preference means
+from "almost always secondary" to "sometimes primary".
+
 ## Changelog
 
 - 2026-03-30: Introduce phase 1 support without token buckets.
