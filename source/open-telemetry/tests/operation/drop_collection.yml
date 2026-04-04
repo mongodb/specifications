@@ -1,5 +1,9 @@
 description: operation drop collection
 schemaVersion: '1.27'
+
+runOnRequirements:
+  - minServerVersion: "7.0"
+
 createEntities:
   - client:
       id: &client0 client0
@@ -29,15 +33,16 @@ tests:
         spans:
           - name: dropCollection operation-drop-collection.test
             attributes:
-              db.system: mongodb
+              db.system.name: mongodb
               db.namespace: operation-drop-collection
               db.collection.name: test
               db.operation.name: dropCollection
               db.operation.summary: dropCollection operation-drop-collection.test
+
             nested:
               - name: drop
                 attributes:
-                  db.system: mongodb
+                  db.system.name: mongodb
                   db.namespace: operation-drop-collection
                   db.collection.name: test
                   db.command.name: drop

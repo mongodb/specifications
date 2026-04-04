@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.27.0
+- Current Schema Version: 1.28.0
 
 ______________________________________________________________________
 
@@ -1866,6 +1866,14 @@ Test runners MUST allow any errors from the callback operation(s) to propagate t
 callback operation raises an error, it should be possible to assert that error at both the callback operation and
 `withTransaction` level.
 
+#### getSnapshotTime
+
+The operation `getSnapshotTime` returns the value of `snapshotTime` on the session, so that it can be used in subsequent
+operations.
+
+When parsing `snapshotTime` from `sessionOptions` for unified tests, the parsed string is the name of the key for the
+actual value of `snapshotTime` to be found in the [Entity Map](#entity-map).
+
 ### Bucket Operations
 
 These operations and their arguments may be documented in the following specifications:
@@ -3417,13 +3425,6 @@ historical reference, in addition to any shorter description that may be added t
 
 ## Future Work
 
-### Assert expected log messages
-
-When drivers support standardized logging, the test format may need to support assertions for messages expected to be
-logged while executing operations. Since log messages are strings, this may require an operator to match regex patterns
-within strings. Additionally, the test runner may need to support ignoring extra log output, similar to
-`ignoreExtraEvents`.
-
 ### Target failPoint by read preference
 
 The [failPoint](#failpoint) operation currently uses a "primary" read preference. To date, no spec has needed behavior
@@ -3458,6 +3459,14 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-03-17: **Schema version 1.28.**
+
+    Add `accessToken` to `kmsProviders` (Azure and GCP). Replace unnecessary `anyOf` with `oneOf` for `csfle`.
+
+- 2026-01-08: Remove Future Work entry for log message assertions (implemented in schema version 1.13).
+
+- 2025-10-22: Added `getSnapshotTime` operation on sessions.
 
 - 2025-09-17: **Schema version 1.27.**
 

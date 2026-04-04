@@ -29,6 +29,15 @@ As part of the test setup for these cases, create a `MongoClient` pointed at the
 in the test case and verify that the test server does NOT define a value for `logicalSessionTimeoutMinutes` by sending a
 hello command and checking the response.
 
+## Specific operations and behaviour for unified tests
+
+An operation on sessions called `getSnapshotTime` must be supported for unified tests. This operation returns the value
+of `snapshotTime` on the session, so that it can be used in subsequent operations.
+
+When parsing `snapshotTime` from `sessionOptions` for unified tests, the parsed string is the name of the key for the
+actual value of `snapshotTime` to be found in the
+[entity map](https://github.com/mongodb/specifications/blob/master/source/unified-test-format/unified-test-format.md#entity-map).
+
 ## Prose tests
 
 ### 1. Setting both `snapshot` and `causalConsistency` to true is not allowed
@@ -53,7 +62,7 @@ This test applies to drivers with session pools.
     commands/replies in another idiomatic way, such as monkey-patching or a mock server.
 - Send a `ping` command to the server with the generic `runCommand` method.
 - Assert that the command passed to the command-started listener includes `$clusterTime` if and only if `maxWireVersion`
-    > = 6.
+    \>= 6.
 - Record the `$clusterTime`, if any, in the reply passed to the command-succeeded APM listener.
 - Send another `ping` command.
 - Assert that `$clusterTime` in the command passed to the command-started listener, if any, equals the `$clusterTime` in
@@ -250,8 +259,39 @@ and configure a `MongoClient` with default options.
 - Run a ping command using C1 and assert that `$clusterTime` sent is the same as the `clusterTime` recorded earlier.
     This assertion proves that C1's `$clusterTime` was not advanced by gossiping through SDAM.
 
+### 21. Having `snapshotTime` set and `snapshot` set to false is not allowed
+
+Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
+
+- Start a session by calling `startSession` with `snapshot = false` and `snapshotTime = new Timestamp(1)`.
+- Assert that a client side error was raised.
+
+### 22. Retrieving `snapshotTime` on a non-snapshot session raises an error
+
+Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
+
+- Start a session by calling `startSession` on with `snapshot = false`.
+- Try to access the session's snapshot time.
+- Assert that a client side error was raised.
+- Assert that the session's `snapshotTime` is unset.
+
+Drivers MAY skip this test if they choose not to implement a getter for `snapshotTime`.
+
+### 23. Ensure `snapshotTime` is Read-Only
+
+Snapshot sessions tests require server of version 5.0 or higher and replica set or a sharded cluster deployment.
+
+- Start a session by calling `startSession` on with `snapshot = false`.
+- Assert that the session's `snapshotTime` is unset.
+- Attempt to mutate the session's `snapshotTime` field through any publicly accessible API.
+- Assert that the original session's `snapshotTime` remains unchanged.
+
+Drivers MAY skip this test if they choose to expose a read-only `snapshotTime` property using an accessor method only.
+
 ## Changelog
 
+- 2025-12-18: Make snapshot getter prose test optional.
+- 2025-09-25: Added tests for snapshotTime.
 - 2025-02-24: Test drivers do not gossip $clusterTime on SDAM.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2019-05-15: Initial version.

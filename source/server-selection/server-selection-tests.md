@@ -40,14 +40,18 @@ The following test cases can be found in YAML form in the "tests" directory. Eac
 representing a set of servers, a ReadPreference document, and sets of servers returned at various stages of the server
 selection process. These sets are described below. Note that it is not required to test for correctness at every step.
 
-| Test Case           | Description                                                                                                                                        |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `suitable_servers`  | the set of servers matching all server selection logic.                                                                                            |
-| `in_latency_window` | the subset of `suitable_servers` that falls within the allowable latency window (required). NOTE: tests use the default localThresholdMS of 15 ms. |
+| Test Case               | Description                                                                                                                                        |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `suitable_servers`      | the set of servers matching all server selection logic.                                                                                            |
+| `in_latency_window`     | the subset of `suitable_servers` that falls within the allowable latency window (required). NOTE: tests use the default localThresholdMS of 15 ms. |
+| `deprioritized_servers` | the set of servers that are deprioritized and must only be selected if no other suitable server exists.                                            |
 
 Drivers implementing server selection MUST test that their implementations correctly return **one** of the servers in
 `in_latency_window`. Drivers SHOULD test against the full set of servers in `in_latency_window` and against
 `suitable_servers` if possible.
+
+For tests containing `deprioritized_servers`, drivers MUST pass the given list of deprioritized servers to each server
+selection call.
 
 ### Topology Type Single
 

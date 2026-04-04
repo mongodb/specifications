@@ -42,7 +42,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.9
+          python-version: 3.14
       - name: Set up npm
         uses: actions/setup-node@v1
         with:
