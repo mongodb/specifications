@@ -123,7 +123,8 @@ rules:
     1. The error is a retryable overload error.
     2. We have not reached `MAX_RETRIES`.
         - The default value of `MAX_RETRIES` is 2. Drivers MUST expose `maxAdaptiveRetries` as a configurable option for
-            this maximum.
+            this maximum. In the future, this default value or the default behavior of the driver may change without being
+            considered a breaking change.
         - This intentionally changes the behavior of CSOT which otherwise would retry an unlimited number of times within
             the timeout to avoid retry storms.
     3. (CSOT-only): There is still time for a retry attempt according to the
@@ -403,9 +404,10 @@ The selection of 2 as a default attempts to broadly pick a sensible default for 
 benefit rather than a negative during overload. However, savvy users, the users expected to be most affected by overload
 and have the most insight into the specifics of their workload and cluster, will likely find that tweaking this value on
 a per-workload basis produces better results. Additionally, there are situations where disabling overload retries
-entirely is optimal. Without a knob, those situations will cause users to either have a strictly worse experience with a
-new driver, or force them to downgrade to an older driver to avoid the issue. These are two strong motivations to add a
-knob for `maxAdaptiveRetries`.
+entirely is optimal, such as non-critical workloads against a cluster shared with critical workloads. Without a knob,
+those situations will cause users to either have a strictly worse experience with a new driver, or force them to
+downgrade to an older driver to avoid the issue. These are two strong motivations to add a knob for
+`maxAdaptiveRetries`.
 
 ### Why make `enableOverloadRetargeting` configurable?
 
