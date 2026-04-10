@@ -426,6 +426,10 @@ that is the case, overload retargeting may be enabled by default in the future.
 `secondaryPreferred` does not have this same staleness issue, but it still materially changes what the preference means
 from "almost always secondary" to "sometimes primary".
 
+Note that for sharded clusters, drivers always attempt to retarget across `mongos` instances on all retryable errors,
+including overload errors, regardless of how `enableOverloadRetargeting` is set. `mongos` has a separate flag to
+retarget overload errors across shards that is independent of the driver's configuration.
+
 ## Changelog
 
 - 2026-03-30: Introduce phase 1 support without token buckets.
