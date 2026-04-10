@@ -127,13 +127,13 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 These tests will be used to ensure drivers properly retry reads against a replica set.
 
-#### 3.1 Retryable Reads Caused by Overload Errors Are Retried on a Different Replicaset Server When One is Available
+#### 3.1 Retryable Reads Caused by Overload Errors Are Retried on a Different Replicaset Server When One is Available and enableOverloadRetargeting is enabled
 
 This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
 `retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
 
-1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
-    enabled.
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, `enableOverloadRetargeting=True`,
+    and command event monitoring enabled.
 
 2. Configure the following fail point for `client`:
 
@@ -187,7 +187,39 @@ This test MUST be executed against a MongoDB 4.4+ replica set that has at least 
 
 6. Assert that both events occurred on the same server.
 
+#### 3.3 Retryable Reads Caused by Overload Errors Are Retried on Same Replicaset Server When enableOverloadRetargeting is disabled
+
+This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
+`retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
+    enabled.
+
+2. Configure the following fail point for `client`:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"]
+            errorCode: 6
+        }
+    }
+    ```
+
+3. Reset the command event monitor to clear the failpoint command from its stored events.
+
+4. Execute a `find` command with `client`.
+
+5. Assert that one failed command event and one successful command event occurred.
+
+6. Assert that both events occurred on the same server.
+
 ## Changelog
+
+- 2026-03-31: Add additional prose test for overload retargeting.
 
 - 2026-02-19: Add prose tests for retrying against a replica set.
 
