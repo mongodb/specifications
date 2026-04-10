@@ -123,8 +123,8 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`.
-        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
+    1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. If
+        elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
         `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
         Otherwise, sleep for `backoffMS`.
 
