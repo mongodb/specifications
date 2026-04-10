@@ -123,9 +123,10 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise the previously encountered error (see Note 1 below). If
-        the elapsed time of `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
-        `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. sleep for `backoffMS`.
+    1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. If
+        elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
+        `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
+        Otherwise, sleep for `backoffMS`.
 
         1. jitter is a random float between \[0, 1), optionally including 1, depending on what is most natural for the
             given driver language.
@@ -141,7 +142,7 @@ This method should perform the following sequence of actions:
     for `startTransaction`. Note that `ClientSession.defaultTransactionOptions` will be used in the absence of any
     explicit TransactionOptions.
 
-4. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` and return
+4. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` as is and return
     immediately.
 
 5. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
@@ -160,11 +161,10 @@ This method should perform the following sequence of actions:
     2. If the callback's error includes a "TransientTransactionError" label, jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
-        committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
+        committed a transaction, propagate the callback's error to the caller of `withTransaction` as is and return
         immediately.
 
-    4. Otherwise, propagate the callback's error (see Note 1 below) to the caller of `withTransaction` and return
-        immediately.
+    4. Otherwise, propagate the callback's error to the caller of `withTransaction` as is and return immediately.
 
 8. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
@@ -173,27 +173,33 @@ This method should perform the following sequence of actions:
 
 10. If `commitTransaction` reported an error:
 
-    1. If the `commitTransaction` error includes a "UnknownTransactionCommitResult" label and the error is not
-        MaxTimeMSExpired and the elapsed time of `withTransaction` is less than TIMEOUT_MS, jump back to step nine. We
-        will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
-        [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
+    1. If the `commitTransaction` error includes a `UnknownTransactionCommitResult` label and the error is not
+        `MaxTimeMSExpired`
 
-    2. If the `commitTransaction` error includes a "TransientTransactionError" label, jump back to step two.
+        1. If the elapsed time of `withTransaction` exceeded `TIMEOUT_MS`, propagate the `commitTransaction` error to the
+            caller of `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return
+            immediately.
+        2. Otherwise, jump back to step nine. We will trust `commitTransaction` to apply a majority write concern on
+            retry attempts (see:
+            [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
-    3. Otherwise, propagate the `commitTransaction` error (see Note 1 below) to the caller of `withTransaction` and
-        return immediately.
+    2. If the `commitTransaction` error includes a `TransientTransactionError` label, jump back to step two.
+
+    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` as is and return
+        immediately.
 
 11. The transaction was committed successfully. Return immediately.
 
-______________________________________________________________________
+###### Timeout Error propagation
 
-**Note 1:** When the `TIMEOUT_MS` (calculated in step [1.3](#sequence-of-actions)) is reached we MUST report a timeout
-error wrapping the last error that was encountered which triggered the retry behavior. If `timeoutMS` is set, then
-timeout error is a special type which is defined in CSOT
-[specification](https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#errors)
-, If `timeoutMS` is not set, then propagate it as timeout error if the language allows to expose the underlying error as
-a cause of a timeout error (see `makeTimeoutError` below in [pseudo-code](#pseudo-code)). If timeout error is thrown
-then it SHOULD expose error label(s) from the transient error.
+When the previously encountered error needs to be propagated because there is no more time for another attempt, and it
+is not already a [timeout error](../client-side-operations-timeout/client-side-operations-timeout.md#errors), then:
+
+- A timeout error MUST be propagated instead. It MUST expose the previously encountered error as specified in the
+    ["Errors" section of the CSOT specification](../client-side-operations-timeout/client-side-operations-timeout.md#errors).
+    - If exposing the previously encountered error from a timeout error is impossible in a driver, then the driver is
+        exempt from the requirement and MUST propagate the previously encountered error as is.
+- The timeout error MUST copy all error labels from the previously encountered error.
 
 ##### Pseudo-code
 
@@ -264,11 +270,11 @@ withTransaction(callback, options) {
                  * {ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}
                  */
                 lastError = error;
-                if (Date.now() - startTime >= timeout) {
-                    throw makeTimeoutError(error);
-                }
                 if (!isMaxTimeMSExpiredError(error) &&
                     error.hasErrorLabel("UnknownTransactionCommitResult")) {
+                    if (Date.now() - startTime >= timeout) {
+                        throw makeTimeoutError(error);
+                    }
                     continue retryCommit;
                 }
 
@@ -303,11 +309,11 @@ propagate. Command errors may abort the transaction on the server, and an attemp
 rejected with `NoSuchTransaction` error.
 
 For example, `DuplicateKeyError` is an error that aborts a transaction on the server. If the callback catches
-`DuplicateKeyError` and does not re-throw it, the driver will attempt to commit the transaction. The server will reject
+`DuplicateKeyError` and does not report it, the driver will attempt to commit the transaction. The server will reject
 the commit attempt with `NoSuchTransaction` error. This error has the "TransientTransactionError" label and the driver
 will retry the commit. This will result in an infinite loop.
 
-Drivers MUST recommend that the callback re-throw command errors if they need to be handled inside the callback. Drivers
+Drivers MUST recommend that the callback report command errors if they need to be handled inside the callback. Drivers
 SHOULD also recommend using Core Transaction API if a user wants to handle errors in a custom way.
 
 ## Test Plan
@@ -348,8 +354,8 @@ An earlier design also considered using the callback's return value to indicate 
 of two ways:
 
 - The callback aborts the transaction directly and returns to `withTransaction`, which will then return to its caller.
-- The callback raises an error without the "TransientTransactionError" label, in which case `withTransaction` will abort
-    the transaction and return to its caller.
+- The callback propagates an error without the `TransientTransactionError` label, in which case `withTransaction` will
+    abort the transaction and return to its caller.
 
 ### Applications are responsible for passing ClientSession for operations within a transaction
 
@@ -439,6 +445,9 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
+
+- 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
+    wrapping semantics and label propagation in spec and prose tests.
 
 - 2026-03-03: Clarify exponential backoff jitter upper bound.
 

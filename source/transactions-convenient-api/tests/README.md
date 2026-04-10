@@ -29,23 +29,23 @@ Write a callback that returns a custom value (e.g. boolean, string, object). Exe
 Drivers should test that `withTransaction` enforces a non-configurable timeout before retrying both commits and entire
 transactions. Specifically, three cases should be checked:
 
-- If the callback raises an error with the TransientTransactionError label and the retry timeout has been exceeded,
-    `withTransaction` should propagate the error (see Note 1 below) to its caller.
-- If committing raises an error with the UnknownTransactionCommitResult label, and the retry timeout has been exceeded,
-    `withTransaction` should propagate the error (see Note 1 below) to its caller.
-- If committing raises an error with the TransientTransactionError label and the retry timeout has been exceeded,
-    `withTransaction` should propagate the error (see Note 1 below) to its caller. This case may occur if the commit was
-    internally retried against a new primary after a failover and the second primary returned a NoSuchTransaction error
-    response.
+- If the callback raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
+    `withTransaction` should propagate the error as described in the
+    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation) to its caller.
+- If committing raises an error with the `UnknownTransactionCommitResult` label, and the retry timeout has been
+    exceeded, `withTransaction` should propagate the error as described in the
+    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation) to its caller
+- If committing raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
+    `withTransaction` should propagate the error as described in the
+    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation) to its caller. This case may
+    occur if the commit was internally retried against a new primary after a failover and the second primary returned a
+    `NoSuchTransaction` error response.
 
 If possible, drivers should implement these tests without requiring the test runner to block for the full duration of
 the retry timeout. This might be done by internally modifying the timeout value used by `withTransaction` with some
 private API or using a mock timer.
 
-______________________________________________________________________
-
-**Note 1:** The error SHOULD be propagated as a timeout error if the language allows to expose the underlying error as a
-cause of a timeout error.
+The drivers should assert that the timeout error propagated has the same labels as the error it wraps.
 
 ### Retry Backoff is Enforced
 
@@ -112,6 +112,8 @@ Drivers should test that retries within `withTransaction` do not occur immediate
 
 ## Changelog
 
+- 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
+    wrapping semantics and label propagation in spec and prose tests
 - 2026-03-03: Clarify exponential backoff jitter upper bound.
 - 2026-02-17: Clarify expected error when timeout is reached
     [DRIVERS-3391](https://jira.mongodb.org/browse/DRIVERS-3391).
