@@ -416,8 +416,8 @@ primary is unavailable. The documentation does not explicitly define unavailable
 is unselectable. Overload retargeting makes the primary unselectable for a retry operation if it returned an overload
 error on a previous attempt. This materially changes how often secondary reads occur. Since secondary reads can result
 in stale data, enabling overload retargeting increases the chance that users of `primaryPreferred` will get stale data
-when they did not previously. This is a semantic change, and so retargeting is disabled by default, with a knob to
-enable it.
+when they did not previously. This is a potentially significant change in expected behavior. Therefore, overload
+retargeting is disabled by default with a knob to enable it.
 
 Overload retargeting significantly increases availability during overload, but it does increase the risk of getting
 stale data when used with `primaryPreferred`. Users of `primaryPreferred` may widely end up preferring that behavior. If
@@ -429,6 +429,11 @@ from "almost always secondary" to "sometimes primary".
 Note that for sharded clusters, drivers always attempt to retarget across `mongos` instances on all retryable errors,
 including overload errors, regardless of how `enableOverloadRetargeting` is set. `mongos` has a separate flag to
 retarget overload errors within shards that is independent of the driver's configuration.
+
+Overload retargeting could also have been implemented as a new option for read preferences instead of as a client-level
+option. This would provide more fine-tuned control for specific operations, databases, or collections to enable
+retargeting. However, this approach would require additional server changes to process the new field, as well as
+expanding the total set of options for users to consider compared to a binary setting on the client.
 
 ## Changelog
 
