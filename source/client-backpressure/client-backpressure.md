@@ -428,7 +428,7 @@ from "almost always secondary" to "sometimes primary".
 
 Note that for sharded clusters, drivers always attempt to retarget across `mongos` instances on all retryable errors,
 including overload errors, regardless of how `enableOverloadRetargeting` is set. `mongos` has a separate flag to
-retarget overload errors across shards that is independent of the driver's configuration.
+retarget overload errors within shards that is independent of the driver's configuration.
 
 ## Changelog
 
