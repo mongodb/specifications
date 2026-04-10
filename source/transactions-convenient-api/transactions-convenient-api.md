@@ -125,8 +125,8 @@ This method should perform the following sequence of actions:
 
     1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`.
         If elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
-       `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
-       Otherwise, sleep for `backoffMS`.
+        `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
+        Otherwise, sleep for `backoffMS`.
 
         1. jitter is a random float between \[0, 1), optionally including 1, depending on what is most natural for the
             given driver language.
