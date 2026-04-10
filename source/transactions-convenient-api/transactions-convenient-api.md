@@ -352,7 +352,7 @@ An earlier design also considered using the callback's return value to indicate 
 of two ways:
 
 - The callback aborts the transaction directly and returns to `withTransaction`, which will then return to its caller.
-- The callback propagates an error without the "TransientTransactionError" label, in which case `withTransaction` will
+- The callback propagates an error without the `TransientTransactionError` label, in which case `withTransaction` will
     abort the transaction and return to its caller.
 
 ### Applications are responsible for passing ClientSession for operations within a transaction
