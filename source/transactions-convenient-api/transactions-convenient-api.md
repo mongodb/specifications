@@ -123,8 +123,7 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error (see
-        [propagation section](transactions-convenient-api.md#timeout-error-propagation-mechanism) below). If the
+    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error as per [timeout error propagation](#timeout-error-propagation). If the
         elapsed time of `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
         `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. sleep for `backoffMS`.
 
@@ -142,7 +141,7 @@ This method should perform the following sequence of actions:
     for `startTransaction`. Note that `ClientSession.defaultTransactionOptions` will be used in the absence of any
     explicit TransactionOptions.
 
-4. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` and return
+4. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` as is and return
     immediately.
 
 5. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
@@ -161,10 +160,10 @@ This method should perform the following sequence of actions:
     2. If the callback's error includes a "TransientTransactionError" label, jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
-        committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
+        committed a transaction, propagate the callback's error to the caller of `withTransaction` as is and return
         immediately.
 
-    4. Otherwise, propagate the callback's error to the caller of `withTransaction` and return immediately.
+    4. Otherwise, propagate the callback's error to the caller of `withTransaction` as is and return immediately.
 
 8. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
@@ -177,19 +176,18 @@ This method should perform the following sequence of actions:
         `MaxTimeMSExpired`
 
         1. If the elapsed time of `withTransaction` exceeded `TIMEOUT_MS`, propagate the `commitTransaction` error to the
-            caller of `withTransaction` and return immediately (see
-            [propagation section](transactions-convenient-api.md#timeout-error-propagation-mechanism) below)
+            caller of `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
         2. If the elapsed time of `withTransaction` is less than `TIMEOUT_MS`, jump back to step nine. We will trust
             `commitTransaction` to apply a majority write concern on retry attempts (see:
             [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
     2. If the `commitTransaction` error includes a "TransientTransactionError" label, jump back to step two.
 
-    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
+    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` as is and return immediately.
 
 11. The transaction was committed successfully. Return immediately.
 
-###### Timeout Error propagation mechanism
+###### Timeout Error propagation
 
 When the previously encountered error needs to be propagated because there is no more time for another attempt,
 and it is not already a [timeout error](../client-side-operations-timeout/client-side-operations-timeout.md#errors),
