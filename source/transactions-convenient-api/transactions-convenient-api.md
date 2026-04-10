@@ -123,8 +123,8 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of `withTransaction`
-        as per [timeout error propagation](#timeout-error-propagation) and return immediately. If the
+    1. If elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
+        `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately. If the
         elapsed time of `withTransaction` is less than TIMEOUT_MS, calculate the backoffMS to be
         `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. sleep for `backoffMS`.
 
@@ -177,26 +177,28 @@ This method should perform the following sequence of actions:
         `MaxTimeMSExpired`
 
         1. If the elapsed time of `withTransaction` exceeded `TIMEOUT_MS`, propagate the `commitTransaction` error to the
-            caller of `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
-        2. If the elapsed time of `withTransaction` is less than `TIMEOUT_MS`, jump back to step nine. We will trust
-            `commitTransaction` to apply a majority write concern on retry attempts (see:
+            caller of `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return
+            immediately.
+        2. Otherwise, jump back to step nine. We will trust `commitTransaction` to apply a majority write concern on
+            retry attempts (see:
             [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
-    2. If the `commitTransaction` error includes a "TransientTransactionError" label, jump back to step two.
+    2. If the `commitTransaction` error includes a `TransientTransactionError` label, jump back to step two.
 
-    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` as is and return immediately.
+    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` as is and return
+        immediately.
 
 11. The transaction was committed successfully. Return immediately.
 
 ###### Timeout Error propagation
 
-When the previously encountered error needs to be propagated because there is no more time for another attempt,
-and it is not already a [timeout error](../client-side-operations-timeout/client-side-operations-timeout.md#errors),
-then:
+When the previously encountered error needs to be propagated because there is no more time for another attempt, and it
+is not already a [timeout error](../client-side-operations-timeout/client-side-operations-timeout.md#errors), then:
+
 - A timeout error MUST be propagated instead. It MUST expose the previously encountered error as specified in the
-["Errors" section of the CSOT specification](../client-side-operations-timeout/client-side-operations-timeout.md#errors).
-   - If exposing the previously encountered error from a timeout error is impossible in a driver, then the driver
-   is exempt from the requirement and MUST propagate the previously encountered error as is.
+    ["Errors" section of the CSOT specification](../client-side-operations-timeout/client-side-operations-timeout.md#errors).
+    - If exposing the previously encountered error from a timeout error is impossible in a driver, then the driver is
+        exempt from the requirement and MUST propagate the previously encountered error as is.
 - The timeout error MUST copy all error labels from the previously encountered error.
 
 ##### Pseudo-code
@@ -307,11 +309,11 @@ propagate. Command errors may abort the transaction on the server, and an attemp
 rejected with `NoSuchTransaction` error.
 
 For example, `DuplicateKeyError` is an error that aborts a transaction on the server. If the callback catches
-`DuplicateKeyError` and does not re-throw it, the driver will attempt to commit the transaction. The server will reject
+`DuplicateKeyError` and does not report it, the driver will attempt to commit the transaction. The server will reject
 the commit attempt with `NoSuchTransaction` error. This error has the "TransientTransactionError" label and the driver
 will retry the commit. This will result in an infinite loop.
 
-Drivers MUST recommend that the callback re-throw command errors if they need to be handled inside the callback. Drivers
+Drivers MUST recommend that the callback report command errors if they need to be handled inside the callback. Drivers
 SHOULD also recommend using Core Transaction API if a user wants to handle errors in a custom way.
 
 ## Test Plan
