@@ -191,13 +191,14 @@ This method should perform the following sequence of actions:
 
 ###### Timeout Error propagation mechanism
 
-When the `TIMEOUT_MS` (calculated in step [1.3](#sequence-of-actions)) is reached we MUST report a timeout error
-wrapping the previously encountered error. If `timeoutMS` is set, then timeout error is a special type which is defined
-in CSOT
-[specification](https://github.com/mongodb/specifications/blob/master/source/client-side-operations-timeout/client-side-operations-timeout.md#errors)
-, If `timeoutMS` is not set, then propagate it as timeout error if the language allows to expose the previously
-encountered error as a cause of a timeout error (see `makeTimeoutError` below in [pseudo-code](#pseudo-code)). If
-timeout error is thrown then it SHOULD copy all error label(s) from the previously encountered retriable error.
+When the previously encountered error needs to be propagated because there is no more time for another attempt,
+and it is not already a [timeout error](../client-side-operations-timeout/client-side-operations-timeout.md#errors),
+then:
+- A timeout error MUST be propagated instead. It MUST expose the previously encountered error as specified in the
+["Errors" section of the CSOT specification](../client-side-operations-timeout/client-side-operations-timeout.md#errors).
+   - If exposing the previously encountered error from a timeout error is impossible in a driver, then the driver
+   is exempt from the requirement and MUST propagate the previously encountered error as is.
+- The timeout error MUST copy all error labels from the previously encountered error.
 
 ##### Pseudo-code
 
