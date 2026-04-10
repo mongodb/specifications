@@ -430,10 +430,11 @@ Note that for sharded clusters, drivers always attempt to retarget across `mongo
 including overload errors, regardless of how `enableOverloadRetargeting` is set. `mongos` has a separate flag to
 retarget overload errors within shards that is independent of the driver's configuration.
 
-Overload retargeting could also have been implemented as a new option for read preferences instead of as a client-level
-option. This would provide more fine-tuned control for specific operations, databases, or collections to enable
-retargeting. However, this approach would require additional server changes to process the new field, as well as
-expanding the total set of options for users to consider compared to a binary setting on the client.
+Alternative design considered: Overload retargeting could have been implemented as a read preference option rather than
+a client-level option. This would allow more granular control: enabling retargeting for  specific operations, databases,
+or collections. However, a read preference option would require server changes to recognize the new field, and would add
+another dimension to read preference selection that users need to reason about. A client-level binary setting is simpler
+to understand and configure.
 
 ## Changelog
 
