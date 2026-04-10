@@ -31,15 +31,15 @@ transactions. Specifically, three cases should be checked:
 
 - If the callback raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
     `withTransaction` should propagate the error as described in the
-    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller.
+    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation) to its caller.
 - If committing raises an error with the `UnknownTransactionCommitResult` label, and the retry timeout has been
     exceeded, `withTransaction` should propagate the error as described in the
-    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller
+    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation) to its caller
 - If committing raises an error with the `TransientTransactionError` label and the retry timeout has been exceeded,
     `withTransaction` should propagate the error as described in the
-    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation-mechanism) to its caller. This
-    case may occur if the commit was internally retried against a new primary after a failover and the second primary
-    returned a `NoSuchTransaction` error response.
+    [propagation mechanism](../transactions-convenient-api.md#timeout-error-propagation) to its caller. This case may
+    occur if the commit was internally retried against a new primary after a failover and the second primary returned a
+    `NoSuchTransaction` error response.
 
 If possible, drivers should implement these tests without requiring the test runner to block for the full duration of
 the retry timeout. This might be done by internally modifying the timeout value used by `withTransaction` with some
