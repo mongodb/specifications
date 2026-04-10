@@ -16,12 +16,6 @@ the [Retryable Reads](../retryable-reads/retryable-reads.md) and
 all commands when specific server overload conditions are encountered, regardless of whether the command would normally
 be retryable under those specifications.
 
-## WARNING
-
-Client backpressure support will be rolled out in two separate phases. The first phase consists of backoff and jitter
-only, without token bucket adaptive retries. Implementing drivers MUST NOT implement token buckets in the initial
-release. If token bucket support has already been merged, it MUST NOT be able to be turned on by users.
-
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
