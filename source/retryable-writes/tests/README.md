@@ -469,6 +469,8 @@ to cover the same sequence of events.
 
 ## Changelog
 
+- 2026-04-14: Add prose test for retry behavior when a mix of overload and non-overload errors are encountered.
+
 - 2026-04-02: Fix test for error propagation behavior when multiple errors are encountered.
 
 - 2026-02-17: Fix test for error propagation behavior when multiple errors are encountered.

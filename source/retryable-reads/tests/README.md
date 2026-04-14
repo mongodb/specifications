@@ -270,6 +270,8 @@ This test MUST be executed against a MongoDB 4.4+ server that supports `retryRea
 
 ## Changelog
 
+- 2026-04-14: Add prose test for retry behavior when a mix of overload and non-overload errors are encountered.
+
 - 2026-03-31: Add additional prose test for overload retargeting.
 
 - 2026-02-19: Add prose tests for retrying against a replica set.

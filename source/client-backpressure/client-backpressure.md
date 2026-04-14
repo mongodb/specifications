@@ -161,7 +161,7 @@ specifications. Drivers MUST ensure:
 - When a failed attempt is retried, backoff MUST be applied if and only if the error is an overload error.
 - If an overload error is encountered at any point during an operation's retry loop:
     - Regardless of whether CSOT is enabled or not, the maximum number of retries for any retry policy becomes
-        `MAX_RETRIES`. This includes retryable non-overload errors following the encountered overload error.
+        `MAX_RETRIES`. This includes retryable non-overload errors following or preceding the encountered overload error.
     - If CSOT is enabled and a command has been retried at least `MAX_RETRIES` times, it MUST NOT be retried further.
 
 #### Pseudocode
@@ -431,6 +431,8 @@ another dimension to read preference selection that users need to reason about. 
 to understand and configure.
 
 ## Changelog
+
+- 2026-04-14: Clarify correct retry behavior when a mix of overload and non-overload errors are encountered.
 
 - 2026-03-30: Introduce phase 1 support without token buckets.
 
