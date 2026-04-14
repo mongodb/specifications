@@ -419,6 +419,54 @@ to cover the same sequence of events.
     }
     ```
 
+#### Case 4: Test that drivers set the maximum number of retries for all retryable write errors when an overload error is encountered
+
+1. Create a client with `retryWrites=true`.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `91` (ShutdownInProgress) and
+    the `RetryableWriteError` and `RetryableError` labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["insert"],
+            errorLabels: ["RetryableError", "RetryableWriteError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+    Configure the second fail point command only if the failed event is for the first error configured in step 2.
+
+4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
+    server error. Assert that `MAX_ADAPTIVE_RETRIES + 1` attempts were made.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
 ## Changelog
 
 - 2026-04-02: Fix test for error propagation behavior when multiple errors are encountered.

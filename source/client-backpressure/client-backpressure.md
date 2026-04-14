@@ -159,9 +159,9 @@ The retry policy in this specification is separate from the other retry policies
 specifications. Drivers MUST ensure:
 
 - When a failed attempt is retried, backoff MUST be applied if and only if the error is an overload error.
-- If an overload error is encountered:
+- If an overload error is encountered at any point during an operation's retry loop:
     - Regardless of whether CSOT is enabled or not, the maximum number of retries for any retry policy becomes
-        `MAX_RETRIES`.
+        `MAX_RETRIES`. This includes retryable non-overload errors following the encountered overload error.
     - If CSOT is enabled and a command has been retried at least `MAX_RETRIES` times, it MUST NOT be retried further.
 
 #### Pseudocode
@@ -307,7 +307,7 @@ The Node and Python drivers will provide the reference implementations. See
 The client backpressure retry loop is primarily concerned with spreading out retries to avoid retry storms. The exact
 sleep duration is not critical to the intended behavior, so long as we sleep at least as long as we say we will.
 
-### Why override existing maximum number of retry attempt defaults for retryable reads and writes if an overload error is received?
+### Why override existing maximum number of retry attempt defaults for retryable reads and writes if an overload error is received at any point during an operation's retry loop?
 
 Load-shedded errors indicate that the request was rejected by the server to minimize load, not that the command failed
 for logical reasons. So, when determining the number of retries an operation should attempt:
@@ -325,8 +325,8 @@ specifications with load-shedding behavior:
     [retryable writes](../retryable-writes/retryable-writes.md) and
     [CSOT](../client-side-operations-timeout/client-side-operations-timeout.md) specifications when no overload errors are
     encountered.
-- Adjusting the maximum number of retry attempts to 5 if an overload error is returned from the server gives requests
-    more opportunities to succeed and helps reduce application errors.
+- Adjusting the maximum number of retry attempts to MAX_RETRIES if an overload error is returned from the server gives
+    requests more opportunities to succeed and helps reduce application errors.
 - An alternative approach would be to retry once if we don't receive an overload error, in which case we'd retry 5
     times. The approach chosen allows for additional retries in scenarios where a non-overload error fails on a retry
     with an overload error.
