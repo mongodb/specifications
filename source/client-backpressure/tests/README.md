@@ -59,7 +59,7 @@ executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint`
         The sum of 2 backoffs is 0.3 seconds. There is a 0.3-second window to account for potential variance between the
         two runs.
 
-#### Test 3: Overload Errors are Retried a Maximum of MAX_RETRIES times
+#### Test 2: Overload Errors are Retried a Maximum of MAX_RETRIES times
 
 Drivers should test that overload errors are retried a maximum of MAX_RETRIES times. This test MUST be executed against
 a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
@@ -88,7 +88,7 @@ a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the
 
 6. Assert that the total number of started commands is MAX_RETRIES + 1 (3).
 
-#### Test 4: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
+#### Test 3: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
 
 Drivers should test that overload errors are retried a maximum of `maxAdaptiveRetries` times, when configured. This test
 MUST be executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels`
