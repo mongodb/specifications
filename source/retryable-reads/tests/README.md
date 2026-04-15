@@ -257,7 +257,7 @@ This test MUST be executed against a MongoDB 4.4+ server that supports `retryRea
     Configure the second fail point command only if the failed event is for the first error configured in step 2.
 
 4. Attempt a `findOne` operation on any record for any database and collection. Expect the `findOne` to fail with a
-    server error. Assert that `MAX_ADAPTIVE_RETRIES + 1` attempts were made.
+    server error. Assert that `MAX_RETRIES + 1` attempts were made.
 
 5. Disable the fail point:
 

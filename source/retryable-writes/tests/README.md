@@ -456,7 +456,7 @@ to cover the same sequence of events.
     Configure the second fail point command only if the failed event is for the first error configured in step 2.
 
 4. Attempt an `insertOne` operation on any record for any database and collection. Expect the `insertOne` to fail with a
-    server error. Assert that `MAX_ADAPTIVE_RETRIES + 1` attempts were made.
+    server error. Assert that `MAX_RETRIES + 1` attempts were made.
 
 5. Disable the fail point:
 
