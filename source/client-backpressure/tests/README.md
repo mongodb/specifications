@@ -59,7 +59,9 @@ executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint`
         The sum of 2 backoffs is 0.3 seconds. There is a 0.3-second window to account for potential variance between the
         two runs.
 
-#### Test 2: Overload Errors are Retried a Maximum of MAX_RETRIES times
+#### Test 2: REMOVED
+
+#### Test 3: Overload Errors are Retried a Maximum of MAX_RETRIES times
 
 Drivers should test that overload errors are retried a maximum of MAX_RETRIES times. This test MUST be executed against
 a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
@@ -88,7 +90,7 @@ a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the
 
 6. Assert that the total number of started commands is MAX_RETRIES + 1 (3).
 
-#### Test 3: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
+#### Test 4: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
 
 Drivers should test that overload errors are retried a maximum of `maxAdaptiveRetries` times, when configured. This test
 MUST be executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels`
@@ -117,30 +119,3 @@ option.
 5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
 6. Assert that the total number of started commands is `maxAdaptiveRetries` + 1 (2).
-
-#### Test 4: Backoff is not applied for non-overload retryable errors
-
-Drivers should test that backoff is not applied for non-overload retryable errors. This test MUST be executed against a
-MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
-
-1. Let `client` be a `MongoClient`.
-
-2. Let `coll` be a collection.
-
-3. Configure the following failpoint:
-
-    ```javascript
-        {
-            configureFailPoint: 'failCommand',
-            mode: { times: 1 },
-            data: {
-                failCommands: ['find'],
-                errorCode: 91,  // ShutdownInProgress
-                errorLabels: ['RetryableError']
-            }
-        }
-    ```
-
-4. Perform a find operation with `coll` that fails on the initial attempt, then succeeds on the first retry attempt.
-
-5. Assert that no backoff was applied for the retry attempt.

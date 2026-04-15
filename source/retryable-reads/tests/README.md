@@ -217,7 +217,7 @@ This test MUST be executed against a MongoDB 4.4+ replica set that has at least 
 
 6. Assert that both events occurred on the same server.
 
-### 1: Test that drivers set the maximum number of retries for all retryable read errors when an overload error is encountered
+### 4: Test that drivers set the maximum number of retries for all retryable read errors when an overload error is encountered
 
 This test MUST be executed against a MongoDB 4.4+ server that supports `retryReads=true` and has enabled the
 `configureFailPoint` command with the `errorLabels` option.
@@ -268,9 +268,61 @@ This test MUST be executed against a MongoDB 4.4+ server that supports `retryRea
     }
     ```
 
+### 5: Test that drivers do not apply backoff to non-overload errors
+
+This test MUST be executed against a MongoDB 4.4+ server that supports `retryReads=true` and has enabled the
+`configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `91` (ShutdownInProgress) and
+    the `RetryableError` label:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+    Configure the second fail point command only if the failed event is for the first error configured in step 2.
+
+4. Attempt a `findOne` operation on any record for any database and collection. Expect the `findOne` to fail with a
+    server error. Assert that backoff was applied only once for the initial overload error and not for the subsequent
+    non-overload retryable errors.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
 ## Changelog
 
-- 2026-04-14: Add prose test for retry behavior when a mix of overload and non-overload errors are encountered.
+- 2026-04-14: Add prose tests for retry behavior when a mix of overload and non-overload errors are encountered.
 
 - 2026-03-31: Add additional prose test for overload retargeting.
 

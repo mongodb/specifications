@@ -159,9 +159,10 @@ The retry policy in this specification is separate from the other retry policies
 specifications. Drivers MUST ensure:
 
 - When a failed attempt is retried, backoff MUST be applied if and only if the error is an overload error.
-- If an overload error is encountered at any point during an operation's retry loop:
+- If an overload error is encountered:
     - Regardless of whether CSOT is enabled or not, the maximum number of retries for any retry policy becomes
-        `MAX_RETRIES`. This includes retryable non-overload errors following or preceding the encountered overload error.
+        `MAX_RETRIES`. This limiting applies to all retry attempts, including retries for errors that are not overload
+        errors.
     - If CSOT is enabled and a command has been retried at least `MAX_RETRIES` times, it MUST NOT be retried further.
 
 #### Pseudocode
