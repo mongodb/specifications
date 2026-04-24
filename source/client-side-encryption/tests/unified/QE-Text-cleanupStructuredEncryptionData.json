@@ -101,7 +101,7 @@
               "bsonType": "string",
               "queries": [
                 {
-                  "queryType": "suffixPreview",
+                  "queryType": "suffix",
                   "contention": {
                     "$numberLong": "0"
                   },
