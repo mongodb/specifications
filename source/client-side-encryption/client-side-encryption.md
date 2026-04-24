@@ -1362,9 +1362,9 @@ One of the strings:
 
 - "equality"
 - "range"
-- "prefixPreview"
-- "suffixPreview"
-- "substringPreview"
+- "prefix"
+- "suffix"
+- "substring"
 
 queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
 queryType is set for a non-applicable algorithm.
@@ -2518,6 +2518,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-04-24: Replace TextPreview with Text
 
 - 2025-09-30: Update `$lookup` prose test to reflect changes in
     [MONGOCRYPT-793](https://jira.mongodb.org/browse/MONGOCRYPT-793).

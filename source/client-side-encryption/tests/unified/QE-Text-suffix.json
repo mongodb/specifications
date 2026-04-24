@@ -1,5 +1,5 @@
 {
-  "description": "QE-Text-suffixPreview",
+  "description": "QE-Text-suffix",
   "schemaVersion": "1.25",
   "runOnRequirements": [
     {
@@ -101,7 +101,7 @@
               "bsonType": "string",
               "queries": [
                 {
-                  "queryType": "suffixPreview",
+                  "queryType": "suffix",
                   "contention": {
                     "$numberLong": "0"
                   },
@@ -123,7 +123,7 @@
   ],
   "tests": [
     {
-      "description": "Insert QE suffixPreview",
+      "description": "Insert QE suffix",
       "operations": [
         {
           "name": "insertOne",

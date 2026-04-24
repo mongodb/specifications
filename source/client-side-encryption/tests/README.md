@@ -3981,7 +3981,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   queryType: "prefix",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4014,7 +4014,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "suffixPreview",
+   queryType: "suffix",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4047,7 +4047,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   queryType: "prefix",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4076,7 +4076,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "suffixPreview",
+   queryType: "suffix",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4105,7 +4105,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4139,7 +4139,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4169,7 +4169,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   queryType: "prefix",
    textOpts: TextOpts {
       caseSensitive: true,
       diacriticSensitive: true,
