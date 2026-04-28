@@ -13,12 +13,14 @@ failPoint:
     closeConnection: false
     blockConnection: true
     blockTimeMS: 500
+    appName: "cmap-format-tests"
 poolOptions:
   # allows both thread1 and the background thread to start opening connections concurrently
   minPoolSize: 2
   # gives opportunity for the checkout in thread2 to open a new connection, which it must not do nonetheless
   maxPoolSize: 3
   waitQueueTimeoutMS: 5000
+  appName: "cmap-format-tests"
 operations:
   - name: ready
   # thread1 exists to hold on one of the two permits to open a connection (the other one is initially held by the background thread),
