@@ -7,9 +7,9 @@ ______________________________________________________________________
 
 ## Abstract
 
-MongoDB 3.4 introduces a new BSON type representing high precision decimal (`"\x13"`), known as Decimal128. 3.4
-compatible drivers must support this type by creating a Value Object for it, possibly with accessor functions for
-retrieving its value in data types supported by the respective languages.
+Decimal128 is a BSON type representing high precision decimal (`"\x13"`). Drivers must support this type by creating a
+Value Object for it, possibly with accessor functions for retrieving its value in data types supported by the respective
+languages.
 
 Round-tripping Decimal128 types between driver and server MUST not change its value or representation in any way.
 Conversion to and from native language types is complicated and there are many pitfalls to represent Decimal128

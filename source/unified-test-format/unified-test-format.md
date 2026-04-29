@@ -326,9 +326,8 @@ The structure of this object is as follows:
     matching a "sharded" topology, test runners MUST accept any type of sharded cluster (i.e. "sharded" implies
     "sharded-replicaset", but not vice versa).
 
-    The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires that all shard servers be replica sets.
-    Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when targeting 3.6+ server versions in order
-    to avoid unnecessary overhead.
+    The "sharded-replicaset" topology type is deprecated. All shard servers are required to be replica sets. Therefore,
+    tests SHOULD use "sharded" instead of "sharded-replicaset" to avoid unnecessary overhead.
 
     Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded cluster behind a load balancer implicitly
     uses replica sets for its shards.

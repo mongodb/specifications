@@ -229,9 +229,9 @@ The transaction’s read preference MUST override all other user configurable re
 drivers that allow an operation level read preference. In this case, the driver MUST respect the read preference
 specified by the user, allowing the server to report an error.
 
-In MongoDB 4.0, transactions may only read from the primary. If a read is attempted and the transaction’s read
-preference is not Primary drivers MUST raise an error containing the string "read preference in a transaction must be
-primary". Drivers MUST NOT validate the read preference during write operations or in startTransaction. See
+Transactions may only read from the primary. If a read is attempted and the transaction’s read preference is not Primary
+drivers MUST raise an error containing the string "read preference in a transaction must be primary". Drivers MUST NOT
+validate the read preference during write operations or in startTransaction. See
 [Why is readPreference part of TransactionOptions?](#why-is-readpreference-part-of-transactionoptions).
 
 ```python
@@ -295,12 +295,8 @@ If this session is in the "starting transaction " or "transaction in progress" s
 containing the message "Transaction already in progress" without modifying any session state.
 
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
-A deployment does not support transactions when the deployment does not support sessions, or maxWireVersion < 7, or the
-maxWireVersion < 8 and the topology type is Sharded, see
+A deployment does not support transactions when the deployment does not support sessions, see
 [How to Tell Whether a Connection Supports Sessions](../sessions/driver-sessions.md#how-to-tell-whether-a-connection-supports-sessions).
-Note that checking the maxWireVersion does not guarantee that the deployment supports transactions, for example a
-MongoDB 4.0 replica set using MMAPv1 will report maxWireVersion 7 but does not support transactions. In this case,
-Drivers rely on the deployment to report an error when a transaction is started.
 
 Drivers MUST increment the `txnNumber` for the corresponding server session.
 
@@ -465,18 +461,17 @@ All operations within a multi-statement transaction (including commitTransaction
 #### Behavior of the readConcern field
 
 Any command that marks the beginning of a transaction MAY include a `readConcern` argument with an optional `level` and
-`afterClusterTime` fields. Read concern level 'local', 'majority', and 'snapshot' are all supported, although they will
-all have the same behavior as "snapshot" in MongoDB 4.0. To support causal consistency, if `readConcern`
-`afterClusterTime` is specified, then the server will ensure that the transaction’s read timestamp is after the
-`afterClusterTime`.
+`afterClusterTime` fields. Read concern level ‘local’, ‘majority’, and ‘snapshot’ are all supported. To support causal
+consistency, if `readConcern` `afterClusterTime` is specified, then the server will ensure that the transaction’s read
+timestamp is after the `afterClusterTime`.
 
 All commands of a multi-statement transaction subsequent to the initial command MUST NOT specify a `readConcern`, since
 the `readConcern` argument is only needed to establish the transaction’s read timestamp. If a `readConcern` argument is
 specified on a subsequent (non-initial) command, the server will return an error.
 
-Read concern level "snapshot" is new in MongoDB 4.0 and can only be used when starting a transaction. The server will
-return an error if read concern level "snapshot" is specified on a command that is not the start of a transaction.
-Drivers MUST rely on the server to report an error if read concern level snapshot is used incorrectly.
+Read concern level "snapshot" can only be used when starting a transaction. The server will return an error if read
+concern level "snapshot" is specified on a command that is not the start of a transaction. Drivers MUST rely on the
+server to report an error if read concern level snapshot is used incorrectly.
 
 #### Behavior of the writeConcern field
 
@@ -566,9 +561,9 @@ a transaction.
 
 ### **Interaction with Retryable Writes**
 
-In MongoDB 4.0 the only supported retryable write commands within a transaction are commitTransaction and
-abortTransaction. Therefore drivers MUST NOT retry write commands within transactions even when retryWrites has been
-enabled on the MongoClient, unless the server response is a
+The only supported retryable write commands within a transaction are commitTransaction and abortTransaction. Therefore
+drivers MUST NOT retry write commands within transactions even when retryWrites has been enabled on the MongoClient,
+unless the server response is a
 [retryable overload error](../client-backpressure/client-backpressure.md#retryable-overload-error).
 
 In addition, drivers MUST NOT add the RetryableWriteError label to any error that occurs during a write command within a

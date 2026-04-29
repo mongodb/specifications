@@ -325,9 +325,6 @@ The responses to a change stream aggregate or getMore have the following structu
        ns: String,
        id: Int64,
        firstBatch: Array<ChangeStreamDocument>,
-       /**
-        * postBatchResumeToken is returned in MongoDB 4.0.7 and later.
-        */
        postBatchResumeToken: Document
     },
     operationTime: Timestamp,
@@ -343,9 +340,6 @@ The responses to a change stream aggregate or getMore have the following structu
        ns: String,
        id: Int64,
        nextBatch: Array<ChangeStreamDocument>
-       /**
-        * postBatchResumeToken is returned in MongoDB 4.0.7 and later.
-        */
        postBatchResumeToken: Document
     },
     operationTime: Timestamp,
@@ -784,11 +778,9 @@ thrown by opening, writing to, or reading from the socket.
 
 ##### Exposing All Resume Tokens
 
-- Since: 4.0.7
-
-Users can inspect the \_id on each `ChangeDocument` to use as a resume token. But since MongoDB 4.0.7, aggregate and
-getMore responses also include a `postBatchResumeToken`. Drivers use one or the other when automatically resuming, as
-described in [Resume Process](#resume-process).
+Users can inspect the \_id on each `ChangeDocument` to use as a resume token. Aggregate and getMore responses also
+include a `postBatchResumeToken`. Drivers use one or the other when automatically resuming, as described in
+[Resume Process](#resume-process).
 
 Drivers MUST expose a mechanism to retrieve the same resume token that would be used to automatically resume. It MUST be
 possible to use this mechanism after iterating every document. It MUST be possible for users to use this mechanism

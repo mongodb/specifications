@@ -167,9 +167,6 @@ therefore effectively replaces the standard `MsgHeader` of the compressed opcode
 There is no guarantee that a response will be compressed even though compression was negotiated for in the handshake.
 Clients MUST be able to parse both compressed and uncompressed responses to both compressed and uncompressed requests.
 
-MongoDB 3.4 will always reply with a compressed response when compression has been negotiated, but future versions may
-not.
-
 A client MAY choose to implement compression for only `OP_QUERY`, `OP_REPLY`, and `OP_MSG`, and perhaps for future
 opcodes, but not to implement it for `OP_INSERT`, `OP_UPDATE`, `OP_DELETE`, `OP_GETMORE`, and `OP_KILLCURSORS`.
 
@@ -204,7 +201,7 @@ In general, after implementing this functionality and the test cases, running th
 a server with compression enabled, and ensuring the test suite is configured to provide a valid compressor as part of
 the connection string, is a good idea. MongoDB-supported drivers MUST add such variant to their CI environment.
 
-The following cases assume a standalone MongoDB 3.4 (or later) node configured with:
+The following cases assume a standalone MongoDB node configured with:
 
 ```shell
 mongod --networkMessageCompressors "snappy" -vvv
@@ -371,7 +368,7 @@ needing to (not) compress very few operations.
 
 - The server MAY reply with compressed data even if the request was not compressed?
 
-    - Yes, and this is in fact the behaviour of MongoDB 3.4
+    - Yes.
 
 - Can drivers compress the initial MongoDB Handshake/hello request?
 
@@ -383,23 +380,14 @@ needing to (not) compress very few operations.
         using any supported compressor, when the client announced support for compression - this includes the reply to the
         actual MongoDB Handshake/`hello` where the support was announced.
 
-- This is billed a MongoDB 3.6 feature -- but I hear it works with MongoDB 3.4?
-
-    - Yes, it does. All MongoDB versions support the `compression` argument to the initial handshake and all MongoDB
-        versions will reply with an intersection of compressors it supports. This works even with MongoDB 3.0, as it will
-        not reply with any compressors. It also works with MongoDB 3.4 which will reply with `snappy` if it was part of
-        the driver's list. MongoDB 3.6 will likely include zlib support.
-
 - Which compressors are currently supported?
 
-    - MongoDB 3.4 supports `snappy`
-    - MongoDB 3.6 supports `snappy` and `zlib`
-    - MongoDB 4.2 supports `snappy`, `zlib`, and `zstd`
+    - All supported MongoDB versions support `snappy`, `zlib`, and `zstd`.
 
 - My language supports xyz compressor, should I announce them all in the handshake?
 
-    - No. But you are allowed to if you really want to make sure you can use that compressor with MongoDB 4.2 and your
-        current driver versions.
+    - No. But you are allowed to if you really want to make sure you can use that compressor with your current driver
+        versions.
 
 - My language does not support xzy compressor. What do I do?
 
@@ -410,13 +398,7 @@ needing to (not) compress very few operations.
     - That is OK. You don’t have to support compressors you can’t support. All it means is you can’t compress the request,
         and since you never declared support for any compressor, you won’t be served with compressed responses either.
 
-- Why did the server not support zlib in MongoDB 3.4?
-
-    - Snappy was selected for its very low performance hit, while giving reasonable compression, resulting in quite
-        significant bandwidth reduction. Zlib characteristics are slightly different out-of-the-box and did not make sense
-        for the initial goal of reducing bandwidth between replica set nodes.
-
-- If snappy is preferable to zlib, why add support for zlib in MongoDB 3.6?
+- If snappy is preferable to zlib, why add support for zlib?
 
     - Zlib is available on every platform known to man. Snappy is not. Having zlib support makes sense for client traffic,
         which could originate on any type of platform, which may or may not support snappy.

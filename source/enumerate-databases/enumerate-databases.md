@@ -65,10 +65,9 @@ db.adminCommand({listDatabases: 1, filter: {name: /^foo/}});
 
 ### AuthorizedDatabases
 
-MongoDB 4.0.5 added an `authorizedDatabases` boolean option to the
-[listDatabases](https://www.mongodb.com/docs/manual/reference/command/listDatabases/) database command, which can be
-used to limit the command result to only include databases the user is authorized to use. Drivers SHOULD support the new
-`authorizedDatabases` option when implementing the
+The [listDatabases](https://www.mongodb.com/docs/manual/reference/command/listDatabases/) database command supports an
+`authorizedDatabases` boolean option, which can be used to limit the command result to only include databases the user
+is authorized to use. Drivers SHOULD support the `authorizedDatabases` option when implementing the
 [listDatabases](https://www.mongodb.com/docs/manual/reference/command/listDatabases/) database command.
 
 The possible values for `authorizedDatabases` are:
@@ -138,8 +137,8 @@ Drivers SHOULD support the `filter`, `authorizedDatabases` and `comment` options
 
 #### Enumerating Database Names
 
-MongoDB 3.6 introduced a `nameOnly` boolean option to the `listDatabases` database command, which limits the command
-result to only include database names. Consider the following example:
+The `listDatabases` database command supports a `nameOnly` boolean option, which limits the command result to only
+include database names. Consider the following example:
 
 ```javascript
 > db.getSiblingDB("admin").runCommand({listDatabases:1,nameOnly:true})
@@ -205,8 +204,8 @@ The following scenarios should be run for each test environment:
 ## Motivation for Change
 
 Although most drivers provide a `listDatabases` command helper in their API, there was previously no spec for a database
-enumeration. MongoDB 3.6 introduced a `nameOnly` option to the `listDatabases` database command. The driver API should
-to be expanded to support this option.
+enumeration. The `listDatabases` database command supports a `nameOnly` option, and the driver API should support this
+option.
 
 ## Design Rationale
 
