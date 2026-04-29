@@ -333,19 +333,9 @@ RESP = {ok: 1}
 MONGODB-X509 is the usage of X.509 certificates to validate a client where the distinguished subject name of the client
 certificate acts as the username.
 
-When connected to MongoDB 3.4:
-
 - You MUST NOT raise an error when the application only provides an X.509 certificate and no username.
 - If the application does not provide a username you MUST NOT send a username to the server.
 - If the application provides a username you MUST send that username to the server.
-
-When connected to MongoDB 3.2 or earlier:
-
-- You MUST send a username to the server.
-- If no username is provided by the application, you MAY extract the username from the X.509 certificate instead of
-    requiring the application to provide it.
-- If you choose not to automatically extract the username from the certificate you MUST error when no username is
-    provided by the application.
 
 #### Conversation
 
@@ -371,7 +361,7 @@ When connected to MongoDB 3.2 or earlier:
 
 - username
 
-    SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
+    SHOULD NOT be provided
 
 - source
 
