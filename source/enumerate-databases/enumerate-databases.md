@@ -204,8 +204,8 @@ The following scenarios should be run for each test environment:
 ## Motivation for Change
 
 Although most drivers provide a `listDatabases` command helper in their API, there was previously no spec for a database
-enumeration. MongoDB 3.6 introduced a `nameOnly` option to the `listDatabases` database command. The driver API should
-to be expanded to support this option.
+enumeration. The `listDatabases` database command supports a `nameOnly` option, and the driver API should support this
+option.
 
 ## Design Rationale
 
