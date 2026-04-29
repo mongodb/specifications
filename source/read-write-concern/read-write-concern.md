@@ -79,10 +79,8 @@ The read concern option is available for the following operations:
 - `geoNear` command
 - `geoSearch` command
 
-Starting in MongoDB 4.2, an `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`;
-however, it does not support the "linearizable" level (attempting to do so will result in a server error).
-
-Server versions before 4.2 do not support a `readConcern` at all for `aggregate` commands with a write stage.
+An `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`; however, it does not
+support the "linearizable" level (attempting to do so will result in a server error).
 
 The `mapReduce` command where the `out` option is anything other than `{ inline: 1 }` does not support a `readConcern`.
 
