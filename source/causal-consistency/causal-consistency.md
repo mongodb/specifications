@@ -200,7 +200,7 @@ There are no new server commands related to causal consistency. Instead, causal 
     The server reports the `operationTime` whether the operation succeeded or not and drivers MUST save the
     `operationTime` in the `ClientSession` whether the operation succeeded or not.
 2. Passing that `operationTime` in the `afterClusterTime` field of the `readConcern` field for subsequent causally
-    consistent read operations (for all commands that support a `readConcern`)
+    consistent read and write operations (for all commands that support a `readConcern`)
 3. Gossiping clusterTime (described in the Driver Session Specification)
 
 ## Server Command Responses
@@ -230,10 +230,10 @@ standalone node are causally consistent automatically because there is only one 
 When connected to a deployment that supports cluster times the command response also includes a field called
 `$clusterTime` that drivers MUST use to gossip the cluster time. See the Sessions Specification for details.
 
-## Causally consistent read commands
+## Causally consistent read and write commands
 
 For causal consistency the driver MUST send the `operationTime` saved in the `ClientSession` as the value of the
-`afterClusterTime` field of the `readConcern` field:
+`afterClusterTime` field of the `readConcern` field for read and write commands:
 
 ```typescript
 {
