@@ -679,18 +679,6 @@ Since the initial release of retryable writes in MongoDB 3.6 testing showed that
 was sufficiently small that there was no risk in changing the default. Additionally, the fact that some operations
 continue to be unsupported for retryable writes (updateMany and deleteMany) does not seem to pose a problem in practice.
 
-### Why do drivers have to parse errmsg to determine storage engine support?
-
-There is no reliable way to determine the storage engine in use for shards in a sharded cluster, and replica sets (and
-shards) can have mixed deployments using different storage engines on different members. This is especially true when a
-replica set or sharded cluster is being upgraded from one storage engine to another. This could be common when upgrading
-to MongoDB 4.2, where MMAPv1 is no longer supported.
-
-The server returns error code 20 (IllegalOperation) when the storage engine doesn't support document-level locking and
-txnNumbers. Error code 20 is used for a large number of different error cases in the server so we need some other way to
-differentiate this error case from any other. The error code and errmsg are the same in MongoDB 3.6 and 4.0, and the
-same from a replica set or sharded cluster (mongos just forwards the error from the shard's replica set).
-
 ### Why does the driver only add the RetryableWriteError label to errors that occur on a MongoClient with retryWrites set to true?
 
 The driver does this to maintain consistency with the MongoDB server. Servers that support the RetryableWriteError label
