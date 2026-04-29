@@ -7,12 +7,10 @@ ______________________________________________________________________
 
 ## Abstract
 
-As of MongoDB server version 3.4 (maxWireVersion 5), a collation option is supported by the query system for matching
-and sorting on language strings in a locale-aware fashion.
+A collation option is supported by the query system for matching and sorting on language strings in a locale-aware
+fashion.
 
-A driver MUST support a Collation option for each of the relevant operations in server versions >= 3.4 (maxWireVersion
-5\) and MUST throw an error if a user supplies a Collation option for the operation and the selected server has
-maxWireVersion < 5 or if the user is using opcode-based unacknowledged writes.
+A driver MUST support a Collation option for each of the relevant operations.
 
 The CRUD and Index Management specs include the collation option in descriptions of API elements where it is supported.
 This document provides more details on the specific driver behavior required to handle the collation option.
@@ -37,13 +35,6 @@ existing collection. Such users will have to supply the Collation option to each
 eventually the majority of users wishing to use Collations on all operations on a collection will create a collection
 with a server-side default. We chose to favor user verbosity right now over abstracting the feature for short-term
 gains.
-
-### Drivers throw an error if a user supplies Collation and the selected server does not support the feature
-
-Server versions earlier than 3.4 don't always throw an error if an unknown option is supplied to certain operations.
-Because a Collation defines how documents are matched and sorted for both read and write operations, behavior
-differences between server versions are significant. Drivers therefore MUST throw an error if a user specifies a
-Collation and the selected server has a maxWireVersion < 5 or if using opcode-based unacknowledged writes.
 
 ## Specification
 
