@@ -295,8 +295,7 @@ If this session is in the "starting transaction " or "transaction in progress" s
 containing the message "Transaction already in progress" without modifying any session state.
 
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
-A deployment does not support transactions when the deployment does not support sessions, or the maxWireVersion < 8 and
-the topology type is Sharded, see
+A deployment does not support transactions when the deployment does not support sessions, see
 [How to Tell Whether a Connection Supports Sessions](../sessions/driver-sessions.md#how-to-tell-whether-a-connection-supports-sessions).
 In this case, Drivers rely on the deployment to report an error when a transaction is started.
 
