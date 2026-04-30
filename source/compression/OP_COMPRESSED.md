@@ -399,6 +399,11 @@ needing to (not) compress very few operations.
     - That is OK. You don’t have to support compressors you can’t support. All it means is you can’t compress the request,
         and since you never declared support for any compressor, you won’t be served with compressed responses either.
 
+- If snappy is preferable to zlib, why add support for zlib?
+
+    - Zlib is available on every platform known to man. Snappy is not. Having zlib support makes sense for client traffic,
+        which could originate on any type of platform, which may or may not support snappy.
+
 ## Changelog
 
 - 2024-02-16: Migrated from reStructuredText to Markdown.
