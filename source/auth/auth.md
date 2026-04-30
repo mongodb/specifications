@@ -103,8 +103,8 @@ Userinfo or authentication parameters in connection options MUST NOT be interpre
 #### Errors
 
 Drivers SHOULD raise an error as early as possible when detecting invalid values in a credential. For instance, if a
-`mechanism_property` is specified for [MONGODB-CR](#mongodb-cr), the driver should raise an error indicating that the
-property does not apply.
+`mechanism_property` is specified for a mechanism that does not support it, the driver should raise an error indicating
+that the property does not apply.
 
 Drivers MUST raise an error if any required information for a mechanism is missing. For instance, if a `username` is not
 specified for SCRAM-SHA-256, the driver must raise an error indicating the the property is missing.
@@ -161,8 +161,6 @@ All blocking operations executed as part of the authentication handshake MUST ap
 [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification.
 
 #### Mechanism Negotiation via Handshake
-
-- Since: 4.0
 
 If an application provides a username but does not provide an authentication mechanism, drivers MUST negotiate a
 mechanism via a `hello` or legacy hello command requesting a user's supported SASL mechanisms:
@@ -232,9 +230,6 @@ used when running the authentication spec tests.
 
 ### Default Authentication Methods
 
-- Since: 3.0
-- Revised: 4.0
-
 If the user did not provide a mechanism via the connection string or via code, the following logic describes how to
 select a default.
 
@@ -255,80 +250,11 @@ be used as the default, regardless of whether SCRAM-SHA-1 is in the list. Driver
 mechanism (e.g. PLAIN) as the default.
 
 If `saslSupportedMechs` is not present in the handshake response for mechanism negotiation, then SCRAM-SHA-1 MUST be
-used when talking to servers >= 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
+used as the default.
 
 When a user has specified a mechanism, regardless of the server version, the driver MUST honor this.
 
-#### Determining Server Version
-
-Drivers SHOULD use the server's wire version ranges to determine the server's version.
-
-### MONGODB-CR
-
-- Since: 1.4
-- Deprecated: 3.0
-- Removed: 4.0
-
-MongoDB Challenge Response is a nonce and MD5 based system. The driver sends a `getnonce` command, encodes and hashes
-the password using the returned nonce, and then sends an `authenticate` command.
-
-#### Conversation
-
-1. Send `getnonce` command
-
-    ```javascript
-    CMD = { getnonce: 1 }
-    RESP = { nonce: <nonce> }
-    ```
-
-2. Compute key
-
-    ```javascript
-    passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))
-    key = HEX( MD5( UTF8( nonce + username + passwordDigest )))
-    ```
-
-3. Send `authenticate` command
-
-    ```javascript
-    CMD = { authenticate: 1, nonce: nonce, user: username, key: key }
-    ```
-
-As an example, given a username of "user" and a password of "pencil", the conversation would appear as follows:
-
-```javascript
-CMD = {getnonce : 1}
-RESP = {nonce: "2375531c32080ae8", ok: 1}
-CMD = {authenticate: 1, user: "user", nonce: "2375531c32080ae8", key: "21742f26431831d5cfca035a08c5bdf6"}
-RESP = {ok: 1}
-```
-
-#### [MongoCredential](#mongocredential) Properties
-
-- username
-
-    MUST be specified and non-zero length.
-
-- source
-
-    MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
-
-- password
-
-    MUST be specified.
-
-- mechanism
-
-    MUST be "MONGODB-CR"
-
-- mechanism_properties
-
-    MUST NOT be specified.
-
 ### MONGODB-X509
-
-- Since: 2.6
-- Changed: 3.4
 
 MONGODB-X509 is the usage of X.509 certificates to validate a client where the distinguished subject name of the client
 certificate acts as the username.
@@ -383,8 +309,6 @@ TODO: Errors
 
 ### SASL Mechanisms
 
-- Since: 2.4 Enterprise
-
 SASL mechanisms are all implemented using the same sasl commands and interpreted as defined by the
 [SASL specification RFC 4422](http://tools.ietf.org/html/rfc4422).
 
@@ -417,12 +341,6 @@ SASL mechanisms are all implemented using the same sasl commands and interpreted
     SCRAM-SHA-1 from scratch.
 
 ### GSSAPI
-
-- Since:
-
-    2.4 Enterprise
-
-    2.6 Enterprise on Windows
 
 GSSAPI is kerberos authentication as defined in [RFC 4752](http://tools.ietf.org/html/rfc4752). Microsoft has a
 proprietary implementation called SSPI which is compatible with both Windows and Linux clients.
@@ -547,8 +465,6 @@ configuration option is set to `false`.
 
 ### PLAIN
 
-- Since: 2.6 Enterprise
-
 The PLAIN mechanism, as defined in [RFC 4616](http://tools.ietf.org/html/rfc4616), is used in MongoDB to perform LDAP
 authentication. It cannot be used to perform any other type of authentication. Since the credentials are stored outside
 of MongoDB, the `$external` database must be used for authentication.
@@ -594,8 +510,6 @@ MongoDB supports either of these forms.
     MUST NOT be specified.
 
 ### SCRAM-SHA-1
-
-- Since: 3.0
 
 SCRAM-SHA-1 is defined in [RFC 5802](http://tools.ietf.org/html/rfc5802).
 
@@ -681,8 +595,6 @@ RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2a
 
 ### SCRAM-SHA-256
 
-- Since: 4.0
-
 SCRAM-SHA-256 extends [RFC 5802](http://tools.ietf.org/html/rfc5802) and is formally defined in
 [RFC 7677](https://tools.ietf.org/html/rfc7677).
 
@@ -746,8 +658,6 @@ RESP = {conversationId: 1, payload: BinData(0, "dj02cnJpVFJCaTIzV3BSUi93dHVwK21N
     MUST NOT be specified.
 
 ### MONGODB-AWS
-
-- Since: 4.4
 
 MONGODB-AWS authenticates using AWS IAM credentials (an access key ID and a secret access key),
 [temporary AWS IAM credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp.html) obtained from
@@ -1196,8 +1106,6 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 > buffer between when the driver fetches the credentials and when the server verifies them.
 
 ### MONGODB-OIDC
-
-- Since: 7.0 Enterprise
 
 MONGODB-OIDC authenticates using an [OpenID Connect (OIDC)](https://openid.net/specs/openid-connect-core-1_0.html)
 access token.
@@ -1893,19 +1801,18 @@ def reauth(connection):
 
 - authMechanism
 
-    MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
+    MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
 
-    Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256,
-    SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
+    Sets the Mechanism property on the MongoCredential. When not set, the default will be SCRAM-SHA-256 or SCRAM-SHA-1,
+    following the auth spec default mechanism rules.
 
 - authSource
 
     Sets the Source property on the MongoCredential.
 
 For GSSAPI, MONGODB-X509 and MONGODB-AWS authMechanisms the authSource defaults to `$external`. For PLAIN the authSource
-defaults to the database name if supplied on the connection string or `$external`. For MONGODB-CR, SCRAM-SHA-1 and
-SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or
-`admin`.
+defaults to the database name if supplied on the connection string or `$external`. For SCRAM-SHA-1 and SCRAM-SHA-256
+authMechanisms, the authSource defaults to the database name if supplied on the connection string or `admin`.
 
 - authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
 
@@ -2108,12 +2015,11 @@ multiple credentials to be associated with a single MongoClient instance.
 
 Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
-When MongoDB implemented SCRAM-SHA-1, it required drivers to *NOT* SASLprep usernames and passwords. The primary reason
-for this was to allow a smooth upgrade path from MongoDB-CR using existing usernames and passwords. Also, because
+When MongoDB implemented SCRAM-SHA-1, it required drivers to *NOT* SASLprep usernames and passwords. Because
 MongoDB's SCRAM-SHA-1 passwords are hex characters of a digest, SASLprep of passwords was irrelevant.
 
 With the introduction of SCRAM-SHA-256, MongoDB requires users to explicitly create new SCRAM-SHA-256 credentials
-distinct from those used for MONGODB-CR and SCRAM-SHA-1. This means SCRAM-SHA-256 passwords are not digested and any
+distinct from those used for SCRAM-SHA-1. This means SCRAM-SHA-256 passwords are not digested and any
 Unicode character could now appear in a password. Therefore, the SCRAM-SHA-256 mechanism requires passwords to be
 normalized with SASLprep, in accordance with the SCRAM RFC.
 
