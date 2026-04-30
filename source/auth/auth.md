@@ -2017,11 +2017,12 @@ multiple credentials to be associated with a single MongoClient instance.
 
 Q: Why does SCRAM sometimes SASLprep and sometimes not?
 
-When MongoDB implemented SCRAM-SHA-1, it required drivers to *NOT* SASLprep usernames and passwords. Because
+When MongoDB implemented SCRAM-SHA-1, it required drivers to *NOT* SASLprep usernames and passwords. The primary reason
+for this was to allow a smooth upgrade path from MongoDB-CR using existing usernames and passwords. Also, because
 MongoDB's SCRAM-SHA-1 passwords are hex characters of a digest, SASLprep of passwords was irrelevant.
 
 With the introduction of SCRAM-SHA-256, MongoDB requires users to explicitly create new SCRAM-SHA-256 credentials
-distinct from those used for SCRAM-SHA-1. This means SCRAM-SHA-256 passwords are not digested and any
+distinct from those used for MONGODB-CR and SCRAM-SHA-1. This means SCRAM-SHA-256 passwords are not digested and any
 Unicode character could now appear in a password. Therefore, the SCRAM-SHA-256 mechanism requires passwords to be
 normalized with SASLprep, in accordance with the SCRAM RFC.
 
