@@ -1107,6 +1107,8 @@ If AWS authentication fails for any reason, the cache MUST be cleared.
 
 ### MONGODB-OIDC
 
+- Since: 7.0 Enterprise
+
 MONGODB-OIDC authenticates using an [OpenID Connect (OIDC)](https://openid.net/specs/openid-connect-core-1_0.html)
 access token.
 
