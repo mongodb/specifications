@@ -167,7 +167,6 @@ therefore effectively replaces the standard `MsgHeader` of the compressed opcode
 There is no guarantee that a response will be compressed even though compression was negotiated for in the handshake.
 Clients MUST be able to parse both compressed and uncompressed responses to both compressed and uncompressed requests.
 
-
 A client MAY choose to implement compression for only `OP_QUERY`, `OP_REPLY`, and `OP_MSG`, and perhaps for future
 opcodes, but not to implement it for `OP_INSERT`, `OP_UPDATE`, `OP_DELETE`, `OP_GETMORE`, and `OP_KILLCURSORS`.
 

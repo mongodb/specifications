@@ -140,18 +140,17 @@ Write commands other than [insert](https://www.mongodb.com/docs/manual/reference
 [update](https://www.mongodb.com/docs/manual/reference/command/update/),
 [delete](https://www.mongodb.com/docs/manual/reference/command/delete/), or
 [findAndModify](https://www.mongodb.com/docs/manual/reference/command/findAndModify/) are not supported. This includes,
-but is not limited to, an
-[aggregate](https://www.mongodb.com/docs/manual/reference/command/aggregate/) command using a write stage (e.g. `$out`,
-`$merge`). Drivers MUST NOT add a transaction ID to these commands and MUST NOT retry these commands if they fail to
-return a response.
+but is not limited to, an [aggregate](https://www.mongodb.com/docs/manual/reference/command/aggregate/) command using a
+write stage (e.g. `$out`, `$merge`). Drivers MUST NOT add a transaction ID to these commands and MUST NOT retry these
+commands if they fail to return a response.
 
 #### Retryable Writes Within Transactions
 
 The only supported retryable write commands within a transaction are `commitTransaction` and `abortTransaction`.
-Therefore drivers MUST NOT retry write commands within transactions even when `retryWrites` has been
-set to true on the `MongoClient`. In addition, drivers MUST NOT add the `RetryableWriteError` label to any error that
-occurs during a write command within a transaction (excepting `commitTransation` and `abortTransaction`), even when
-`retryWrites` has been set to true on the `MongoClient`.
+Therefore drivers MUST NOT retry write commands within transactions even when `retryWrites` has been set to true on the
+`MongoClient`. In addition, drivers MUST NOT add the `RetryableWriteError` label to any error that occurs during a write
+command within a transaction (excepting `commitTransation` and `abortTransaction`), even when `retryWrites` has been set
+to true on the `MongoClient`.
 
 ### Implementing Retryable Writes
 

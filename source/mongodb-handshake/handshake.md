@@ -115,8 +115,7 @@ conn.authenticate(creds, negotiated_mechs, speculative_auth)
 
 #### Hello Command
 
-The initial handshake supports a `client` argument, provided as a BSON object. This object has
-the following structure:
+The initial handshake supports a `client` argument, provided as a BSON object. This object has the following structure:
 
 ```javascript
     {
