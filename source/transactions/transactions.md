@@ -297,7 +297,6 @@ containing the message "Transaction already in progress" without modifying any s
 startTransaction SHOULD report an error if the driver can detect that transactions are not supported by the deployment.
 A deployment does not support transactions when the deployment does not support sessions, see
 [How to Tell Whether a Connection Supports Sessions](../sessions/driver-sessions.md#how-to-tell-whether-a-connection-supports-sessions).
-In this case, Drivers rely on the deployment to report an error when a transaction is started.
 
 Drivers MUST increment the `txnNumber` for the corresponding server session.
 
@@ -956,12 +955,29 @@ Providing a read preference for the entire transaction makes it easier for appli
 read preferences for non-transactional reads to run transactions under a single, primary read-preference. Applications
 only need to set primary read preference on the transaction instead of changing the read preference of all operations.
 
-The read preference in transactions must always be primary. TransactionOptions inherits the client's read preference,
-and the error "read preference in a transaction must be primary" is thrown whenever the application attempts a read
-operation in a transaction with a non-primary read preference. The readPreference is checked per-operation rather than
-at startTransaction time, since startTransaction cannot know in advance all operations the application will perform in
-the transaction. For consistency with other options-inheritance rules in the specifications, transactions MUST inherit
-the client's read preference.
+Because primary is the only read preference allowed with transactions in MongoDB 4.0, this specification could have
+omitted TransactionOptions.readPreference, or at least defaulted the read preference to primary instead of inheriting
+the client's read preference. However, this would have required a breaking change circa MongoDB 4.2 when we introduce
+secondary reads in transactions: TransactionOptions will inherit the client's read preference in 4.2, so for the sake of
+future-compatibility, TransactionOptions inherits the client's read preference now.
+
+We considered defaulting TransactionOptions.readPreference to primary in 4.0, overriding the client's read preference by
+default for convenience. However, for consistency with other options-inheritance rules in our specifications,
+transactions MUST inherit the client's read preference.
+
+In MongoDB 4.0, the error "read preference in a transaction must be primary" is thrown whenever the application attempts
+a read operation in a transaction with a non-primary read preference. We considered throwing this error from
+startTransaction instead, to make the error more deterministic and reduce the performance burden of re-checking the
+TransactionOptions on each operation. However, this behavior will have to change when we introduce secondary reads in
+transactions. There will then be new error scenarios, such as a transaction with secondary reads followed by a write. It
+won't be possible in the future for startTransaction to check that the read preference is correct for all operations the
+application will perform in the transaction. Therefore, we specify now that the readPreference must be checked
+per-operation. (However, we have not completely planned how read preference validation will behave in MongoDB 4.2.)
+
+*Update 28.Oct.20214*
+
+Note this section is retained in the spec for historical reasons and that the read preference in transactions must
+always be primary.
 
 ### Users cannot pass readConcern or writeConcern to operations in transactions
 
