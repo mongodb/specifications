@@ -101,7 +101,7 @@ options = new SessionOptions(causalConsistency = true);
 session = client.startSession(options);
 ```
 
-All read operations performed using this session will now be causally consistent.
+All read and write operations performed using this session will now be causally consistent.
 
 If no value is provided for `causalConsistency` and snapshot reads are not requested a value of true is implied. See the
 `causalConsistency` section.
@@ -125,7 +125,7 @@ class SessionOptions {
 
 In order to support causal consistency a new property named `causalConsistency` is added to `SessionOptions`.
 Applications set `causalConsistency` when starting a client session to indicate whether they want causal consistency.
-All read operations performed using that client session are then causally consistent.
+All read and write operations performed using that client session are then causally consistent.
 
 Each new member is documented below.
 
@@ -218,8 +218,8 @@ and write operations).
 ```
 
 The `operationTime` MUST be stored in the `ClientSession` to later be passed as the `afterClusterTime` field of the
-`readConcern` field in subsequent read operations. The `operationTime` is returned whether the command succeeded or not
-and MUST be stored in either case.
+`readConcern` field in subsequent causally consistent read and write operations. The `operationTime` is returned whether
+the command succeeded or not and MUST be stored in either case.
 
 Drivers MUST examine all responses from the server for the presence of an `operationTime` field and store the value in
 the `ClientSession`.
@@ -237,7 +237,7 @@ For causal consistency the driver MUST send the `operationTime` saved in the `Cl
 
 ```typescript
 {
-    find : <string>, // or other read command
+    find : <string>, // or other read or write command
     ... // the rest of the command parameters
     readConcern :
     {
@@ -247,8 +247,9 @@ For causal consistency the driver MUST send the `operationTime` saved in the `Cl
 }
 ```
 
-For the lists of commands that support causally consistent reads, see
-[ReadConcern](../read-write-concern/read-write-concern.md#read-concern) spec.
+For the list of commands that support causally consistent reads, see the
+[ReadConcern](../read-write-concern/read-write-concern.md#read-concern) spec. The write commands `insert`, `update`,
+`delete`, and `findAndModify` also accept `readConcern.afterClusterTime` when used in causally consistent sessions.
 
 The driver MUST merge the `ReadConcern` specified for the operation with the `operationTime` from the `ClientSession`
 (which goes in the `afterClusterTime` field) to generate the combined `readConcern` to send to the server. If the level
@@ -259,15 +260,16 @@ level does not support causal consistency.
 
 The Read and Write Concern specification states that when a user has not specified a `ReadConcern` or has specified the
 server's default `ReadConcern`, drivers MUST omit the `ReadConcern` parameter when sending the command. For causally
-consistent reads this requirement is modified to state that when the `ReadConcern` parameter would normally be omitted
-drivers MUST send a `ReadConcern` after all because that is how the `afterClusterTime` value is sent to the server.
+consistent reads and writes this requirement is modified to state that when the `ReadConcern` parameter would normally
+be omitted drivers MUST send a `ReadConcern` after all because that is how the `afterClusterTime` value is sent to the
+server.
 
 The Read and Write Concern Specification states that drivers MUST NOT add a `readConcern` field to commands that are run
 using a generic `runCommand` method. The same is true for causal consistency, so commands that are run using
 `runCommand` MUST NOT have an `afterClusterTime` field added to them.
 
-When executing a causally consistent read, the `afterClusterTime` field MUST be sent when connected to a deployment that
-supports cluster times, and MUST NOT be sent when connected to a deployment that does not support cluster times.
+When executing a causally consistent operation, the `afterClusterTime` field MUST be sent when connected to a deployment
+that supports cluster times, and MUST NOT be sent when connected to a deployment that does not support cluster times.
 
 ## Unacknowledged writes
 
@@ -276,7 +278,7 @@ a write. Since unacknowledged writes don't receive a response from the server (o
 `ClientSession`'s `operationTime` is not updated after an unacknowledged write. That means that a causally consistent
 read after an unacknowledged write cannot be causally consistent with the unacknowledged write. Rather than prohibiting
 unacknowledged writes in a causally consistent session we have decided to accept this limitation. Drivers MUST document
-that causally consistent reads are not causally consistent with unacknowledged writes.
+that causally consistent operations are not causally consistent with unacknowledged writes.
 
 ## Test Plan
 
@@ -370,6 +372,15 @@ any deployment that is version 3.6 or higher and is either a replica set or a sh
     - `document = collection.findOne({})`
     - capture the command sent to the server
     - assert that the command includes a `$clusterTime` field
+13. A `findOne` followed by any write operation (test them all) should include the `operationTime` returned by the
+    server for the `findOne` in the `afterClusterTime` parameter of the write operation.
+    - skip this test if connected to a deployment that does not support cluster times
+    - `session = client.startSession(causalConsistency = true)`
+    - `collection.findOne(session, {})`
+    - `operationTime = session.operationTime`
+    - `collection.anyWriteOperation(session, ...)`
+    - capture the command sent to the server (using APM or other mechanism)
+    - assert that the command has an `afterClusterTime` field with a value of `operationTime`
 
 ## Motivation
 
@@ -402,6 +413,9 @@ resolving many discussions of spec details. A final reference implementation mus
 ## Q&A
 
 ## Changelog
+
+- 2026-05-04: Require `afterClusterTime` on write commands (`insert`, `update`, `delete`, `findAndModify`) in causally
+    consistent sessions, not only on read commands. Added prose test 13.
 
 - 2024-02-08: Migrated from reStructuredText to Markdown.
 

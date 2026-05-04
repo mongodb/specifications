@@ -41,7 +41,10 @@
     {
       "session": {
         "id": "session0",
-        "client": "client0"
+        "client": "client0",
+        "sessionOptions": {
+          "causalConsistency": true
+        }
       }
     }
   ],

@@ -24,6 +24,8 @@ createEntities:
   - session:
       id: &session0 session0
       client: *client0
+      sessionOptions:
+        causalConsistency: true
 
 initialData:
   - collectionName: *collectionName
