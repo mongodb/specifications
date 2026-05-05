@@ -249,7 +249,8 @@ For causal consistency the driver MUST send the `operationTime` saved in the `Cl
 
 For the list of commands that support causally consistent reads, see the
 [ReadConcern](../read-write-concern/read-write-concern.md#read-concern) spec. The write commands `insert`, `update`,
-`delete`, and `findAndModify` also accept `readConcern.afterClusterTime` when used in causally consistent sessions.
+`delete`, `findAndModify`, and `bulkWrite` also accept `readConcern.afterClusterTime` when used in causally consistent
+sessions.
 
 The driver MUST merge the `ReadConcern` specified for the operation with the `operationTime` from the `ClientSession`
 (which goes in the `afterClusterTime` field) to generate the combined `readConcern` to send to the server. If the level
@@ -372,15 +373,6 @@ any deployment that is version 3.6 or higher and is either a replica set or a sh
     - `document = collection.findOne({})`
     - capture the command sent to the server
     - assert that the command includes a `$clusterTime` field
-13. A `findOne` followed by any write operation (test them all) should include the `operationTime` returned by the
-    server for the `findOne` in the `afterClusterTime` parameter of the write operation.
-    - skip this test if connected to a deployment that does not support cluster times
-    - `session = client.startSession(causalConsistency = true)`
-    - `collection.findOne(session, {})`
-    - `operationTime = session.operationTime`
-    - `collection.anyWriteOperation(session, ...)`
-    - capture the command sent to the server (using APM or other mechanism)
-    - assert that the command has an `afterClusterTime` field with a value of `operationTime`
 
 ## Motivation
 
@@ -414,8 +406,8 @@ resolving many discussions of spec details. A final reference implementation mus
 
 ## Changelog
 
-- 2026-05-04: Require `afterClusterTime` on write commands (`insert`, `update`, `delete`, `findAndModify`) in causally
-    consistent sessions, not only on read commands. Added prose test 13.
+- 2026-05-04: Require `afterClusterTime` on write commands (`insert`, `update`, `delete`, `findAndModify`, `bulkWrite`)
+    in causally consistent sessions, not only on read commands. Added prose test 13.
 
 - 2024-02-08: Migrated from reStructuredText to Markdown.
 

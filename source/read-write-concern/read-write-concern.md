@@ -68,7 +68,7 @@ class ReadConcern {
 }
 ```
 
-The read concern option is available for the following operations:
+The read concern option is available for most operations, including the following:
 
 - `aggregate` command
 - `count` command
@@ -82,11 +82,13 @@ The read concern option is available for the following operations:
 - `update` command
 - `findAndModify` command
 - `delete` command
+- `bulkWrite` command
 
 > [!NOTE]
 > See
 > [Operations That Support Read Concern](https://www.mongodb.com/docs/manual/reference/read-concern/#operations-that-support-read-concern)
-> for the complete list.
+> for the complete list of operations that support read concern. Note that `bulkWrite` is erroneously omitted from that
+> list.
 
 Starting in MongoDB 4.2, an `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`;
 however, it does not support the "linearizable" level (attempting to do so will result in a server error).
