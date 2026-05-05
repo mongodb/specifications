@@ -4195,7 +4195,6 @@ class EncryptOpts {
 Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
 algorithm".
 
-
 #### Case 8: can find a case-insensitively indexed document by prefix and suffix
 
 Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the following `EncryptOpts`:
