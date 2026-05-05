@@ -4183,3 +4183,305 @@ class EncryptOpts {
 
 Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
 algorithm".
+
+#### Case 8: can find a case-insensitively indexed document by prefix and suffix
+
+Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: false,
+      diacriticSensitive: true,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
+
+```javascript
+{ "encryptedText": <encrypted 'FooBarBaz'> }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "prefix",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: false,
+      diacriticSensitive: true,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+
+```javascript
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'foo'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "FooBarBaz" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "suffix",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: false,
+      diacriticSensitive: true,
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+
+```javascript
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "FooBarBaz" }
+```
+
+#### Case 9: can find a diacritic-insensitively indexed document by prefix and suffix
+
+Use `clientEncryption.encrypt()` to encrypt the string `"cafébarbäz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: false,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
+
+```javascript
+{ "encryptedText": <encrypted 'cafébarbäz'> }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "prefix",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: false,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+
+```javascript
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'cafe'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "cafébarbäz" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "suffix",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: false,
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+
+```javascript
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "cafébarbäz" }
+```
+
+#### Case 10: can find a case-insensitively indexed document by substring
+
+Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: false,
+      diacriticSensitive: true,
+      substring: SubstringOpts {
+        strMaxLength: 10,
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
+
+```javascript
+{ "encryptedText": <encrypted 'FooBarBaz'> }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "substring",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: false,
+      diacriticSensitive: true,
+      substring: SubstringOpts {
+        strMaxLength: 10,
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      }
+   },
+}
+```
+
+Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+
+```javascript
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "FooBarBaz" }
+```
+
+#### Case 11: can find a diacritic-insensitively indexed document by substring
+
+Use `clientEncryption.encrypt()` to encrypt the string `"foocafébaz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: false,
+      substring: SubstringOpts {
+        strMaxLength: 10,
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      },
+   },
+}
+```
+
+Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
+
+```javascript
+{ "encryptedText": <encrypted 'foocafébaz'> }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "TextPreview",
+   queryType: "substring",
+   contentionFactor: 0,
+   textOpts: TextOpts {
+      caseSensitive: true,
+      diacriticSensitive: false,
+      substring: SubstringOpts {
+        strMaxLength: 10,
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+      }
+   },
+}
+```
+
+Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+
+```javascript
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'cafe'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "foocafébaz" }
+```
