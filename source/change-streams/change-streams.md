@@ -1034,6 +1034,8 @@ There should be no backwards compatibility concerns.
 
 ## Changelog
 
+- 2026-04-28: Remove test for nsType when creating timeseries
+
 - 2026-03-18: Revert expanded field visibility change.
 
 - 2025-09-08: Clarify resume behavior.
