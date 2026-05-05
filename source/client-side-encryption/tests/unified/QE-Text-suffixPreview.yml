@@ -1,4 +1,4 @@
-description: QE-Text-suffix
+description: QE-Text-suffixPreview
 schemaVersion: "1.25"
 runOnRequirements:
   - minServerVersion: "8.2.0" # Server 8.2.0 adds preview support for QE text queries.
@@ -62,7 +62,7 @@ initialData:
                 "queries": [
                     # Use zero contention for deterministic __safeContent__:
                     {
-                      "queryType": "suffix",
+                      "queryType": "suffixPreview",
                       "contention": { "$numberLong": "0" },
                       "strMinQueryLength": { "$numberLong": "3" },
                       "strMaxQueryLength": { "$numberLong": "30" },
@@ -74,7 +74,7 @@ initialData:
             ],
         }
 tests:
-  - description: "Insert QE suffix"
+  - description: "Insert QE suffixPreview"
     operations:
       - name: insertOne
         arguments:

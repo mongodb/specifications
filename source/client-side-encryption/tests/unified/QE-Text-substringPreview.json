@@ -1,5 +1,5 @@
 {
-  "description": "QE-Text-substring",
+  "description": "QE-Text-substringPreview",
   "schemaVersion": "1.25",
   "runOnRequirements": [
     {
@@ -101,7 +101,7 @@
               "bsonType": "string",
               "queries": [
                 {
-                  "queryType": "substring",
+                  "queryType": "substringPreview",
                   "contention": {
                     "$numberLong": "0"
                   },

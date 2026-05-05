@@ -3984,7 +3984,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "prefix",
+   queryType: "prefixPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4019,7 +4019,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "suffix",
+   queryType: "suffixPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4054,7 +4054,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "prefix",
+   queryType: "prefixPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4085,7 +4085,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "suffix",
+   queryType: "suffixPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4114,7 +4114,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "substring",
+   queryType: "substringPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4148,7 +4148,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "substring",
+   queryType: "substringPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: true,
@@ -4180,7 +4180,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "prefix",
+   queryType: "prefixPreview",
    textOpts: TextOpts {
       caseSensitive: true,
       diacriticSensitive: true,
@@ -4194,6 +4194,7 @@ class EncryptOpts {
 
 Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
 algorithm".
+
 
 #### Case 8: can find a case-insensitively indexed document by prefix and suffix
 

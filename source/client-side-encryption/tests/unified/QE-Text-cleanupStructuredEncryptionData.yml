@@ -61,7 +61,7 @@ initialData:
                 "bsonType": "string",
                 "queries": [
                     {
-                      "queryType": "suffix",
+                      "queryType": "suffixPreview",
                       "contention": { "$numberLong": "0" },
                       "strMinQueryLength": { "$numberLong": "3" },
                       "strMaxQueryLength": { "$numberLong": "30" },

@@ -11,7 +11,7 @@
             "bsonType": "string",
             "queries": [
                 {
-                    "queryType": "prefix",
+                    "queryType": "prefixPreview",
                     "strMinQueryLength": {
                         "$numberInt": "2"
                     },
@@ -22,7 +22,7 @@
                     "diacriticSensitive": true
                 },
                 {
-                    "queryType": "suffix",
+                    "queryType": "suffixPreview",
                     "strMinQueryLength": {
                         "$numberInt": "2"
                     },

@@ -102,7 +102,7 @@
               "bsonType": "string",
               "queries": [
                 {
-                  "queryType": "suffix",
+                  "queryType": "suffixPreview",
                   "contention": {
                     "$numberLong": "0"
                   },
@@ -210,7 +210,7 @@
                             "bsonType": "string",
                             "queries": [
                               {
-                                "queryType": "suffix",
+                                "queryType": "suffixPreview",
                                 "contention": {
                                   "$numberLong": "0"
                                 },
