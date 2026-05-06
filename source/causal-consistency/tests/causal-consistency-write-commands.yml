@@ -319,3 +319,83 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+
+  - description: "create includes afterClusterTime in causally consistent session"
+    operations:
+      - *findOne
+      - name: createCollection
+        object: *database0
+        arguments:
+          session: *session0
+          collection: &newCollectionName newcoll
+    expectEvents:
+      - client: *client0
+        events:
+          - *findEvent
+          - commandStartedEvent:
+              commandName: create
+              command:
+                create: *newCollectionName
+                lsid: { $$sessionLsid: *session0 }
+                readConcern:
+                  afterClusterTime: { $$exists: true }
+
+  - description: "createIndexes includes afterClusterTime in causally consistent session"
+    operations:
+      - *findOne
+      - name: createIndex
+        object: *collection0
+        arguments:
+          session: *session0
+          keys: { x: 1 }
+          name: x_1
+    expectEvents:
+      - client: *client0
+        events:
+          - *findEvent
+          - commandStartedEvent:
+              commandName: createIndexes
+              command:
+                createIndexes: *collectionName
+                lsid: { $$sessionLsid: *session0 }
+                readConcern:
+                  afterClusterTime: { $$exists: true }
+
+  - description: "drop includes afterClusterTime in causally consistent session"
+    operations:
+      - *findOne
+      - name: dropCollection
+        object: *database0
+        arguments:
+          session: *session0
+          collection: *collectionName
+    expectEvents:
+      - client: *client0
+        events:
+          - *findEvent
+          - commandStartedEvent:
+              commandName: drop
+              command:
+                drop: *collectionName
+                lsid: { $$sessionLsid: *session0 }
+                readConcern:
+                  afterClusterTime: { $$exists: true }
+
+  - description: "dropIndexes includes afterClusterTime in causally consistent session"
+    operations:
+      - *findOne
+      - name: dropIndexes
+        object: *collection0
+        arguments:
+          session: *session0
+    expectEvents:
+      - client: *client0
+        events:
+          - *findEvent
+          - commandStartedEvent:
+              commandName: dropIndexes
+              command:
+                dropIndexes: *collectionName
+                lsid: { $$sessionLsid: *session0 }
+                readConcern:
+                  afterClusterTime: { $$exists: true }

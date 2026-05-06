@@ -83,6 +83,11 @@ The read concern option is available for most operations, including the followin
 - `findAndModify` command
 - `delete` command
 - `bulkWrite` command
+- `create` command
+- `createIndexes` command
+- `drop` command
+- `dropDatabase` command
+- `dropIndexes` command
 
 > [!NOTE]
 > See

@@ -248,9 +248,7 @@ For causal consistency the driver MUST send the `operationTime` saved in the `Cl
 ```
 
 For the list of commands that support causally consistent reads, see the
-[ReadConcern](../read-write-concern/read-write-concern.md#read-concern) spec. The write commands `insert`, `update`,
-`delete`, `findAndModify`, and `bulkWrite` also accept `readConcern.afterClusterTime` when used in causally consistent
-sessions.
+[ReadConcern](../read-write-concern/read-write-concern.md#read-concern) spec.
 
 The driver MUST merge the `ReadConcern` specified for the operation with the `operationTime` from the `ClientSession`
 (which goes in the `afterClusterTime` field) to generate the combined `readConcern` to send to the server. If the level
@@ -406,8 +404,8 @@ resolving many discussions of spec details. A final reference implementation mus
 
 ## Changelog
 
-- 2026-05-04: Require `afterClusterTime` on write commands (`insert`, `update`, `delete`, `findAndModify`, `bulkWrite`)
-    in causally consistent sessions, not only on read commands. Added prose test 13.
+- 2026-05-04: Require `afterClusterTime` on all write commands in causally-consistent sessions, not only on read
+    commands.
 
 - 2024-02-08: Migrated from reStructuredText to Markdown.
 

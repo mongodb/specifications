@@ -920,6 +920,264 @@
           ]
         }
       ]
+    },
+    {
+      "description": "create includes afterClusterTime in causally consistent session",
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": {
+            "_id": 1,
+            "x": 11
+          }
+        },
+        {
+          "name": "createCollection",
+          "object": "database0",
+          "arguments": {
+            "session": "session0",
+            "collection": "newcoll"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "command": {
+                  "find": "test",
+                  "readConcern": {
+                    "$$exists": false
+                  },
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "create",
+                "command": {
+                  "create": "newcoll",
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  },
+                  "readConcern": {
+                    "afterClusterTime": {
+                      "$$exists": true
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "createIndexes includes afterClusterTime in causally consistent session",
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": {
+            "_id": 1,
+            "x": 11
+          }
+        },
+        {
+          "name": "createIndex",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0",
+            "keys": {
+              "x": 1
+            },
+            "name": "x_1"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "command": {
+                  "find": "test",
+                  "readConcern": {
+                    "$$exists": false
+                  },
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "createIndexes",
+                "command": {
+                  "createIndexes": "test",
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  },
+                  "readConcern": {
+                    "afterClusterTime": {
+                      "$$exists": true
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "drop includes afterClusterTime in causally consistent session",
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": {
+            "_id": 1,
+            "x": 11
+          }
+        },
+        {
+          "name": "dropCollection",
+          "object": "database0",
+          "arguments": {
+            "session": "session0",
+            "collection": "test"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "command": {
+                  "find": "test",
+                  "readConcern": {
+                    "$$exists": false
+                  },
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "drop",
+                "command": {
+                  "drop": "test",
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  },
+                  "readConcern": {
+                    "afterClusterTime": {
+                      "$$exists": true
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "dropIndexes includes afterClusterTime in causally consistent session",
+      "operations": [
+        {
+          "name": "findOne",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0",
+            "filter": {
+              "_id": 1
+            }
+          },
+          "expectResult": {
+            "_id": 1,
+            "x": 11
+          }
+        },
+        {
+          "name": "dropIndexes",
+          "object": "collection0",
+          "arguments": {
+            "session": "session0"
+          }
+        }
+      ],
+      "expectEvents": [
+        {
+          "client": "client0",
+          "events": [
+            {
+              "commandStartedEvent": {
+                "commandName": "find",
+                "command": {
+                  "find": "test",
+                  "readConcern": {
+                    "$$exists": false
+                  },
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
+                "commandName": "dropIndexes",
+                "command": {
+                  "dropIndexes": "test",
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  },
+                  "readConcern": {
+                    "afterClusterTime": {
+                      "$$exists": true
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
