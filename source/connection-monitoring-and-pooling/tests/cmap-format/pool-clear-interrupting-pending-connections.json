@@ -17,11 +17,13 @@
       ],
       "closeConnection": false,
       "blockConnection": true,
-      "blockTimeMS": 10000
+      "blockTimeMS": 10000,
+      "appName": "cmap-format-tests"
     }
   },
   "poolOptions": {
-    "minPoolSize": 0
+    "minPoolSize": 0,
+    "appName": "cmap-format-tests"
   },
   "operations": [
     {
