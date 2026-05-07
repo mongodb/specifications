@@ -7,12 +7,10 @@ ______________________________________________________________________
 
 ## Abstract
 
-As of MongoDB server version 3.4 (maxWireVersion 5), a collation option is supported by the query system for matching
-and sorting on language strings in a locale-aware fashion.
+A collation option is supported by the query system for matching and sorting on language strings in a locale-aware
+fashion.
 
-A driver MUST support a Collation option for each of the relevant operations in server versions >= 3.4 (maxWireVersion
-5\) and MUST throw an error if a user supplies a Collation option for the operation and the selected server has
-maxWireVersion < 5 or if the user is using opcode-based unacknowledged writes.
+A driver MUST support a Collation option for each of the relevant operations.
 
 The CRUD and Index Management specs include the collation option in descriptions of API elements where it is supported.
 This document provides more details on the specific driver behavior required to handle the collation option.
@@ -37,13 +35,6 @@ existing collection. Such users will have to supply the Collation option to each
 eventually the majority of users wishing to use Collations on all operations on a collection will create a collection
 with a server-side default. We chose to favor user verbosity right now over abstracting the feature for short-term
 gains.
-
-### Drivers throw an error if a user supplies Collation and the selected server does not support the feature
-
-Server versions earlier than 3.4 don't always throw an error if an unknown option is supplied to certain operations.
-Because a Collation defines how documents are matched and sorted for both read and write operations, behavior
-differences between server versions are significant. Drivers therefore MUST throw an error if a user specifies a
-Collation and the selected server has a maxWireVersion < 5 or if using opcode-based unacknowledged writes.
 
 ## Specification
 
@@ -137,11 +128,6 @@ The collation option is sent to the server in the form of a BSON Document. See t
 Driver helpers manipulating or using indexes MUST support a collation option. These include creating, deleting, and
 hinting an index. See the [Index Management specification](../index-management/index-management.md) for details.
 
-### Require maxWireVersion 5
-
-Drivers MUST require the server's maxWireVersion >= 5 to support Collations. When a collation is explicitly specified
-for a server with maxWireVersion < 5, the driver MUST raise an error.
-
 ### Opcode-based Unacknowledged Writes
 
 The driver MUST NOT allow collation with opcodes, because the server doesn't support it. If a driver uses opcode-based
@@ -158,30 +144,6 @@ db.command({
 });
 ```
 
-### BulkWrite API
-
-If maxWireVersion < 5, the driver MUST inspect each BulkWrite operation model for a collation and MUST raise an error
-and MUST NOT send any operations to the server if a collation is explicitly specified on an operation. For example, the
-user will provide BulkWrite operation models as in the following example:
-
-```typescript
-db.collection.bulkWrite([
-  {insertOne: { ... }},
-
-  {updateOne: { filter: { name: "PING" },
-                        update: { $set: { name: "pong" }},
-                        collation: { locale: "en_US", strength: 2 }}},
-  {updateMany: {..., collation: {...}}},
-  {replaceOne: {..., collation: {...}}},
-  {deleteOne: {..., collation: {...}}},
-  {deleteMany: {..., collation: {...}}}
-]);
-```
-
-The driver must inspect each operation for a Collation if maxWireVersion is < 5 and fail the entire bulkWrite if a
-collation was explicitly specified. In the example above, that means even the insertOne (without Collation) MUST NOT be
-sent.
-
 ## Test Plan
 
 There is no specific test plan for driver Collation support; however drivers should test each affected CRUD, Index
@@ -190,9 +152,6 @@ Management API, and collection creation/modification component to ensure that Co
 In addition, drivers should test that two indexes can be created with identical key patterns and different collations. A
 custom name must be provided for one of them. Then, the test should ensure that the correct index is dropped when
 delete_one is called with an index name.
-
-Drivers should also test that errors are raised in each place Collation can be provided to a API method and the selected
-server has maxWireVersion < 5.
 
 ## Backwards Compatibility
 

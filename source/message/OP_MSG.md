@@ -17,15 +17,14 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 #### Usage
 
-`OP_MSG` is only available in MongoDB 3.6 (`maxWireVersion >= 6`) and later. MongoDB drivers MUST perform the MongoDB
-handshake using `OP_MSG` if an API version was declared on the client.
+MongoDB drivers MUST perform the MongoDB handshake using `OP_MSG` if an API version was declared on the client.
 
 If no API version was declared, drivers that have historically supported MongoDB 3.4 and earlier MUST perform the
 handshake using `OP_QUERY` to determine if the node supports `OP_MSG`. Drivers that have only ever supported MongoDB 3.6
 and newer MAY default to using `OP_MSG`.
 
-If the node supports `OP_MSG`, any and all messages MUST use `OP_MSG`, optionally compressed with `OP_COMPRESSED`.
-Authentication messages MUST also use `OP_MSG` when it is supported, but MUST NOT use `OP_COMPRESSED`.
+Any and all messages MUST use `OP_MSG`, optionally compressed with `OP_COMPRESSED`. Authentication messages MUST also
+use `OP_MSG`, but MUST NOT use `OP_COMPRESSED`.
 
 #### OP_MSG
 

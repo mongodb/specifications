@@ -935,9 +935,7 @@ the `error` field of the new `ServerDescription` object MUST include a descripti
 invalidated because the primary was determined to be stale. A multi-threaded client MUST
 [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
 
-If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
-the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
-newer, the client MUST NOT clear its connection pool for the old primary.
+The client MUST NOT clear its connection pool for the old primary.
 
 See [replica set monitoring with and without a primary](#replica-set-monitoring-with-and-without-a-primary).
 
@@ -1878,9 +1876,7 @@ These errors indicate one of these:
 
 In any case the error is a symptom that a ServerDescription's type no longer reflects reality.
 
-On MongoDB 4.0 and earlier, a primary closes its connections when it steps down, so in many cases the next operation
-causes a network error rather than "not writable primary". The driver can see a "not writable primary" error in the
-following scenario:
+The driver can see a "not writable primary" error in the following scenario:
 
 1. The client discovers the primary.
 2. The primary steps down.

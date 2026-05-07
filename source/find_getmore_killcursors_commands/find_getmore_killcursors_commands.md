@@ -93,19 +93,17 @@ This section only applies to drivers that support exhaust cursors.
 
 The exhaust protocol differs based on the server version:
 
-| Server version  | Server behavior                                                                                                           |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 4.0 and earlier | Only supports exhaust over legacy **OP_QUERY**. The **find** command does not support the exhaust flag from **OP_QUERY**. |
-| 4.2 to 5.0      | Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**.                                                            |
-| 5.1 and later   | Supports exhaust over **OP_MSG**.                                                                                         |
+| Server version | Server behavior                                                |
+| -------------- | -------------------------------------------------------------- |
+| 4.2 to 5.0     | Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**. |
+| 5.1 and later  | Supports exhaust over **OP_MSG**.                              |
 
 Therefore drivers that implement exhaust cursors:
 
-| Server version  | Driver behavior                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 4.0 and earlier | Drivers MUST use legacy **OP_QUERY**.                                                                                              |
-| 4.2 to 5.0      | Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.                                                                     |
-| 5.1 and later   | Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested. |
+| Server version | Driver behavior                                                                                                                    |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 4.2 to 5.0     | Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.                                                                     |
+| 5.1 and later  | Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested. |
 
 #### Interactions with OP_QUERY
 

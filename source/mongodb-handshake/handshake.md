@@ -7,7 +7,7 @@ ______________________________________________________________________
 
 ## Abstract
 
-MongoDB 3.4 has the ability to annotate connections with metadata provided by the connecting client. The intent of this
+MongoDB has the ability to annotate connections with metadata provided by the connecting client. The intent of this
 metadata is to be able to identify client level information about the connection, such as application name, driver name
 and version. The provided information will be logged through the `mongo[d|s].log` and the profile logs; this should
 enable sysadmins to easily backtrack log entries the offending application. The active connection data will also be
@@ -115,8 +115,7 @@ conn.authenticate(creds, negotiated_mechs, speculative_auth)
 
 #### Hello Command
 
-The initial handshake, as of MongoDB 3.4, supports a new argument, `client`, provided as a BSON object. This object has
-the following structure:
+The initial handshake supports a `client` argument, provided as a BSON object. This object has the following structure:
 
 ```javascript
     {

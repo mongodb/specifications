@@ -710,8 +710,8 @@ interface IndexOptions {
   sparse: Boolean;
 
   /**
-   * Optionally used only in MongoDB 3.0.0 and higher. Allows users to configure the storage
-   * engine on a per-index basis when creating an index.
+   * Optionally allows users to configure the storage engine on a per-index basis when creating
+   * an index.
    */
   storageEngine: Document;
 
@@ -783,14 +783,13 @@ interface IndexOptions {
 
   /**
    * Optionally specifies a filter for use in a partial index. Only documents that match the
-   * filter expression are included in the index. New in MongoDB 3.2.
+   * filter expression are included in the index.
    */
   partialFilterExpression: Document;
 
   /**
-   * Optionally specifies a collation to use for the index in MongoDB 3.4 and higher.
-   * If not specified, no collation is sent and the default collation of the collection
-   * server-side is used.
+   * Optionally specifies a collation to use for the index. If not specified, no collation is
+   * sent and the default collation of the collection server-side is used.
    */
   collation: Document;
 
