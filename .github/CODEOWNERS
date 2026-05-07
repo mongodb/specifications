@@ -1,53 +1,102 @@
-# Unowned specs
-* @mongodb/dbx-spec-reviewers-unowned
-
-# APM
-/source/command-monitoring/ @mongodb/dbx-spec-owners-apm
+# Default ownership
+* @mongodb/dbx-leadership
 
 # Authentication
-/source/auth/ @mongodb/dbx-spec-owners-auth
+/source/auth/ @mongodb/dbx-spec-maintainers-auth
+
+# Backpressure
+/source/client-backpressure/ @mongodb/dbx-spec-maintainers-backpressure
+
+#Benchmarking
+/source/benchmarking/ @mongodb/dbx-spec-maintainers-benchmarking
+
+# BSON & Extended JSON
+/source/bson-binary-encrypted/ @mongodb/dbx-spec-maintainers-bson
+/source/bson-binary-uuid/ @mongodb/dbx-spec-maintainers-bson
+/source/bson-binary-vector/ @mongodb/dbx-spec-maintainers-bson
+/source/bson-corpus/ @mongodb/dbx-spec-maintainers-bson
+/source/bson-decimal128/ @mongodb/dbx-spec-maintainers-bson
+/source/bson-objectid/ @mongodb/dbx-spec-maintainers-bson
+/source/dbref/ @mongodb/dbx-spec-maintainers-bson
+/source/extended-json/ @mongodb/dbx-spec-maintainers-bson
 
 # Change Streams
-/source/change-streams/ @mongodb/dbx-spec-owners-change-streams
+/source/change-streams/ @mongodb/dbx-spec-maintainers-change-streams
 
 # Client Side Encryption
-/source/client-side-encryption/ @mongodb/dbx-spec-owners-fle
+/source/client-side-encryption/ @mongodb/dbx-spec-maintainers-client-side-encryption
 
 # Client Side Operations Timeout
-/source/client-side-operations-timeout/ @mongodb/dbx-spec-owners-csot
+/source/client-side-operations-timeout/ @mongodb/dbx-spec-maintainers-csot
+
+# Connection Establishment
+/source/load-balancers/ @mongodb/dbx-spec-maintainers-connection-establishment
+/source/mongodb-handshake/ @mongodb/dbx-spec-maintainers-connection-establishment
+/source/socks5-support/ @mongodb/dbx-spec-maintainers-connection-establishment
+/source/versioned-api/ @mongodb/dbx-spec-maintainers-connection-establishment
+/source/wireversion-featurelist/ @mongodb/dbx-spec-maintainers-connection-establishment
+
+# Connection String & URI Options
+/source/connection-string/ @mongodb/dbx-spec-maintainers-connection-string
+/source/uri-options/ @mongodb/dbx-spec-maintainers-connection-string
 
 # CMAP
-/source/connection-monitoring-and-pooling/ @mongodb/dbx-spec-owners-cmap
+/source/connection-monitoring-and-pooling/ @mongodb/dbx-spec-maintainers-cmap
 
-# CRUD
-/source/crud/ @mongodb/dbx-spec-owners-crud
-/source/driver-bulk-update.rst @mongodb/dbx-spec-owners-crud
+# CRUD & Command-level operations
+/source/crud/ @mongodb/dbx-spec-maintainers-crud
+/source/collation/ @mongodb/dbx-spec-maintainers-crud
+/source/driver-bulk-update.rst @mongodb/dbx-spec-maintainers-crud
+/source/find_getmore_killcursors_commands/ @mongodb/dbx-spec-maintainers-crud
+/source/gridfs/ @mongodb/dbx-spec-maintainers-crud
+/source/read-write-concern/ @mongodb/dbx-spec-maintainers-crud
+/source/run-command/ @mongodb/dbx-spec-maintainers-crud
+/source/server_write_commands/ @mongodb/dbx-spec-maintainers-crud
+
+# Database & Collection Enumeration
+/source/enumerate-collections/ @mongodb/dbx-spec-maintainers-database-collection-enumeration
+/source/enumerate-databases/ @mongodb/dbx-spec-maintainers-database-collection-enumeration
+/source/collection-management/ @mongodb/dbx-spec-maintainers-database-collection-enumeration
+
+# SRV-based Cluster Discovery
+/source/initial-dns-seedlist-discovery/ @mongodb/dbx-spec-maintainers-srv-clusters
+/source/polling-srv-records-for-mongos-discovery/ @mongodb/dbx-spec-maintainers-srv-clusters
+
+# FAAS Testing
+/source/faas-automated-testing/ @mongodb/dbx-spec-maintainers-faas
+
+# Index Management
+/source/index-management @mongodb/dbx-spec-maintainers-index-management
+
+# Observability
+/source/command-logging-and-monitoring/ @mongodb/dbx-spec-maintainers-observability
+/source/logging/ @mongodb/dbx-spec-maintainers-observability
+/source/open-telemetry/ @mongodb/dbx-spec-maintainers-observability
 
 # Retryability
-/source/retryable-reads/ @mongodb/dbx-spec-owners-retryability
-/source/retryable-writes/ @mongodb/dbx-spec-owners-retryability
+/source/retryable-reads/ @mongodb/dbx-spec-maintainers-retryability
+/source/retryable-writes/ @mongodb/dbx-spec-maintainers-retryability
 
-# SDAM
-/source/server-discovery-and-monitoring/ @mongodb/dbx-spec-owners-sdam
+# Server Discovery and Topology Resilience
+/source/server-discovery-and-monitoring/ @mongodb/dbx-spec-maintainers-server-discovery-topology-resilience
+/source/connections-survive-step-down/ @mongodb/dbx-spec-maintainers-server-discovery-topology-resilience
 
-# Server Selection
-/source/server-selection/ @mongodb/dbx-spec-owners-server-selection
+# Server Selection & Staleness
+/source/server-selection/ @mongodb/dbx-spec-maintainers-server-selection
+/source/max-staleness/ @mongodb/dbx-spec-maintainers-server-selection
 
-# Sessions
-/source/sessions/ @mongodb/dbx-spec-owners-sessions
-
-# Transactions
-/source/transactions/ @mongodb/dbx-spec-owners-transactions
-/source/transactions-convenient-api/ @mongodb/dbx-spec-owners-transactions
+# Session & Transaction Semantics
+/source/causal-consistency/ @mongodb/dbx-spec-maintainers-session-transactions
+/source/sessions/ @mongodb/dbx-spec-maintainers-session-transactions
+/source/transactions/ @mongodb/dbx-spec-maintainers-session-transactions
+/source/transactions-convenient-api/ @mongodb/dbx-spec-maintainers-session-transactions
 
 # Unified Test Format
-/source/unified-test-format/ @mongodb/dbx-spec-owners-unified-test-format
+/source/unified-test-format/ @mongodb/dbx-spec-maintainers-unified-test-format
 
-# URI Options
-/source/uri-options/ @mongodb/dbx-spec-owners-uri-options
-
-# Workforce OIDC
-/docs/workforce-human-oidc-auth.md @mongodb/dbx-spec-owners-workforce-oidc
+# Wire Protocol & Compression
+/source/message/ @mongodb/dbx-spec-maintainers-wire-protocol-compression
+/source/compression/ @mongodb/dbx-spec-maintainers-wire-protocol-compression
 
 # Workflows and code ownership file
 /.github/ @mongodb/dbx-leadership
