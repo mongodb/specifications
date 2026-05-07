@@ -20,7 +20,7 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 `OP_MSG` is only available in MongoDB 3.6 (`maxWireVersion >= 6`) and later. MongoDB drivers MUST perform the MongoDB
 handshake using `OP_MSG` if an API version was declared on the client.
 
-If no API version was declared, drivers that have historically supported MongoDB 3.4 and earlier MUST perform the
+If no API version was declared, drivers that have historically supported MongoDB 3.4 and earlier MAY perform the
 handshake using `OP_QUERY` to determine if the node supports `OP_MSG`. Drivers that have only ever supported MongoDB 3.6
 and newer MAY default to using `OP_MSG`.
 
