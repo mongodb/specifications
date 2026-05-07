@@ -72,7 +72,7 @@
       "description": "insertOne includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -80,10 +80,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "insertOne",
@@ -148,7 +150,7 @@
       "description": "insertMany includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -156,10 +158,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "insertMany",
@@ -222,7 +226,7 @@
       "description": "updateOne includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -230,10 +234,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "updateOne",
@@ -301,7 +307,7 @@
       "description": "updateMany includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -309,10 +315,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "updateMany",
@@ -382,7 +390,7 @@
       "description": "replaceOne includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -390,10 +398,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "replaceOne",
@@ -459,7 +469,7 @@
       "description": "deleteOne includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -467,10 +477,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "deleteOne",
@@ -531,7 +543,7 @@
       "description": "deleteMany includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -539,10 +551,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "deleteMany",
@@ -605,7 +619,7 @@
       "description": "findOneAndUpdate includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -613,10 +627,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "findOneAndUpdate",
@@ -683,7 +699,7 @@
       "description": "findOneAndDelete includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -691,10 +707,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "findOneAndDelete",
@@ -756,7 +774,7 @@
       "description": "findOneAndReplace includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -764,10 +782,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "findOneAndReplace",
@@ -832,7 +852,7 @@
       "description": "bulkWrite includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -840,10 +860,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "bulkWrite",
@@ -964,7 +986,7 @@
       "description": "create includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -972,10 +994,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "createCollection",
@@ -1031,7 +1055,7 @@
       "description": "createIndexes includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -1039,10 +1063,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "createIndex",
@@ -1101,7 +1127,7 @@
       "description": "drop includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -1109,10 +1135,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "dropCollection",
@@ -1168,7 +1196,7 @@
       "description": "dropIndexes includes afterClusterTime in causally consistent session",
       "operations": [
         {
-          "name": "findOne",
+          "name": "find",
           "object": "collection0",
           "arguments": {
             "session": "session0",
@@ -1176,10 +1204,12 @@
               "_id": 1
             }
           },
-          "expectResult": {
-            "_id": 1,
-            "x": 11
-          }
+          "expectResult": [
+            {
+              "_id": 1,
+              "x": 11
+            }
+          ]
         },
         {
           "name": "dropIndexes",

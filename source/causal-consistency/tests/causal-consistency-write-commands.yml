@@ -41,13 +41,13 @@ initialData:
 tests:
   - description: "insertOne includes afterClusterTime in causally consistent session"
     operations:
-      - &findOne
-        name: findOne
+      - &find
+        name: find
         object: *collection0
         arguments:
           session: *session0
           filter: { _id: 1 }
-        expectResult: { _id: 1, x: 11 }
+        expectResult: [{ _id: 1, x: 11 }]
       - name: insertOne
         object: *collection0
         arguments:
@@ -76,7 +76,7 @@ tests:
 
   - description: "insertMany includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: insertMany
         object: *collection0
         arguments:
@@ -99,7 +99,7 @@ tests:
 
   - description: "updateOne includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: updateOne
         object: *collection0
         arguments:
@@ -125,7 +125,7 @@ tests:
 
   - description: "updateMany includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: updateMany
         object: *collection0
         arguments:
@@ -151,7 +151,7 @@ tests:
 
   - description: "replaceOne includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: replaceOne
         object: *collection0
         arguments:
@@ -177,7 +177,7 @@ tests:
 
   - description: "deleteOne includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: deleteOne
         object: *collection0
         arguments:
@@ -200,7 +200,7 @@ tests:
 
   - description: "deleteMany includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: deleteMany
         object: *collection0
         arguments:
@@ -223,7 +223,7 @@ tests:
 
   - description: "findOneAndUpdate includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: findOneAndUpdate
         object: *collection0
         arguments:
@@ -246,7 +246,7 @@ tests:
 
   - description: "findOneAndDelete includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: findOneAndDelete
         object: *collection0
         arguments:
@@ -268,7 +268,7 @@ tests:
 
   - description: "findOneAndReplace includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: findOneAndReplace
         object: *collection0
         arguments:
@@ -291,7 +291,7 @@ tests:
 
   - description: "bulkWrite includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: bulkWrite
         object: *collection0
         arguments:
@@ -335,7 +335,7 @@ tests:
 
   - description: "create includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: createCollection
         object: *database0
         arguments:
@@ -356,7 +356,7 @@ tests:
 
   - description: "createIndexes includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: createIndex
         object: *collection0
         arguments:
@@ -378,7 +378,7 @@ tests:
 
   - description: "drop includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: dropCollection
         object: *database0
         arguments:
@@ -399,7 +399,7 @@ tests:
 
   - description: "dropIndexes includes afterClusterTime in causally consistent session"
     operations:
-      - *findOne
+      - *find
       - name: dropIndexes
         object: *collection0
         arguments:
