@@ -72,6 +72,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "insertMany includes afterClusterTime in causally consistent session"
     operations:
@@ -94,6 +95,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "updateOne includes afterClusterTime in causally consistent session"
     operations:
@@ -119,6 +121,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "updateMany includes afterClusterTime in causally consistent session"
     operations:
@@ -144,6 +147,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "replaceOne includes afterClusterTime in causally consistent session"
     operations:
@@ -169,6 +173,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "deleteOne includes afterClusterTime in causally consistent session"
     operations:
@@ -191,6 +196,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "deleteMany includes afterClusterTime in causally consistent session"
     operations:
@@ -213,6 +219,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "findOneAndUpdate includes afterClusterTime in causally consistent session"
     operations:
@@ -235,6 +242,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "findOneAndDelete includes afterClusterTime in causally consistent session"
     operations:
@@ -256,6 +264,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "findOneAndReplace includes afterClusterTime in causally consistent session"
     operations:
@@ -278,6 +287,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "bulkWrite includes afterClusterTime in causally consistent session"
     operations:
@@ -305,6 +315,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
           - commandStartedEvent:
               commandName: update
               command:
@@ -312,6 +323,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
           - commandStartedEvent:
               commandName: delete
               command:
@@ -319,6 +331,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "create includes afterClusterTime in causally consistent session"
     operations:
@@ -339,6 +352,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "createIndexes includes afterClusterTime in causally consistent session"
     operations:
@@ -360,6 +374,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "drop includes afterClusterTime in causally consistent session"
     operations:
@@ -380,6 +395,7 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
 
   - description: "dropIndexes includes afterClusterTime in causally consistent session"
     operations:
@@ -399,3 +415,4 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }

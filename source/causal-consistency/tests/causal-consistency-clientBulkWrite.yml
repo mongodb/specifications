@@ -72,3 +72,4 @@ tests:
                 lsid: { $$sessionLsid: *session0 }
                 readConcern:
                   afterClusterTime: { $$exists: true }
+                  level: { $$exists: false }
