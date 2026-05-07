@@ -136,9 +136,8 @@ tests:
                 txnNumber: { $numberLong: "1" }
                 startTransaction: true
                 autocommit: false
-                readConcern:
-                  afterClusterTime: { $$exists: true }
                 # omitted fields
+                readConcern: { $$exists: false }
                 writeConcern: { $$exists: false }
               commandName: insert
               databaseName: *databaseName

@@ -260,9 +260,7 @@
                   "startTransaction": true,
                   "autocommit": false,
                   "readConcern": {
-                    "afterClusterTime": {
-                      "$$exists": true
-                    }
+                    "$$exists": false
                   },
                   "writeConcern": {
                     "$$exists": false
