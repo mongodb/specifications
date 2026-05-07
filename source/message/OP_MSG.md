@@ -409,6 +409,7 @@ In the near future, this opcode is expected to be extended and include support f
 
 ### Changelog
 
+- 2026-05-07: Allow OP_MSG for all handshakes.
 - 2024-04-30: Convert from RestructuredText to Markdown.
 - 2022-10-05: Remove spec front matter.
 - 2022-01-13: Clarify that `OP_MSG` must be used when using stable API
