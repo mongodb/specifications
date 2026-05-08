@@ -3886,6 +3886,9 @@ create the following collections with majority write concern:
 - `db.prefix-suffix` using the `encryptedFields` option set to the contents of
     [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json).
     Skip this step if testing server 9.0.0+.
+- `db.prefix-suffix-ci-di` using the `encryptedFields` option set to the contents of
+    [encryptedFields-prefix-suffix-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix-ci-di.json).
+    Skip this step if testing server 9.0.0+.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
 
@@ -3919,6 +3922,22 @@ class AutoEncryptionOpts {
    kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
    bypassQueryAnalysis: true,
 }
+```
+
+Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) using these `AutoEncryptionOpts`:
+
+```typescript
+class AutoEncryptionOpts {
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+}
+```
+
+Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
+Skip this step if testing server 9.0.0+.
+
+```javascript
+{ "encryptedText": "BingQiLin" }
 ```
 
 Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
@@ -4195,37 +4214,13 @@ class EncryptOpts {
 Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
 algorithm".
 
-#### Case 8: can find a case-insensitively indexed document by prefix and suffix
+#### Case 8: can find a case and diacritic-insensitively indexed document by prefix and suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the following `EncryptOpts`:
+`"BingQiLin"` was inserted via auto-encryption in Test Setup, indexed under the
+`caseSensitive: false, diacriticSensitive: false` prefix configuration and the
+`caseSensitive: false, diacriticSensitive: false` suffix configuration of `db.prefix-suffix-ci-di`.
 
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: false,
-      diacriticSensitive: true,
-      prefix: PrefixOpts {
-        strMaxQueryLength: 10,
-        strMinQueryLength: 2,
-      },
-      suffix: SuffixOpts {
-        strMaxQueryLength: 10,
-        strMinQueryLength: 2,
-      },
-   },
-}
-```
-
-Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
-
-```javascript
-{ "encryptedText": <encrypted 'FooBarBaz'> }
-```
-
-Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
+Use `clientEncryption.encrypt()` to encrypt the string `"bing"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
@@ -4235,7 +4230,7 @@ class EncryptOpts {
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: false,
-      diacriticSensitive: true,
+      diacriticSensitive: false,
       prefix: PrefixOpts {
         strMaxQueryLength: 10,
         strMinQueryLength: 2,
@@ -4244,19 +4239,19 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'foo'>} } }
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'bing'>} } }
 ```
 
 Assert the following document is returned:
 
 ```javascript
-{ "encryptedText": "FooBarBaz" }
+{ "encryptedText": "BingQiLin" }
 ```
 
-Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
+Use `clientEncryption.encrypt()` to encrypt the string `"lin"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
@@ -4275,46 +4270,33 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'lin'>} } }
 ```
 
 Assert the following document is returned:
 
 ```javascript
-{ "encryptedText": "FooBarBaz" }
+{ "encryptedText": "BingQiLin" }
 ```
 
 #### Case 9: can find a diacritic-insensitively indexed document by prefix and suffix
 
-Use `clientEncryption.encrypt()` to encrypt the string `"cafébarbäz"` with the following `EncryptOpts`:
+Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) using these `AutoEncryptionOpts`:
 
 ```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: true,
-      diacriticSensitive: false,
-      prefix: PrefixOpts {
-        strMaxQueryLength: 10,
-        strMinQueryLength: 2,
-      },
-      suffix: SuffixOpts {
-        strMaxQueryLength: 10,
-        strMinQueryLength: 2,
-      },
-   },
+class AutoEncryptionOpts {
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
+Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
 
 ```javascript
-{ "encryptedText": <encrypted 'cafébarbäz'> }
+{ "encryptedText": "cafébarbäz" }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
@@ -4336,7 +4318,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'cafe'>} } }
@@ -4367,7 +4349,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
