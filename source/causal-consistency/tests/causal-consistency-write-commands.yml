@@ -336,15 +336,27 @@ tests:
   - description: "create includes afterClusterTime in causally consistent session"
     operations:
       - *find
+      # Drop the collection first to make sure there's no name conflict during
+      # createCollection.
+      - name: dropCollection
+        object: *database0
+        arguments:
+          session: *session0
+          collection: &newCollectionName causal-consistency-createCollection-test
       - name: createCollection
         object: *database0
         arguments:
           session: *session0
-          collection: &newCollectionName newcoll
+          collection: *newCollectionName
     expectEvents:
       - client: *client0
         events:
           - *findEvent
+          - commandStartedEvent:
+              commandName: drop
+              command:
+                drop: *newCollectionName
+                lsid: { $$sessionLsid: *session0 }
           - commandStartedEvent:
               commandName: create
               command:

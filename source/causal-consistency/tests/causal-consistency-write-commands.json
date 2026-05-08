@@ -1002,11 +1002,19 @@
           ]
         },
         {
+          "name": "dropCollection",
+          "object": "database0",
+          "arguments": {
+            "session": "session0",
+            "collection": "causal-consistency-createCollection-test"
+          }
+        },
+        {
           "name": "createCollection",
           "object": "database0",
           "arguments": {
             "session": "session0",
-            "collection": "newcoll"
+            "collection": "causal-consistency-createCollection-test"
           }
         }
       ],
@@ -1030,9 +1038,20 @@
             },
             {
               "commandStartedEvent": {
+                "commandName": "drop",
+                "command": {
+                  "drop": "causal-consistency-createCollection-test",
+                  "lsid": {
+                    "$$sessionLsid": "session0"
+                  }
+                }
+              }
+            },
+            {
+              "commandStartedEvent": {
                 "commandName": "create",
                 "command": {
-                  "create": "newcoll",
+                  "create": "causal-consistency-createCollection-test",
                   "lsid": {
                     "$$sessionLsid": "session0"
                   },
