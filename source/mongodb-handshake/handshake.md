@@ -51,10 +51,10 @@ and is maintained for backwards compatibility with servers that do not support t
 
 Drivers SHOULD use the `OP_MSG` protocol for all handshakes if their minWireVersion is 6 (MongoDB 3.6) or higher. If a
 [server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST also use the
-`hello` command for the initial handshake. If server API version is not requested and
-`loadBalanced: False`, drivers MUST use legacy hello for the first message of the initial handshake, and include 
-`helloOk:true` in the handshake request. If the server does not understand `OP_MSG`, drivers MUST show the same error 
-message as when wire version checks fail (e.g. because the server's maxWireVersion is lower than the driver's minWireVersion).
+`hello` command for the initial handshake. If server API version is not requested and `loadBalanced: False`, drivers
+MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
+request. If the server does not understand `OP_MSG`, drivers MUST show the same error message as when wire version
+checks fail (e.g. because the server's maxWireVersion is lower than the driver's minWireVersion).
 
 ASIDE: If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
 the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
