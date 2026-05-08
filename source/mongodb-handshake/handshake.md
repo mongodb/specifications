@@ -101,7 +101,7 @@ reply = conn.send_command("admin", cmd)
 
 if reply["maxWireVersion"] < 6:
     # Server is reporting that it doesn't support OpMSG
-    raise Error()
+    raise Error("wire version check failed")
 
 # Store the negotiated compressor, see OP_COMPRESSED spec.
 if reply.get("compression"):
@@ -564,7 +564,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
-- 2026-05-07: Allow OP_MSG for all handshakes.
+- 2026-05-08: Allow OP_MSG for all handshakes.
 - 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
