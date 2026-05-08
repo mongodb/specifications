@@ -3933,8 +3933,8 @@ class AutoEncryptionOpts {
 }
 ```
 
-Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
-Skip this step if testing server 9.0.0+.
+Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern. Skip this
+step if testing server 9.0.0+.
 
 ```javascript
 { "encryptedText": "BingQiLin" }
