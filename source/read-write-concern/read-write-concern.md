@@ -68,7 +68,7 @@ class ReadConcern {
 }
 ```
 
-The read concern option is available for the following operations:
+The read concern option is available for most operations, including the following:
 
 - `aggregate` command
 - `count` command
@@ -78,6 +78,16 @@ The read concern option is available for the following operations:
 - `parallelCollectionScan` command
 - `geoNear` command
 - `geoSearch` command
+- `insert` command
+- `update` command
+- `findAndModify` command
+- `delete` command
+- `bulkWrite` command
+- `create` command
+- `createIndexes` command
+- `drop` command
+- `dropDatabase` command
+- `dropIndexes` command
 
 Starting in MongoDB 4.2, an `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`;
 however, it does not support the "linearizable" level (attempting to do so will result in a server error).
