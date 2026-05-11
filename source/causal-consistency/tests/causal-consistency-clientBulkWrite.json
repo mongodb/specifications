@@ -1,5 +1,5 @@
 {
-  "description": "causal consistency write commands include afterClusterTime",
+  "description": "causal consistency bulkWrite include afterClusterTime",
   "schemaVersion": "1.3",
   "runOnRequirements": [
     {
