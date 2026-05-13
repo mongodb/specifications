@@ -1,0 +1,48 @@
+description: "Documents with out-of-order fields MUST decode to a DBRef model and MUST re-encode with fields in canonical order ($ref, $id, $db, then extra fields)"
+tests:
+  - description: "$id before $ref"
+    input: { $id: 1, $ref: "coll0" }
+    decoded:
+      ref: "coll0"
+      id: 1
+      db: ~
+    encoded: { $ref: "coll0", $id: 1 }
+
+  - description: "$db before $ref"
+    input: { $db: "db0", $ref: "coll0", $id: 1 }
+    decoded:
+      ref: "coll0"
+      id: 1
+      db: "db0"
+    encoded: { $ref: "coll0", $id: 1, $db: "db0" }
+
+  - description: "extra field before $ref"
+    input: { foo: 1, $id: 1, $ref: "coll0" }
+    decoded:
+      ref: "coll0"
+      id: 1
+      db: ~
+      extra:
+        foo: 1
+    encoded: { $ref: "coll0", $id: 1, foo: 1 }
+
+  - description: "extra field before $ref, with $db"
+    input: { foo: 1, $ref: "coll0", $id: 1, $db: "db0" }
+    decoded:
+      ref: "coll0"
+      id: 1
+      db: "db0"
+      extra:
+        foo: 1
+    encoded: { $ref: "coll0", $id: 1, $db: "db0", foo: 1 }
+
+  - description: "extra fields surrounding required fields"
+    input: { foo: 1, $ref: "coll0", $id: 1, $db: "db0", bar: 1 }
+    decoded:
+      ref: "coll0"
+      id: 1
+      db: "db0"
+      extra:
+        foo: 1
+        bar: 1
+    encoded: { $ref: "coll0", $id: 1, $db: "db0", foo: 1, bar: 1 }

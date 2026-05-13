@@ -1,0 +1,21 @@
+description: "Documents that MUST NOT be decoded to a DBRef model"
+tests:
+  - description: "missing $id"
+    document: { $ref: "coll0" }
+    valid: false
+
+  - description: "missing $ref"
+    document: { $id: { $oid: "60a6fe9a54f4180c86309efa" } }
+    valid: false
+
+  - description: "missing both $ref and $id"
+    document: { $db: "db0" }
+    valid: false
+
+  - description: "$ref is not a string (boolean)"
+    document: { $ref: true, $id: 1 }
+    valid: false
+
+  - description: "$db is not a string (integer)"
+    document: { $ref: "coll0", $id: 1, $db: 1 }
+    valid: false

@@ -1,0 +1,156 @@
+{
+  "description": "Valid documents that MUST be decoded to a DBRef model",
+  "tests": [
+    {
+      "description": "ObjectId $id",
+      "document": {
+        "$ref": "coll0",
+        "$id": {
+          "$oid": "60a6fe9a54f4180c86309efa"
+        }
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": {
+          "$oid": "60a6fe9a54f4180c86309efa"
+        },
+        "db": null
+      }
+    },
+    {
+      "description": "integer $id",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": null
+      }
+    },
+    {
+      "description": "null $id",
+      "document": {
+        "$ref": "coll0",
+        "$id": null
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": null,
+        "db": null
+      }
+    },
+    {
+      "description": "with $db",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1,
+        "$db": "db0"
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": "db0"
+      }
+    },
+    {
+      "description": "extra field with string value",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1,
+        "$db": "db0",
+        "foo": "bar"
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": "db0",
+        "extra": {
+          "foo": "bar"
+        }
+      }
+    },
+    {
+      "description": "multiple extra fields with boolean values",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1,
+        "foo": true,
+        "bar": false
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": null,
+        "extra": {
+          "foo": true,
+          "bar": false
+        }
+      }
+    },
+    {
+      "description": "extra field with document value",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1,
+        "meta": {
+          "foo": 1,
+          "bar": 2
+        }
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": null,
+        "extra": {
+          "meta": {
+            "foo": 1,
+            "bar": 2
+          }
+        }
+      }
+    },
+    {
+      "description": "extra field with dollar-prefixed name",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1,
+        "$foo": "bar"
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": null,
+        "extra": {
+          "$foo": "bar"
+        }
+      }
+    },
+    {
+      "description": "extra field with dot-notation name",
+      "document": {
+        "$ref": "coll0",
+        "$id": 1,
+        "foo.bar": 0
+      },
+      "valid": true,
+      "decoded": {
+        "ref": "coll0",
+        "id": 1,
+        "db": null,
+        "extra": {
+          "foo.bar": 0
+        }
+      }
+    }
+  ]
+}

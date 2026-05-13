@@ -1,0 +1,37 @@
+description: "DBRef models MUST encode with fields in canonical order: $ref, $id, $db (if present), then extra fields in their original relative order"
+tests:
+  - description: "basic fields: $ref and ObjectId $id"
+    input: { $ref: "coll0", $id: { $oid: "60a6fe9a54f4180c86309efa" } }
+    encoded: { $ref: "coll0", $id: { $oid: "60a6fe9a54f4180c86309efa" } }
+
+  - description: "integer $id"
+    input: { $ref: "coll0", $id: 1 }
+    encoded: { $ref: "coll0", $id: 1 }
+
+  - description: "null $id"
+    input: { $ref: "coll0", $id: ~ }
+    encoded: { $ref: "coll0", $id: ~ }
+
+  - description: "with $db"
+    input: { $ref: "coll0", $id: 1, $db: "db0" }
+    encoded: { $ref: "coll0", $id: 1, $db: "db0" }
+
+  - description: "extra field with string value"
+    input: { $ref: "coll0", $id: 1, $db: "db0", foo: "bar" }
+    encoded: { $ref: "coll0", $id: 1, $db: "db0", foo: "bar" }
+
+  - description: "multiple extra fields preserve relative order"
+    input: { $ref: "coll0", $id: 1, foo: true, bar: false }
+    encoded: { $ref: "coll0", $id: 1, foo: true, bar: false }
+
+  - description: "extra field with document value"
+    input: { $ref: "coll0", $id: 1, meta: { foo: 1, bar: 2 } }
+    encoded: { $ref: "coll0", $id: 1, meta: { foo: 1, bar: 2 } }
+
+  - description: "extra field with dollar-prefixed name"
+    input: { $ref: "coll0", $id: 1, $foo: "bar" }
+    encoded: { $ref: "coll0", $id: 1, $foo: "bar" }
+
+  - description: "extra field with dot-notation name"
+    input: { $ref: "coll0", $id: 1, "foo.bar": 0 }
+    encoded: { $ref: "coll0", $id: 1, "foo.bar": 0 }
