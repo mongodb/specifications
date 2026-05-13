@@ -11,13 +11,16 @@
 - [ ] `tls=false` in connection string OVERRIDES implicit TLS from `mongodb+srv` — test7 only verifies TXT `ssl=false`
     is rejected, not that URI `tls=false` succeeds
 - [ ] All valid/invalid subdomain combinations for SRVs with fewer than 3 dot-separated parts (clarified 2024-09-24) —
-    prose tests only, no unified YAML
+    prose tests only, no unified YAML ([PR #1787](https://github.com/mongodb/specifications/pull/1787) /
+    [DRIVERS-3162](https://jira.mongodb.org/browse/DRIVERS-3162) open)
 
 ## Ambiguities
 
 - **Domain matching for short hostnames**: "SRV records with fewer than three `.` separated parts, the returned hostname
     MUST have at least one more domain level" — does "one more domain level" mean one additional subdomain component or
-    one additional dot-separated part?
+    one additional dot-separated part? ([DRIVERS-2922](https://jira.mongodb.org/browse/DRIVERS-2922) implementing:
+    "Allow valid SRV hostnames with less than 3 parts"; [PR #1854](https://github.com/mongodb/specifications/pull/1854)
+    clarifying driver verification requirements)
 - **Multiple TXT records**: "MUST NOT allow multiple TXT records and MUST raise an error" — does "multiple" mean
     multiple DNS records in one response, or multiple separate queries?
 - **Fisher-Yates for `srvMaxHosts`**: Uses SHOULD, not MUST — drivers can use other randomization methods. Tests only

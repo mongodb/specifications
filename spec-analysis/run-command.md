@@ -42,3 +42,6 @@
 - Load balancer connection pinning tests present and cover a subtle requirement.
 - Tests verify command construction via `commandStartedEvent`; cannot easily test timeout, error timing, or dynamic
     option changes.
+- [DRIVERS-2131](https://jira.mongodb.org/browse/DRIVERS-2131) /
+    [DRIVERS-1158](https://jira.mongodb.org/browse/DRIVERS-1158) (Backlog): test that generic `runCommand` sends no
+    `readConcern afterClusterTime`.

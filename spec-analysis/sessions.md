@@ -18,7 +18,8 @@
 - **One-minute staleness threshold**: Spec does not define clock precision or how clock skew affects the "one minute
     left" reuse decision.
 - **`endSession` vs dispose pattern**: "SHOULD support that in addition to OR instead of `endSession`" — can a driver
-    provide only dispose and omit `endSession`?
+    provide only dispose and omit `endSession`? ([PR #1912](https://github.com/mongodb/specifications/pull/1912),
+    [DRIVERS-3421](https://jira.mongodb.org/browse/DRIVERS-3421) in review)
 - **Cluster time comparison with null**: When both MongoClient and ClientSession cluster times are null, what is sent?
     Spec says "greater of... (either could be null)" without defining null semantics.
 
@@ -38,3 +39,8 @@
 - 7 unified test files. Prose tests (5 items) cover pool LIFO, cluster time, explicit/implicit sessions.
 - Prose test 2 (Pool is LIFO) and Prose test 3 (clusterTime in commands) require APM inspection — not easily automated
     in unified format.
+- [PR #1754](https://github.com/mongodb/specifications/pull/1754) /
+    [DRIVERS-1872](https://jira.mongodb.org/browse/DRIVERS-1872) (open): add tests to verify explicit sessions were
+    created on the correct client.
+- [DRIVERS-2782](https://jira.mongodb.org/browse/DRIVERS-2782) (Implementing): expose `atClusterTime` in snapshot
+    sessions.

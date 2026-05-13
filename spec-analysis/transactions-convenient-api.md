@@ -29,6 +29,9 @@
     new transaction leave the session in?
 - **Backoff pseudo-code order**: Pseudo-code calculates backoff before checking elapsed time, but the numbered steps
     describe the check first. Order of operations could differ between implementations.
+    ([DRIVERS-3391](https://jira.mongodb.org/browse/DRIVERS-3391) /
+    [DRIVERS-3436](https://jira.mongodb.org/browse/DRIVERS-3436) implementing: timeout error wrapping and backoff
+    semantics)
 
 ## Inconsistencies
 

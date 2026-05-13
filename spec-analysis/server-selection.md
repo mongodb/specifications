@@ -33,3 +33,6 @@
 - 147 test files. Extensive RTT and latency window coverage. `in_window` tests include operation count tracking for
     multi-threaded fairness.
 - Hedged reads noted as deprecated (8.0+) but no migration/deprecation path is tested.
+- [DRIVERS-3075](https://jira.mongodb.org/browse/DRIVERS-3075) (Backlog): replace references to mongos `localThreshold`
+    option.
+- [DRIVERS-2580](https://jira.mongodb.org/browse/DRIVERS-2580) (Backlog): support server selection events.

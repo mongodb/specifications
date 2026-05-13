@@ -40,3 +40,6 @@
 - `rawData` option added in Sept 2025; minimal test coverage (2 tests, command construction only).
 - Prose tests and unified tests form a two-tier strategy; search index prose tests (Cases 1–8 with polling) are not
     automated.
+- [PR #1861](https://github.com/mongodb/specifications/pull/1861) /
+    [DRIVERS-3345](https://jira.mongodb.org/browse/DRIVERS-3345) (open): ensure search index default name is `"default"`
+    and type is `"search"` when not specified.

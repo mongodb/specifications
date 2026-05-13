@@ -6,7 +6,8 @@
     recent if either topologyVersion is unset"
 - [ ] `ServerDescription.isCryptd` field: `mongocryptd` server detection and exclusion from normal topology
 - [ ] `maxElectionId`/`maxSetVersion` comparison for MongoDB < 6.0 (setVersion-first comparison) — version-dependent
-    comparison logic not integration-tested
+    comparison logic not integration-tested ([DRIVERS-2412](https://jira.mongodb.org/browse/DRIVERS-2412) implementing:
+    "SDAM should prioritize electionId over setVersion only on >=6.0 servers")
 - [ ] RSGhost server incorrectly reporting a non-null `hosts` list — spec: "client MUST NOT attempt to use its hosts
     list"
 - [ ] Load-balanced topology error handling: `serviceId`-based pool clearing in all error paths
@@ -38,3 +39,5 @@
     topologies and concurrent monitor updates lack depth.
 - `topologyVersion` handling is tested but processId equality edge cases need coverage.
 - Single-threaded monitoring scanning order is under-tested relative to multi-threaded cases.
+- [DRIVERS-3275](https://jira.mongodb.org/browse/DRIVERS-3275) (Backlog): centralize SDAM tests.
+- [DRIVERS-1670](https://jira.mongodb.org/browse/DRIVERS-1670) (Implementing): add log messages to SDAM spec.

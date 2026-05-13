@@ -43,3 +43,6 @@
 - **Only 1 unified test file** (59 lines). Extensive prose tests in README (8 test suites) but none automated.
 - FaaS/container detection is implementation-specific; spec says exact OS detection method is "undefined by this
     specification."
+- [PR #1933](https://github.com/mongodb/specifications/pull/1933) /
+    [DRIVERS-2944](https://jira.mongodb.org/browse/DRIVERS-2944) (open): update handshake spec to allow using OP_MSG
+    exclusively — directly addresses the OP_MSG requirement scope inconsistency identified in this analysis.

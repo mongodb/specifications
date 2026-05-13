@@ -5,7 +5,8 @@
 - [ ] Error code 20 with errmsg starting with "Transaction numbers" MUST produce an actionable error message — prose
     test only, no YAML
 - [ ] `PoolClearedError` during connection checkout MUST get `RetryableWriteError` label — prose test 2 only, no unified
-    test
+    test ([PR #1804](https://github.com/mongodb/specifications/pull/1804) /
+    [DRIVERS-1815](https://jira.mongodb.org/browse/DRIVERS-1815) implementing)
 - [ ] `WriteConcernError` with `RetryableWriteError` label + `NoWritesPerformed` on retry: MUST return original error —
     prose test 3 only
 - [ ] Sharded cluster: retry MUST target a different mongos (deprioritization) — prose tests 4 & 5 only; not expressible
@@ -14,7 +15,7 @@
 - [ ] Network error during initial connection handshake MUST get `RetryableWriteError` label — `handshakeError.yml`
     exists but completeness unclear
 - [ ] CSOT-enabled retries: multiple attempts MUST be allowed (vs. single attempt without CSOT) — no CSOT-specific retry
-    count tests
+    count tests ([DRIVERS-3247](https://jira.mongodb.org/browse/DRIVERS-3247) ready for work)
 
 ## Ambiguities
 
@@ -41,3 +42,7 @@
 - 5 prose tests (PoolClearedError, WriteConcernError, sharded cluster deprioritization) — ~12% of critical coverage is
     manual.
 - CSOT behavioral change (2022-10-18: "multiple retries allowed when CSOT enabled") has no corresponding test coverage.
+- [DRIVERS-3296](https://jira.mongodb.org/browse/DRIVERS-3296) (Backlog): clarify expected behavior for command logging,
+    retryable writes and write concern errors.
+- [DRIVERS-3352](https://jira.mongodb.org/browse/DRIVERS-3352) (Backlog): add `RetryableError` labels to retryability
+    eligibility.

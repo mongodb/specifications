@@ -41,3 +41,5 @@
 - Header "Minimum Server Version: 1.8" conflicts with feature requirements for 3.6 (`nameOnly`) and 4.0+
     (`authorizedCollections`). Version requirements should be tiered per feature.
 - Test Plan (lines 251–281) is prose-only; no JSON/YAML fixtures.
+- [DRIVERS-935](https://jira.mongodb.org/browse/DRIVERS-935) (Backlog): collection enumeration specification is out of
+    date.

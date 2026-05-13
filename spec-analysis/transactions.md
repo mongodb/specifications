@@ -3,7 +3,8 @@
 ## Missing Tests
 
 - [ ] On `TransientTransactionError` during non-commit/abort operation: session MUST be unpinned before SDAM retry — no
-    test for this unpinning sequence
+    test for this unpinning sequence ([DRIVERS-3411](https://jira.mongodb.org/browse/DRIVERS-3411) implementing:
+    "Transaction state is preserved across retries")
 - [ ] `commitTransaction` retry receives new `recoveryToken`: MUST track and use updated token in subsequent retries
 - [ ] `startTransaction` with `readPreference='secondary'` MUST NOT be rejected — only read operations should be
     validated (spec: "MUST NOT validate during startTransaction")
@@ -36,3 +37,6 @@
 - 80 test files. Comprehensive coverage of state machines, error conditions, write concern, read preference, mongos
     pinning.
 - `do-not-retry-read-in-transaction` test correctly prevents double-retry via retryable reads mechanism.
+- [PR #1804](https://github.com/mongodb/specifications/pull/1804) /
+    [DRIVERS-1815](https://jira.mongodb.org/browse/DRIVERS-1815) (implementing): clarify `PoolClearedError` labels,
+    touches transactions spec.

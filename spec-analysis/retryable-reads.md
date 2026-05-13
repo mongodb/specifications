@@ -3,7 +3,8 @@
 ## Missing Tests
 
 - [ ] CSOT enabled: read MUST be retried multiple times within timeout window (not just once) — spec section "Executing
-    Retryable Read Commands" 3c, no unified test
+    Retryable Read Commands" 3c, no unified test ([DRIVERS-3247](https://jira.mongodb.org/browse/DRIVERS-3247) ready for
+    work)
 - [ ] Wire version dip between initial attempt and retry: driver chooses to recreate command or not retry — no test for
     this transient topology change
 - [ ] Sharded cluster: retry MUST target a different mongos (deprioritization) — prose tests 2.1/2.2 acknowledge this

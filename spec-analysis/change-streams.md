@@ -25,7 +25,7 @@
 - **Last document in batch with `postBatchResumeToken`**: If a batch has only one document and `postBatchResumeToken` is
     present, is that document "the last document"? The spec's wording could be interpreted either way.
 - **`showExpandedEvents` server version**: ">6.0.0" lacks precision; field visibility changes between 6.0 and 8.2 create
-    multiple API surfaces.
+    multiple API surfaces ([DRIVERS-3278](https://jira.mongodb.org/browse/DRIVERS-3278) implementing this adjustment).
 
 ## Inconsistencies
 
@@ -42,4 +42,5 @@
 - 9 unified test files (~18 test cases). Prose tests (19 items) cover advanced resume scenarios but require manual
     implementation.
 - Recent changes (2025-03-31) for server 8.2+ field visibility (`operationDescription`, `nsType`, `collectionUUID`) may
-    not be fully covered by existing tests.
+    not be fully covered by existing tests ([DRIVERS-3278](https://jira.mongodb.org/browse/DRIVERS-3278),
+    [DRIVERS-3458](https://jira.mongodb.org/browse/DRIVERS-3458) implementing).

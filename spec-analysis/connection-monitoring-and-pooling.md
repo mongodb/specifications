@@ -7,7 +7,9 @@
     no YAML test
 - [ ] Load-balanced `serviceId`-to-generation map management during handshake — no test
 - [ ] `SystemOverloadedError` and `RetryableError` labels MUST be added to network errors during connection
-    establishment — no test (recent addition: 2025-11-21)
+    establishment — no test (recent addition: 2025-11-21,
+    [PR #1369](https://github.com/mongodb/specifications/pull/1369) /
+    [DRIVERS-1003](https://jira.mongodb.org/browse/DRIVERS-1003) open for CMAP error tests)
 - [ ] `interruptInUseConnections=true` in pool clear: in-use connections MUST be interrupted — only pending connections
     tested
 - [ ] Background thread: idle connection expiration via `maxIdleTimeMS` — existence tested, actual timeout enforcement
@@ -41,7 +43,8 @@
 - **WaitQueue eviction error type**: Tests show `PoolClearedError` for evicted requests, but spec says "return errors
     indicating that the pool was cleared" — not all cleared-queue errors are necessarily `PoolClearedError`.
 - **Available connection iteration order**: Spec says search for non-perished connection but doesn't specify order
-    (FIFO, LIFO, random) — creates potential inconsistency across drivers.
+    (FIFO, LIFO, random) — creates potential inconsistency across drivers
+    ([DRIVERS-3103](https://jira.mongodb.org/browse/DRIVERS-3103): "CMAP should mandate LIFO order", Backlog).
 
 ## Notes
 
@@ -52,3 +55,9 @@
 - Load balancer mode is a significant feature but `serviceId`-based tracking tests are absent — likely requires a
     specific deployment topology.
 - Backpressure error labels (2025-11-21 changelog) appear to have no corresponding test coverage yet.
+- [PR #1927](https://github.com/mongodb/specifications/pull/1927) /
+    [DRIVERS-3459](https://jira.mongodb.org/browse/DRIVERS-3459) (in review): use `appName` for hello failpoints in CMAP
+    tests.
+- [DRIVERS-2194](https://jira.mongodb.org/browse/DRIVERS-2194) (Backlog): clarify order between server monitor events
+    and connection pool events.
+- [DRIVERS-1998](https://jira.mongodb.org/browse/DRIVERS-1998) (Backlog): add a reason to connection pool Clear method.

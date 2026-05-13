@@ -40,3 +40,13 @@
 - 28 YAML test files + extensive prose tests (11 sections). Strong coverage for CRUD, GridFS, background pooling, server
     selection, and transactions.
 - Some blocking sections (implicit sessions, OCSP) rely on optional prose/unit tests.
+- [PR #1888](https://github.com/mongodb/specifications/pull/1888) /
+    [DRIVERS-3006](https://jira.mongodb.org/browse/DRIVERS-3006) (in review): consolidate CSOT change stream timeout
+    tests.
+- [PR #1887](https://github.com/mongodb/specifications/pull/1887) /
+    [DRIVERS-3269](https://jira.mongodb.org/browse/DRIVERS-3269) (open): move aggregation tests out of tailable
+    awaitData cursor.
+- [PR #1845](https://github.com/mongodb/specifications/pull/1845) /
+    [DRIVERS-2884](https://jira.mongodb.org/browse/DRIVERS-2884) (open): CSOT avoid connection churn on timeout.
+- [DRIVERS-2965](https://jira.mongodb.org/browse/DRIVERS-2965) (Blocked): fix CSOT tests that contradict spec.
+- [DRIVERS-3259](https://jira.mongodb.org/browse/DRIVERS-3259) (Backlog): CSOT GA.

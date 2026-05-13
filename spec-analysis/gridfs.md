@@ -37,3 +37,7 @@
 - 8 unified test files covering upload, download, delete, rename, and disableMD5 variants.
 - MD5 is deprecated; `disableMD5` option tested separately.
 - Tests don't distinguish Basic API (MUST support) from Advanced API (MAY support).
+- [DRIVERS-2062](https://jira.mongodb.org/browse/DRIVERS-2062) (Backlog): modify GridFS spec to support sessions,
+    transactions and causal consistency.
+- [DRIVERS-3442](https://jira.mongodb.org/browse/DRIVERS-3442) (Blocked): increase `timeoutMS` values in CSOT GridFS
+    tests.

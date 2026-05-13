@@ -4,6 +4,9 @@
 
 - [ ] `TextOpts` all 4 combinations of `caseSensitive`/`diacriticSensitive` (true/true, true/false, false/true,
     false/false) across substring/prefix/suffix query types
+    ([PR #1931](https://github.com/mongodb/specifications/pull/1931) /
+    [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470) in review: case and diacritic text explicit encryption
+    tests)
 - [ ] `encryptExpression` with mismatched bound types (e.g., double min/max with int64 value) — error handling
 - [ ] `RangeOpts` precision: MUST error when `precision` is omitted for `double`/`decimal128` but min/max are set (or
     vice versa)
@@ -35,3 +38,6 @@
 - ~440 test files. Heavy focus on encryption/decryption correctness and Range/Text query types for Queryable Encryption.
 - Legacy test folder indicates FLE1→FLE2 migration was a major focus; cross-version compatibility is not well-tested.
 - No `## Changelog` section missing — spec has a changelog but it's not a separate section.
+- [PR #1925](https://github.com/mongodb/specifications/pull/1925) /
+    [DRIVERS-3321](https://jira.mongodb.org/browse/DRIVERS-3321) (in review): Support Substring/Suffix/Prefix indexes as
+    GA.

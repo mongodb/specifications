@@ -8,7 +8,8 @@
 - [ ] `findOne` followed by any read MUST include `operationTime` in `afterClusterTime` — test propagation across
     multiple reads
 - [ ] Write followed by `findOne` MUST include `operationTime` in `afterClusterTime`, including error cases — test
-    write→read causal chain
+    write→read causal chain ([PR #1930](https://github.com/mongodb/specifications/pull/1930),
+    [DRIVERS-3274](https://jira.mongodb.org/browse/DRIVERS-3274))
 - [ ] Read in a non-causally-consistent session MUST NOT include `afterClusterTime` — test explicit
     `causalConsistency=false`
 - [ ] Causally consistent read against a pre-3.6 server MUST NOT send `afterClusterTime` — test backwards compatibility
@@ -43,3 +44,7 @@
     implementation.
 - Spec references Sessions Specification (required reading) and ReadConcern spec for the list of commands that support
     causal consistency.
+- [DRIVERS-1083](https://jira.mongodb.org/browse/DRIVERS-1083) /
+    [DRIVERS-2097](https://jira.mongodb.org/browse/DRIVERS-2097) (Backlog): prose tests 6 and 7 always succeed as
+    written — known issue predating this analysis.
+- [DRIVERS-1374](https://jira.mongodb.org/browse/DRIVERS-1374) (Implementing): remove outdated prose test.
