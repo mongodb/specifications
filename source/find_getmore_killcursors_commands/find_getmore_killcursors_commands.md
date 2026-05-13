@@ -264,8 +264,7 @@ to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is speci
 ### getMore
 
 The [getMore](https://www.mongodb.com/docs/manual/reference/command/getMore/) command replaces the **OP_GET_MORE** wire
-protocol message. The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true when sent to a
-secondary. The OP_QUERY namespace MUST be the same as for the **find** and **killCursors** commands.
+protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **killCursors** commands.
 
 ```typescript
 interface GetMoreCommand {
@@ -455,6 +454,8 @@ More in depth information about passing read preferences to Mongos can be found 
 [Server Selection Specification](../server-selection/server-selection.md#passing-read-preference-to-mongos).
 
 ## Changelog
+
+- 2026-05-13: Remove stale `secondaryOk=true` requirement from getMore section.
 
 - 2024-07-30: Migrated from reStructuredText to Markdown.
 
