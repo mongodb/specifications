@@ -87,7 +87,7 @@ Per the PR template:
 
 - Title must include a DRIVERS ticket (e.g., `DRIVERS-1234`)
 - Update the spec changelog
-- New tests must be validated against at least one driver implementation
+- Spec changes must be implemented and validated in **at least 2 driver languages** before the PR can be merged
 - Tests must pass against all supported server versions and topologies
 
 ## Specification Writing Guidelines
