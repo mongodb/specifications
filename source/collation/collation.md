@@ -1,7 +1,7 @@
 # Collation
 
 - Status: Accepted
-- Minimum Server Version: 1.8
+- Minimum Server Version: 3.4
 
 ______________________________________________________________________
 
@@ -222,6 +222,8 @@ A: A collection with a default collation can be created using the create helper 
 
 ## Changelog
 
+- 2026-05-13: Fix "Minimum Server Version" header from 1.8 to 3.4, matching the maxWireVersion 5 requirement stated in
+    the spec body.
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 - 2017-05-15: Minor markup fixes in API section.
