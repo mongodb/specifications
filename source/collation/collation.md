@@ -178,9 +178,9 @@ db.collection.bulkWrite([
 ]);
 ```
 
-The driver must inspect each operation for a Collation if maxWireVersion is < 5 and fail the entire bulkWrite if a
-collation was explicitly specified. In the example above, that means even the insertOne (without Collation) MUST NOT be
-sent.
+The driver MUST inspect all operations before sending any to the server. If any operation specifies a Collation, the
+driver MUST raise an error and MUST NOT send any operations to the server. In the example above, even the insertOne
+(which has no Collation) MUST NOT be sent.
 
 ## Test Plan
 
@@ -222,6 +222,8 @@ A: A collection with a default collation can be created using the create helper 
 
 ## Changelog
 
+- 2026-05-13: Clarify BulkWrite pre-flight check: use RFC 2119 MUST and make explicit that all operations are inspected
+    before any are sent.
 - 2024-02-15: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 - 2017-05-15: Minor markup fixes in API section.
