@@ -1363,11 +1363,11 @@ One of the strings:
 - "equality"
 - "range"
 - "prefixPreview"
-   - Used for the `$encStrStartsWith` operator.
+    - Used for the `$encStrStartsWith` operator.
 - "suffixPreview"
-   - Used for the `$encStrEndsWith` operator.
+    - Used for the `$encStrEndsWith` operator.
 - "substringPreview"
-   - Used for the `$encStrContains` operator.
+    - Used for the `$encStrContains` operator.
 
 queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
 queryType is set for a non-applicable algorithm.
