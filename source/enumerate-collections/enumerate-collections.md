@@ -243,10 +243,8 @@ method
 
 #### Replica Sets
 
-- `listCollections` can be run on a secondary node.
-- Querying `system.indexes` on a secondary node requires secondaryOk to be set.
-- Drivers MUST run `listCollections` on the primary node when in a replica set topology, unless directly connected to a
-    secondary node in Single topology.
+The server supports running `listCollections` on a secondary node. Drivers MUST however run `listCollections` on the
+primary node when in a replica set topology, unless directly connected to a secondary node in Single topology.
 
 ## Test Plan
 
@@ -291,6 +289,9 @@ The shell implements the first algorithm for falling back if the `listCollection
 (<https://github.com/mongodb/mongo/blob/f32ba54f971c045fb589fe4c3a37da77dc486cee/src/mongo/shell/db.js#L550>).
 
 ## Changelog
+
+- 2026-05-13: Clarify "Replica Sets" section: reword to distinguish server capability from driver routing rule; remove
+    stale `system.indexes` bullet (2.x behavior).
 
 - 2024-07-26: Migrated from reStructuredText to Markdown. Drop description of behavior for MongoDB 2.x servers.
 
