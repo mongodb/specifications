@@ -39,7 +39,9 @@
 
 ## Notes
 
-- No `tests/` directory; tests are prose-only.
+- No `tests/` directory; tests are prose-only. → [DRIVERS-3475](https://jira.mongodb.org/browse/DRIVERS-3475) /
+    [PR #1942](https://github.com/mongodb/specifications/pull/1942): machine-readable YAML fixtures proposed for all 16
+    behaviors above
 - Good use of Extended JSON examples, but these require manual translation to BSON in driver test implementations.
 - Design Rationale explains robustness principle: liberal decoding (accept out-of-order fields), conservative encoding
     (canonical order output).

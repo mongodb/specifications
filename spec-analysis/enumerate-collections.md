@@ -31,7 +31,8 @@
     NO tests for timeout behavior.
 - **Replica set secondary handling**: "listCollections can be run on a secondary node" but also "Drivers MUST run
     listCollections on the primary node in a replica set topology, unless directly connected to a secondary in a Single
-    topology." Contradictory phrasing in the same spec.
+    topology." Contradictory phrasing in the same spec. → [DRIVERS-3481](https://jira.mongodb.org/browse/DRIVERS-3481) /
+    [PR #1939](https://github.com/mongodb/specifications/pull/1939)
 - **Array vs cursor return type**: Unclear whether existing array-returning methods satisfy the cursor SHOULD
     requirement, or whether a separate cursor-based method is also needed.
 

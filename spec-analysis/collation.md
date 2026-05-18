@@ -20,14 +20,18 @@
 - **Error type for unsupported servers**: Spec states "Drivers MUST throw an error" for `maxWireVersion < 5` but does
     not specify the error type, message format, or whether the error is raised pre-flight or at the wire protocol level.
 - **`BulkWrite` rejection timing**: "Fail the entire `bulkWrite` if a collation was explicitly specified" — unclear
-    whether the entire batch is rejected before any network call or only after the first operation fails.
+    whether the entire batch is rejected before any network call or only after the first operation fails. →
+    [DRIVERS-3483](https://jira.mongodb.org/browse/DRIVERS-3483) /
+    [PR #1941](https://github.com/mongodb/specifications/pull/1941)
 - **Test plan vagueness**: "Drivers should test each affected CRUD, Index Management API, and collection
     creation/modification component" — no structured test format is provided.
 
 ## Inconsistencies
 
 - **Header "Minimum Server Version: 1.8" vs `maxWireVersion` 5 requirement**: Spec states support for "server versions
-    \>= 3.4 (`maxWireVersion` 5)" but the header says the minimum is 1.8. These conflict.
+    \>= 3.4 (`maxWireVersion` 5)" but the header says the minimum is 1.8. These conflict. →
+    [DRIVERS-3478](https://jira.mongodb.org/browse/DRIVERS-3478) /
+    [PR #1936](https://github.com/mongodb/specifications/pull/1936)
 - **Strict Collation model vs unknown options**: Spec defines a strict typed `Collation` class but also says "MUST NOT
     raise an error when a user provides unknown options." This creates tension between strict typing and server-side
     validation.

@@ -22,7 +22,9 @@ lack explicit test coverage:
 - **Non-file logging frameworks**: "Provide a straightforward, idiomatic way to programmatically consume messages and
     write to a file" — too vague. Does the driver need to ship a built-in file handler, or is documentation sufficient?
 - **Truncation logic contradiction**: "MUST ensure graceful handling of mid-code-point truncation" but also "MUST
-    implement truncation naively by simply truncating at the required length." These directly contradict each other.
+    implement truncation naively by simply truncating at the required length." These directly contradict each other. →
+    [DRIVERS-3479](https://jira.mongodb.org/browse/DRIVERS-3479) /
+    [PR #1937](https://github.com/mongodb/specifications/pull/1937)
 - **"Less severe level if one is available"**: "Available" could mean supported by the logging framework OR present in
     the spec table — ambiguous.
 - **"Internal way to intercept structured data"**: What does "internal" mean for drivers that use unstructured logging

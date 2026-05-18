@@ -32,7 +32,9 @@
 ## Inconsistencies
 
 - **Changelog 2015-09-30 vs current spec**: Old entry says "Legacy `secondaryOk` flag MUST be set to true on `getMore`
-    and `killCursors`" but current spec says "SHOULD NOT." The contradiction is not resolved in the spec text.
+    and `killCursors`" but current spec says "SHOULD NOT." The contradiction is not resolved in the spec text. →
+    [DRIVERS-3482](https://jira.mongodb.org/browse/DRIVERS-3482) /
+    [PR #1940](https://github.com/mongodb/specifications/pull/1940)
 - **Exhaust cursor 3.6 version gap**: Changelog says "Exhaust cursors must use OP_MSG on 3.6+ servers" (2021-08-27) but
     current table says "4.0 and earlier MUST use OP_QUERY." Server 3.6 falls between these two rules — which applies?
 - **Duplicate `maxTimeMS` rules**: One rule for non-tailable cursors and one for tailable with `awaitData` use nearly

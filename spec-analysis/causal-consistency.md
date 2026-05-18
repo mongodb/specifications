@@ -34,7 +34,9 @@
 
 - **Unacknowledged writes and `operationTime`**: Spec says "do not wait for a response" for unacknowledged writes but
     also says drivers "MUST save the `operationTime` in the `ClientSession` whether the operation succeeded or not."
-    Saving `operationTime` requires a response, which contradicts the "no response" statement.
+    Saving `operationTime` requires a response, which contradicts the "no response" statement. →
+    [DRIVERS-3480](https://jira.mongodb.org/browse/DRIVERS-3480) /
+    [PR #1938](https://github.com/mongodb/specifications/pull/1938)
 - **Default for implicit sessions**: "For implicit sessions, the value of this property MUST be set to false" conflicts
     with "If no value is supplied for `causalConsistency` the value will be inherited."
 
