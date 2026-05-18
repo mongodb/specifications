@@ -29,6 +29,9 @@ pre-commit run --all-files --hook-stage manual shellcheck   # Run shellcheck man
 
 ### YAML → JSON Test Conversion
 
+CI will fail if JSON files are out of date with their YAML sources. Always run `make -C source` after editing YAML test
+files.
+
 ```bash
 npm install -g js-yaml   # Required once
 make -C source           # Convert all YAML test files to JSON
@@ -40,12 +43,18 @@ make -C source           # Convert all YAML test files to JSON
 make update-schema-latest -C source
 ```
 
-### Test Generation Scripts (in `source/etc/`)
+### Test Generation Scripts
+
+Some specs include Python scripts that generate test files. These often live alongside their respective specs rather
+than in a single directory. Examples:
 
 ```bash
-python source/etc/generate-error-tests.py     # SDAM error tests
-python source/etc/generate-corpus.py          # Client-side encryption corpus tests
+python source/server-discovery-and-monitoring/tests/errors/generate-error-tests.py   # SDAM error tests
+python source/client-side-encryption/etc/generate-corpus.py                          # Client-side encryption corpus tests
+python source/etc/generate-handshakeError-tests.py                                   # Handshake error tests
 ```
+
+A general pattern: look for `generate-*.py` scripts in a spec's `etc/` or `tests/` subdirectory.
 
 ## Architecture
 
@@ -79,6 +88,8 @@ The unified test format (`source/unified-test-format/`) defines a YAML/JSON sche
 - YAML files are the source of truth; JSON files are auto-generated and committed
 - Schema versions live in `source/unified-test-format/schema-*.json`; `schema-latest.json` must match the highest
     version (run `make update-schema-latest -C source` to update it)
+- CI validates test files against the declared schema version using `ajv-cli`. Using any fields from a newer schema
+    version than declared will fail validation.
 
 ### Test File Conventions
 
@@ -90,7 +101,7 @@ The unified test format (`source/unified-test-format/`) defines a YAML/JSON sche
 ### Documentation Build (`mkdocs.yml`)
 
 MkDocs with `pymdown-extensions` and `mkdocs-github-admonitions-plugin`. The navigation is largely auto-generated via
-`generate_index.py`. The build must pass in `--strict` mode (no warnings).
+`scripts/generate_index.py`. The build must pass in `--strict` mode (no warnings).
 
 ## Test Authoring Rules
 
@@ -131,10 +142,25 @@ Per the PR template and project workflow:
 
 - Title must include a DRIVERS ticket (e.g., `DRIVERS-1234`)
 - Update the `## Changelog` section in each modified spec file
-- Spec changes must be implemented and validated in **at least 2 driver languages** before the PR can be merged
+- Test changes in at least one language driver
 - Include links to the driver implementation PRs in the PR description (e.g.,
     `Python implementation: https://github.com/mongodb/mongo-python-driver/pull/…`)
 - Tests must pass against all supported server versions and topologies
+
+## Jira Workflow
+
+When creating a DRIVERS ticket for a spec change:
+
+- **Issue type**: `Spec Change`
+- **Driver Changes** field (`customfield_10951`): set via `additional_fields` — use
+    `{"customfield_10951": {"id": "10748"}}` for "Needed" or `{"id": "25628"}` for "Needed - No Spec Changes"
+- **Description**: use Jira wiki markup (`h3.`, `h4.`), not Markdown
+- Pass `components` as a direct parameter (not inside `additional_fields`)
+- **Engineering Lead** (`customfield_18362`) is required to transition to "Ready for Work" — set it, transition, then
+    clear it
+- Workflow transitions: Needs Triage → Ready for Work (1091) → In Progress (941) → In Review (1041)
+- Transitioning to "In Review" automatically creates sub-tickets in each driver project (CDRIVER, CSHARP, CXX, GODRIVER,
+    JAVA, NODE, PHPLIB, PYTHON, RUBY, RUST)
 
 ## Specification Writing Guidelines
 
