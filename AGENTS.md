@@ -149,7 +149,7 @@ Per the PR template and project workflow:
 
 ## Jira Workflow
 
-When creating a DRIVERS ticket for a spec change:
+### Creating a DRIVERS spec change ticket
 
 - **Issue type**: `Spec Change`
 - **Driver Changes** field (`customfield_10951`): set via `additional_fields` — use
@@ -161,6 +161,17 @@ When creating a DRIVERS ticket for a spec change:
 - Workflow transitions: Needs Triage → Ready for Work (1091) → In Progress (941) → In Review (1041)
 - Transitioning to "In Review" automatically creates sub-tickets in each driver project (CDRIVER, CSHARP, CXX, GODRIVER,
     JAVA, NODE, PHPLIB, PYTHON, RUBY, RUST)
+
+### Closing driver sub-tickets
+
+Sub-tickets created in individual driver projects require project-specific fields before closing (transition id `61`):
+
+- **NODE**: set `{"customfield_23072": {"value": "Not Needed"}}` via `jira_update_issue` before closing
+    (Compass/DevTools Changes field)
+- **CDRIVER**: requires an assignee (`jira_update_issue` with `{"assignee": "..."}`) before any transition; the close
+    transition may fail with an unnamed required field — in that case, leave the ticket in "Investigating" and close
+    manually
+- **All others** (CSHARP, CXX, GODRIVER, JAVA, PHPLIB, PYTHON, RUBY, RUST): transition directly with id `61`
 
 ## Specification Writing Guidelines
 
