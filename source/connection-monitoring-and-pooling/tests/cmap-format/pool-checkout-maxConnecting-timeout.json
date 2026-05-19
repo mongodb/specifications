@@ -20,13 +20,13 @@
       "closeConnection": false,
       "blockConnection": true,
       "blockTimeMS": 750,
-      "appName": "cmap-format-tests"
+      "appName": "PoolCheckoutMaxConnectingTimeout"
     }
   },
   "poolOptions": {
     "maxPoolSize": 10,
     "waitQueueTimeoutMS": 50,
-    "appName": "cmap-format-tests"
+    "appName": "PoolCheckoutMaxConnectingTimeout"
   },
   "operations": [
     {
