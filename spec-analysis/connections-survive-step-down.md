@@ -1,11 +1,9 @@
 # Analysis: connections-survive-step-down
 
-## Important Note
+## Missing Tests
 
 **No main specification file exists.** This component contains only `tests/README.md` with test procedures. There is no
 normative document defining what "surviving a step-down" means or what driver behaviors are required.
-
-## Missing Tests (to be implemented as unified test format YAML)
 
 - [ ] **getMore Iteration**: After a primary step-down, subsequent `getMore` calls on an existing cursor succeed without
     new pool entries being created
