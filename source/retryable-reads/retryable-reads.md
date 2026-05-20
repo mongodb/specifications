@@ -15,6 +15,11 @@ This specification will
 - outline how an API for retryable read operations will be implemented in drivers
 - define an option to enable retryable reads for an application.
 
+The changes in this specification are related to but distinct from the retryability behaviors defined in the
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), which defines a retryability
+mechanism for all commands under certain server conditions. Unless otherwise noted, the changes in this specification
+refer only to the retryability behaviors summarized above.
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -207,8 +212,14 @@ capture this original retryable error. Drivers should then proceed with selectin
 
 ###### 3a. Selecting the server for retry
 
-In a sharded cluster, the server on which the operation failed MUST be provided to the server selection mechanism as a
-deprioritized server.
+For sharded clusters, the server address on which the operation failed MUST be provided to the server selection
+mechanism as a member of the deprioritized server address list.
+
+For all other topologies, the server address on which the operation failed MUST be provided to the server selection
+mechanism as a member of the deprioritized server address list only if the error is labelled with
+`SystemOverloadedError`. All other retryable errors MUST NOT cause the server address to be added to the deprioritized
+server address list. This requirement preserves the existing behavior of retryable reads for non-overload errors and
+avoids unintended consequences for operations utilizing primaryPreferred and secondaryPreferred read preferences.
 
 If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
 retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer
@@ -267,6 +278,13 @@ The following pseudocode for executing retryable read commands has been adapted 
 [the pseudocode for executing retryable write commands](../retryable-writes/retryable-writes.md#executing-retryable-write-commands)
 and reflects the flow described above.
 
+> [!NOTE]
+> The rules above and the pseudocode below only demonstrate the rules for retryable reads as outlined in this
+> specification. For simplicity, and to make the retryable reads rules easier to follow, the pseudocode was
+> intentionally unmodified. For a pseudocode block that contains both retryable reads logic as defined in this
+> specification and backoff retryabilitity as defined in the client backpressure specification, see the pseudocode in
+> the [Backpressure Specification](../client-backpressure/client-backpressure.md).
+
 ```typescript
 /**
  * Checks if a connection supports retryable reads.
@@ -284,6 +302,7 @@ function executeRetryableRead(command, session) {
   Exception previousError = null;
   retrying = false;
   Server previousServer = null;
+  deprioritizedServers = [];
   while true {
     if (previousError != null) {
       retrying = true;
@@ -292,9 +311,13 @@ function executeRetryableRead(command, session) {
       if (previousServer == null) {
         server = selectServer();
       } else {
-        // If a previous attempt was made, deprioritize the previous server
+        // If a previous attempt was made, deprioritize the previous server address
         // where the command failed.
-        deprioritizedServers = [ previousServer ];
+        // Sharded clusters deprioritize on all retryable errors.
+        // Other topologies only deprioritize on overload errors.
+        if previousServer.isSharded || previousError.hasLabel("SystemOverloadedError") {
+          deprioritizedServers.push(previousServer.address);
+        }
         server = selectServer(deprioritizedServers);
       }
     } catch (ServerSelectionException exception) {
@@ -318,6 +341,10 @@ function executeRetryableRead(command, session) {
       }
       /* CSOT is enabled and the operation has timed out. */
       if (timeoutMS != null && isExpired(timeoutMS) {
+        throw previousError;
+      }
+      /* CSOT is not enabled, and we have already tried once */
+      if (timeoutMS == null && retrying) {
         throw previousError;
       }
       continue;
@@ -357,6 +384,12 @@ function executeRetryableRead(command, session) {
     } catch (NotWritablePrimaryException notPrimaryError) {
       updateTopologyDescriptionForNotWritablePrimaryError(server, notPrimaryError);
       previousError = notPrimaryError;
+      previousServer = server;
+    } catch (Exception error when error.code in RETRYABLE_ERROR_CODES) {
+      /* Catches remaining server errors with retryable error codes as defined
+       * in the Retryable Error section. */
+      updateTopologyDescriptionForError(server, error);
+      previousError = error;
       previousServer = server;
     } catch (DriverException error) {
       if ( previousError != null ) {
@@ -546,6 +579,13 @@ reads because the resilience benefit of retryable reads outweighs the minor risk
 any customers experiencing degraded performance can simply disable `retryableReads`.
 
 ## Changelog
+
+- 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
+
+- 2026-02-11: Clarified that the retry logic and pseudocode does not include the modifications required by client
+    backpressure.
+
+- 2025-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 

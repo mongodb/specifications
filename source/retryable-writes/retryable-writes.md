@@ -19,6 +19,11 @@ specification will outline how an API for retryable write operations will be imp
 will define an option to enable retryable writes for an application and describe how a transaction ID will be provided
 to write commands executed therein.
 
+The changes in this specification are related to but distinct from the retryability behaviors defined in the
+[Client Backpressure Specification](../client-backpressure/client-backpressure.md), which defines a retryability
+mechanism for all commands under certain server conditions. Unless otherwise noted, the changes in this specification
+refer only to the retryability behaviors summarized above.
+
 ## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
@@ -43,10 +48,10 @@ specification. This object is always associated with a server session; however, 
 that creating a ClientSession will not always entail creation of a new server session. The name of this object MAY vary
 across drivers.
 
-**Retryable Error**
+**Retryable Write Error**
 
 An error is considered retryable if it has a RetryableWriteError label in its top-level "errorLabels" field. See
-[Determining Retryable Errors](#determining-retryable-errors) for more information.
+[Determining Retryable Write Errors](#determining-retryable-write-errors) for more information.
 
 Additional terms may be defined in the [Driver Session](../sessions/driver-sessions.md) specification.
 
@@ -102,7 +107,7 @@ In a sharded cluster, it is possible that mongos may appear to support retryable
 cluster do not (e.g. replica set shard is configured with feature compatibility version 3.4, a standalone is added as a
 new shard). In these rare cases, a write command that fans out to a shard that does not support retryable writes may
 partially fail and an error may be reported in the write result from mongos (e.g. `writeErrors` array in the bulk write
-result). This does not constitute a retryable error. Drivers MUST relay such errors to the user.
+result). This does not constitute a retryable write error. Drivers MUST relay such errors to the user.
 
 #### Supported Write Operations
 
@@ -162,7 +167,7 @@ occurs during a write command within a transaction (excepting `commitTransation`
 
 ### Implementing Retryable Writes
 
-#### Determining Retryable Errors
+#### Determining Retryable Write Errors
 
 When connected to a MongoDB instance that supports retryable writes (versions 3.6+), the driver MUST treat all errors
 with the RetryableWriteError label as retryable. This error label can be found in the top-level "errorLabels" field of
@@ -317,21 +322,43 @@ Drivers MUST then retry the operation as many times as necessary until any one o
 
 - CSOT is not enabled and one retry was attempted.
 
-For each retry attempt, drivers MUST select a writable server. In a sharded cluster, the server on which the operation
-failed MUST be provided to the server selection mechanism as a deprioritized server.
+For each retry attempt, drivers MUST select a writable server. For sharded clusters, the server address on which the
+operation failed MUST be provided to the server selection mechanism as a member of the deprioritized server address
+list. For all other topologies, the server address on which the operation failed MUST be provided to the server
+selection mechanism as a member of the deprioritized server address list only if the error is labelled with
+`SystemOverloadedError`. This requirement preserves the existing behavior of retryable writes for non-overload errors.
 
 If the driver cannot select a server for a retry attempt or the selected server does not support retryable writes,
 retrying is not possible and drivers MUST raise the retryable error from the previous attempt. In both cases, the caller
 is able to infer that an attempt was made.
 
 If a retry attempt also fails, drivers MUST update their topology according to the SDAM spec (see:
-[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)). If an error
-would not allow the caller to infer that an attempt was made (e.g. connection pool exception originating from the
-driver) or the error is labeled "NoWritesPerformed", the error from the previous attempt should be raised. If all server
-errors are labeled "NoWritesPerformed", then the first error should be raised.
+[Error Handling](../server-discovery-and-monitoring/server-discovery-and-monitoring.md#error-handling)).
+
+If the driver is unable to retry an operation, an error MUST be returned to the user. Some errors that a driver
+encounters indicate that no writes were attempted (i.e., the operation is a no-op). These errors include any client-side
+error that occurs before a command is sent (e.g., a server selection or connection checkout error) or any server error
+with the `NoWritesPerformed` error label. When the driver encounters multiple errors, the driver MUST ensure that if an
+error has been encountered which indicates that a write was attempted, this error is returned. This behavior is
+summarized below in the following rules:
+
+- If the driver has encountered only errors that indicate write attempts were made, the most recently encountered error
+    must be returned.
+- If all errors indicate no attempt was made (e.g., all errors contain the `NoWritesPerformed` error label or are
+    client-side errors before a command is sent), the first error encountered must be returned.
+- If the driver has encountered some errors which indicate a write attempt was made and some which indicate no write
+    attempt was made (e.g., a retryable server error followed by a checkout error), the most recently encountered error
+    which indicates a write attempt occurred must be returned.
 
 If a driver associates server information (e.g. the server address or description) with an error, the driver MUST ensure
 that the reported server information corresponds to the server that originated the error.
+
+> [!NOTE]
+> The rules above and the pseudocode below only demonstrate the rules for retryable writes as outlined in this
+> specification. For simplicity, and to make the retryable writes rules easier to follow, the pseudocode was
+> intentionally unmodified. For a pseudocode block that contains both retryable writes logic as defined in this
+> specification and backoff retryabilitity as defined in the client backpressure specification, see the pseudocode in
+> the [Backpressure Specification](../client-backpressure/client-backpressure.md).
 
 The above rules are implemented in the following pseudo-code:
 
@@ -377,6 +404,7 @@ function executeRetryableWrite(command, session) {
 
   Exception previousError = null;
   retrying = false;
+  deprioritizedServers = [];
   while true {
     try {
       return executeCommand(server, retryableCommand);
@@ -418,13 +446,17 @@ function executeRetryableWrite(command, session) {
     }
 
     /*
-     * We try to select server that is not the one that failed by passing the
-     * failed server as a deprioritized server.
+     * We try to select a server that has not already failed by adding the
+     * failed server to the list of deprioritized servers passed to selectServer.
      * If we cannot select a writable server, do not proceed with retrying and
      * throw the previous error. The caller can then infer that an attempt was
      * made and failed. */
+    // Sharded clusters deprioritize on all retryable errors.
+    // Other topologies only deprioritize on overload errors.
     try {
-      deprioritizedServers = [ server ];
+      if server.isSharded || previousError.hasLabel("SystemOverloadedError") {
+        deprioritizedServers.push(server.address);
+      }
       server = selectServer("writable", deprioritizedServers);
     } catch (Exception ignoredError) {
       throw previousError;
@@ -679,6 +711,15 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
+
+- 2026-02-11: Clarified that the retry logic and pseudocode does not include the modifications required by client
+    backpressure.
+
+- 2026-01-14: Clarify which error to return when more than one error with the `NoWritesPerformed` label is encountered.
+
+- 2025-12-08: Clarified that server deprioritization during retries must use a list of server addresses.
 
 - 2024-05-08: Add guidance for client-level `bulkWrite()` retryability.
 

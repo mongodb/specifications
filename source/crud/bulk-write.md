@@ -835,7 +835,7 @@ Encountering a top-level error MUST halt execution of a bulk write for both orde
 means that drivers MUST NOT attempt to retrieve more responses from the cursor or execute any further `bulkWrite`
 batches and MUST immediately throw an exception. If the results cursor has not been exhausted on the server when a
 top-level error occurs, drivers MUST send the `killCursors` command to attempt to close it. The result returned from the
-`killCursors` command MAY be ignored.
+`killCursors` command MUST NOT be ignored.
 
 ### Write Concern Errors
 
@@ -861,11 +861,15 @@ specification.
 
 ## Future Work
 
-### Retry `bulkWrite` when `getMore` fails with a retryable error
+### Retrying `getMore`s
 
 When a `getMore` fails with a retryable error when attempting to iterate the results cursor, drivers could retry the
 entire `bulkWrite` command to receive a fresh cursor and retry iteration. This work was omitted to minimize the scope of
 the initial implementation and testing of the new bulk write API, but may be revisited in the future.
+
+Note that there is one exception to this behavior: when a command fails with an error that is eligible for retry under
+the conditions defined in the [Client Backpressure](../client-backpressure/client-backpressure.md) specification,
+drivers SHOULD retry the `getMore` following the rules outlined in the client backpressure specification.
 
 ### Use document sequences for auto-encrypted bulk writes
 
@@ -946,6 +950,8 @@ The requirement has since been removed. Checking size limits complicates some dr
 error in this specific situation does not seem helpful enough to require size checks.
 
 ## **Changelog**
+
+- 2026-01-05: Specify that `killCursors`'s response cannot be ignored.
 
 - 2025-09-09: Clarify that `rawData` is for internal use only.
 

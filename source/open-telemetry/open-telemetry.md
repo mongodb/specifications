@@ -124,7 +124,7 @@ below.
 ##### Transactions
 
 When a user starts a transaction with `startTransaction`, the driver SHOULD create a span for the pseudo operation
-`transaction`. This span MUST have only one attribute `db.system` with the value `mongodb`. All operations executed
+`transaction`. This span MUST have only one attribute `db.system.name` with the value `mongodb`. All operations executed
 within the transaction SHOULD be nested to the `transaction` span.
 
 When a user commits or aborts a transaction with `commitTransaction` or `abortTransaction`, the driver SHOULD finish the
@@ -158,7 +158,7 @@ Spans SHOULD have the following attributes:
 
 | Attribute              | Type     | Description                                                                | Requirement Level     |
 | :--------------------- | :------- | :------------------------------------------------------------------------- | :-------------------- |
-| `db.system`            | `string` | MUST be 'mongodb'                                                          | Required              |
+| `db.system.name`       | `string` | MUST be 'mongodb'                                                          | Required              |
 | `db.namespace`         | `string` | The database name                                                          | Required if available |
 | `db.collection.name`   | `string` | The collection being accessed within the database stated in `db.namespace` | Required if available |
 | `db.operation.name`    | `string` | The name of the driver operation being executed                            | Required              |
@@ -234,7 +234,7 @@ Spans SHOULD have the following attributes:
 
 | Attribute                         | Type     | Description                                                                                                                                              | Requirement Level            |
 | :-------------------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- |
-| `db.system`                       | `string` | MUST be 'mongodb'                                                                                                                                        | Required                     |
+| `db.system.name`                  | `string` | MUST be 'mongodb'                                                                                                                                        | Required                     |
 | `db.namespace`                    | `string` | The database name                                                                                                                                        | Required if available        |
 | `db.collection.name`              | `string` | The collection being accessed within the database stated in `db.namespace`                                                                               | Required if available        |
 | `db.command.name`                 | `string` | The name of the server command being executed                                                                                                            | Required                     |
@@ -422,3 +422,8 @@ tracing may have unexpected negative outcome.
 Further, we already have two attributes that configure tracing, and we expect there might be more.
 
 A URI options can be added later if we realise our users need it, while the opposite is not easily accomplished.
+
+## Changelog
+
+- 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
+    conventions.

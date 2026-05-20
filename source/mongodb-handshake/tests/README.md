@@ -88,6 +88,12 @@ the following sets of environment variables:
 Drivers that do not emit events for commands issued as part of the handshake with the server will need to create a
 test-only backdoor mechanism to intercept the handshake `hello` command for verification purposes.
 
+Client metadata specified as part of a "Create a `MongoClient` instance" step MUST use an API which appends the
+specified metadata _during_ `MongoClient` initialization.
+
+Client metadata specified as part of an "Append the `DriverInfoOptions`" step MUST use an API which appends the
+specified metadata _after_ `MongoClient` initialization.
+
 ### Test 1: Test that the driver updates metadata
 
 Drivers should verify that metadata provided after `MongoClient` initialization is appended, not replaced, and is
@@ -102,7 +108,7 @@ Before each test case, perform the setup.
 
     - `maxIdleTimeMS` set to `1ms`
 
-    - Wrapping library metadata:
+    - Client metadata appended with the following `DriverInfoOptions`:
 
         | Field    | Value            |
         | -------- | ---------------- |
@@ -172,7 +178,7 @@ Before each test case, perform the setup.
 
 3. Send a `ping` command to the server and verify that the command succeeds.
 
-4. Save intercepted `client` document as `updatedClientMetadata`.
+4. Save intercepted `client` document as `clientMetadata`.
 
 5. Wait 5ms for the connection to become idle.
 
@@ -206,7 +212,7 @@ Before each test case, perform the setup.
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
 
-    - All other subfields in the `client` document remain unchanged from `updatedClientMetadata`.
+    - All other subfields in the `client` document remain unchanged from `clientMetadata`.
 
 ### Test 3: Multiple Successive Metadata Updates with Duplicate Data
 
@@ -319,13 +325,14 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following:
 
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
+    - Client metadata appended with the following `DriverInfoOptions`:
+
+        | Field    | Value            |
+        | -------- | ---------------- |
+        | name     | library          |
+        | version  | 1.2              |
+        | platform | Library Platform |
 
 2. Send a `ping` command to the server and verify that the command succeeds.
 
@@ -352,13 +359,14 @@ Before each test case, perform the setup.
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the following:
 
-    | Field    | Value            |
-    | -------- | ---------------- |
-    | name     | library          |
-    | version  | 1.2              |
-    | platform | Library Platform |
+    - Client metadata appended with the following `DriverInfoOptions`:
+
+        | Field    | Value            |
+        | -------- | ---------------- |
+        | name     | library          |
+        | version  | 1.2              |
+        | platform | Library Platform |
 
 2. Send a `ping` command to the server and verify that the command succeeds.
 
@@ -402,21 +410,24 @@ Before each test case, perform the setup.
 
 ##### Parameterized test cases
 
-###### Initial metadata
+> [!NOTE]
+> Drivers whose API allows `client.driver.name` to be unset MAY implement Case 1.
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | null    | 1.2     | Library Platform |
-| 2    | library | null    | Library Platform |
-| 3    | library | 1.2     | null             |
+###### Appended metadata
 
-###### Appended Metadata
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~null~~ | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | null    | Library Platform     |
+| 3     | library  | 1.2     | null                 |
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | ""      | 1.2     | Library Platform |
-| 2    | library | ""      | Library Platform |
-| 3    | library | 1.2     | ""               |
+###### Duplicate Metadata
+
+| Case  | Name    | Version | Platform             |
+| ----- | ------- | ------- | -------------------- |
+| ~~1~~ | ~~""~~  | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library | ""      | Library Platform     |
+| 3     | library | 1.2     | ""                   |
 
 ##### Running a test case
 
@@ -424,21 +435,21 @@ Before each test case, perform the setup.
 
     - `maxIdleTimeMS` set to `1ms`
 
-2. Append the `DriverInfoOptions` from the selected test case from the initial metadata section.
+2. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
 
 3. Send a `ping` command to the server and verify that the command succeeds.
 
-4. Save intercepted `client` document as `initialClientMetadata`.
+4. Save intercepted `client` document as `clientMetadata`.
 
 5. Wait 5ms for the connection to become idle.
 
-6. Append the `DriverInfoOptions` from the selected test case from the appended metadata section.
+6. Append the `DriverInfoOptions` from the selected test case from the duplicate metadata section.
 
 7. Send a `ping` command to the server and verify the command succeeds.
 
 8. Store the response as `updatedClientMetadata`.
 
-9. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+9. Assert that `clientMetadata` is identical to `updatedClientMetadata`.
 
 ### Test 8: Empty strings are considered unset when appending metadata identical to initial metadata
 
@@ -452,26 +463,27 @@ Before each test case, perform the setup.
 
 ###### Initial metadata
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | null    | 1.2     | Library Platform |
-| 2    | library | null    | Library Platform |
-| 3    | library | 1.2     | null             |
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~null~~ | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | null    | Library Platform     |
+| 3     | library  | 1.2     | null                 |
 
 ###### Appended Metadata
 
-| Case | Name    | Version | Platform         |
-| ---- | ------- | ------- | ---------------- |
-| 1    | ""      | 1.2     | Library Platform |
-| 2    | library | ""      | Library Platform |
-| 3    | library | 1.2     | ""               |
+| Case  | Name     | Version | Platform             |
+| ----- | -------- | ------- | -------------------- |
+| ~~1~~ | ~~null~~ | ~~1.2~~ | ~~Library Platform~~ |
+| 2     | library  | ""      | Library Platform     |
+| 3     | library  | 1.2     | ""                   |
 
 ##### Running a test case
 
 1. Create a `MongoClient` instance with:
 
     - `maxIdleTimeMS` set to `1ms`
-    - `driverInfo` set to the `DriverInfoOptions` from the selected test case from the initial metadata section.
+    - Client metadata appended with the `DriverInfoOptions` from the selected test case from the initial metadata
+        section.
 
 2. Send a `ping` command to the server and verify that the command succeeds.
 
@@ -486,3 +498,17 @@ Before each test case, perform the setup.
 7. Store the response as `updatedClientMetadata`.
 
 8. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
+
+### Test 9: Handshake documents include `backpressure: true`
+
+These tests require a mechanism for observing handshake documents sent to the server.
+
+1. Create a `MongoClient` that is configured to record all handshake documents sent to the server as a part of
+    connection establishment.
+
+2. Send a `ping` command to the server and verify that the command succeeds. This ensure that a connection is
+    established on all topologies.
+
+3. Assert that for every handshake document intercepted:
+
+    1. The document has a field `backpressure` whose value is `true`.

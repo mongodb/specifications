@@ -3884,7 +3884,8 @@ Using [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md
 create the following collections with majority write concern:
 
 - `db.prefix-suffix` using the `encryptedFields` option set to the contents of
-    [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json)
+    [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json).
+    Skip this step if testing server 9.0.0+.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
 
@@ -3975,6 +3976,8 @@ Use `encryptedClient` to insert the following document into `db.substring` with 
 
 #### Case 1: can find a document by prefix
 
+Skip this test case if testing MongoDB server 9.0.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
@@ -4007,6 +4010,8 @@ Assert the following document is returned:
 ```
 
 #### Case 2: can find a document by suffix
+
+Skip this test case if testing MongoDB server 9.0.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
@@ -4041,6 +4046,8 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
+Skip this test case if testing MongoDB server 9.0.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
 ```typescript
@@ -4069,6 +4076,8 @@ Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collec
 Assert that no documents are returned.
 
 #### Case 4: assert no document found by suffix
+
+Skip this test case if testing MongoDB server 9.0.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
@@ -4162,6 +4171,8 @@ Use `encryptedClient` to run a "find" operation on the `db.substring` collection
 Assert that no documents are returned.
 
 #### Case 7: assert `contentionFactor` is required
+
+Skip this test case if testing MongoDB server 9.0.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 

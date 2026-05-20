@@ -123,7 +123,210 @@ This test MUST be executed against a sharded cluster that supports `retryReads=t
 
 7. Disable the fail point on `s0`.
 
+### 3. Retrying Reads in a Replica Set
+
+These tests will be used to ensure drivers properly retry reads against a replica set.
+
+#### 3.1 Retryable Reads Caused by Overload Errors Are Retried on a Different Replicaset Server When One is Available and enableOverloadRetargeting is enabled
+
+This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
+`retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, `enableOverloadRetargeting=True`,
+    and command event monitoring enabled.
+
+2. Configure the following fail point for `client`:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"]
+            errorCode: 6
+        }
+    }
+    ```
+
+3. Reset the command event monitor to clear the failpoint command from its stored events.
+
+4. Execute a `find` command with `client`.
+
+5. Assert that one failed command event and one successful command event occurred.
+
+6. Assert that both events occurred on different servers.
+
+#### 3.2 Retryable Reads Caused by Non-Overload Errors Are Retried on the Same Replicaset Server
+
+This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
+`retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
+    enabled.
+
+2. Configure the following fail point for `client`:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError"]
+            errorCode: 6
+        }
+    }
+    ```
+
+3. Reset the command event monitor to clear the failpoint command from its stored events.
+
+4. Execute a `find` command with `client`.
+
+5. Assert that one failed command event and one successful command event occurred.
+
+6. Assert that both events occurred on the same server.
+
+#### 3.3 Retryable Reads Caused by Overload Errors Are Retried on Same Replicaset Server When enableOverloadRetargeting is disabled
+
+This test MUST be executed against a MongoDB 4.4+ replica set that has at least one secondary, supports
+`retryReads=true`, and has enabled the `configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client `client` with `retryReads=true`, `readPreference=primaryPreferred`, and command event monitoring
+    enabled.
+
+2. Configure the following fail point for `client`:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"]
+            errorCode: 6
+        }
+    }
+    ```
+
+3. Reset the command event monitor to clear the failpoint command from its stored events.
+
+4. Execute a `find` command with `client`.
+
+5. Assert that one failed command event and one successful command event occurred.
+
+6. Assert that both events occurred on the same server.
+
+### 4: Test that drivers set the maximum number of retries for all retryable read errors when an overload error is encountered
+
+This test MUST be executed against a MongoDB 4.4+ server that supports `retryReads=true` and has enabled the
+`configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `91` (ShutdownInProgress) and
+    the `RetryableError` label:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+    Configure the second fail point command only if the failed event is for the first error configured in step 2.
+
+4. Attempt a `findOne` operation on any record for any database and collection. Expect the `findOne` to fail with a
+    server error. Assert that `MAX_RETRIES + 1` attempts were made.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
+### 5: Test that drivers do not apply backoff to non-overload errors
+
+This test MUST be executed against a MongoDB 4.4+ server that supports `retryReads=true` and has enabled the
+`configureFailPoint` command with the `errorLabels` option.
+
+1. Create a client.
+
+2. Configure a fail point with error code `91` (ShutdownInProgress) with the `RetryableError` and
+    `SystemOverloadedError` error labels:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: {times: 1},
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError", "SystemOverloadedError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+3. Via the command monitoring CommandFailedEvent, configure a fail point with error code `91` (ShutdownInProgress) and
+    the `RetryableError` label:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "alwaysOn",
+        data: {
+            failCommands: ["find"],
+            errorLabels: ["RetryableError"],
+            errorCode: 91
+        }
+    }
+    ```
+
+    Configure the second fail point command only if the failed event is for the first error configured in step 2.
+
+4. Attempt a `findOne` operation on any record for any database and collection. Expect the `findOne` to fail with a
+    server error. Assert that backoff was applied only once for the initial overload error and not for the subsequent
+    non-overload retryable errors.
+
+5. Disable the fail point:
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: "off"
+    }
+    ```
+
 ## Changelog
+
+- 2026-04-14: Add prose tests for retry behavior when a mix of overload and non-overload errors are encountered.
+
+- 2026-03-31: Add additional prose test for overload retargeting.
+
+- 2026-02-19: Add prose tests for retrying against a replica set.
 
 - 2024-04-30: Migrated from reStructuredText to Markdown.
 

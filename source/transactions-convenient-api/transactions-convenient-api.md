@@ -115,56 +115,91 @@ needed (e.g. user data to pass as a parameter to the callback).
 This method should perform the following sequence of actions:
 
 1. Define the following:
+
     1. Record the current monotonic time, which will be used to enforce the 120-second / CSOT timeout before later retry
         attempts.
-    2. Set `retry` to `0`. This will be used for backoff later in step 7.
+    2. Set `transactionAttempt` to `0`.
     3. Set `TIMEOUT_MS` to be `timeoutMS` if given, otherwise 120-seconds.
-2. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session. If TransactionOptions
-    were specified in the call to `withTransaction`, those MUST be used for `startTransaction`. Note that
-    `ClientSession.defaultTransactionOptions` will be used in the absence of any explicit TransactionOptions.
-3. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` and return
+
+2. If `transactionAttempt` > 0:
+
+    1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. If
+        elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
+        `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
+        Otherwise, sleep for `backoffMS`.
+
+        1. jitter is a random float between \[0, 1), optionally including 1, depending on what is most natural for the
+            given driver language.
+
+        2. `transactionAttempt` is the variable defined in step 1.
+
+        3. `BACKOFF_INITIAL` is 5ms
+
+        4. `BACKOFF_MAX` is 500ms
+
+3. Invoke [startTransaction](../transactions/transactions.md#starttransaction) on the session and increment
+    `transactionAttempt`. If TransactionOptions were specified in the call to `withTransaction`, those MUST be used
+    for `startTransaction`. Note that `ClientSession.defaultTransactionOptions` will be used in the absence of any
+    explicit TransactionOptions.
+
+4. If `startTransaction` reported an error, propagate that error to the caller of `withTransaction` as is and return
     immediately.
-4. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
+
+5. Invoke the callback. Drivers MUST ensure that the ClientSession can be accessed within the callback (e.g. pass
     ClientSession as the first parameter, rely on lexical scoping). Drivers MAY pass additional parameters as needed
     (e.g. user data solicited by withTransaction).
-5. Control returns to `withTransaction`. Determine the current
+
+6. Control returns to `withTransaction`. Determine the current
     [state](../transactions/transactions.md#clientsession-changes) of the ClientSession and whether the callback
     reported an error (e.g. thrown exception, error output parameter).
-6. If the callback reported an error:
+
+7. If the callback reported an error:
+
     1. If the ClientSession is in the "starting transaction" or "transaction in progress" state, invoke
         [abortTransaction](../transactions/transactions.md#aborttransaction) on the session.
 
-    2. If the callback's error includes a "TransientTransactionError" label and the elapsed time of `withTransaction` is
-        less than TIMEOUT_MS, calculate the backoffMS to be `jitter * min(BACKOFF_INITIAL * (1.5**retry), BACKOFF_MAX)`
-        where:
-
-        1. jitter is a random float between \[0, 1)
-        2. retry is the variable defined in step 1.
-        3. `BACKOFF_INITIAL` is 5ms
-        4. `BACKOFF_MAX` is 500ms
-
-        If elapsed time + `backoffMS` > `TIMEOUT_MS`, then raise last known error. Otherwise, sleep for `backoffMS`,
-        increment `retry`, and jump back to step two.
+    2. If the callback's error includes a "TransientTransactionError" label, jump back to step two.
 
     3. If the callback's error includes a "UnknownTransactionCommitResult" label, the callback must have manually
-        committed a transaction, propagate the callback's error to the caller of `withTransaction` and return
+        committed a transaction, propagate the callback's error to the caller of `withTransaction` as is and return
         immediately.
 
-    4. Otherwise, propagate the callback's error to the caller of `withTransaction` and return immediately.
-7. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
+    4. Otherwise, propagate the callback's error to the caller of `withTransaction` as is and return immediately.
+
+8. If the ClientSession is in the "no transaction", "transaction aborted", or "transaction committed" state, assume the
     callback intentionally aborted or committed the transaction and return immediately.
-8. Invoke [commitTransaction](../transactions/transactions.md#committransaction) on the session.
-9. If `commitTransaction` reported an error:
-    1. If the `commitTransaction` error includes a "UnknownTransactionCommitResult" label and the error is not
-        MaxTimeMSExpired and the elapsed time of `withTransaction` is less than TIMEOUT_MS, jump back to step eight. We
-        will trust `commitTransaction` to apply a majority write concern on retry attempts (see:
-        [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
 
-    2. If the `commitTransaction` error includes a "TransientTransactionError" label and the elapsed time of
-        `withTransaction` is less than TIMEOUT_MS, jump back to step two.
+9. Invoke [commitTransaction](../transactions/transactions.md#committransaction) on the session.
 
-    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` and return immediately.
-10. The transaction was committed successfully. Return immediately.
+10. If `commitTransaction` reported an error:
+
+    1. If the `commitTransaction` error includes a `UnknownTransactionCommitResult` label and the error is not
+        `MaxTimeMSExpired`
+
+        1. If the elapsed time of `withTransaction` exceeded `TIMEOUT_MS`, propagate the `commitTransaction` error to the
+            caller of `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return
+            immediately.
+        2. Otherwise, jump back to step nine. We will trust `commitTransaction` to apply a majority write concern on
+            retry attempts (see:
+            [Majority write concern is used when retrying commitTransaction](#majority-write-concern-is-used-when-retrying-committransaction)).
+
+    2. If the `commitTransaction` error includes a `TransientTransactionError` label, jump back to step two.
+
+    3. Otherwise, propagate the `commitTransaction` error to the caller of `withTransaction` as is and return
+        immediately.
+
+11. The transaction was committed successfully. Return immediately.
+
+###### Timeout Error propagation
+
+When the previously encountered error needs to be propagated because there is no more time for another attempt, and it
+is not already a [timeout error](../client-side-operations-timeout/client-side-operations-timeout.md#errors), then:
+
+- A timeout error MUST be propagated instead. It MUST expose the previously encountered error as specified in the
+    ["Errors" section of the CSOT specification](../client-side-operations-timeout/client-side-operations-timeout.md#errors).
+    - If exposing the previously encountered error from a timeout error is impossible in a driver, then the driver is
+        exempt from the requirement and MUST propagate the previously encountered error as is.
+- The timeout error MUST copy all error labels from the previously encountered error.
 
 ##### Pseudo-code
 
@@ -178,33 +213,38 @@ withTransaction(callback, options) {
     var startTime = Date.now(); // milliseconds since Unix epoch
     // See the CSOT specification for information on calculating timeoutMS for a convenient transaction API call.
     var timeout = getCSOTTimeoutIfSet() ?? 120_000;
-    var retry = 0;
+    var transactionAttempt = 0;
+    var lastError = null;
 
     retryTransaction: while (true) {
-        if (retry > 0) {
-            var backoff = Math.random() * min(BACKOFF_INITIAL * (1.5**retry), 
+        if (transactionAttempt > 0) {
+            var backoff = Math.random() * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), 
                                               BACKOFF_MAX);
 
             if (Date.now() + backoff - startTime >= timeout) {
-                throw last_error;
+                throw makeTimeoutError(lastError);
             }
             sleep(backoff);
         }
-        retry += 1
+
         this.startTransaction(options); // may throw on error
+        transactionAttempt += 1;
 
         try {
             callback(this);
         } catch (error) {
-            var last_error = error;
+            lastError = error;
             if (this.transactionState == STARTING ||
                 this.transactionState == IN_PROGRESS) {
                 this.abortTransaction();
             }
 
-            if (error.hasErrorLabel("TransientTransactionError") &&
-                Date.now() - startTime < timeout) {
-                continue retryTransaction;
+            if (error.hasErrorLabel("TransientTransactionError")) {
+                if (Date.now() - startTime < timeout) {
+                    continue retryTransaction;
+                } else {
+                    throw makeTimeoutError(error)
+                }
             }
 
             throw error;
@@ -229,14 +269,16 @@ withTransaction(callback, options) {
                  * {ok:0, code: 50, codeName: "MaxTimeMSExpired"}
                  * {ok:1, writeConcernError: {code: 50, codeName: "MaxTimeMSExpired"}}
                  */
+                lastError = error;
                 if (!isMaxTimeMSExpiredError(error) &&
-                    error.hasErrorLabel("UnknownTransactionCommitResult") &&
-                    Date.now() - startTime < timeout) {
+                    error.hasErrorLabel("UnknownTransactionCommitResult")) {
+                    if (Date.now() - startTime >= timeout) {
+                        throw makeTimeoutError(error);
+                    }
                     continue retryCommit;
                 }
 
-                if (error.hasErrorLabel("TransientTransactionError") &&
-                    Date.now() - startTime < timeout) {
+                if (error.hasErrorLabel("TransientTransactionError")) {
                     continue retryTransaction;
                 }
 
@@ -246,6 +288,10 @@ withTransaction(callback, options) {
         }
         break; // Transaction was successful
     }
+}
+
+function makeTimeoutError(error) {
+    return getCSOTTimeoutIfSet() != null ? createCSOTMongoTimeoutException(error) : createLegacyMongoTimeoutException(error);
 }
 ```
 
@@ -263,11 +309,11 @@ propagate. Command errors may abort the transaction on the server, and an attemp
 rejected with `NoSuchTransaction` error.
 
 For example, `DuplicateKeyError` is an error that aborts a transaction on the server. If the callback catches
-`DuplicateKeyError` and does not re-throw it, the driver will attempt to commit the transaction. The server will reject
+`DuplicateKeyError` and does not report it, the driver will attempt to commit the transaction. The server will reject
 the commit attempt with `NoSuchTransaction` error. This error has the "TransientTransactionError" label and the driver
 will retry the commit. This will result in an infinite loop.
 
-Drivers MUST recommend that the callback re-throw command errors if they need to be handled inside the callback. Drivers
+Drivers MUST recommend that the callback report command errors if they need to be handled inside the callback. Drivers
 SHOULD also recommend using Core Transaction API if a user wants to handle errors in a custom way.
 
 ## Test Plan
@@ -308,8 +354,8 @@ An earlier design also considered using the callback's return value to indicate 
 of two ways:
 
 - The callback aborts the transaction directly and returns to `withTransaction`, which will then return to its caller.
-- The callback raises an error without the "TransientTransactionError" label, in which case `withTransaction` will abort
-    the transaction and return to its caller.
+- The callback propagates an error without the `TransientTransactionError` label, in which case `withTransaction` will
+    abort the transaction and return to its caller.
 
 ### Applications are responsible for passing ClientSession for operations within a transaction
 
@@ -377,7 +423,7 @@ Previously, the driver would retry transactions immediately, which is fine for l
 server load increases, immediate retries can result in retry storms, unnecessarily further overloading the server.
 
 Exponential backoff is well-researched and accepted backoff strategy that is simple to implement. A low initial backoff
-(1-millisecond) and growth value (1.25x) were chosen specifically to mitigate latency in low levels of contention.
+(5-milliseconds) and growth value (1.5x) were chosen specifically to mitigate latency in low levels of contention.
 Empirical evidence suggests that 500-millisecond max backoff ensured that a transaction did not wait so long as to
 exceed the 120-second timeout and reduced load spikes.
 
@@ -399,6 +445,16 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
+
+- 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
+    wrapping semantics and label propagation in spec and prose tests.
+
+- 2026-03-03: Clarify exponential backoff jitter upper bound.
+
+- 2026-02-20: Fix initial backoff and growth value parameters in "Design Rationale" section.
+
+- 2026-02-17: Clarify expected error when timeout is reached
+    [DRIVERS-3391](https://jira.mongodb.org/browse/DRIVERS-3391).
 
 - 2025-11-20: withTransaction applies exponential backoff when retrying.
 
