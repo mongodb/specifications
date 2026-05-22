@@ -3898,9 +3898,17 @@ as `key1Document`.
 
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
+Load the file
+[key2-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key2-document.json)
+as `key2Document`.
+
+Read the `"_id"` field of `key2Document` as `key2ID`.
+
 Drop and create the collection `keyvault.datakeys`.
 
 Insert `key1Document` in `keyvault.datakeys` with majority write concern.
+
+Insert `key2Document` in `keyvault.datakeys` with majority write concern.
 
 Create a MongoClient named `keyVaultClient`.
 
@@ -4261,7 +4269,7 @@ class EncryptOpts {
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: false,
-      diacriticSensitive: true,
+      diacriticSensitive: false,
       suffix: SuffixOpts {
         strMaxQueryLength: 10,
         strMinQueryLength: 2,
@@ -4308,7 +4316,7 @@ class EncryptOpts {
    queryType: "prefix",
    contentionFactor: 0,
    textOpts: TextOpts {
-      caseSensitive: true,
+      caseSensitive: false,
       diacriticSensitive: false,
       prefix: PrefixOpts {
         strMaxQueryLength: 10,
@@ -4339,7 +4347,7 @@ class EncryptOpts {
    queryType: "suffix",
    contentionFactor: 0,
    textOpts: TextOpts {
-      caseSensitive: true,
+      caseSensitive: false,
       diacriticSensitive: false,
       suffix: SuffixOpts {
         strMaxQueryLength: 10,
@@ -4367,7 +4375,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the fo
 
 ```typescript
 class EncryptOpts {
-   keyId : <key1ID>,
+   keyId : <key2ID>,
    algorithm: "TextPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
@@ -4385,14 +4393,14 @@ class EncryptOpts {
 Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
 
 ```javascript
-{ "encryptedText": <encrypted 'FooBarBaz'> }
+{ "encryptedTextInsensitive": <encrypted 'FooBarBaz'> }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
-   keyId : <key1ID>,
+   keyId : <key2ID>,
    algorithm: "TextPreview",
    queryType: "substring",
    contentionFactor: 0,
@@ -4411,13 +4419,13 @@ class EncryptOpts {
 Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
+{ $expr: { $encStrContains: {input: '$encryptedTextInsensitive', substring: <encrypted 'bar'>} } }
 ```
 
 Assert the following document is returned:
 
 ```javascript
-{ "encryptedText": "FooBarBaz" }
+{ "encryptedTextInsensitive": "FooBarBaz" }
 ```
 
 #### Case 11: can find a diacritic-insensitively indexed document by substring
