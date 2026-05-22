@@ -1,5 +1,6 @@
 # Default ownership
 * @mongodb/dbx-leadership
+* @mongodb/dbx-spec-maintainers-cross-spec-consistency
 
 # Authentication
 /source/auth/ @mongodb/dbx-spec-maintainers-auth
