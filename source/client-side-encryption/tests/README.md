@@ -4224,6 +4224,8 @@ algorithm".
 
 #### Case 8: can find a case and diacritic-insensitively indexed document by prefix and suffix
 
+Skip this test case if testing MongoDB server 9.0.0+.
+
 `"BingQiLin"` was inserted via auto-encryption in Test Setup, indexed under the
 `caseSensitive: false, diacriticSensitive: false` prefix configuration and the
 `caseSensitive: false, diacriticSensitive: false` suffix configuration of `db.prefix-suffix-ci-di`.
@@ -4291,6 +4293,8 @@ Assert the following document is returned:
 ```
 
 #### Case 9: can find a diacritic-insensitively indexed document by prefix and suffix
+
+Skip this test case if testing MongoDB server 9.0.0+.
 
 Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) using these `AutoEncryptionOpts`:
 
