@@ -68,7 +68,7 @@ class ReadConcern {
 }
 ```
 
-The read concern option is available for most operations, including the following:
+The read concern option is available for the following operations:
 
 - `aggregate` command
 - `count` command
@@ -78,16 +78,6 @@ The read concern option is available for most operations, including the followin
 - `parallelCollectionScan` command
 - `geoNear` command
 - `geoSearch` command
-- `insert` command
-- `update` command
-- `findAndModify` command
-- `delete` command
-- `bulkWrite` command
-- `create` command
-- `createIndexes` command
-- `drop` command
-- `dropDatabase` command
-- `dropIndexes` command
 
 Starting in MongoDB 4.2, an `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`;
 however, it does not support the "linearizable" level (attempting to do so will result in a server error).
@@ -95,6 +85,9 @@ however, it does not support the "linearizable" level (attempting to do so will 
 Server versions before 4.2 do not support a `readConcern` at all for `aggregate` commands with a write stage.
 
 The `mapReduce` command where the `out` option is anything other than `{ inline: 1 }` does not support a `readConcern`.
+
+The read concern document is also used to specify `afterClusterTime` for read and write operations in
+causally-consistent sessions. See [`afterClusterTime`](#afterclustertime) for more information.
 
 #### Unknown Levels and Additional Options for String Based ReadConcerns
 
@@ -114,6 +107,26 @@ for reading. `find`, `aggregate` and `distinct` operations executed with `ReadCo
 `atClusterTime` will return `atClusterTime` timestamp in the server response. The obtained `atClusterTime` timestamp can
 be used for subsequent read operations. `ReadConcern` `level` `snapshot` with `clusterTime` is supported in `find`,
 `aggregate` and `distinct` operations.
+
+#### `afterClusterTime`
+
+When running operations in a causally-consistent session, the read concern document is used to specify
+`afterClusterTime`. In addition to the read operations listed above, a read concern document containing only
+`afterClusterTime` is also supported for the following write operations:
+
+- `insert` command
+- `update` command
+- `findAndModify` command
+- `delete` command
+- `bulkWrite` command
+- `create` command
+- `createIndexes` command
+- `drop` command
+- `dropDatabase` command
+- `dropIndexes` command
+
+See the [Causal Consistency specification](../causal-consistency/causal-consistency.md#server-commands) for details
+about when to send `afterClusterTime`.
 
 #### On the Wire
 
@@ -542,6 +555,8 @@ don't send one and if a user does specify a `ReadConcern`, we do send one. If th
 instance, we send it.
 
 ## Changelog
+
+- 2025-05-04: Describe how `readConcern.afterClusterTime` is used in causally-consistent sessions on reads and writes.
 
 - 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
 

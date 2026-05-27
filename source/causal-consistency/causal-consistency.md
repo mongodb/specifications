@@ -247,8 +247,8 @@ For causal consistency the driver MUST send the `operationTime` saved in the `Cl
 }
 ```
 
-For the list of commands that support causally consistent reads, see the
-[ReadConcern](../read-write-concern/read-write-concern.md#read-concern) spec.
+For the list of commands that support causally consistent reads and writes, see the
+[Read Concern](../read-write-concern/read-write-concern.md#afterclustertime) spec.
 
 The driver MUST merge the `ReadConcern` specified for the operation with the `operationTime` from the `ClientSession`
 (which goes in the `afterClusterTime` field) to generate the combined `readConcern` to send to the server. If the level
