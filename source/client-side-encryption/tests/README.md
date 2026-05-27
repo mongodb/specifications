@@ -3891,6 +3891,8 @@ create the following collections with majority write concern:
     Skip this step if testing server 9.0.0+.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
+- `db.substring-ci-di` using the `encryptedFields` option set to the contents of
+    [encryptedFields-substring-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring-ci-di.json)
 
 Load the file
 [key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
@@ -3898,17 +3900,9 @@ as `key1Document`.
 
 Read the `"_id"` field of `key1Document` as `key1ID`.
 
-Load the file
-[key2-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key2-document.json)
-as `key2Document`.
-
-Read the `"_id"` field of `key2Document` as `key2ID`.
-
 Drop and create the collection `keyvault.datakeys`.
 
 Insert `key1Document` in `keyvault.datakeys` with majority write concern.
-
-Insert `key2Document` in `keyvault.datakeys` with majority write concern.
 
 Create a MongoClient named `keyVaultClient`.
 
@@ -4381,7 +4375,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the fo
 
 ```typescript
 class EncryptOpts {
-   keyId : <key2ID>,
+   keyId : <key1ID>,
    algorithm: "TextPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
@@ -4396,17 +4390,17 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
+Use `encryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
-{ "encryptedTextInsensitive": <encrypted 'FooBarBaz'> }
+{ "encryptedText": <encrypted 'FooBarBaz'> }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
-   keyId : <key2ID>,
+   keyId : <key1ID>,
    algorithm: "TextPreview",
    queryType: "substring",
    contentionFactor: 0,
@@ -4422,16 +4416,16 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `encryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following filter:
 
 ```javascript
-{ $expr: { $encStrContains: {input: '$encryptedTextInsensitive', substring: <encrypted 'bar'>} } }
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
 ```
 
 Assert the following document is returned:
 
 ```javascript
-{ "encryptedTextInsensitive": "FooBarBaz" }
+{ "encryptedText": "FooBarBaz" }
 ```
 
 #### Case 11: can find a diacritic-insensitively indexed document by substring
@@ -4457,7 +4451,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
+Use `encryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
 { "encryptedText": <encrypted 'foocafébaz'> }
@@ -4483,7 +4477,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `encryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'cafe'>} } }
