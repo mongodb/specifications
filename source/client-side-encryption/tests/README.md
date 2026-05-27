@@ -4224,7 +4224,7 @@ algorithm".
 
 #### Case 8: can find a case and diacritic-insensitively indexed document by prefix and suffix
 
-Skip this test case if testing MongoDB server 9.0.0+.
+Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 `"BingQiLin"` was inserted via auto-encryption in Test Setup, indexed under the
 `caseSensitive: false, diacriticSensitive: false` prefix configuration and the
@@ -4294,7 +4294,7 @@ Assert the following document is returned:
 
 #### Case 9: can find a diacritic-insensitively indexed document by prefix and suffix
 
-Skip this test case if testing MongoDB server 9.0.0+.
+Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) using these `AutoEncryptionOpts`:
 
@@ -4375,6 +4375,8 @@ Assert the following document is returned:
 
 #### Case 10: can find a case-insensitively indexed document by substring
 
+This test requires libmongocrypt 1.18.1+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the following `EncryptOpts`:
 
 ```typescript
@@ -4433,6 +4435,8 @@ Assert the following document is returned:
 ```
 
 #### Case 11: can find a diacritic-insensitively indexed document by substring
+
+This test requires libmongocrypt 1.18.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foocafébaz"` with the following `EncryptOpts`:
 
