@@ -3916,7 +3916,7 @@ class ClientEncryptionOpts {
 }
 ```
 
-Create a MongoClient named `encryptedClient` with these `AutoEncryptionOpts`:
+Create a MongoClient named `explicitEncryptedClient` with these `AutoEncryptionOpts`:
 
 ```typescript
 class AutoEncryptionOpts {
@@ -3926,20 +3926,14 @@ class AutoEncryptionOpts {
 }
 ```
 
-Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) using these `AutoEncryptionOpts`:
+Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) named `autoEncryptedClient` using
+these `AutoEncryptionOpts`:
 
 ```typescript
 class AutoEncryptionOpts {
    keyVaultNamespace: "keyvault.datakeys",
    kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
 }
-```
-
-Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern. Skip this
-step if testing server 9.0.0+.
-
-```javascript
-{ "encryptedText": "BingQiLin" }
 ```
 
 Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
@@ -3964,7 +3958,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -3989,7 +3983,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.substring` with majority write concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -4018,7 +4012,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'foo'>} } }
@@ -4053,7 +4047,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
@@ -4088,7 +4082,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'baz'>} } }
@@ -4119,7 +4113,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'foo'>} } }
@@ -4149,7 +4143,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
@@ -4183,7 +4177,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'qux'>} } }
@@ -4220,9 +4214,12 @@ algorithm".
 
 Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
-`"BingQiLin"` was inserted via auto-encryption in Test Setup, indexed under the
-`caseSensitive: false, diacriticSensitive: false` prefix configuration and the
-`caseSensitive: false, diacriticSensitive: false` suffix configuration of `db.prefix-suffix-ci-di`.
+Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
+Skip this step if testing server 9.0.0+.
+
+```javascript
+{ "encryptedText": "BingQiLin" }
+```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"bing"` with the following `EncryptOpts`:
 
@@ -4243,7 +4240,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'bing'>} } }
@@ -4274,7 +4272,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'lin'>} } }
@@ -4290,13 +4289,10 @@ Assert the following document is returned:
 
 Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
-Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) using these `AutoEncryptionOpts`:
+Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
 
-```typescript
-class AutoEncryptionOpts {
-   keyVaultNamespace: "keyvault.datakeys",
-   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
-}
+```javascript
+{ "encryptedText": "cafébarbäz" }
 ```
 
 Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
@@ -4324,7 +4320,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'cafe'>} } }
@@ -4355,7 +4352,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
@@ -4371,29 +4369,10 @@ Assert the following document is returned:
 
 This test requires libmongocrypt 1.18.1+.
 
-Use `clientEncryption.encrypt()` to encrypt the string `"FooBarBaz"` with the following `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: false,
-      diacriticSensitive: true,
-      substring: SubstringOpts {
-        strMaxLength: 10,
-        strMaxQueryLength: 10,
-        strMinQueryLength: 2,
-      },
-   },
-}
-```
-
-Use `encryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
+Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
-{ "encryptedText": <encrypted 'FooBarBaz'> }
+{ "encryptedText": 'FooBarBaz' }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
@@ -4416,7 +4395,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following
+filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
@@ -4477,7 +4457,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following
+filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'cafe'>} } }
