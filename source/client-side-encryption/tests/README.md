@@ -4288,12 +4288,6 @@ Assert the following document is returned:
 
 Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
-Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
-
-```javascript
-{ "encryptedText": "cafébarbäz" }
-```
-
 Use that client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
 
 ```javascript
@@ -4384,7 +4378,7 @@ class EncryptOpts {
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: false,
-      diacriticSensitive: true,
+      diacriticSensitive: false,
       substring: SubstringOpts {
         strMaxLength: 10,
         strMaxQueryLength: 10,
@@ -4411,29 +4405,10 @@ Assert the following document is returned:
 
 This test requires libmongocrypt 1.18.1+.
 
-Use `clientEncryption.encrypt()` to encrypt the string `"foocafébaz"` with the following `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "TextPreview",
-   contentionFactor: 0,
-   textOpts: TextOpts {
-      caseSensitive: true,
-      diacriticSensitive: false,
-      substring: SubstringOpts {
-        strMaxLength: 10,
-        strMaxQueryLength: 10,
-        strMinQueryLength: 2,
-      },
-   },
-}
-```
-
-Use `explicitEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
+Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
-{ "encryptedText": <encrypted 'foocafébaz'> }
+{ "encryptedText": 'foocafébaz' }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
