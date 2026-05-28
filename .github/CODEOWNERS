@@ -1,5 +1,11 @@
 # Default ownership
-* @mongodb/dbx-leadership
+* @mongodb/dbx-leadership @mongodb/dbx-spec-maintainers-cross-spec-consistency
+
+# Cross-spec consistency: guidelines
+README.md @mongodb/dbx-spec-maintainers-cross-spec-consistency
+/source/driver-mantras.md @mongodb/dbx-spec-maintainers-cross-spec-consistency
+AGENTS.md @mongodb/dbx-spec-maintainers-cross-spec-consistency
+CLAUDE.md @mongodb/dbx-spec-maintainers-cross-spec-consistency
 
 # Authentication
 /source/auth/ @mongodb/dbx-spec-maintainers-auth
