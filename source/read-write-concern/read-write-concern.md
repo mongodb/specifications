@@ -556,7 +556,7 @@ instance, we send it.
 
 ## Changelog
 
-- 2025-05-04: Describe how `readConcern.afterClusterTime` is used in causally-consistent sessions on reads and writes.
+- 2026-05-04: Describe how `readConcern.afterClusterTime` is used in causally-consistent sessions on reads and writes.
 
 - 2025-02-25: Rename WriteConcernFailed to WriteConcernTimeout
 
