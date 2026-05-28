@@ -4288,8 +4288,7 @@ Assert the following document is returned:
 
 Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
-Use `autoEncryptedClient` client to insert the following document into `db.prefix-suffix-ci-di` with majority write
-concern:
+Use `autoEncryptedClient` client to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
 
 ```javascript
 { "encryptedText": "cafébarbäz" }
@@ -4366,7 +4365,7 @@ This test requires libmongocrypt 1.18.1+.
 Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
-{ "encryptedText": 'FooBarBaz' }
+{ "encryptedText": "FooBarBaz" }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
@@ -4409,7 +4408,7 @@ This test requires libmongocrypt 1.18.1+.
 Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
-{ "encryptedText": 'foocafébaz' }
+{ "encryptedText": "foocafébaz" }
 ```
 
 Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
