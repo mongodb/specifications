@@ -4431,7 +4431,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
 ```javascript
 { "encryptedText": <encrypted 'foocafébaz'> }
