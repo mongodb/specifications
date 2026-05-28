@@ -4215,7 +4215,6 @@ algorithm".
 Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
-Skip this step if testing server 9.0.0+.
 
 ```javascript
 { "encryptedText": "BingQiLin" }
