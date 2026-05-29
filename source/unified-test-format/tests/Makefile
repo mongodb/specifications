@@ -2,6 +2,7 @@ SCHEMA=../schema-latest.json
 
 .PHONY: all \
 	auth \
+	causal-consistency \
 	change-streams \
 	client-side-encryption \
 	client-side-operations-timeout \
@@ -33,6 +34,7 @@ SCHEMA=../schema-latest.json
 	HAS_AJV
 
 all: auth \
+	causal-consistency \
 	change-streams \
 	client-side-encryption \
 	client-side-operations-timeout \
@@ -61,6 +63,9 @@ all: auth \
 # in addition to a target for the specification itself
 auth: HAS_AJV
 	@ajv --spec=draft2019 test -s $(SCHEMA) -d "../../auth/tests/unified/*.yml" --valid
+
+causal-consistency: HAS_AJV
+	@ajv --spec=draft2019 test -s $(SCHEMA) -d "../../causal-consistency/tests/*.yml" --valid
 
 change-streams: HAS_AJV
 	@ajv --spec=draft2019 test -s $(SCHEMA) -d "../../change-streams/tests/unified/*.yml" --valid
