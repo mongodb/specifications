@@ -196,9 +196,9 @@ started with `causalConsistency = true` then all operations using that session w
 
 There are no new server commands related to causal consistency. Instead, causal consistency is implemented by:
 
-1. Saving the `operationTime` returned by 3.6+ servers for all operations in a property of the `ClientSession` object.
-    The server reports the `operationTime` whether the operation succeeded or not and drivers MUST save the
-    `operationTime` in the `ClientSession` whether the operation succeeded or not.
+1. Saving the `operationTime` returned by 3.6+ servers for all acknowledged operations in a property of the
+    `ClientSession` object. The server reports the `operationTime` whether the operation succeeded or not, and drivers
+    MUST save the `operationTime` in the `ClientSession` whether the operation succeeded or not.
 2. Passing that `operationTime` in the `afterClusterTime` field of the `readConcern` field for subsequent causally
     consistent read operations (for all commands that support a `readConcern`)
 3. Gossiping clusterTime (described in the Driver Session Specification)
@@ -402,6 +402,9 @@ resolving many discussions of spec details. A final reference implementation mus
 ## Q&A
 
 ## Changelog
+
+- 2026-05-13: Clarify that the "MUST save operationTime" rule applies only to acknowledged operations; unacknowledged
+    writes receive no server response and do not update the session's `operationTime`.
 
 - 2024-02-08: Migrated from reStructuredText to Markdown.
 
