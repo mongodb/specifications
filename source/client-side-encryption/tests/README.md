@@ -3871,10 +3871,10 @@ expect(dk).to.be.a(Binary);
 expect(calledCount).to.be.greaterThan(0);
 ```
 
-### 27. Text Explicit Encryption
+### 27. String Explicit Encryption
 
-The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server 8.2.0+
-and libmongocrypt 1.15.1+. The tests must not run against a standalone.
+The String Explicit Encryption tests utilize Queryable Encryption (QE) and require MongoDB server 8.2.0+ and libmongocrypt
+1.18.1+. The tests must not run against a standalone.
 
 Before running each of the following test cases, perform the following Test Setup.
 
@@ -3885,10 +3885,10 @@ create the following collections with majority write concern:
 
 - `db.prefix-suffix` using the `encryptedFields` option set to the contents of
     [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json).
-    Skip this step if testing server 9.0.0+.
+    This step requires server 9.0.0+.
 - `db.prefix-suffix-ci-di` using the `encryptedFields` option set to the contents of
     [encryptedFields-prefix-suffix-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix-ci-di.json).
-    Skip this step if testing server 9.0.0+.
+    This step requires server 9.0.0+.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
 - `db.substring-ci-di` using the `encryptedFields` option set to the contents of
@@ -3941,9 +3941,9 @@ Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `E
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -3969,9 +3969,9 @@ Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `E
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
@@ -3991,17 +3991,17 @@ Use `explicitEncryptedClient` to insert the following document into `db.substrin
 
 #### Case 1: can find a document by prefix
 
-Skip this test case if testing MongoDB server 9.0.0+.
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   algorithm: "String",
+   queryType: "prefix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -4026,17 +4026,17 @@ Assert the following document is returned:
 
 #### Case 2: can find a document by suffix
 
-Skip this test case if testing MongoDB server 9.0.0+.
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "suffixPreview",
+   algorithm: "String",
+   queryType: "suffix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       suffix: SuffixOpts {
@@ -4061,17 +4061,17 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
-Skip this test case if testing MongoDB server 9.0.0+.
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   algorithm: "String",
+   queryType: "prefix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -4092,17 +4092,17 @@ Assert that no documents are returned.
 
 #### Case 4: assert no document found by suffix
 
-Skip this test case if testing MongoDB server 9.0.0+.
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "suffixPreview",
+   algorithm: "String",
+   queryType: "suffix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       suffix: SuffixOpts {
@@ -4128,10 +4128,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "substringPreview",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
@@ -4162,10 +4162,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the followin
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "substringPreview",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
@@ -4187,16 +4187,16 @@ Assert that no documents are returned.
 
 #### Case 7: assert `contentionFactor` is required
 
-Skip this test case if testing MongoDB server 9.0.0+.
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "prefixPreview",
-   textOpts: TextOpts {
+   algorithm: "String",
+   queryType: "prefix",
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -4207,13 +4207,13 @@ class EncryptOpts {
 }
 ```
 
-Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
+Expect an error from libmongocrypt with a message containing the string: "contention factor is required for string
 algorithm".
 
 #### Case 8: can find an auto-encrypted case indexed document by prefix and suffix
 
-This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if
-testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test case requires
+MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
 
@@ -4226,10 +4226,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bing"` with the followi
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "prefix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       prefix: PrefixOpts {
@@ -4258,10 +4258,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"lin"` with the followin
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "suffix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       suffix: SuffixOpts {
@@ -4287,8 +4287,8 @@ Assert the following document is returned:
 
 #### Case 9: can find an auto-encrypted diacritic-insensitively indexed document by prefix and suffix
 
-This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if
-testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test case requires
+MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
 
@@ -4301,10 +4301,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the followi
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "prefix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       prefix: PrefixOpts {
@@ -4333,10 +4333,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "suffix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       suffix: SuffixOpts {
@@ -4376,10 +4376,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "substringPreview",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       substring: SubstringOpts {
@@ -4420,10 +4420,10 @@ Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the followi
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    queryType: "substringPreview",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       substring: SubstringOpts {
