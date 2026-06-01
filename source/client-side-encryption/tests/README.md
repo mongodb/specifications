@@ -4212,7 +4212,8 @@ algorithm".
 
 #### Case 8: can find an auto-encrypted case indexed document by prefix and suffix
 
-This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if
+testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
 
@@ -4286,7 +4287,8 @@ Assert the following document is returned:
 
 #### Case 9: can find an auto-encrypted diacritic-insensitively indexed document by prefix and suffix
 
-This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if
+testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
 
@@ -4360,7 +4362,8 @@ Assert the following document is returned:
 
 #### Case 10: can find an auto-encrypted case-insensitively indexed document by substring
 
-This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires
+libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
@@ -4403,7 +4406,8 @@ Assert the following document is returned:
 
 #### Case 11: can find an auto-encrypted diacritic-insensitively indexed document by substring
 
-This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires
+libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
