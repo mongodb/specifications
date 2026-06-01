@@ -101,7 +101,7 @@ try:
     reply = conn.send_command("admin", cmd)
 except AutoReconnect as exc:
     # Socket was closed, OpMSG might not be supported
-    raise AutoReconnect("wire version might not be supported") from exc
+    raise Error("wire version might not be supported") from exc
 
 # Store the negotiated compressor, see OP_COMPRESSED spec.
 if reply.get("compression"):
