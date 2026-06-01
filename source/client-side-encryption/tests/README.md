@@ -4210,7 +4210,7 @@ class EncryptOpts {
 Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
 algorithm".
 
-#### Case 8: can find an auto-encrypted case and diacritic-insensitively indexed document by prefix and suffix
+#### Case 8: can find an auto-encrypted case indexed document by prefix and suffix
 
 This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
