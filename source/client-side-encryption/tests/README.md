@@ -4210,9 +4210,9 @@ class EncryptOpts {
 Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
 algorithm".
 
-#### Case 8: can find a case and diacritic-insensitively indexed document by prefix and suffix
+#### Case 8: can find an auto-encrypted case and diacritic-insensitively indexed document by prefix and suffix
 
-Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
 
@@ -4284,9 +4284,9 @@ Assert the following document is returned:
 { "encryptedText": "BingQiLin" }
 ```
 
-#### Case 9: can find a diacritic-insensitively indexed document by prefix and suffix
+#### Case 9: can find an auto-encrypted diacritic-insensitively indexed document by prefix and suffix
 
-Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). Skip this test case if testing MongoDB server 9.0.0+. This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
 
@@ -4358,9 +4358,9 @@ Assert the following document is returned:
 { "encryptedText": "cafébarbäz" }
 ```
 
-#### Case 10: can find a case-insensitively indexed document by substring
+#### Case 10: can find an auto-encrypted case-insensitively indexed document by substring
 
-This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
@@ -4374,7 +4374,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "substring",
+   queryType: "substringPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: false,
@@ -4401,9 +4401,9 @@ Assert the following document is returned:
 { "encryptedText": "FooBarBaz" }
 ```
 
-#### Case 11: can find a diacritic-insensitively indexed document by substring
+#### Case 11: can find an auto-encrypted diacritic-insensitively indexed document by substring
 
-This test requires libmongocrypt 1.18.1+.
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires libmongocrypt 1.18.1+.
 
 Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
 
@@ -4417,7 +4417,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the followi
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "TextPreview",
-   queryType: "substring",
+   queryType: "substringPreview",
    contentionFactor: 0,
    textOpts: TextOpts {
       caseSensitive: false,
