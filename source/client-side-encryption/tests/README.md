@@ -3873,8 +3873,8 @@ expect(calledCount).to.be.greaterThan(0);
 
 ### 27. String Explicit Encryption
 
-The String Explicit Encryption tests utilize Queryable Encryption (QE) and require MongoDB server 8.2.0+ and libmongocrypt
-1.18.1+. The tests must not run against a standalone.
+The String Explicit Encryption tests utilize Queryable Encryption (QE) and require MongoDB server 8.2.0+ and
+libmongocrypt 1.18.1+. The tests must not run against a standalone.
 
 Before running each of the following test cases, perform the following Test Setup.
 
