@@ -200,8 +200,8 @@ subdocuments, strings, integers, doubles and booleans.
 
 Dataset: The dataset, designated DEEP_BSON (disk file `deep_bson.json`), will be synthetically generated and consist of
 an extended JSON document representing a balanced binary tree of depth 6, with "left" and "right" keys at each level
-containing a sub-document until the final level, where each leaf contains two string fields, "leftValue" and "rightValue",
-each holding a random 8-character ASCII string (126 total key/value pairs).
+containing a sub-document until the final level, where each leaf contains two string fields, "leftValue" and
+"rightValue", each holding a random 8-character ASCII string (126 total key/value pairs).
 
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (2284
 bytes) times 10,000 operations, which equals 22,840,000 bytes or 22.84 MB.
@@ -221,8 +221,8 @@ subdocuments, strings, integers, doubles and booleans.
 
 Dataset: The dataset, designated DEEP_BSON, will be synthetically generated and consist of an extended JSON document
 representing a balanced binary tree of depth 6, with "left" and "right" keys at each level containing a sub-document
-until the final level, where each leaf contains two string fields, "leftValue" and "rightValue",
-each holding a random 8-character ASCII string (126 total key/value pairs).
+until the final level, where each leaf contains two string fields, "leftValue" and "rightValue", each holding a random
+8-character ASCII string (126 total key/value pairs).
 
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (2284
 bytes) times 10,000 operations, which equals 22,840,000 bytes or 22.84 MB.
