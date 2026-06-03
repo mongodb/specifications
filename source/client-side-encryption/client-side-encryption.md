@@ -48,7 +48,10 @@ QEv1 and QEv2 are incompatible.
 MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
 ([SPM-3583](https://jira.mongodb.org/browse/SPM-3583)).
 
-MongoDB 8.2 added unstable support for QE text queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
+MongoDB 8.2 added unstable support for QE string queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
+
+MongoDB 9.0 dropped `queryType=prefixPreview|suffixPreview` and added `queryType=prefix|suffix`
+([SPM-4539](https://jira.mongodb.org/browse/SPM-4539))
 
 ## META
 
@@ -1258,7 +1261,7 @@ class EncryptOpts {
    contentionFactor: Optional<Int64>,
    queryType: Optional<String>
    rangeOpts: Optional<RangeOpts>
-   textOpts: Optional<TextOpts>
+   stringOpts: Optional<StringOpts>
 }
 
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
@@ -1277,18 +1280,18 @@ class RangeOpts {
    precision: Optional<Int32>
 }
 
-// TextOpts specifies options for a Queryable Encryption field supporting text queries.
-// NOTE: TextOpts is currently unstable API and subject to backwards breaking changes.
-class TextOpts {
+// StringOpts specifies options for a Queryable Encryption field supporting string queries.
+class StringOpts {
    // substring contains further options to support substring queries.
+   // NOTE: substring is currently unstable API and subject to backwards breaking changes.
    substring: Optional<SubstringOpts>,
    // prefix contains further options to support prefix queries.
    prefix: Optional<PrefixOpts>,
    // suffix contains further options to support suffix queries.
    suffix: Optional<SuffixOpts>,
-   // caseSensitive determines whether text indexes for this field are case sensitive.
+   // caseSensitive determines whether string indexes for this field are case sensitive.
    caseSensitive: bool,
-   // diacriticSensitive determines whether text indexes for this field are diacritic sensitive.
+   // diacriticSensitive determines whether string indexes for this field are diacritic sensitive.
    diacriticSensitive: bool
 }
 
@@ -1302,7 +1305,6 @@ class SubstringOpts {
    strMaxQueryLength: Int32,
 }
 
-// NOTE: PrefixOpts is currently unstable API and subject to backwards breaking changes.
 class PrefixOpts {
    // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
    strMinQueryLength: Int32,
@@ -1310,7 +1312,6 @@ class PrefixOpts {
    strMaxQueryLength: Int32,
 }
 
-// NOTE: SuffixOpts is currently unstable API and subject to backwards breaking changes.
 class SuffixOpts {
    // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
    strMinQueryLength: Int32,
@@ -1340,20 +1341,20 @@ One of the strings:
 - "Indexed"
 - "Unindexed"
 - "Range"
-- "TextPreview"
+- "String"
 
-The result of explicit encryption with the "Indexed", "Range", or "TextPreview" algorithm must be processed by the
-server to insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed", "Range", or "String" algorithm must be processed by the server to
+insert or query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed", "Range", or "String" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
-> must be false. The "TextPreview" algorithm is in preview and should be used for experimental workloads only. These
-> features are unstable and their security is not guaranteed until released as Generally Available (GA). The GA version
-> of these features may not be backwards compatible with the preview version.
+> must be false. The "substringPreview" query type is in preview and should be used for experimental workloads only.
+> This feature is unstable and its security is not guaranteed until released as Generally Available (GA). The GA version
+> of this feature may not be backwards compatible with the preview version.
 
 #### contentionFactor
 
-contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "TextPreview".
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "String".
 libmongocrypt returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
@@ -1362,24 +1363,24 @@ One of the strings:
 
 - "equality"
 - "range"
-- "prefixPreview"
+- "prefix"
     - Used for the `$encStrStartsWith` operator.
-- "suffixPreview"
+- "suffix"
     - Used for the `$encStrEndsWith` operator.
 - "substringPreview"
     - Used for the `$encStrContains` operator.
 
-queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
-queryType is set for a non-applicable algorithm.
+queryType only applies when algorithm is "Indexed", "Range", or "String". libmongocrypt returns an error if queryType is
+set for a non-applicable algorithm.
 
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
 
-#### textOpts
+#### stringOpts
 
-textOpts only applies when algorithm is "TextPreview". libmongocrypt returns an error if textOpts is set for a
+stringOpts only applies when algorithm is "String". libmongocrypt returns an error if stringOpts is set for a
 non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
@@ -2521,6 +2522,13 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-05-29: Add stable support for prefix and suffix queries
+
+    - Replace `prefixPreview` with `prefix`.
+    - Replace `suffixPreview` with `suffix`.
+    - Replace `TextPreview` with `String`.
+    - Replace `TextOpts` with `StringOpts`.
 
 - 2025-09-30: Update `$lookup` prose test to reflect changes in
     [MONGOCRYPT-793](https://jira.mongodb.org/browse/MONGOCRYPT-793).
