@@ -53,8 +53,8 @@ Drivers MUST use the `OP_MSG` protocol for all handshakes if their minWireVersio
 [server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST also use the
 `hello` command for the initial handshake. If server API version is not requested and `loadBalanced: False`, drivers
 MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
-request. If the server does not understand `OP_MSG`, the socket MAY be closed by the server and drivers MUST include the
-original error and indicate that incompatible server is likely the cause.
+request. If the server does not understand `OP_MSG`, the server will close the socket and drivers MUST include the
+original error.
 
 ASIDE: If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
 the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
@@ -97,11 +97,7 @@ if creds:
         cmd["saslSupportedMechs"] = ...
     cmd["speculativeAuthenticate"] = ...
 
-try:
-    reply = conn.send_command("admin", cmd)
-except AutoReconnect as exc:
-    # Socket was closed, OpMSG might not be supported
-    raise Error("wire version might not be supported") from exc
+reply = conn.send_command("admin", cmd)
 
 # Store the negotiated compressor, see OP_COMPRESSED spec.
 if reply.get("compression"):
@@ -564,7 +560,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
-- 2026-05-08: Allow OP_MSG for all handshakes.
+- 2026-06-03: Allow OP_MSG for all handshakes.
 - 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
