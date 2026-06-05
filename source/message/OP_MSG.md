@@ -22,7 +22,7 @@ handshake using `OP_MSG` if an API version was declared on the client.
 
 Refer to the
 [handshake specification](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.md)
-for the appropriate use of `OP_MSG` and `OP_QUERY`.
+for the appropriate use of `OP_MSG`.
 
 If the node supports `OP_MSG`, any and all messages MUST use `OP_MSG`, optionally compressed with `OP_COMPRESSED`.
 Authentication messages MUST also use `OP_MSG` when it is supported, but MUST NOT use `OP_COMPRESSED`.
