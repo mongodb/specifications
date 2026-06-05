@@ -17,15 +17,11 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 #### Usage
 
-`OP_MSG` is only available in MongoDB 3.6 (`maxWireVersion >= 6`) and later. MongoDB drivers MUST perform the MongoDB
-handshake using `OP_MSG` if an API version was declared on the client.
-
-Refer to the
+All messages, including authentication messages, MUST use `OP_MSG`. Refer to the
 [handshake specification](https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.md)
-for the appropriate use of `OP_MSG`.
-
-If the node supports `OP_MSG`, any and all messages MUST use `OP_MSG`, optionally compressed with `OP_COMPRESSED`.
-Authentication messages MUST also use `OP_MSG` when it is supported, but MUST NOT use `OP_COMPRESSED`.
+for the appropriate use of `OP_MSG`. See also
+[OP_COMPRESSED specification](https://github.com/mongodb/specifications/blob/master/source/compression/OP_COMPRESSED.md)
+for more details.
 
 #### OP_MSG
 
@@ -409,7 +405,7 @@ In the near future, this opcode is expected to be extended and include support f
 
 ### Changelog
 
-- 2026-06-03: Allow OP_MSG for all handshakes.
+- 2026-06-05: Use OP_MSG for all messages.
 - 2024-04-30: Convert from RestructuredText to Markdown.
 - 2022-10-05: Remove spec front matter.
 - 2022-01-13: Clarify that `OP_MSG` must be used when using stable API

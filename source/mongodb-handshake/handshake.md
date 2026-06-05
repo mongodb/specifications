@@ -53,14 +53,14 @@ Drivers MUST use the `OP_MSG` protocol for all handshakes if their minWireVersio
 [server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST also use the
 `hello` command for the initial handshake. If server API version is not requested and `loadBalanced: False`, drivers
 MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
-request. If the server does not understand `OP_MSG`, the server will close the socket and drivers MUST include the
-original error.
+request.
 
 ASIDE: If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
 the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
 monitoring commands MUST use the legacy hello command. See the
 [Server Discovery and Monitoring spec](../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
-for further information.
+for further information. Additionally, note that if the server does not understand `OP_MSG`, the server will close the
+socket.
 
 The initial handshake MUST be performed on every socket to any and all servers upon establishing the connection to
 MongoDB, including reconnects of dropped connections and newly discovered members of a cluster. It MUST be the first
@@ -79,7 +79,6 @@ Consider the following pseudo-code for establishing a new connection:
 ```python
 conn = Connection()
 conn.connect()  # Connect via TCP / TLS
-conn.supports_op_msg = True  # Always send the initial command via OP_MSG.
 if stable_api_configured or client_options.load_balanced:
     cmd = {"hello": 1}
 else:
@@ -560,7 +559,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
-- 2026-06-03: Allow OP_MSG for all handshakes.
+- 2026-06-05: Use OP_MSG for all handshakes.
 - 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
