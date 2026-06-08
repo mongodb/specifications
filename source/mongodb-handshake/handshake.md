@@ -49,17 +49,18 @@ MongoDB uses the `hello` or `isMaster` commands for handshakes and topology moni
 preferred command. `hello` must always be sent using the `OP_MSG` protocol. `isMaster` is referred to as "legacy hello"
 and is maintained for backwards compatibility with servers that do not support the `hello` command.
 
-If a [server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST use the
-`hello` command for the initial handshake and use the `OP_MSG` protocol. If server API version is not requested and
-`loadBalanced: False`, drivers MUST use legacy hello for the first message of the initial handshake with the `OP_QUERY`
-protocol (before switching to `OP_MSG` if the `maxWireVersion` indicates compatibility), and include `helloOk:true` in
-the handshake request.
+Drivers MUST use the `OP_MSG` protocol for all handshakes if their minWireVersion is 6 (MongoDB 3.6) or higher. If a
+[server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST also use the
+`hello` command for the initial handshake. If server API version is not requested and `loadBalanced: False`, drivers
+MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
+request.
 
 ASIDE: If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
 the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
 monitoring commands MUST use the legacy hello command. See the
 [Server Discovery and Monitoring spec](../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
-for further information.
+for further information. Additionally, note that if the server does not understand `OP_MSG`, the server will close the
+socket.
 
 The initial handshake MUST be performed on every socket to any and all servers upon establishing the connection to
 MongoDB, including reconnects of dropped connections and newly discovered members of a cluster. It MUST be the first
@@ -80,10 +81,8 @@ conn = Connection()
 conn.connect()  # Connect via TCP / TLS
 if stable_api_configured or client_options.load_balanced:
     cmd = {"hello": 1}
-    conn.supports_op_msg = True  # Send the initial command via OP_MSG.
 else:
     cmd = {"legacy hello": 1, "helloOk": 1}
-    conn.supports_op_msg = False  # Send the initial command via OP_QUERY.
 cmd["backpressure"] = True
 cmd["client"] = client_metadata
 if client_options.compressors:
@@ -98,10 +97,6 @@ if creds:
     cmd["speculativeAuthenticate"] = ...
 
 reply = conn.send_command("admin", cmd)
-
-if reply["maxWireVersion"] >= 6:
-    # Use OP_MSG for all future commands, including authentication.
-    conn.supports_op_msg = True
 
 # Store the negotiated compressor, see OP_COMPRESSED spec.
 if reply.get("compression"):
@@ -564,6 +559,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-06-05: Use OP_MSG for all handshakes.
 - 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
 - 2024-11-05: Move handshake prose tests from spec file to prose test file.
