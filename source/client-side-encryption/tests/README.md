@@ -4142,7 +4142,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
@@ -4176,7 +4176,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
@@ -4390,7 +4390,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: false,
@@ -4434,7 +4434,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the followi
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: false,
