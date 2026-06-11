@@ -58,8 +58,10 @@ request.
 ASIDE: If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
 the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
 monitoring commands MUST use the legacy hello command. Additionally, note that if the server does not understand
-`OP_MSG`, the server will close the socket. See the
-[Server Discovery and Monitoring spec](../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
+`OP_MSG`, the server will close the socket. See the Server Discovery and Monitoring spec
+[here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#streaming-hello-or-legacy-hello)
+and
+[here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#error-handling)
 for further information.
 
 The initial handshake MUST be performed on every socket to any and all servers upon establishing the connection to
