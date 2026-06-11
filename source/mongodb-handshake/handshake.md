@@ -55,10 +55,10 @@ Drivers MUST use the `OP_MSG` protocol for all handshakes if their minWireVersio
 MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
 request.
 
-If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
-the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
-monitoring commands MUST use the legacy hello command. Additionally, note that if the server does not understand
-`OP_MSG`, the server will close the socket. See the Server Discovery and Monitoring spec
+If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use the
+`hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology monitoring
+commands MUST use the legacy hello command. Additionally, note that if the server does not understand `OP_MSG`, the
+server will close the socket. See the Server Discovery and Monitoring spec
 [here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#streaming-hello-or-legacy-hello)
 and
 [here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#error-handling)
