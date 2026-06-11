@@ -55,12 +55,14 @@ Drivers MUST use the `OP_MSG` protocol for all handshakes if their minWireVersio
 MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
 request.
 
-ASIDE: If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use
-the `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology
-monitoring commands MUST use the legacy hello command. See the
-[Server Discovery and Monitoring spec](../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
-for further information. Additionally, note that if the server does not understand `OP_MSG`, the server will close the
-socket.
+If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use the
+`hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology monitoring
+commands MUST use the legacy hello command. Additionally, note that if the server does not understand `OP_MSG`, the
+server will close the socket. See the Server Discovery and Monitoring spec
+[here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#streaming-hello-or-legacy-hello)
+and
+[here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#error-handling)
+for further information.
 
 The initial handshake MUST be performed on every socket to any and all servers upon establishing the connection to
 MongoDB, including reconnects of dropped connections and newly discovered members of a cluster. It MUST be the first
@@ -559,6 +561,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-06-11: Clarify that there is no new behavior as a result of only using OP_MSG for all handshakes.
 - 2026-06-05: Use OP_MSG for all handshakes.
 - 2025-09-04: Clarify that drivers do not append the same metadata multiple times.
 - 2025-06-09: Add requirement to allow appending to client metadata after `MongoClient` initialization.
