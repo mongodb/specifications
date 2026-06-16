@@ -135,7 +135,7 @@ rules:
         formula: `backoff = retryAfterMS.value + (jitter * retryAfterMS)`
         - `jitter` is a random jitter value between -0.5 and 0.5.
         - `retryAfterMS.value` is the value of the error's `retryAfterMS` field.
-    2. If `retryAfterMS` is not present, apply exponential backoff according to the following formula:
+    2. Otherwise, apply exponential backoff according to the following formula:
         `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
         - `jitter` is a random jitter value between 0 and 1.
         - `BASE_BACKOFF` is constant 100ms.
