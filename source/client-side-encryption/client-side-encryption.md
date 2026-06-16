@@ -2523,6 +2523,10 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 ## Changelog
 
+- 2026-06-16: Explicit Encryption prose test Case 2 now recreates `db.explicit_encryption`
+  with `contention: 10` to match its `contentionFactor`, for compatibility with server-side
+  contention validation (SERVER-91887).
+
 - 2026-05-29: Add stable support for prefix and suffix queries
 
     - Replace `prefixPreview` with `prefix`.

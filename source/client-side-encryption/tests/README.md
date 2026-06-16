@@ -2002,6 +2002,19 @@ Assert one document is returned containing the field `{ "encryptedIndexed": "enc
 
 #### Case 2: can insert encrypted indexed and find with non-zero contention
 
+> [!NOTE]
+> The `Test Setup` creates `db.explicit_encryption` from `encryptedFields`, which configures the `encryptedIndexed`
+> field with `contention: 0`. This case uses a `contentionFactor` of 10, so it must run against a collection whose
+> configured contention is at least 10. Servers implementing
+> [SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887) reject payloads whose contention factor exceeds the
+> collection's configured contention.
+
+Create a copy of `encryptedFields` named `encryptedFieldsContention10` and set the `contention` of the
+`encryptedIndexed` field's `queries` to 10.
+
+Drop and create the collection `db.explicit_encryption` using `encryptedFieldsContention10` as an option. See
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+
 Use `clientEncryption` to encrypt the value "encrypted indexed value" with these `EncryptOpts`:
 
 ```typescript
