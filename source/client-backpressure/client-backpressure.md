@@ -446,6 +446,8 @@ to understand and configure.
 
 ## Changelog
 
+- 2026-06-16: Add support for retryAfterMS backoff calculation.
+
 - 2026-04-14: Clarify correct retry behavior when a mix of overload and non-overload errors are encountered.
 
 - 2026-03-30: Introduce phase 1 support without token buckets.
