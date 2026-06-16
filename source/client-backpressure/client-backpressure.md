@@ -129,12 +129,18 @@ rules:
         - To retry `runCommand`, both [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) and
             [retryReads](../retryable-reads/retryable-reads.md#retryreads) MUST be enabled. See
             [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
-3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply exponential backoff
-    according to the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
-    - `jitter` is a random jitter value between 0 and 1.
-    - `BASE_BACKOFF` is constant 100ms.
-    - `MAX_BACKOFF` is 10000ms.
-    - This results in delays of 100ms and 200ms before accounting for jitter.
+3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply backoff according to the
+    following rules:
+    1. If `retryAfterMS` is present on the error and has a positive value, apply backoff according to the following
+        formula: `backoff = retryAfterMS.value + (jitter * retryAfterMS)`
+        - `jitter` is a random jitter value between -0.5 and 0.5.
+        - `retryAfterMS.value` is the value of the error's `retryAfterMS` field.
+    2. If `retryAfterMS` is not present, apply exponential backoff according to the following formula:
+        `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
+        - `jitter` is a random jitter value between 0 and 1.
+        - `BASE_BACKOFF` is constant 100ms.
+        - `MAX_BACKOFF` is 10000ms.
+        - This results in delays of 100ms and 200ms before accounting for jitter.
 4. If the request is eligible for retry (as outlined in step 2 above) and `enableOverloadRetargeting` is enabled, the
     client MUST add the previously used server's address to the list of deprioritized server addresses for
     [server selection](../server-selection/server-selection.md). Drivers MUST expose `enableOverloadRetargeting` as a
@@ -213,9 +219,16 @@ def execute_command_retryable(command, ...):
                 deprioritized_servers.append(server.address)
 
             if is_overload:
-                jitter = random.random() # Random float between [0.0, 1.0).
-                backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2 ** (attempt - 1))
-          
+                # If present on the error, retryAfterMS sets the backoff
+                retry_after_ms = exc.retry_after_ms
+                if retry_after_ms:
+                    retry_after /= 1000 # Convert from milliseconds to seconds
+                    jitter = random.uniform(-0.5, 0.5) # Random float between [-0.5, 0.5].
+                    backoff = (jitter * retry_after) + retry_after
+                # Otherwise fall back to exponential
+                else:
+                    jitter = random.random() # Random float between [0.0, 1.0).
+                    backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2 ** (attempt - 1))
                 # If the delay exceeds the deadline, bail early.
                 if _csot.get_timeout():
                     if time.monotonic() + backoff > _csot.get_deadline():
