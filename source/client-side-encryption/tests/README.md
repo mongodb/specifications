@@ -2005,9 +2005,9 @@ Assert one document is returned containing the field `{ "encryptedIndexed": "enc
 > [!NOTE]
 > The `Test Setup` creates `db.explicit_encryption` from `encryptedFields`, which configures the `encryptedIndexed`
 > field with `contention: 0`. This case uses a `contentionFactor` of 10, so it must run against a collection whose
-> configured contention is at least 10. Servers implementing
-> [SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887) reject payloads whose contention factor exceeds the
-> collection's configured contention.
+> configured contention matches. Servers implementing
+> [SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887) reject find payloads whose contention factor does not
+> match the collection's configured contention.
 
 Create a copy of `encryptedFields` named `encryptedFieldsContention10` and set the `contention` of the
 `encryptedIndexed` field's `queries` to 10.
@@ -2038,7 +2038,7 @@ class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "Indexed",
    queryType: "equality",
-   contentionFactor: 0,
+   contentionFactor: 10,
 }
 ```
 
@@ -2046,25 +2046,6 @@ Store the result in `findPayload`.
 
 Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
 `{ "encryptedIndexed": <findPayload> }`.
-
-Assert less than 10 documents are returned. 0 documents may be returned. Assert each returned document contains the
-field `{ "encryptedIndexed": "encrypted indexed value" }`.
-
-Use `clientEncryption` to encrypt the value "encrypted indexed value" with these `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "Indexed",
-   queryType: "equality",
-   contentionFactor: 10,
-}
-```
-
-Store the result in `findPayload2`.
-
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
-`{ "encryptedIndexed": <findPayload2> }`.
 
 Assert 10 documents are returned. Assert each returned document contains the field
 `{ "encryptedIndexed": "encrypted indexed value" }`.

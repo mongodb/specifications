@@ -635,34 +635,34 @@ Once requested, drivers MUST create a new [KMSProviders](#kmsproviders) $P$ acco
 
 1. Let $K$ be the [kmsProviders](#kmsproviders) value provided by the user as part of the original
     [ClientEncryptionOpts](#ClientEncryptionOpts) or [AutoEncryptionOpts](#AutoEncryptionOpts).
-2. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
-3. If $K$ contains an `aws` property, and that property is an empty map:
+1. Initialize $P$ to an empty [KMSProviders](#kmsproviders) object.
+1. If $K$ contains an `aws` property, and that property is an empty map:
     1. If a custom credential provider is supplied via the `credentialProviders.aws` applicable encryption option, use
         that to fetch the credentials from AWS.
-    2. Otherwise:
+    1. Otherwise:
         1. Attempt to obtain credentials $C$ from the environment using similar logic as is detailed in
             [the obtaining-AWS-credentials section from the Driver Authentication specification](../auth/auth.md#obtaining-credentials),
             but ignoring the case of loading the credentials from a URI
-        2. If credentials $C$ were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from $C$ and
+        1. If credentials $C$ were successfully loaded, create a new [AWSKMSOptions](#AWSKMSOptions) map from $C$ and
             insert that map onto $P$ as the `aws` property.
-4. If $K$ contains an `gcp` property, and that property is an empty map:
+1. If $K$ contains an `gcp` property, and that property is an empty map:
     1. Attempt to obtain credentials $C$ from the environment logic as is detailed in
         [Obtaining GCP Credentials](#obtaining-gcp-credentials).
-    2. If credentials $C$ were successfully loaded, create a new [GCPKMSOptions](#GCPKMSOptions) map from $C$ and insert
+    1. If credentials $C$ were successfully loaded, create a new [GCPKMSOptions](#GCPKMSOptions) map from $C$ and insert
         that map onto $P$ as the `gcp` property.
-5. If $K$ contains an `azure` property, and that property is an empty map:
+1. If $K$ contains an `azure` property, and that property is an empty map:
     1. If there is a `cachedAzureAccessToken` AND the duration until `azureAccessTokenExpireTime` is greater than one
         minute, insert `cachedAzureAccessToken` as the `azure` property on $P$.
-    2. Otherwise:
+    1. Otherwise:
         1. Let $t_0$ be the current time.
-        2. Attempt to obtain an Azure VM Managed Identity Access Token $T$ as detailed in
+        1. Attempt to obtain an Azure VM Managed Identity Access Token $T$ as detailed in
             [Obtaining an Access Token for Azure Key Vault](#obtaining-an-access-token-for-azure-key-vault).
-        3. If a token $T$ with expire duration $d\_{exp}$ were obtained successfully, create a new
+        1. If a token $T$ with expire duration $d\_{exp}$ were obtained successfully, create a new
             [AzureAccessToken](#AzureAccessToken) object with $T$ as the `accessToken` property. Insert that
             [AzureAccessToken](#AzureAccessToken) object into $P$ as the `azure` property. Record the generated
             [AzureAccessToken](#AzureAccessToken) in `cachedAzureAccessToken`. Record the `azureAccessTokenExpireTime` as
             $t_0 + d\_{exp}$.
-6. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
+1. Return $P$ as the additional KMS providers to [libmongocrypt](#libmongocrypt).
 
 <span id="obtaining-gcp-credentials"></span>
 
@@ -697,31 +697,31 @@ The below steps should be taken:
 
 1. Let $U$ be a new URL, initialized from the URL string `"http://169.254.169.254/metadata/identity/oauth2/token"`
 
-2. Add a query parameter `api-version=2018-02-01` to $U$.
+1. Add a query parameter `api-version=2018-02-01` to $U$.
 
-3. Add a query parameter `resource=https://vault.azure.net/` to $U$.
+1. Add a query parameter `resource=https://vault.azure.net/` to $U$.
 
-4. Prepare an HTTP GET request $Req$ based on $U$.
+1. Prepare an HTTP GET request $Req$ based on $U$.
 
     > [!NOTE]
     > All query parameters on $U$ should be appropriately percent-encoded
 
-5. Add HTTP headers `Metadata: true` and `Accept: application/json` to $Req$.
+1. Add HTTP headers `Metadata: true` and `Accept: application/json` to $Req$.
 
-6. Issue $Req$ to the Azure IMDS server `169.254.169.254:80`. Let $Resp$ be the response from the server. If the HTTP
+1. Issue $Req$ to the Azure IMDS server `169.254.169.254:80`. Let $Resp$ be the response from the server. If the HTTP
     response is not completely received within ten seconds, consider the request to have timed out, and return an
     error instead of an access token.
 
-7. If $Resp\_{status} ≠ 200$, obtaining the access token has failed, and the HTTP response body of $Resp$ encodes
+1. If $Resp\_{status} ≠ 200$, obtaining the access token has failed, and the HTTP response body of $Resp$ encodes
     information about the error that occurred. Return an error including the HTTP response body instead of an access
     token.
 
-8. Otherwise, let $J$ be the JSON document encoded in the HTTP response body of $Resp$.
+1. Otherwise, let $J$ be the JSON document encoded in the HTTP response body of $Resp$.
 
-9. The result access token $T$ is given as the `access_token` string property of $J$. Return $T$ as the resulting
+1. The result access token $T$ is given as the `access_token` string property of $J$. Return $T$ as the resulting
     access token.
 
-10. The resulting "expires in" duration $d\_{exp}$ is a count of seconds given as an ASCII-encoded integer string
+1. The resulting "expires in" duration $d\_{exp}$ is a count of seconds given as an ASCII-encoded integer string
     `expires_in` property of $J$.
 
 > [!NOTE]
@@ -906,16 +906,16 @@ options, $collName$ is the name of the collection, $dbName$ is the name of the d
 and $askDb$ is a boolean value. The resulting `encryptedFields` $EF$ is found by:
 
 1. Let $QualName$ be the string formed by joining $dbName$ and $collName$ with an ASCII dot `"."`.
-2. If $opts$ contains an `"encryptedFields"` property, then $EF$ is the value of that property.
-3. Otherwise, if `AutoEncryptionOptions.encryptedFieldsMap` contains an element named by $QualName$, then $EF$ is the
+1. If $opts$ contains an `"encryptedFields"` property, then $EF$ is the value of that property.
+1. Otherwise, if `AutoEncryptionOptions.encryptedFieldsMap` contains an element named by $QualName$, then $EF$ is the
     value of that element.
-4. Otherwise, if $askDb$ is `true`:
+1. Otherwise, if $askDb$ is `true`:
     1. Issue a `listCollections` command against the database named by $dbName$, filtered by `{name: <collName>}`. Let
         the result be the document $L$.
-    2. If $L$ contains an `options` document element, and that element contains an `encryptedFields` document element,
+    1. If $L$ contains an `options` document element, and that element contains an `encryptedFields` document element,
         $EF$ is $L$ `["options"]["encryptedFields"]`.
-    3. Otherwise, $EF$ is *not-found*
-5. Otherwise, $EF$ is considered *not-found*.
+    1. Otherwise, $EF$ is *not-found*
+1. Otherwise, $EF$ is considered *not-found*.
 
 <span id="create-collection-helper"></span>
 
@@ -1627,7 +1627,7 @@ As noted in [Path Resolution Behavior](#path-resolution-behavior), [crypt_shared
 `libmongocrypt_handle` by omission:
 
 1. Do not specify any [search paths](#search-paths),
-2. AND do not specify a [crypt_shared](#crypt_shared) library [override path](#override-path)
+1. AND do not specify a [crypt_shared](#crypt_shared) library [override path](#override-path)
     ([extraOptions.cryptSharedLibPath](#extraoptions.cryptsharedlibpath)).
 
 This will have the effect that [libmongocrypt](#libmongocrypt) will not attempt to search or load
@@ -1650,7 +1650,7 @@ if:
 
 1. The new `libmongocrypt_handle` wants [crypt_shared](#crypt_shared) (i.e. at least one [search path](#search-path) was
     specified or an [override path](#override-path) was specified).
-2. AND the initialization of that `libmongocrypt_handle` does not successfully find and load the same
+1. AND the initialization of that `libmongocrypt_handle` does not successfully find and load the same
     [crypt_shared](#crypt_shared) library that was loaded by the existing `libmongocrypt_handle` that is already using
     [crypt_shared](#crypt_shared).
 
@@ -2524,8 +2524,9 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 ## Changelog
 
 - 2026-06-16: Explicit Encryption prose test Case 2 now recreates `db.explicit_encryption`
-  with `contention: 10` to match its `contentionFactor`, for compatibility with server-side
-  contention validation (SERVER-91887).
+    with `contention: 10` to match its `contentionFactor`, and removes the find with
+    `contentionFactor: 0`, for compatibility with server-side contention validation (SERVER-91887)
+    which requires find payloads to match the collection's configured contention.
 
 - 2026-05-29: Add stable support for prefix and suffix queries
 
