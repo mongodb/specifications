@@ -3878,6 +3878,9 @@ create the following collections with majority write concern:
 - `db.prefix-suffix-ci-di` using the `encryptedFields` option set to the contents of
     [encryptedFields-prefix-suffix-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix-ci-di.json).
     This step requires server 9.0.0+.
+- `db.prefix-suffix-preview` using the `encryptedFields` option set to the contents of
+    [encryptedFields-prefix-suffix-preview.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix-preview.json).
+    This step requires server pre-9.0.0.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
 - `db.substring-ci-di` using the `encryptedFields` option set to the contents of
@@ -3947,7 +3950,8 @@ class EncryptOpts {
 }
 ```
 
-Use `explicitEncryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.prefix-suffix` (if created) and
+`db.prefix-suffix-preview` (if created) with majority write concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -3980,7 +3984,12 @@ Use `explicitEncryptedClient` to insert the following document into `db.substrin
 
 #### Case 1: can find a document by prefix
 
-This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+Run this case multiple times with the following sets of parameters:
+
+- `queryType=prefix` and `collection=prefix-suffix`
+    - Require server 9.0.0+ and libmongocrypt 1.19.0+.
+- `queryType=prefixPreview` and `collection=prefix-suffix-preview`
+    - Require server pre-9.0.0 and libmongocrypt 1.19.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
@@ -3988,7 +3997,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "prefix",
+   queryType: "<queryType>",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
@@ -4001,7 +4010,7 @@ class EncryptOpts {
 }
 ```
 
-Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.<collection>` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'foo'>} } }
@@ -4015,7 +4024,12 @@ Assert the following document is returned:
 
 #### Case 2: can find a document by suffix
 
-This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+Run this case multiple times with the following sets of parameters:
+
+- `queryType=suffix` and `collection=prefix-suffix`
+    - Require server 9.0.0+ and libmongocrypt 1.19.0+.
+- `queryType=suffixPreview` and `collection=prefix-suffix-preview`
+    - Require server pre-9.0.0 and libmongocrypt 1.19.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
@@ -4023,7 +4037,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "suffix",
+   queryType: "<queryType>",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
@@ -4036,7 +4050,7 @@ class EncryptOpts {
 }
 ```
 
-Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.<collection>` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
@@ -4050,7 +4064,12 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
-This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+Run this case multiple times with the following sets of parameters:
+
+- `queryType=prefix` and `collection=prefix-suffix`
+    - Require server 9.0.0+ and libmongocrypt 1.19.0+.
+- `queryType=prefixPreview` and `collection=prefix-suffix-preview`
+    - Require server pre-9.0.0 and libmongocrypt 1.19.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
@@ -4058,7 +4077,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "prefix",
+   queryType: "<queryType>",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
@@ -4071,7 +4090,7 @@ class EncryptOpts {
 }
 ```
 
-Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.<collection>` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'baz'>} } }
@@ -4081,7 +4100,12 @@ Assert that no documents are returned.
 
 #### Case 4: assert no document found by suffix
 
-This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+Run this case multiple times with the following sets of parameters:
+
+- `queryType=suffix` and `collection=prefix-suffix`
+    - Require server 9.0.0+ and libmongocrypt 1.19.0+.
+- `queryType=suffixPreview` and `collection=prefix-suffix-preview`
+    - Require server pre-9.0.0 and libmongocrypt 1.19.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
@@ -4089,7 +4113,7 @@ Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "suffix",
+   queryType: "<queryType>",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
@@ -4102,7 +4126,7 @@ class EncryptOpts {
 }
 ```
 
-Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.<collection>` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'foo'>} } }
