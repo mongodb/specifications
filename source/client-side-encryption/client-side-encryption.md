@@ -2523,7 +2523,8 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 ## Changelog
 
-- 2026-06-16: Update tests in response to server-side validation of payloads ([SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887))
+- 2026-06-16: Update tests in response to server-side validation of payloads
+    ([SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887))
 
 - 2026-05-29: Add stable support for prefix and suffix queries
 

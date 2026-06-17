@@ -2021,7 +2021,8 @@ class EncryptOpts {
 
 Store the result in `insertPayload`.
 
-Use `encryptedClient` to insert the document `{ "encryptedIndexed": <insertPayload> }` into `db.explicit_encryption_c10`.
+Use `encryptedClient` to insert the document `{ "encryptedIndexed": <insertPayload> }` into
+`db.explicit_encryption_c10`.
 
 Repeat the above steps 10 times to insert 10 total documents. The `insertPayload` must be regenerated each iteration.
 
