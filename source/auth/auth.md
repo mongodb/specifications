@@ -265,7 +265,7 @@ certificate acts as the username.
 
 #### Conversation
 
-1. Send `authenticate` command (MongoDB 3.4+)
+1. Send `authenticate` command
 
     ```javascript
     CMD = {"authenticate": 1, "mechanism": "MONGODB-X509"}
