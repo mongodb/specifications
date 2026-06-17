@@ -4447,3 +4447,146 @@ Assert the following document is returned:
 ```javascript
 { "encryptedText": "foocafébaz" }
 ```
+
+### 28. KMS Connect Callback
+
+The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it returns is used for the KMS connection. Drivers that do not implement `kmsConnectCallback` MUST skip these tests.
+
+#### Setup
+
+Start the following server processes before running test cases in this section.
+
+1. The mock [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
+
+    Run on port 9006 with
+    [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
+    file and
+    [server.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/server.pem) as
+    a cert file:
+
+    ```shell
+    python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9006
+    ```
+
+2. The KMS HTTP proxy in plain HTTP mode on port 9004:
+
+    ```shell
+    python -u kms_http_proxy.py --port 9004
+    ```
+
+3. The KMS HTTP proxy in HTTPS mode on port 9005:
+
+    ```shell
+    python -u kms_http_proxy.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9005
+    ```
+
+For Cases 1 and 2, create a `ClientEncryption` object configured as follows:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`
+- `tlsOptions`: TLS options for `aws` with `tlsCAFile` set to `ca.pem` (to verify the mock KMS server's certificate).
+
+A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
+
+1. Accept `(host, port)` from the driver.
+2. Open a plain TCP connection to `127.0.0.1:9004`.
+3. Send `CONNECT host:port HTTP/1.1\r\nHost: host:port\r\n\r\n`.
+4. Read the response and verify it begins with `HTTP/1.1 200`.
+5. Return the raw TCP socket.
+
+A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to `127.0.0.1:9005` using `ca.pem` to verify the proxy's certificate.
+
+#### Case 1: plain HTTP proxy
+
+Reset the proxy metrics by sending `POST http://127.0.0.1:9004/reset`.
+
+Call `client_encryption.createDataKey()` with `"aws"` as the provider, the plain HTTP proxy `kmsConnectCallback`, and the following `masterKey`:
+
+```javascript
+{
+  "region": "us-east-1",
+  "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
+  "endpoint": "127.0.0.1:9006"
+}
+```
+
+Expect this to fail with an error from libmongocrypt with a message containing the string `"parse error"`. This implies the callback was invoked, the CONNECT tunnel was established through the proxy, and the TLS handshake to the mock KMS server on port 9006 succeeded.
+
+Fetch `GET http://127.0.0.1:9004/metrics`. Parse the response and assert:
+
+- `connect_count` is at least `1`.
+- At least one `connect_target` line contains `127.0.0.1:9006`.
+
+#### Case 2: HTTPS proxy
+
+Reset the proxy metrics by sending `POST https://127.0.0.1:9005/reset` (use `ca.pem` to verify the proxy's TLS certificate).
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1, but using the HTTPS proxy `kmsConnectCallback`.
+
+Expect the same `"parse error"` as Case 1.
+
+Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert:
+
+- `connect_count` is at least `1`.
+- At least one `connect_target` line contains `127.0.0.1:9006`.
+
+#### Case 3: full auto encryption pipeline via proxy
+
+This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic through a proxy. It uses real AWS KMS credentials; skip this case if they are not available.
+
+Perform the following setup.
+
+1. Create a `MongoClient` without encryption enabled (referred to as `client`).
+
+2. Using `client`, drop the collections `keyvault.datakeys` and `db.coll`.
+
+3. Create a `ClientEncryption` object (referred to as `client_encryption`) with:
+
+    - `keyVaultNamespace` set to `keyvault.datakeys`, `keyVaultClient` set to `client`.
+    - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+    - `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+4. Call `client_encryption.createDataKey()` with `"aws"` as the provider and the following `masterKey`:
+
+    ```javascript
+    {
+      "region": "us-east-1",
+      "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+    }
+    ```
+
+    Expect this to succeed. Store the returned UUID as `dataKeyId`.
+
+5. Build a JSON schema for `db.coll` using `dataKeyId`:
+
+    ```javascript
+    {
+      "bsonType": "object",
+      "properties": {
+        "encrypted_string": {
+          "encrypt": {
+            "keyId": [<Binary uuid of dataKeyId>],
+            "bsonType": "string",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+          }
+        }
+      }
+    }
+    ```
+
+6. Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
+
+7. Create a `MongoClient` configured with auto encryption (referred to as `client_encrypted`) with these `AutoEncryptionOpts`:
+
+    - `keyVaultNamespace`: `keyvault.datakeys`.
+    - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+    - `schemaMap`: `{ "db.coll": <schema from step 5> }`.
+    - `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+8. Use `client_encrypted` to insert `{ "_id": 1, "encrypted_string": "hello" }` into `db.coll`. Expect this to succeed.
+
+9. Use `client_encrypted` to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect the returned document to contain `{ "encrypted_string": "hello" }`.
+
+10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to be a Binary value (i.e. still encrypted).
+
+11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`, confirming that KMS requests were routed through the proxy.
