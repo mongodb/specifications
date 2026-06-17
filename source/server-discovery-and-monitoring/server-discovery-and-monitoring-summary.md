@@ -130,8 +130,7 @@ operation. The `hello` or legacy hello call is retried once, immediately, before
 In either case the client MUST clear its connection pool for the server: if one socket is bad, it is likely that all
 are.
 
-An algorithm is specified for inspecting error codes (MongoDB 3.6+) and falling back to parsing error messages when
-error codes are unavailable (MongoDB 3.4 and earlier). When the client sees such an error it knows its topology view is
+An algorithm is specified for inspecting error codes. When the client sees such an error it knows its topology view is
 out of date. It MUST mark the server type "unknown." Multi-threaded and asynchronous clients MUST re-check the server
 soon, and single-threaded clients MUST request a scan before the next operation. The client MUST NOT clear its
 connection pool for the server.
