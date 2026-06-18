@@ -132,7 +132,7 @@ rules:
 3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply backoff according to the
     following rules:
     1. If `retryAfterMS` is present on the error and has a positive value, apply backoff according to the following
-        formula: `backoff = retryAfterMS.value + (jitter * retryAfterMS)`
+        formula: `backoff = retryAfterMS.value + (jitter * retryAfterMS.value)`
         - `jitter` is a random jitter value between -0.5 and 0.5.
         - `retryAfterMS.value` is the value of the error's `retryAfterMS` field.
     2. Otherwise, apply exponential backoff according to the following formula:
