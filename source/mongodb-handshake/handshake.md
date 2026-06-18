@@ -85,7 +85,7 @@ if stable_api_configured or client_options.load_balanced:
     cmd = {"hello": 1}
 else:
     cmd = {"legacy hello": 1, "helloOk": 1}
-cmd["backpressure"] = True
+cmd["backpressure"] = "2"
 cmd["client"] = client_metadata
 if client_options.compressors:
     cmd["compression"] = client_options.compressors

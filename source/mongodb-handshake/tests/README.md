@@ -499,7 +499,7 @@ Before each test case, perform the setup.
 
 8. Assert that `initialClientMetadata` is identical to `updatedClientMetadata`.
 
-### Test 9: Handshake documents include `backpressure: true`
+### Test 9: Handshake documents include `backpressure: 2`
 
 These tests require a mechanism for observing handshake documents sent to the server.
 
@@ -511,4 +511,4 @@ These tests require a mechanism for observing handshake documents sent to the se
 
 3. Assert that for every handshake document intercepted:
 
-    1. The document has a field `backpressure` whose value is `true`.
+    1. The document has a field `backpressure` whose value is `"2"`.

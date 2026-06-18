@@ -222,7 +222,7 @@ def execute_command_retryable(command, ...):
                 # If present on the error, retryAfterMS sets the backoff
                 retry_after_ms = exc.retry_after_ms
                 if retry_after_ms:
-                    retry_after /= 1000 # Convert from milliseconds to seconds
+                    retry_after = retry_after / 1000 # Convert from milliseconds to seconds
                     jitter = random.uniform(-0.5, 0.5) # Random float between [-0.5, 0.5].
                     backoff = (jitter * retry_after) + retry_after
                 # Otherwise fall back to exponential
