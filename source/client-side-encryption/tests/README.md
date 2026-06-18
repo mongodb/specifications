@@ -1940,6 +1940,13 @@ Read the `"_id"` field of `key1Document` as `key1ID`.
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
 [FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
+Load the file
+[encryptedFields-c10.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-c10.json)
+as `encryptedFields_c10`.
+
+Drop and create the collection `db.explicit_encryption_c10` using `encryptedFields_c10` as an option. See
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+
 Drop and create the collection `keyvault.datakeys`.
 
 Insert `key1Document` in `keyvault.datakeys` with majority write concern.
@@ -2014,28 +2021,10 @@ class EncryptOpts {
 
 Store the result in `insertPayload`.
 
-Use `encryptedClient` to insert the document `{ "encryptedIndexed": <insertPayload> }` into `db.explicit_encryption`.
+Use `encryptedClient` to insert the document `{ "encryptedIndexed": <insertPayload> }` into
+`db.explicit_encryption_c10`.
 
 Repeat the above steps 10 times to insert 10 total documents. The `insertPayload` must be regenerated each iteration.
-
-Use `clientEncryption` to encrypt the value "encrypted indexed value" with these `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "Indexed",
-   queryType: "equality",
-   contentionFactor: 0,
-}
-```
-
-Store the result in `findPayload`.
-
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
-`{ "encryptedIndexed": <findPayload> }`.
-
-Assert less than 10 documents are returned. 0 documents may be returned. Assert each returned document contains the
-field `{ "encryptedIndexed": "encrypted indexed value" }`.
 
 Use `clientEncryption` to encrypt the value "encrypted indexed value" with these `EncryptOpts`:
 
@@ -2048,10 +2037,10 @@ class EncryptOpts {
 }
 ```
 
-Store the result in `findPayload2`.
+Store the result in `findPayload`.
 
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
-`{ "encryptedIndexed": <findPayload2> }`.
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption_c10` collection with the filter
+`{ "encryptedIndexed": <findPayload> }`.
 
 Assert 10 documents are returned. Assert each returned document contains the field
 `{ "encryptedIndexed": "encrypted indexed value" }`.
