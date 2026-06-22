@@ -523,7 +523,7 @@ const client = new MongoClient(process.env.MONGODB_URI, {
 #### kmsConnectCallback
 
 The `kmsConnectCallback` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
-[AutoEncryptionOpts](#AutoEncryptionOpts). Drivers MAY choose not to implement this option.
+[AutoEncryptionOpts](#AutoEncryptionOpts).
 
 When provided, the callback is invoked when establishing a connection to a KMS host, receiving the hostname and port as
 arguments. It MUST return a socket-like object connected to the target host. The driver then wraps the returned socket
@@ -533,6 +533,9 @@ perform TLS.
 This is intended to enable use cases such as routing KMS requests through an HTTP proxy via HTTPS CONNECT. The callback
 type is intentionally left unspecified so that drivers may use the type that best fits their language (e.g., a function,
 a callable object).
+
+Drivers are required to support an HTTP proxy but MAY omit kmsConnectCallback if they provide an alternative mechanism
+for proxy support.
 
 #### kmsProviders
 
