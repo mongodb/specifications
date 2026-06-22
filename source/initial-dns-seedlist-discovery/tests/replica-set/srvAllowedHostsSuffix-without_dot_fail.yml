@@ -1,4 +1,4 @@
-# dot should be prepended causing the host to be .uild.10gen.cc
+# dot should be prepended to srvAllowedHostsSuffix causing the host to be .uild.10gen.cc which should not match any available DNS records
 "uri": "mongodb+srv://test12.test.build.10gen.cc/?srvAllowedHostsSuffix=uild.10gen.cc"
 seeds: []
 hosts: []
