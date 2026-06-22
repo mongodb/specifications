@@ -4450,41 +4450,23 @@ Assert the following document is returned:
 
 ### 28. KMS Connect Callback
 
-The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it returns is used for the KMS connection. Drivers that do not implement `kmsConnectCallback` MUST skip these tests.
+The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it returns is used for the KMS connection. Drivers that do not implement `kmsConnectCallback` MUST skip these tests. All cases require real AWS KMS credentials; skip any case if they are not available.
 
 #### Setup
 
 Start the following server processes before running test cases in this section.
 
-1. The mock [KMS HTTP server](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/csfle/kms_http_server.py).
-
-    Run on port 9006 with
-    [ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem) as a CA
-    file and
-    [server.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/server.pem) as
-    a cert file:
-
-    ```shell
-    python -u kms_http_server.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9006
-    ```
-
-2. The KMS HTTP proxy in plain HTTP mode on port 9004:
+1. The KMS HTTP proxy in plain HTTP mode on port 9004:
 
     ```shell
     python -u kms_http_proxy.py --port 9004
     ```
 
-3. The KMS HTTP proxy in HTTPS mode on port 9005:
+2. The KMS HTTP proxy in HTTPS mode on port 9005:
 
     ```shell
     python -u kms_http_proxy.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9005
     ```
-
-For Cases 1 and 2, create a `ClientEncryption` object configured as follows:
-
-- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
-- `kmsProviders`: `{ "aws": { <AWS credentials> } }`
-- `tlsOptions`: TLS options for `aws` with `tlsCAFile` set to `ca.pem` (to verify the mock KMS server's certificate).
 
 A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
 
@@ -4498,41 +4480,46 @@ A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, e
 
 #### Case 1: plain HTTP proxy
 
-Reset the proxy metrics by sending `POST http://127.0.0.1:9004/reset`.
+Create a `ClientEncryption` object with:
 
-Call `client_encryption.createDataKey()` with `"aws"` as the provider, the plain HTTP proxy `kmsConnectCallback`, and the following `masterKey`:
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
+
+Call `client_encryption.createDataKey()` with `"aws"` as the provider and the following `masterKey`:
 
 ```javascript
 {
   "region": "us-east-1",
-  "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0",
-  "endpoint": "127.0.0.1:9006"
+  "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
 }
 ```
 
-Expect this to fail with an error from libmongocrypt with a message containing the string `"parse error"`. This implies the callback was invoked, the CONNECT tunnel was established through the proxy, and the TLS handshake to the mock KMS server on port 9006 succeeded.
+Expect this to succeed.
 
-Fetch `GET http://127.0.0.1:9004/metrics`. Parse the response and assert:
-
-- `connect_count` is at least `1`.
-- At least one `connect_target` line contains `127.0.0.1:9006`.
+Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`.
 
 #### Case 2: HTTPS proxy
 
-Reset the proxy metrics by sending `POST https://127.0.0.1:9005/reset` (use `ca.pem` to verify the proxy's TLS certificate).
+Create a `ClientEncryption` object with:
 
-Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1, but using the HTTPS proxy `kmsConnectCallback`.
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: the HTTPS proxy callback described in Setup.
 
-Expect the same `"parse error"` as Case 1.
+Reset the proxy metrics: `POST https://127.0.0.1:9005/reset` (use `ca.pem` to verify the proxy's TLS certificate).
 
-Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert:
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
 
-- `connect_count` is at least `1`.
-- At least one `connect_target` line contains `127.0.0.1:9006`.
+Expect this to succeed.
+
+Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_count` is `1`.
 
 #### Case 3: full auto encryption pipeline via proxy
 
-This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic through a proxy. It uses real AWS KMS credentials; skip this case if they are not available.
+This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic through a proxy.
 
 Perform the following setup.
 
