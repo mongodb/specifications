@@ -4450,7 +4450,9 @@ Assert the following document is returned:
 
 ### 28. KMS Connect Callback
 
-The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it returns is used for the KMS connection. Drivers that do not implement `kmsConnectCallback` MUST skip these tests. All cases require real AWS KMS credentials; skip any case if they are not available.
+The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it returns is used for the KMS connection. All cases require real AWS KMS credentials; skip any case if they are not available.
+
+Drivers that do not implement `kmsConnectCallback` MUST use an alternative means of connecting to the HTTP proxy.
 
 #### Setup
 
@@ -4576,4 +4578,4 @@ Perform the following setup.
 
 10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to be a Binary value (i.e. still encrypted).
 
-11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`, confirming that KMS requests were routed through the proxy.
+11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`, confirming that KMS requests were routed through the proxy.
