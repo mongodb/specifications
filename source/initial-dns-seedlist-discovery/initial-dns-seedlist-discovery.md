@@ -68,7 +68,7 @@ Only `{domainname}` is used during SRV record verification and `{subdomain}` is 
 
 #### srvAllowedHostsSuffix
 
-This option is used to validate hosts. If present, its value MUST be treated as the domain for DNS validation. For
+This option is used to validate hosts. If present, its value MUST be treated as the `{domainname}` for DNS validation. For
 example, `srvAllowedHostsSuffix=.mydomain.net`. If the value does not begin with a `.`, for example,
 `srvAllowedHostsSuffix=mydomain.net`, the `.` MUST be automatically prepended prior to validation. If this option is not
 present, the domain MUST be inferred from the hostname. This option MUST only be configurable at the level of a
