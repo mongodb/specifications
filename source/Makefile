@@ -4,12 +4,12 @@ JSON_FILES=$(patsubst %.yml,%.json,$(YAML_FILES))
 all: $(JSON_FILES) HAS_JSYAML
 
 %.json: %.yml
-	tmpfile=$$(mktemp);               \
-	if js-yaml $< > "$$tmpfile"; then \
-	    mv "$$tmpfile" $@;            \
-	else                              \
-	    rm "$$tmpfile";               \
-	    exit 1;                       \
+	tmpfile=$$(mktemp);                                                                         \
+	if node $(dir $(lastword $(MAKEFILE_LIST)))/../scripts/yaml2json.mjs $< > "$$tmpfile"; then \
+	    mv "$$tmpfile" $@;                                                                      \
+	else                                                                                        \
+	    rm "$$tmpfile";                                                                         \
+	    exit 1;                                                                                 \
 	fi
 
 HAS_JSYAML:
