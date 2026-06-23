@@ -157,7 +157,8 @@ option.
        const end = performance.now();
     ```
 
-6. Configure the random number generator used for `retryAfterMS` jitter to always return `0`.
+6. Configure the random number generator used for exponential backoff jitter to always return a number as close as
+    possible to `1`.
 
 7. Run the following command to set up `retryAfterMS` on overload errors.
 
