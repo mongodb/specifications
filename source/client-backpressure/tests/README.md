@@ -157,28 +157,25 @@ option.
        const end = performance.now();
     ```
 
-6. Configure the random number generator used for exponential backoff jitter to always return a number as close as
-    possible to `1`.
-
-7. Run the following command to set up `retryAfterMS` on overload errors.
+6. Run the following command to set up `retryAfterMS` on overload errors.
 
     ```python
     client.admin.command("setParameter", 1, overloadRetryAfterMS=50)
     ```
 
-8. Execute step 5 again.
+7. Execute step 5 again.
 
-9. Run the following command to disable `retryAfterMS` on overload errors.
+8. Run the following command to disable `retryAfterMS` on overload errors.
 
     ```python
     client.admin.command("setParameter", 1, overloadRetryAfterMS=0)
     ```
 
-10. Compare the time between the two runs.
+9. Compare the time between the two runs.
 
     ```python
     assertTrue(absolute_value(exponential_backoff_time - (with_retry_after_ms_time + 0.2 seconds)) < 0.2 seconds)
     ```
 
-    The difference in the backoffs is 0.2 seconds. There is a 0.2-second window to account for potential variance
-    between the two runs.
+    The difference in the backoffs is 0.2 seconds. There is a 0.2-second window to account for potential variance between
+    the two runs.
