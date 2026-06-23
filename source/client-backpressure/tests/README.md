@@ -122,7 +122,7 @@ option.
 
 #### Test 5: Overload Errors with retryAfterMS override exponential backoff
 
-Drivers should test that overload errors with `retryAfterMS` override the default exponential backoff policy. This test
+Drivers SHOULD test that overload errors with `retryAfterMS` override the default exponential backoff policy. This test
 MUST be executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels`
 option.
 
