@@ -217,13 +217,12 @@ def execute_command_retryable(command, ...):
                 deprioritized_servers.append(server.address)
 
             if is_overload:
-                # If present on the error, retryAfterMS sets the backoff
+                # If present on the error, retryAfterMS sets the base backoff
                 retry_after_ms = exc.retry_after_ms
                 if retry_after_ms:
                     retry_after = retry_after / 1000 # Convert from milliseconds to seconds
-                    jitter = random.uniform(-0.5, 0.5) # Random float between [-0.5, 0.5].
-                    backoff = (jitter * retry_after) + retry_after
-                # Otherwise fall back to exponential
+                    backoff = jitter * min(MAX_BACKOFF, retry_after * 2 ** (attempt - 1))
+                # Otherwise fall back to BASE_BACKOFF
                 else:
                     jitter = random.random() # Random float between [0.0, 1.0).
                     backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2 ** (attempt - 1))
