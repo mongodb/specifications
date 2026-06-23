@@ -70,7 +70,7 @@ tests:
                   "subType": "00"
                 }
               }
-            }
+              }
           command_name: compactStructuredEncryptionData
   - description: "Compact errors on an unencrypted client"
     operations:
