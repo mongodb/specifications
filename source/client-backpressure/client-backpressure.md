@@ -131,16 +131,13 @@ rules:
             [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
 3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply backoff according to the
     following rules:
-    1. If `retryAfterMS` is present on the error and has a positive value, apply backoff according to the following
-        formula: `backoff = min(MAX_BACKOFF, retryAfterMS.value + (jitter * retryAfterMS.value))`
-        - `jitter` is a random jitter value between -0.5 and 0.5.
-        - `retryAfterMS.value` is the value of the error's `retryAfterMS` field.
-        - `MAX_BACKOFF` is 10000ms.
-    2. Otherwise, apply exponential backoff according to the following formula:
-        `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
+    1. If `retryAfterMS` is present on the error and has a positive value, use the following formula:
+        `backoff = jitter * min(MAX_BACKOFF, retryAfterMS.value * 2^(attempt - 1))`
         - `jitter` is a random jitter value between 0 and 1.
         - `BASE_BACKOFF` is constant 100ms.
         - `MAX_BACKOFF` is 10000ms.
+        - `retryAfterMS.value` is the value of the error's `retryAfterMS` field.
+    2. Otherwise, use `BASE_BACKOFF` instead of `retryAfterMS.value` in the same formula.
         - This results in delays of 100ms and 200ms before accounting for jitter.
 4. If the request is eligible for retry (as outlined in step 2 above) and `enableOverloadRetargeting` is enabled, the
     client MUST add the previously used server's address to the list of deprioritized server addresses for
