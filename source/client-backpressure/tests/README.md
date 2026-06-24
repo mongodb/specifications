@@ -120,11 +120,10 @@ option.
 
 6. Assert that the total number of started commands is `maxAdaptiveRetries` + 1 (2).
 
-#### Test 5: Overload Errors with retryAfterMS override exponential backoff
+#### Test 5: Overload Errors with retryAfterMS override base backoff
 
-Drivers SHOULD test that overload errors with `retryAfterMS` override the default exponential backoff policy. This test
-MUST be executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels`
-option.
+Drivers SHOULD test that overload errors with `retryAfterMS` override the default backoff duration. This test MUST be
+executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient`.
 
