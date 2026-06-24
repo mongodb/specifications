@@ -218,14 +218,11 @@ def execute_command_retryable(command, ...):
 
             if is_overload:
                 jitter = random.random() # Random float between [0.0, 1.0).
-                # If present on the error, retryAfterMS sets the base backoff
-                retry_after_ms = exc.retry_after_ms
-                if retry_after_ms:
-                    retry_after = retry_after / 1000 # Convert from milliseconds to seconds
-                    backoff = jitter * min(MAX_BACKOFF, retry_after * 2 ** (attempt - 1))
-                # Otherwise fall back to BASE_BACKOFF
-                else:
-                    backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2 ** (attempt - 1))
+                retry_after = BASE_BACKOFF
+                # If present on the error, retryAfterMS overrides the base backoff
+                if exc.retry_after_ms:
+                    retry_after = exc.retry_after_ms / 1000 # Convert from milliseconds to seconds
+                backoff = jitter * min(MAX_BACKOFF, retry_after * 2 ** (attempt - 1))
                 # If the delay exceeds the deadline, bail early.
                 if _csot.get_timeout():
                     if time.monotonic() + backoff > _csot.get_deadline():
