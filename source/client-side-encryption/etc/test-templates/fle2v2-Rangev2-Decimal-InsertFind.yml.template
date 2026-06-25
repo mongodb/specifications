@@ -98,7 +98,7 @@ tests:
                         "subType": "06"
                     }
                   }
-              }
+                }
             encryptionInformation:
               type: 1
               schema:
