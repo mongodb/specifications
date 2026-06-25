@@ -16,7 +16,7 @@ data: [
       }
     }
   }
-]
+  ]
 key_vault_data: [ {{ yamlfile("keys/key2-document.json") }}]
 tests:
   - description: "FLE2 decrypt of existing data succeeds"

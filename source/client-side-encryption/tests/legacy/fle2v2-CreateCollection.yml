@@ -107,7 +107,7 @@ tests:
                         "keyId": { "$binary": { "subType": "04", "base64": "AAAAAAAAAAAAAAAAAAAAAA==" }}
                     }
                 ]
-            }
+                }
             command_name: create
             database_name: *database_name
         # Index on __safeContents__ is then created.
