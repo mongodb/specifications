@@ -4463,7 +4463,9 @@ Assert the following document is returned:
 
 ### 28. KMS Connect Callback
 
-The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it returns is used for the KMS connection. All cases require real AWS KMS credentials; skip any case if they are not available.
+The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it
+returns is used for the KMS connection. All cases require real AWS KMS credentials; skip any case if they are not
+available.
 
 Drivers that do not implement `kmsConnectCallback` MUST use an alternative means of connecting to the HTTP proxy.
 
@@ -4491,7 +4493,8 @@ A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
 4. Read the response and verify it begins with `HTTP/1.1 200`.
 5. Return the raw TCP socket.
 
-A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to `127.0.0.1:9005` using `ca.pem` to verify the proxy's certificate.
+A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to
+`127.0.0.1:9005` using `ca.pem` to verify the proxy's certificate.
 
 #### Case 1: plain HTTP proxy
 
@@ -4534,7 +4537,8 @@ Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_cou
 
 #### Case 3: full auto encryption pipeline via proxy
 
-This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic through a proxy.
+This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic
+through a proxy.
 
 Perform the following setup.
 
@@ -4578,7 +4582,8 @@ Perform the following setup.
 
 6. Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
 
-7. Create a `MongoClient` configured with auto encryption (referred to as `client_encrypted`) with these `AutoEncryptionOpts`:
+7. Create a `MongoClient` configured with auto encryption (referred to as `client_encrypted`) with these
+    `AutoEncryptionOpts`:
 
     - `keyVaultNamespace`: `keyvault.datakeys`.
     - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
@@ -4587,8 +4592,11 @@ Perform the following setup.
 
 8. Use `client_encrypted` to insert `{ "_id": 1, "encrypted_string": "hello" }` into `db.coll`. Expect this to succeed.
 
-9. Use `client_encrypted` to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect the returned document to contain `{ "encrypted_string": "hello" }`.
+9. Use `client_encrypted` to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect the returned document to
+    contain `{ "encrypted_string": "hello" }`.
 
-10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to be a Binary value (i.e. still encrypted).
+10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to
+    be a Binary value (i.e. still encrypted).
 
-11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`, confirming that KMS requests were routed through the proxy.
+11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`, confirming that KMS requests were routed
+    through the proxy.
