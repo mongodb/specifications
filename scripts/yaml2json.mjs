@@ -7,7 +7,9 @@ import { execSync } from 'child_process';
 
 // Import globally installed `js-yaml` package:
 const globalRoot = execSync('npm root -g').toString().trim();
-const { load, CORE_SCHEMA, mergeTag } = await import(`${globalRoot}/js-yaml/dist/js-yaml.mjs`);
+const pkg = JSON.parse(readFileSync(`${globalRoot}/js-yaml/package.json`, 'utf8'));
+const entry = pkg.exports?.['.']?.import ?? pkg.module ?? pkg.main;
+const { load, CORE_SCHEMA, mergeTag } = await import(`${globalRoot}/js-yaml/${entry}`);
 
 const file = process.argv[2];
 const content = readFileSync(file, 'utf8');
