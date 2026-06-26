@@ -18,7 +18,7 @@ tests:
           "default.default": {
             "fields": []
           }
-        }
+          }
     operations:
       - name: insertOne
         arguments:
@@ -31,7 +31,7 @@ tests:
                 "subType": "06"
               }
             }
-          }
+            }
     expectations:
       - command_started_event:
           command:

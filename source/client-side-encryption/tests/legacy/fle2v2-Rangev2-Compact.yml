@@ -88,6 +88,6 @@ tests:
                         "subType": "00"
                     }
                 }
-              }
+                }
             encryptionInformation: *encryptionInformation
           command_name: compactStructuredEncryptionData

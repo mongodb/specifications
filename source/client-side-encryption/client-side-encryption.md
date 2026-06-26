@@ -1348,9 +1348,9 @@ insert or query. Drivers MUST document the following behavior:
 
 > To insert or query with an "Indexed", "Range", or "String" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
-> must be false. The "substringPreview" query type is in preview and should be used for experimental workloads only.
-> This feature is unstable and its security is not guaranteed until released as Generally Available (GA). The GA version
-> of this feature may not be backwards compatible with the preview version.
+> must be false. The "prefixPreview", "suffixPreview", and "substringPreview" query types are in preview and should be
+> used for experimental workloads only. This feature is unstable and its security is not guaranteed until released as
+> Generally Available (GA). The GA version of this feature may not be backwards compatible with the preview version.
 
 #### contentionFactor
 
@@ -1363,9 +1363,9 @@ One of the strings:
 
 - "equality"
 - "range"
-- "prefix"
+- "prefix" / "prefixPreview"
     - Used for the `$encStrStartsWith` operator.
-- "suffix"
+- "suffix" / "suffixPreview"
     - Used for the `$encStrEndsWith` operator.
 - "substringPreview"
     - Used for the `$encStrContains` operator.
@@ -2522,6 +2522,11 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-06-17: Restore `prefixPreview` and `suffixPreview` as experimental.
+
+- 2026-06-16: Update tests in response to server-side validation of payloads
+    ([SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887))
 
 - 2026-05-29: Add stable support for prefix and suffix queries
 

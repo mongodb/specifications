@@ -19,7 +19,7 @@ tests:
           "default.default": {
             "fields": []
           }
-        }
+          }
     operations:
       # EncryptedFieldsMap overrides remote encryptedFields.
       # Automatic encryption does not occur on encryptedUnindexed. The value is validated on the server.
@@ -33,7 +33,7 @@ tests:
                 "subType": "06"
               }
             }
-          }
+            }
       - name: find
         arguments:
           filter: { "_id": 1 }

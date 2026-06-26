@@ -10,7 +10,7 @@ data: []
 json_schema: {
     "properties": {},
     "bsonType": "object"
-}
+  }
 encrypted_fields: &encrypted_fields {{ yamlfile ("encryptedFields.json") }}
 key_vault_data: [ {{ yamlfile ("keys/key1-document.json") }} ]
 tests:
