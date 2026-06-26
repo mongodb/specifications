@@ -807,6 +807,11 @@ up with an invalid cluster time. Worse, this invalid cluster time may remain the
 clocks between different clusters are not synced. This results in all operations failing until the application is
 restarted. To fix this issue we decided it was more robust to stop gossiping on SDAM commands altogether.
 
+## Idiomatic APIs
+
+Drivers MAY implement session management APIs idiomatic to their language. These APIs SHOULD take advantage of language
+runtime capabilities to encourage correct usage of sessions.
+
 ## Test Plan
 
 See the [README](tests/README.md) for tests.
@@ -884,6 +889,9 @@ collection.insertOne(session, {})
 session.endSession()
 ```
 
+If possible, drivers are encouraged to implement APIs idiomatic to their language that remove the need to explicitly
+pass sessions to each operation.
+
 ### Why does a network error cause the `ServerSession` to be discarded from the pool?
 
 When a network error is encountered when executing an operation with a `ClientSession`, the operation may be left
@@ -934,6 +942,7 @@ has risks that do not justify the potential guaranteed `ServerSession` allocatio
 
 ## Changelog
 
+- 2026-03-12: Drivers MAY implement idiomatic session management APIs.
 - 2025-02-24: Drivers MUST NOT gossip $clusterTime on SDAM commands.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2017-09-13: If causalConsistency option is omitted assume true
