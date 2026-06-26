@@ -1,7 +1,6 @@
 # CRUD API
 
 - Status: Accepted
-- Minimum Server Version: 2.6
 
 ______________________________________________________________________
 
@@ -240,7 +239,6 @@ class AggregateOptions {
    * when the $out or $merge stage is specified.
    *
    * This option is sent only if the caller explicitly provides a true value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/aggregate/
    */
@@ -250,7 +248,6 @@ class AggregateOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/aggregate/
    */
@@ -285,10 +282,8 @@ class AggregateOptions {
    * the database profiler, currentOp and logs. The default is to not send a value.
    *
    * The comment can be any valid BSON type for server versions 4.4 and above.
-   * Server versions between 3.6 and 4.2 only support string as comment,
+   * Servers before 4.4 only support string as comment,
    * and providing a non-string type will result in a server-side error.
-   * Older server versions do not support comment for aggregate command at all,
-   * and providing one will result in a server-side error.
    *
    * If a comment is provided, drivers MUST attach this comment to all
    * subsequent getMore commands run on the same cursor for server
@@ -344,7 +339,6 @@ class CountOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    */
   collation: Optional<Document>;
 
@@ -453,7 +447,6 @@ class DistinctOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/distinct/
    */
@@ -545,8 +538,7 @@ class FindOptions {
    * This option is sent only if the caller explicitly provides a value. The default
    * is to not send a value.
    *
-   * This option is only supported by servers >= 4.4. Older servers >= 3.2 will report an error for using this option.
-   * For servers < 3.2, the driver MUST raise an error if the caller explicitly provides a value.
+   * This option is only supported by servers >= 4.4; older servers will report an error.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -556,7 +548,6 @@ class FindOptions {
    * Get partial results from a mongos if some shards are down (instead of throwing an error).
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, the Partial wire protocol flag is used and defaults to false.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -566,7 +557,6 @@ class FindOptions {
    * The number of documents to return per batch.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this is combined with limit to create the wire protocol numberToReturn value.
    * If specified, drivers SHOULD apply this option to both the original query operation and subsequent
    * getMore operations on the cursor.
    *
@@ -578,7 +568,6 @@ class FindOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -604,7 +593,6 @@ class FindOptions {
    * the tailable and awaitData options.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, the AwaitData and Tailable wire protocol flags are used and default to false.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -624,11 +612,9 @@ class FindOptions {
    * The maximum number of documents to return.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this is combined with batchSize to create the wire protocol numberToReturn value.
    *
-   * A negative limit implies that the caller has requested a single batch of results. For servers >= 3.2, singleBatch
-   * should be set to true and limit should be converted to a positive value. For servers < 3.2, the wire protocol
-   * numberToReturn value may be negative.
+   * A negative limit implies that the caller has requested a single batch of results. singleBatch should be set to
+   * true and limit should be converted to a positive value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -649,7 +635,6 @@ class FindOptions {
    * this option is ignored.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as maxTimeMS does not exist in the OP_GET_MORE wire protocol.
    *
    * Note: This option is specified as "maxTimeMS" in the getMore command and not provided as part of the
    * initial find command.
@@ -693,7 +678,6 @@ class FindOptions {
    * to prevent excess memory use. Set this option to prevent that.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, the NoCursorTimeout wire protocol flag is used and defaults to false.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -705,7 +689,6 @@ class FindOptions {
    * Note: this option is intended for internal replication use only.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, the OplogReplay wire protocol flag is used and defaults to false.
    * For servers >= 4.4, the server will ignore this option if set (see: SERVER-36186).
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
@@ -744,7 +727,6 @@ class FindOptions {
    * The number of documents to skip before returning.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this is a wire protocol parameter that defaults to 0.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -890,43 +872,6 @@ When users specify both `limit` and `batchSize` options with the same value, the
 batch, but still leaves an open cursor that needs to be closed using the `killCursors` command. To avoid this, drivers
 MUST send a value of `limit + 1` for `batchSize` in the resulting `find` command. This eliminates the open cursor issue.
 
-##### Combining Limit and Batch Size for OP_QUERY
-
-The OP_QUERY wire protocol only contains a numberToReturn value which drivers must calculate to get expected limit and
-batch size behavior. Subsequent calls to OP_GET_MORE should use the user-specified batchSize or default to 0. If the
-result is larger than the max Int32 value, an error MUST be raised as the computed value is impossible to send to the
-server. Below is pseudo-code for calculating numberToReturn for OP_QUERY.
-
-```typescript
-function calculateFirstNumberToReturn(options: FindOptions): Int32 {
-  Int32 numberToReturn;
-  Int32 limit = options.limit || 0;
-  Int32 batchSize = options.batchSize || 0;
-
-  if (limit < 0) {
-    numberToReturn = limit;
-  }
-  else if (limit == 0) {
-    numberToReturn = batchSize;
-  }
-  else if (batchSize == 0) {
-    numberToReturn = limit;
-  }
-  else if (limit < batchSize) {
-    numberToReturn = limit;
-  }
-  else {
-    numberToReturn = batchSize;
-  }
-
-  return numberToReturn;
-}
-```
-
-Because of this anomaly in the wire protocol, it is up to the driver to enforce the user-specified limit. Each driver
-MUST keep track of how many documents have been iterated and stop iterating once the limit has been reached. When the
-limit has been reached, if the cursor is still open, a driver MUST kill the cursor.
-
 ##### Database-level aggregation
 
 The server supports several collection-less aggregation source stages like `$currentOp` and `$listLocalSessions`. The
@@ -951,9 +896,6 @@ interface Collection {
    * Executes multiple write operations.
    *
    * An error MUST be raised if the requests parameter is empty.
-   *
-   * For servers < 3.4, if a collation was explicitly set for any request, an error MUST be raised
-   * and no documents sent.
    *
    * NOTE: see the FAQ about the previous bulk API and how it relates to this.
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
@@ -1042,8 +984,6 @@ class BulkWriteOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-   * For unacknowledged writes using OP_INSERT, OP_UPDATE, or OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -1094,8 +1034,6 @@ class InsertOneOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-   * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -1133,8 +1071,6 @@ class InsertManyOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-   * For unacknowledged writes using OP_INSERT, the driver MUST raise an error if the caller explicitly provides a value.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -1179,8 +1115,6 @@ class UpdateOptions {
    * A set of filters specifying to which array elements an update should apply.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1190,8 +1124,6 @@ class UpdateOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -1199,8 +1131,6 @@ class UpdateOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1211,10 +1141,6 @@ class UpdateOptions {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1287,8 +1213,6 @@ class ReplaceOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -1296,8 +1220,6 @@ class ReplaceOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1308,10 +1230,6 @@ class ReplaceOptions {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1383,8 +1301,6 @@ class DeleteOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
    */
@@ -1395,9 +1311,7 @@ class DeleteOptions {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
+   * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
    * For unacknowledged writes using OP_MSG and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
@@ -1475,8 +1389,6 @@ class DeleteOneModel implements WriteModel {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
    */
@@ -1487,9 +1399,7 @@ class DeleteOneModel implements WriteModel {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
+   * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
    * For unacknowledged writes using OP_MSG and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
@@ -1510,8 +1420,6 @@ class DeleteManyModel implements WriteModel {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_DELETE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
    */
@@ -1522,8 +1430,7 @@ class DeleteManyModel implements WriteModel {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.4. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
+   * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
    * For unacknowledged writes using OP_DELETE or OP_MSG, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
@@ -1551,8 +1458,6 @@ class ReplaceOneModel implements WriteModel {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1563,10 +1468,6 @@ class ReplaceOneModel implements WriteModel {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1613,8 +1514,6 @@ class UpdateOneModel implements WriteModel {
    * A set of filters specifying to which array elements an update should apply.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1624,8 +1523,6 @@ class UpdateOneModel implements WriteModel {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1636,10 +1533,6 @@ class UpdateOneModel implements WriteModel {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1686,8 +1579,6 @@ class UpdateManyModel implements WriteModel {
    * A set of filters specifying to which array elements an update should apply.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1697,8 +1588,6 @@ class UpdateManyModel implements WriteModel {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1709,10 +1598,6 @@ class UpdateManyModel implements WriteModel {
    * If specified, then the query system will only consider plans using the hinted index.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 4.2. Older servers >= 3.4 will report an error for using this option.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_UPDATE, the driver MUST raise an error if the caller explicitly provides a value.
-   * For unacknowledged writes using OP_MSG and servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -2124,7 +2009,6 @@ class FindOneAndDeleteOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
    */
@@ -2136,7 +2020,6 @@ class FindOneAndDeleteOptions {
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
-   * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
@@ -2220,7 +2103,6 @@ class FindOneAndReplaceOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -2228,7 +2110,6 @@ class FindOneAndReplaceOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
    */
@@ -2240,7 +2121,6 @@ class FindOneAndReplaceOptions {
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
-   * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
@@ -2345,7 +2225,6 @@ class FindOneAndUpdateOptions {
    * A set of filters specifying to which array elements an update should apply.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.6, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -2355,7 +2234,6 @@ class FindOneAndUpdateOptions {
    * If true, allows the write to opt-out of document level validation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.2, this option is ignored and not sent as document validation is not available.
    */
   bypassDocumentValidation: Optional<Boolean>;
 
@@ -2363,7 +2241,6 @@ class FindOneAndUpdateOptions {
    * Specifies a collation.
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * For servers < 3.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
    */
@@ -2375,7 +2252,6 @@ class FindOneAndUpdateOptions {
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
    * This option is only supported by servers >= 4.4. Older servers >= 4.2 will report an error for using this option.
-   * For servers < 4.2, the driver MUST raise an error if the caller explicitly provides a value.
    * For unacknowledged writes and servers < 4.4, the driver MUST raise an error if the caller explicitly provides a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
@@ -2718,22 +2594,14 @@ release.
 Q: Where is `singleBatch` in FindOptions?
 
 Drivers have historically allowed users to request a single batch of results (after which the cursor is closed) by
-specifying a negative value for the `limit` option. For servers < 3.2, a single batch may be requested by specifying a
-negative value in the `numberToReturn` wire protocol field. For servers >= 3.2, the `find` command defines `limit` as a
-non-negative integer option but introduces a `singleBatch` boolean option. Rather than introduce a `singleBatch` option
-to FindOptions, the spec preserves the existing API for `limit` and instructs drivers to convert negative values
-accordingly for servers >= 3.2.
+specifying a negative value for the `limit` option. The `find` command defines `limit` as a non-negative integer option
+but introduces a `singleBatch` boolean option. Rather than introduce a `singleBatch` option to FindOptions, the spec
+preserves the existing API for `limit` and instructs drivers to convert negative values accordingly.
 
 Q: Why are client-side errors raised for some unsupported options?
 
-Server versions before 3.4 were inconsistent about reporting errors for unrecognized command options and may simply
-ignore them, which means a client-side error is the only way to inform users that such options are unsupported. For
-unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a
-response (even though a 3.6+ server is otherwise capable of reporting errors for unrecognized options). For
-unacknowledged writes using legacy opcodes (i.e. OP_INSERT, OP_UPDATE, and OP_DELETE), the message body has no field
-with which to express these options so a client-side error is the only mechanism to inform the user that such options
-are unsupported. The spec does not explicitly refer to unacknowledged writes using OP_QUERY primarily because a response
-document is always returned and drivers generally would not consider using OP_QUERY precisely for that reason.
+For unacknowledged writes using OP_MSG, a client-side error is necessary because the server has no chance to return a
+response.
 
 Q: Why does reverting to using `count` instead of `aggregate` with `$collStats` for estimatedDocumentCount not require a
 major version bump in the drivers, even though it might break users of the Stable API?
@@ -2748,6 +2616,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2025-09-09: Clarify that `rawData` is for internal use only.
 

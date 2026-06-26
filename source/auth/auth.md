@@ -1,7 +1,6 @@
 # Authentication
 
 - Status: Accepted
-- Minimum Server Version: 2.6
 
 ______________________________________________________________________
 
@@ -147,8 +146,7 @@ Drivers MUST follow the following steps for an authentication handshake:
     type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
     authentication error.
 2. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
-3. Inspect the value of `maxWireVersion`. If the value is greater than or equal to `6`, then the driver MUST use
-    `OP_MSG` for authentication. Otherwise, it MUST use `OP_QUERY`.
+3. Drivers MUST use `OP_MSG` for authentication.
 4. If credentials exist: 3.1. A driver MUST authenticate with all credentials provided to the MongoClient. 3.2. A single
     invalid credential is the same as all credentials being invalid.
 
@@ -175,8 +173,7 @@ in the auth credential. The username MUST NOT be modified from the form provided
 SASLprep), as the server uses the raw form to look for conflicts with legacy credentials.
 
 If the handshake response includes a `saslSupportedMechs` field, then drivers MUST use the contents of that field to
-select a default mechanism as described later. If the command succeeds and the response does not include a
-`saslSupportedMechs` field, then drivers MUST use the legacy default mechanism rules for servers older than 4.0.
+select a default mechanism as described later.
 
 Drivers MUST NOT validate the contents of the `saslSupportedMechs` attribute of the initial handshake reply. Drivers
 MUST NOT raise an error if the `saslSupportedMechs` attribute of the reply includes an unknown mechanism.
@@ -196,13 +193,8 @@ Drivers with a list of credentials at the time a connection is opened MAY do mec
 handshake, but only for the first credential in the list of credentials.
 
 When authenticating each credential, if the authentication mechanism is not specified and has not been negotiated for
-that credential:
-
-- If the connection handshake results indicate the server version is 4.0 or later, drivers MUST send a new `hello` or
-    legacy hello negotiation command for the credential to determine the default authentication mechanism.
-- Otherwise, when the server version is earlier than 4.0, the driver MUST select a default authentication mechanism for
-    the credential following the instructions for when the `saslSupportedMechs` field is not present in a legacy hello
-    response.
+that credential, drivers MUST send a new `hello` or legacy hello negotiation command for the credential to determine the
+default authentication mechanism.
 
 ### Caching credentials in SCRAM
 
@@ -1861,8 +1853,6 @@ Connection string tests have been defined in the associated files:
 
 ### SCRAM-SHA-256 and mechanism negotiation
 
-Testing SCRAM-SHA-256 requires server version 3.7.3 or later with `featureCompatibilityVersion` of "4.0" or later.
-
 Drivers that allow specifying auth parameters in code as well as via connection string should test both for the test
 cases described below.
 
@@ -2043,6 +2033,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2026-06-17: Remove additional pre-4.2 version references.
 
 - 2025-11-25: Remove redundant `*.mongodbgov.net` on `ALLOWED_HOSTS`
 

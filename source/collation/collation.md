@@ -1,7 +1,6 @@
 # Collation
 
 - Status: Accepted
-- Minimum Server Version: 3.4
 
 ______________________________________________________________________
 

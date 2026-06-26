@@ -1,7 +1,6 @@
 # Retryable Writes
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 
@@ -149,16 +148,15 @@ commands if they fail to return a response.
 The only supported retryable write commands within a transaction are `commitTransaction` and `abortTransaction`.
 Therefore drivers MUST NOT retry write commands within transactions even when `retryWrites` has been set to true on the
 `MongoClient`. In addition, drivers MUST NOT add the `RetryableWriteError` label to any error that occurs during a write
-command within a transaction (excepting `commitTransation` and `abortTransaction`), even when `retryWrites` has been set
+command within a transaction (excepting `commitTransaction` and `abortTransaction`), even when `retryWrites` has been set
 to true on the `MongoClient`.
 
 ### Implementing Retryable Writes
 
 #### Determining Retryable Write Errors
 
-When connected to a MongoDB instance that supports retryable writes (versions 3.6+), the driver MUST treat all errors
-with the RetryableWriteError label as retryable. This error label can be found in the top-level "errorLabels" field of
-the error.
+The driver MUST treat all errors with the RetryableWriteError label as retryable. This error label can be found in the 
+top-level "errorLabels" field of the error.
 
 ##### RetryableWriteError Labels
 
@@ -686,6 +684,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references;
 
 - 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
 

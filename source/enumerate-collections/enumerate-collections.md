@@ -1,7 +1,6 @@
 # Enumerating Collections
 
 - Status: Accepted
-- Minimum Server Version: 1.8
 
 ______________________________________________________________________
 
@@ -159,11 +158,6 @@ Example return:
 ]
 ```
 
-Server version between 2.7.6 (inclusive) and 4.0 (exclusive) do not support the `nameOnly` option for the
-`listCollections` command and will ignore it without raising an error. Therefore, drivers MUST always specify the
-`nameOnly` option when they only intend to access collection names from the `listCollections` command result, except
-drivers MUST NOT set `nameOnly` if a filter specifies any keys other than `name`.
-
 The `listCollections` command also supports an `authorizedCollections` boolean option, which can be used to limit the
 command result to only include collections the user is authorized to use. Drivers MAY allow users to set the
 `authorizedCollections` option on the `listCollectionNames` method.
@@ -289,6 +283,8 @@ The shell implements the first algorithm for falling back if the `listCollection
 (<https://github.com/mongodb/mongo/blob/f32ba54f971c045fb589fe4c3a37da77dc486cee/src/mongo/shell/db.js#L550>).
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-05-13: Clarify "Replica Sets" section: reword to distinguish server capability from driver routing rule; remove
     stale `system.indexes` bullet (2.x behavior).

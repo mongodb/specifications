@@ -1,7 +1,6 @@
 # Transactions Specification
 
 - Status: Accepted
-- Minimum Server Version: 4.0
 
 ______________________________________________________________________
 
@@ -59,8 +58,8 @@ Any error or timeout that occurs while selecting a server or reading from or wri
 
 #### Error Label
 
-Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
-string error labels. Drivers may also add error labels to errors that they return.
+Any command error may include a top level "errorLabels" field. The field contains an array of string error labels.
+Drivers may also add error labels to errors that they return.
 
 #### Transient Transaction Error
 
@@ -414,8 +413,8 @@ server to the client, or determined client-side. Any error reported by the drive
 selection error, or network error MUST have an API for determining whether it has a given label. In programming
 languages that use class inheritance hierarchies for exceptions, the presence of an error label MUST NOT affect an
 exception's class. Error labels MUST be expressed as a collection of text strings, and it MUST be possible for
-applications to check if an error has a label that is not yet specified in MongoDB 4.0. Drivers MAY define constants for
-error label strings that are known at this time.
+applications to check if an error has a label that is not yet specified in the current driver version. Drivers MAY
+define constants for error label strings that are known at this time.
 
 Drivers MAY implement an error label API similar to the following:
 
@@ -461,7 +460,7 @@ All operations within a multi-statement transaction (including commitTransaction
 #### Behavior of the readConcern field
 
 Any command that marks the beginning of a transaction MAY include a `readConcern` argument with an optional `level` and
-`afterClusterTime` fields. Read concern level ‘local’, ‘majority’, and ‘snapshot’ are all supported. To support causal
+`afterClusterTime` fields. Read concern level `local`, `majority`, and `snapshot` are all supported. To support causal
 consistency, if `readConcern` `afterClusterTime` is specified, then the server will ensure that the transaction’s read
 timestamp is after the `afterClusterTime`.
 
@@ -469,9 +468,9 @@ All commands of a multi-statement transaction subsequent to the initial command 
 the `readConcern` argument is only needed to establish the transaction’s read timestamp. If a `readConcern` argument is
 specified on a subsequent (non-initial) command, the server will return an error.
 
-Read concern level "snapshot" can only be used when starting a transaction. The server will return an error if read
-concern level "snapshot" is specified on a command that is not the start of a transaction. Drivers MUST rely on the
-server to report an error if read concern level snapshot is used incorrectly.
+Read concern level `snapshot` can only be used when starting a transaction. The server will return an error if read
+concern level `snapshot` is specified on a command that is not the start of a transaction. Drivers MUST rely on the
+server to report an error if read concern level `snapshot` is used incorrectly.
 
 #### Behavior of the writeConcern field
 
@@ -719,8 +718,7 @@ contents of the document.
 
 ### Error Labels
 
-Starting in MongoDB 4.0, any command error may include a top level "errorLabels" field. The field contains an array of
-string error labels.
+Any command error may include a top level "errorLabels" field. The field contains an array of string error labels.
 
 ### Transient Transaction Error
 
@@ -1127,6 +1125,8 @@ that is not a retryable overload error, we no longer have the guarantee that the
 must apply a majority write concern to prevent the transaction from being applied twice.
 
 ## **Changelog**
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-01-09: Specify the handling of client backpressure.
 

@@ -2,8 +2,6 @@
 
 - Status: Accepted
 
-- Minimum Server Version: 3.4
-
 ## Abstract
 
 This specification describes how to implement Wire Protocol Compression between MongoDB drivers and mongo[d|s].

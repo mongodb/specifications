@@ -1,7 +1,6 @@
 # Server Discovery And Monitoring
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 
@@ -1039,7 +1038,7 @@ def handleError(error):
               # Mark the server Unknown
               unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
               onServerDescriptionChanged(unknown, connection pool for server)
-            if isShutdown(code) or (error was from <4.2):
+            if isShutdown(code):
               # the pools must only be cleared while the lock is held.
               if type == LoadBalanced:
                 clear connection pool for serviceId
@@ -1250,7 +1249,7 @@ The following subset of "node is recovering" errors is defined to be "node is sh
 | ShutdownInProgress    | 91         |
 
 When handling a "not writable primary" or "node is recovering" error, the client MUST clear the server's connection pool
-if and only if the error is "node is shutting down" or the error originated from server version < 4.2.
+if and only if the error is "node is shutting down".
 
 (See
 [when does a client see "not writable primary" or "node is recovering"?](#when-does-a-client-see-not-writable-primary-or-node-is-recovering),
@@ -1936,6 +1935,8 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6 contr
 oversaw the specification process.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 

@@ -1,7 +1,6 @@
 # Change Streams
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 

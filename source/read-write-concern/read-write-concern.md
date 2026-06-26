@@ -1,7 +1,6 @@
 # Read and Write Concern
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 

@@ -1,7 +1,6 @@
 # Server Discovery And Monitoring -- Summary
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 
@@ -137,5 +136,8 @@ connection pool for the server.
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
+
 - 2024-05-02: Migrated from reStructuredText to Markdown.
+
 - 2022-10-05: Revise spec front matter and add changelog.
