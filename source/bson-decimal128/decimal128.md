@@ -339,15 +339,12 @@ Most of the tests are converted from the
 
     - NumberDecimal("2.000")
 
-- Should a driver avoid sending Decimal128 values to pre-3.4 servers?
-
-    - No
-
 - Is there a wire version bump or something for Decimal128?
 
     - No
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
 - 2024-02-08: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter.

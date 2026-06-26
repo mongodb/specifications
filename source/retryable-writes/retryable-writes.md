@@ -91,12 +91,6 @@ If the server selected for the first attempt of a retryable write operation does
 MUST execute the write as if retryable writes were not enabled. Drivers MUST NOT include a transaction ID in the write
 command and MUST not retry the command under any circumstances.
 
-In a sharded cluster, it is possible that mongos may appear to support retryable writes but one or more shards in the
-cluster do not (e.g. replica set shard is configured with feature compatibility version 3.4, a standalone is added as a
-new shard). In these rare cases, a write command that fans out to a shard that does not support retryable writes may
-partially fail and an error may be reported in the write result from mongos (e.g. `writeErrors` array in the bulk write
-result). This does not constitute a retryable write error. Drivers MUST relay such errors to the user.
-
 #### Supported Write Operations
 
 MongoDB supports retryability for some, but not all, write operations.
@@ -148,14 +142,14 @@ commands if they fail to return a response.
 The only supported retryable write commands within a transaction are `commitTransaction` and `abortTransaction`.
 Therefore drivers MUST NOT retry write commands within transactions even when `retryWrites` has been set to true on the
 `MongoClient`. In addition, drivers MUST NOT add the `RetryableWriteError` label to any error that occurs during a write
-command within a transaction (excepting `commitTransaction` and `abortTransaction`), even when `retryWrites` has been set
-to true on the `MongoClient`.
+command within a transaction (excepting `commitTransaction` and `abortTransaction`), even when `retryWrites` has been
+set to true on the `MongoClient`.
 
 ### Implementing Retryable Writes
 
 #### Determining Retryable Write Errors
 
-The driver MUST treat all errors with the RetryableWriteError label as retryable. This error label can be found in the 
+The driver MUST treat all errors with the RetryableWriteError label as retryable. This error label can be found in the
 top-level "errorLabels" field of the error.
 
 ##### RetryableWriteError Labels
@@ -352,10 +346,6 @@ The above rules are implemented in the following pseudo-code:
  * Checks if a server supports retryable writes.
  */
 function isRetryableWritesSupported(server) {
-  if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
-    return false;
-  }
-
   if ( ! server.hasLogicalSessionTimeoutMinutes()) {
     return false;
   }

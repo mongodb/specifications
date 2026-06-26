@@ -714,7 +714,6 @@ The `ChangeStream` MUST save the `operationTime` from the initial `aggregate` re
 met:
 
 - None of `startAtOperationTime`, `resumeAfter`, `startAfter` were specified in the `ChangeStreamOptions`.
-- The max wire version is >= `7`.
 - The initial `aggregate` response had no results.
 - The initial `aggregate` response did not include a `postBatchResumeToken`.
 
@@ -744,7 +743,7 @@ MUST follow these steps:
         - The driver MUST NOT set `startAtOperationTime`. If `startAtOperationTime` was in the original aggregation command,
             the driver MUST remove it.
 - Else if there is no cached `resumeToken` and the `ChangeStream` has a saved operation time (either from an originally
-    specified `startAtOperationTime` or saved from the original aggregation) and the max wire version is >= `7`:
+    specified `startAtOperationTime` or saved from the original aggregation):
     - The driver MUST NOT set `resumeAfter`.
     - The driver MUST NOT set `startAfter`.
     - The driver MUST set `startAtOperationTime` to the value of the originally used `startAtOperationTime` or the one
@@ -1024,6 +1023,8 @@ There should be no backwards compatibility concerns.
 - RUBY (RUBY-1228)
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-04-28: Remove test for nsType when creating timeseries
 

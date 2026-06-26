@@ -273,13 +273,6 @@ and reflects the flow described above.
 
 ```typescript
 /**
- * Checks if a connection supports retryable reads.
- */
-function isRetryableReadsSupported(connection) {
-  return connection.MaxWireVersion >= RETRYABLE_READS_MIN_WIRE_VERSION);
-}
-
-/**
  * Executes a read command in the context of a MongoClient where a retryable
  * read have been enabled. The session parameter may be an implicit or
  * explicit client session (depending on how the CRUD method was invoked).
@@ -336,20 +329,10 @@ function executeRetryableRead(command, session) {
       continue;
     }
 
-    if ( !isRetryableReadsSupported(connection) || session.inTransaction()) {
-      /* If this is the first loop iteration and we determine that retryable
-       * reads are not supported, execute the command once and allow any
-       * errors to propagate */
-
-      if (previousError == null) {
-        return executeCommand(connection, command);
-      }
-
-      /* If the server selected for retrying is too old, throw the previous error.
-       * The caller can then infer that an attempt was made and failed. This case
-       * is very rare, and likely means that the cluster is in the midst of a
-       * downgrade. */
-      throw previousError;
+    if (session.inTransaction()) {
+      /* Retryable reads are disabled within a transaction; execute the command
+       * once and allow any errors to propagate */
+      return executeCommand(connection, command);
     }
 
     /* NetworkException and NotWritablePrimaryException are both retryable errors. If

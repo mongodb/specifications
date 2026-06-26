@@ -256,7 +256,7 @@ Fields:
 
 - (=) `setName`: string or null. Default null.
 
-- (=) `electionId`: an ObjectId, if this is a MongoDB 2.6+ replica set member that believes it is primary. See
+- (=) `electionId`: an ObjectId, if this is a replica set member that believes it is primary. See
     [using electionId and setVersion to detect stale primaries](#using-electionid-and-setversion-to-detect-stale-primaries).
     Default null.
 
@@ -504,9 +504,9 @@ to another (e.g. from RSPrimary to RSSecondary) its RTT is updated normally, not
 
 #### lastWriteDate and opTime
 
-The hello or legacy hello response of a replica set member running MongoDB 3.4 and later contains a `lastWrite`
-subdocument with fields `lastWriteDate` and `opTime` ([SERVER-8858](https://jira.mongodb.org/browse/SERVER-8858)). If
-these fields are available, parse them from the hello or legacy hello response, otherwise set them to null.
+The hello or legacy hello response of a replica set member contains a `lastWrite` subdocument with fields
+`lastWriteDate` and `opTime` ([SERVER-8858](https://jira.mongodb.org/browse/SERVER-8858)). If these fields are
+available, parse them from the hello or legacy hello response, otherwise set them to null.
 
 Clients MUST NOT attempt to compensate for the network latency between when the server generated its hello or legacy
 hello response and when the client records `lastUpdateTime`.
@@ -529,9 +529,9 @@ the replica set.
 
 #### logicalSessionTimeoutMinutes
 
-MongoDB 3.6 and later include a `logicalSessionTimeoutMinutes` field if logical sessions are enabled in the deployment.
-Clients MUST check for this field and set the ServerDescription's logicalSessionTimeoutMinutes field to this value, or
-to null otherwise.
+The hello or legacy hello response includes a `logicalSessionTimeoutMinutes` field if logical sessions are enabled in
+the deployment. Clients MUST check for this field and set the ServerDescription's logicalSessionTimeoutMinutes field to
+this value, or to null otherwise.
 
 #### topologyVersion
 
@@ -624,10 +624,10 @@ fill out the TopologyDescription's "compatibilityError" field like so:
     "Server at `host`:`port` reports wire version `maxWireVersion`, but this version of `driverName` requires at least
     `clientMinWireVersion` (MongoDB `mongoVersion`)."
 
-Replace `mongoVersion` with the appropriate MongoDB minor version, for example if `clientMinWireVersion` is 2 and it
-connects to MongoDB 2.4, format the error like:
+Replace `mongoVersion` with the appropriate MongoDB minor version, for example if `clientMinWireVersion` is 8 and it
+connects to MongoDB 4.0, format the error like:
 
-> "Server at example.com:27017 reports wire version 0, but this version of My Driver requires at least 2 (MongoDB 2.6)."
+> "Server at example.com:27017 reports wire version 7, but this version of My Driver requires at least 8 (MongoDB 4.2)."
 
 In this second case, the exact required MongoDB version is known and can be named in the error message, whereas in the
 first case the implementer does not know which MongoDB versions will be compatible or incompatible in the future.
@@ -1311,14 +1311,13 @@ It is tempting to take these values from the last hello or legacy hello response
 the ServerDescription, but this is an anti-pattern. Multi-threaded and asynchronous clients that do so are prone to
 several classes of race, for example:
 
-- Setup: A MongoDB 3.0 Standalone with authentication enabled, the client must log in with SCRAM-SHA-1.
-- The monitor thread discovers the server and stores maxWireVersion on the ServerDescription
-- An application thread wants a socket, selects the Standalone, and is about to check the maxWireVersion on its
+- Setup: A Standalone server.
+- The monitor thread discovers the server and stores maxWireVersion, maxWriteBatchSize, etc. on the ServerDescription.
+- An application thread wants a socket, selects the Standalone, and is about to read maxWriteBatchSize from its
     ServerDescription when...
-- The monitor thread gets disconnected from server and marks it Unknown, with default maxWireVersion of 0.
-- The application thread resumes, creates a socket, and attempts to log in using MONGODB-CR, since maxWireVersion is
-    *now* reported as 0.
-- Authentication fails, the server requires SCRAM-SHA-1.
+- The monitor thread gets disconnected from the server and marks it Unknown, resetting these fields to their defaults.
+- The application thread resumes, creates a socket, and splits a bulk write based on the now-default maxWriteBatchSize,
+    sending a batch the server rejects.
 
 Better to call hello or legacy hello for each new socket, as required by the [Auth Spec](../auth/auth.md), and use the
 hello or legacy hello response associated with that socket for maxWireVersion, maxBsonObjectSize, etc.: all the fields

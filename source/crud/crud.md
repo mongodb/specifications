@@ -309,7 +309,7 @@ class AggregateOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/aggregate/
    */
@@ -757,7 +757,7 @@ class FindOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -797,8 +797,7 @@ command differs depending on the options passed to it and may or may not provide
 is provided the count command provides an estimate using collection metadata. Even when provided with a query filter the
 count command can return inaccurate results with a sharded cluster
 [if orphaned documents exist or if a chunk migration is in progress](https://www.mongodb.com/docs/manual/reference/command/count/#behavior).
-The countDocuments helper avoids these sharded cluster problems entirely when used with MongoDB 3.6+, and when using
-`Primary` read preference with older sharded clusters.
+The countDocuments helper avoids these sharded cluster problems entirely.
 
 ##### estimatedDocumentCount
 
@@ -1161,7 +1160,7 @@ class UpdateOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1250,7 +1249,7 @@ class ReplaceOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/update/
    */
@@ -1324,7 +1323,7 @@ class DeleteOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/delete/
    */
@@ -2063,7 +2062,7 @@ class FindOneAndDeleteOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
    */
@@ -2185,7 +2184,7 @@ class FindOneAndReplaceOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
    */
@@ -2314,7 +2313,7 @@ class FindOneAndUpdateOptions {
    * accessed as variables in an aggregate expression context (e.g. "$$var").
    *
    * This option is sent only if the caller explicitly provides a value. The default is to not send a value.
-   * This option is only supported by servers >= 5.0. Older servers >= 2.6 (and possibly earlier) will report an error for using this option.
+   * This option is only supported by servers >= 5.0. Older servers will report an error for using this option.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/findAndModify/
    */

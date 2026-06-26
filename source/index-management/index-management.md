@@ -302,7 +302,7 @@ Java:
 collection.createIndex(new Document("name", 1), new IndexOptions().unique(true));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -333,7 +333,7 @@ collection.createIndexes(asList(
 ));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -399,7 +399,7 @@ Java:
 collection.listIndexes();
 ```
 
-Produces the shell equivalent (>= 3.0.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({ listIndexes: "users" });
@@ -547,7 +547,7 @@ Java:
 collection.indexes().createOne(new Document("name", 1), new IndexOptions().unique(true));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -578,7 +578,7 @@ collection.indexes().createMany(asList(
 ));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -648,7 +648,7 @@ for (BsonDocument document: collection.indexes()) {
 }
 ```
 
-Produces the shell equivalent (>= 3.0.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 var indexes = db.runCommand({ listIndexes: "users" });
@@ -737,10 +737,6 @@ interface IndexOptions {
 
   /**
    * Optionally provides the text index version number.
-   *
-   * MongoDB 2.4 can only support version 1.
-   *
-   * MongoDB 2.6 and higher may support version 1 or 2.
    */
   textIndexVersion: Int32;
 
@@ -751,10 +747,6 @@ interface IndexOptions {
 
   /**
    * Optionally specifies the 2dsphere index version number.
-   *
-   * MongoDB 2.4 can only support version 1.
-   *
-   * MongoDB 2.6 and higher may support version 1 or 2.
    */
   2dsphereIndexVersion: Int32;
 
@@ -1195,6 +1187,8 @@ internally by the server on those versions, and its value could have adverse eff
 from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 #### Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2025-12-18: Search index tests only assert `latestDefinition.mappings.dynamic` values.
 
