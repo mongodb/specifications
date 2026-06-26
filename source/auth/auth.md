@@ -1,7 +1,6 @@
 # Authentication
 
 - Status: Accepted
-- Minimum Server Version: 2.6
 
 ______________________________________________________________________
 
@@ -103,8 +102,8 @@ Userinfo or authentication parameters in connection options MUST NOT be interpre
 #### Errors
 
 Drivers SHOULD raise an error as early as possible when detecting invalid values in a credential. For instance, if a
-`mechanism_property` is specified for [MONGODB-CR](#mongodb-cr), the driver should raise an error indicating that the
-property does not apply.
+`mechanism_property` is specified for a mechanism that does not support it, the driver should raise an error indicating
+that the property does not apply.
 
 Drivers MUST raise an error if any required information for a mechanism is missing. For instance, if a `username` is not
 specified for SCRAM-SHA-256, the driver must raise an error indicating the the property is missing.
@@ -147,8 +146,7 @@ Drivers MUST follow the following steps for an authentication handshake:
     type. If the `hello` or legacy hello of the MongoDB Handshake fails with an error, drivers MUST treat this as an
     authentication error.
 2. If the server is of type RSArbiter, no authentication is possible and the handshake is complete.
-3. Inspect the value of `maxWireVersion`. If the value is greater than or equal to `6`, then the driver MUST use
-    `OP_MSG` for authentication. Otherwise, it MUST use `OP_QUERY`.
+3. Drivers MUST use `OP_MSG` for authentication.
 4. If credentials exist: 3.1. A driver MUST authenticate with all credentials provided to the MongoClient. 3.2. A single
     invalid credential is the same as all credentials being invalid.
 
@@ -161,8 +159,6 @@ All blocking operations executed as part of the authentication handshake MUST ap
 [Client Side Operations Timeout](../client-side-operations-timeout/client-side-operations-timeout.md) specification.
 
 #### Mechanism Negotiation via Handshake
-
-- Since: 4.0
 
 If an application provides a username but does not provide an authentication mechanism, drivers MUST negotiate a
 mechanism via a `hello` or legacy hello command requesting a user's supported SASL mechanisms:
@@ -177,8 +173,7 @@ in the auth credential. The username MUST NOT be modified from the form provided
 SASLprep), as the server uses the raw form to look for conflicts with legacy credentials.
 
 If the handshake response includes a `saslSupportedMechs` field, then drivers MUST use the contents of that field to
-select a default mechanism as described later. If the command succeeds and the response does not include a
-`saslSupportedMechs` field, then drivers MUST use the legacy default mechanism rules for servers older than 4.0.
+select a default mechanism as described later.
 
 Drivers MUST NOT validate the contents of the `saslSupportedMechs` attribute of the initial handshake reply. Drivers
 MUST NOT raise an error if the `saslSupportedMechs` attribute of the reply includes an unknown mechanism.
@@ -198,13 +193,8 @@ Drivers with a list of credentials at the time a connection is opened MAY do mec
 handshake, but only for the first credential in the list of credentials.
 
 When authenticating each credential, if the authentication mechanism is not specified and has not been negotiated for
-that credential:
-
-- If the connection handshake results indicate the server version is 4.0 or later, drivers MUST send a new `hello` or
-    legacy hello negotiation command for the credential to determine the default authentication mechanism.
-- Otherwise, when the server version is earlier than 4.0, the driver MUST select a default authentication mechanism for
-    the credential following the instructions for when the `saslSupportedMechs` field is not present in a legacy hello
-    response.
+that credential, drivers MUST send a new `hello` or legacy hello negotiation command for the credential to determine the
+default authentication mechanism.
 
 ### Caching credentials in SCRAM
 
@@ -232,9 +222,6 @@ used when running the authentication spec tests.
 
 ### Default Authentication Methods
 
-- Since: 3.0
-- Revised: 4.0
-
 If the user did not provide a mechanism via the connection string or via code, the following logic describes how to
 select a default.
 
@@ -255,101 +242,22 @@ be used as the default, regardless of whether SCRAM-SHA-1 is in the list. Driver
 mechanism (e.g. PLAIN) as the default.
 
 If `saslSupportedMechs` is not present in the handshake response for mechanism negotiation, then SCRAM-SHA-1 MUST be
-used when talking to servers >= 3.0. Prior to server 3.0, MONGODB-CR MUST be used.
+used as the default.
 
 When a user has specified a mechanism, regardless of the server version, the driver MUST honor this.
 
-#### Determining Server Version
-
-Drivers SHOULD use the server's wire version ranges to determine the server's version.
-
-### MONGODB-CR
-
-- Since: 1.4
-- Deprecated: 3.0
-- Removed: 4.0
-
-MongoDB Challenge Response is a nonce and MD5 based system. The driver sends a `getnonce` command, encodes and hashes
-the password using the returned nonce, and then sends an `authenticate` command.
-
-#### Conversation
-
-1. Send `getnonce` command
-
-    ```javascript
-    CMD = { getnonce: 1 }
-    RESP = { nonce: <nonce> }
-    ```
-
-2. Compute key
-
-    ```javascript
-    passwordDigest = HEX( MD5( UTF8( username + ':mongo:' + password )))
-    key = HEX( MD5( UTF8( nonce + username + passwordDigest )))
-    ```
-
-3. Send `authenticate` command
-
-    ```javascript
-    CMD = { authenticate: 1, nonce: nonce, user: username, key: key }
-    ```
-
-As an example, given a username of "user" and a password of "pencil", the conversation would appear as follows:
-
-```javascript
-CMD = {getnonce : 1}
-RESP = {nonce: "2375531c32080ae8", ok: 1}
-CMD = {authenticate: 1, user: "user", nonce: "2375531c32080ae8", key: "21742f26431831d5cfca035a08c5bdf6"}
-RESP = {ok: 1}
-```
-
-#### [MongoCredential](#mongocredential) Properties
-
-- username
-
-    MUST be specified and non-zero length.
-
-- source
-
-    MUST be specified. Defaults to the database name if supplied on the connection string or `admin`.
-
-- password
-
-    MUST be specified.
-
-- mechanism
-
-    MUST be "MONGODB-CR"
-
-- mechanism_properties
-
-    MUST NOT be specified.
-
 ### MONGODB-X509
-
-- Since: 2.6
-- Changed: 3.4
 
 MONGODB-X509 is the usage of X.509 certificates to validate a client where the distinguished subject name of the client
 certificate acts as the username.
-
-When connected to MongoDB 3.4:
 
 - You MUST NOT raise an error when the application only provides an X.509 certificate and no username.
 - If the application does not provide a username you MUST NOT send a username to the server.
 - If the application provides a username you MUST send that username to the server.
 
-When connected to MongoDB 3.2 or earlier:
-
-- You MUST send a username to the server.
-- If no username is provided by the application, you MAY extract the username from the X.509 certificate instead of
-    requiring the application to provide it.
-- If you choose not to automatically extract the username from the certificate you MUST error when no username is
-    provided by the application.
-
 #### Conversation
 
-1. Send `authenticate` command (MongoDB 3.4+)
+1. Send `authenticate` command
 
     ```javascript
     CMD = {"authenticate": 1, "mechanism": "MONGODB-X509"}
@@ -371,7 +279,7 @@ When connected to MongoDB 3.2 or earlier:
 
 - username
 
-    SHOULD NOT be provided for MongoDB 3.4+ MUST be specified and non-zero length for MongoDB prior to 3.4
+    SHOULD NOT be provided
 
 - source
 
@@ -392,8 +300,6 @@ When connected to MongoDB 3.2 or earlier:
 TODO: Errors
 
 ### SASL Mechanisms
-
-- Since: 2.4 Enterprise
 
 SASL mechanisms are all implemented using the same sasl commands and interpreted as defined by the
 [SASL specification RFC 4422](http://tools.ietf.org/html/rfc4422).
@@ -427,12 +333,6 @@ SASL mechanisms are all implemented using the same sasl commands and interpreted
     SCRAM-SHA-1 from scratch.
 
 ### GSSAPI
-
-- Since:
-
-    2.4 Enterprise
-
-    2.6 Enterprise on Windows
 
 GSSAPI is kerberos authentication as defined in [RFC 4752](http://tools.ietf.org/html/rfc4752). Microsoft has a
 proprietary implementation called SSPI which is compatible with both Windows and Linux clients.
@@ -557,8 +457,6 @@ configuration option is set to `false`.
 
 ### PLAIN
 
-- Since: 2.6 Enterprise
-
 The PLAIN mechanism, as defined in [RFC 4616](http://tools.ietf.org/html/rfc4616), is used in MongoDB to perform LDAP
 authentication. It cannot be used to perform any other type of authentication. Since the credentials are stored outside
 of MongoDB, the `$external` database must be used for authentication.
@@ -604,8 +502,6 @@ MongoDB supports either of these forms.
     MUST NOT be specified.
 
 ### SCRAM-SHA-1
-
-- Since: 3.0
 
 SCRAM-SHA-1 is defined in [RFC 5802](http://tools.ietf.org/html/rfc5802).
 
@@ -690,8 +586,6 @@ RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2a
     MUST NOT be specified.
 
 ### SCRAM-SHA-256
-
-- Since: 4.0
 
 SCRAM-SHA-256 extends [RFC 5802](http://tools.ietf.org/html/rfc5802) and is formally defined in
 [RFC 7677](https://tools.ietf.org/html/rfc7677).
@@ -1903,19 +1797,18 @@ def reauth(connection):
 
 - authMechanism
 
-    MONGODB-CR, MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
+    MONGODB-X509, GSSAPI, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, MONGODB-AWS
 
-    Sets the Mechanism property on the MongoCredential. When not set, the default will be one of SCRAM-SHA-256,
-    SCRAM-SHA-1 or MONGODB-CR, following the auth spec default mechanism rules.
+    Sets the Mechanism property on the MongoCredential. When not set, the default will be SCRAM-SHA-256 or SCRAM-SHA-1,
+    following the auth spec default mechanism rules.
 
 - authSource
 
     Sets the Source property on the MongoCredential.
 
 For GSSAPI, MONGODB-X509 and MONGODB-AWS authMechanisms the authSource defaults to `$external`. For PLAIN the authSource
-defaults to the database name if supplied on the connection string or `$external`. For MONGODB-CR, SCRAM-SHA-1 and
-SCRAM-SHA-256 authMechanisms, the authSource defaults to the database name if supplied on the connection string or
-`admin`.
+defaults to the database name if supplied on the connection string or `$external`. For SCRAM-SHA-1 and SCRAM-SHA-256
+authMechanisms, the authSource defaults to the database name if supplied on the connection string or `admin`.
 
 - authMechanismProperties=PROPERTY_NAME:PROPERTY_VALUE,PROPERTY_NAME2:PROPERTY_VALUE2
 
@@ -1959,8 +1852,6 @@ Connection string tests have been defined in the associated files:
 - [Connection String](./tests/legacy/connection-string.json).
 
 ### SCRAM-SHA-256 and mechanism negotiation
-
-Testing SCRAM-SHA-256 requires server version 3.7.3 or later with `featureCompatibilityVersion` of "4.0" or later.
 
 Drivers that allow specifying auth parameters in code as well as via connection string should test both for the test
 cases described below.
@@ -2142,6 +2033,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2026-06-17: Remove additional pre-4.2 version references.
 
 - 2025-11-25: Remove redundant `*.mongodbgov.net` on `ALLOWED_HOSTS`
 

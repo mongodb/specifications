@@ -1,7 +1,6 @@
 # Client Side Operations Timeout
 
 - Status: Accepted
-- Minimum Server Version: 2.6
 
 ______________________________________________________________________
 
@@ -644,9 +643,8 @@ expected.
 
 In general, users can override `timeoutMS` at the level of a single operation. The `startSession` operation, however,
 only inherits `timeoutMS` from the MongoClient and does not allow the option to be overridden. This was a conscious API
-design decision because drivers are moving towards only supporting MongoDB versions 3.6 and higher, so sessions will
-always be supported. Adding an override for `startSession` would introduce a new knob and increase the API surface of
-drivers without providing a significant benefit.
+design decision because all supported MongoDB versions support sessions. Adding an override for `startSession` would
+introduce a new knob and increase the API surface of drivers without providing a significant benefit.
 
 ### Drivers use minimum RTT to short circuit operations
 
@@ -668,9 +666,16 @@ timeout for each database operation. This would mimic using `timeoutMode=ITERATI
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
+
 - 2024-01-29: Adjust getMore maxTimeMS calculation for tailable awaitData cursors.
+
 - 2024-09-12: Specify that explain helpers support support timeoutMS.
+
 - 2023-12-07: Migrated from reStructuredText to Markdown.
+
 - 2022-11-17: Use minimum RTT for maxTimeMS calculation instead of 90th percentile RTT.
+
 - 2022-10-05: Remove spec front matter.
+
 - 2022-01-19: Initial version.

@@ -1,7 +1,6 @@
 # Sessions Specification
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 
@@ -791,12 +790,9 @@ Drivers do not need to check the deployment topology or the server version they 
 highest seen `$clusterTime`. They simply need to check for the presence of the `$clusterTime` field in responses
 received from servers.
 
-### Gossipping with mixed server versions
+### Gossipping the cluster time
 
-Drivers MUST check that the server they are sending a command to supports `$clusterTime` before adding `$clusterTime` to
-the command. A server supports `$clusterTime` when the `maxWireVersion` >= 6.
-
-This supports the (presumably short lived) scenario where not all servers have been upgraded to 3.6.
+Drivers MUST add `$clusterTime` to commands sent to the server.
 
 ### Do not gossip on SDAM commands
 
@@ -934,6 +930,7 @@ has risks that do not justify the potential guaranteed `ServerSession` allocatio
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
 - 2025-02-24: Drivers MUST NOT gossip $clusterTime on SDAM commands.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2017-09-13: If causalConsistency option is omitted assume true

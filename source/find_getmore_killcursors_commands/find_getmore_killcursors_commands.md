@@ -1,7 +1,6 @@
 # Find, getMore and killCursors commands
 
 - Status: Accepted
-- Minimum Server Version: 3.2
 
 ## Abstract
 
@@ -40,12 +39,10 @@ for the driver.
 
 ### Implementation
 
-If the **hello** command returns **maxWireVersion >= 4**, drivers:
+Drivers:
 
-- MUST implement queries with the `find` command instead of `OP_QUERY`.
-- MUST implement cursor operations with the `getMore` and `killCursors` commands instead of `OP_GET_MORE` and
-    `OP_KILL_CURSORS`, respectively.
-- MUST NOT use OP_QUERY except to execute commands.
+- MUST implement queries with the `find` command.
+- MUST implement cursor operations with the `getMore` and `killCursors` commands.
 
 ## Commands
 
@@ -70,42 +67,23 @@ For a successful command, the document returned from the server has the followin
 }
 ```
 
-#### Special Collection names
-
-The find command **does not support querying on system collections**, so if drivers are using any system collections
-instead of the inprog, killop, unlock, etc. commands they SHOULD default to using the old-style OP_QUERY.
-
-Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if
-**hello.maxWireVersion >=4** or higher.
-
-| Special collection name        | Replacement Command |
-| ------------------------------ | ------------------- |
-| `$cmd.sys.inprog`              | currentOp           |
-| `$cmd.sys.unlock`              | fsyncUnlock         |
-| `<database>.system.indexes`    | listIndexes         |
-| `<database>.system.namespaces` | listCollections     |
-
-Special Collection Names
-
 #### Exhaust
 
 This section only applies to drivers that support exhaust cursors.
 
 The exhaust protocol differs based on the server version:
 
-| Server version  | Server behavior                                                                                                           |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 4.0 and earlier | Only supports exhaust over legacy **OP_QUERY**. The **find** command does not support the exhaust flag from **OP_QUERY**. |
-| 4.2 to 5.0      | Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**.                                                            |
-| 5.1 and later   | Supports exhaust over **OP_MSG**.                                                                                         |
+| Server version | Server behavior                                                |
+| -------------- | -------------------------------------------------------------- |
+| 4.2 to 5.0     | Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**. |
+| 5.1 and later  | Supports exhaust over **OP_MSG**.                              |
 
 Therefore drivers that implement exhaust cursors:
 
-| Server version  | Driver behavior                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 4.0 and earlier | Drivers MUST use legacy **OP_QUERY**.                                                                                              |
-| 4.2 to 5.0      | Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.                                                                     |
-| 5.1 and later   | Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested. |
+| Server version | Driver behavior                                                                                                                    |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 4.2 to 5.0     | Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.                                                                     |
+| 5.1 and later  | Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested. |
 
 #### Interactions with OP_QUERY
 
@@ -455,6 +433,8 @@ More in depth information about passing read preferences to Mongos can be found 
 [Server Selection Specification](../server-selection/server-selection.md#passing-read-preference-to-mongos).
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2024-07-30: Migrated from reStructuredText to Markdown.
 

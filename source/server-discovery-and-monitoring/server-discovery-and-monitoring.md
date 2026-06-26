@@ -1,7 +1,6 @@
 # Server Discovery And Monitoring
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 
@@ -257,7 +256,7 @@ Fields:
 
 - (=) `setName`: string or null. Default null.
 
-- (=) `electionId`: an ObjectId, if this is a MongoDB 2.6+ replica set member that believes it is primary. See
+- (=) `electionId`: an ObjectId, if this is a replica set member that believes it is primary. See
     [using electionId and setVersion to detect stale primaries](#using-electionid-and-setversion-to-detect-stale-primaries).
     Default null.
 
@@ -505,9 +504,9 @@ to another (e.g. from RSPrimary to RSSecondary) its RTT is updated normally, not
 
 #### lastWriteDate and opTime
 
-The hello or legacy hello response of a replica set member running MongoDB 3.4 and later contains a `lastWrite`
-subdocument with fields `lastWriteDate` and `opTime` ([SERVER-8858](https://jira.mongodb.org/browse/SERVER-8858)). If
-these fields are available, parse them from the hello or legacy hello response, otherwise set them to null.
+The hello or legacy hello response of a replica set member contains a `lastWrite` subdocument with fields
+`lastWriteDate` and `opTime` ([SERVER-8858](https://jira.mongodb.org/browse/SERVER-8858)). If these fields are
+available, parse them from the hello or legacy hello response, otherwise set them to null.
 
 Clients MUST NOT attempt to compensate for the network latency between when the server generated its hello or legacy
 hello response and when the client records `lastUpdateTime`.
@@ -530,9 +529,9 @@ the replica set.
 
 #### logicalSessionTimeoutMinutes
 
-MongoDB 3.6 and later include a `logicalSessionTimeoutMinutes` field if logical sessions are enabled in the deployment.
-Clients MUST check for this field and set the ServerDescription's logicalSessionTimeoutMinutes field to this value, or
-to null otherwise.
+The hello or legacy hello response includes a `logicalSessionTimeoutMinutes` field if logical sessions are enabled in
+the deployment. Clients MUST check for this field and set the ServerDescription's logicalSessionTimeoutMinutes field to
+this value, or to null otherwise.
 
 #### topologyVersion
 
@@ -625,10 +624,10 @@ fill out the TopologyDescription's "compatibilityError" field like so:
     "Server at `host`:`port` reports wire version `maxWireVersion`, but this version of `driverName` requires at least
     `clientMinWireVersion` (MongoDB `mongoVersion`)."
 
-Replace `mongoVersion` with the appropriate MongoDB minor version, for example if `clientMinWireVersion` is 2 and it
-connects to MongoDB 2.4, format the error like:
+Replace `mongoVersion` with the appropriate MongoDB minor version, for example if `clientMinWireVersion` is 8 and it
+connects to MongoDB 4.0, format the error like:
 
-> "Server at example.com:27017 reports wire version 0, but this version of My Driver requires at least 2 (MongoDB 2.6)."
+> "Server at example.com:27017 reports wire version 7, but this version of My Driver requires at least 8 (MongoDB 4.2)."
 
 In this second case, the exact required MongoDB version is known and can be named in the error message, whereas in the
 first case the implementer does not know which MongoDB versions will be compatible or incompatible in the future.
@@ -935,9 +934,7 @@ the `error` field of the new `ServerDescription` object MUST include a descripti
 invalidated because the primary was determined to be stale. A multi-threaded client MUST
 [request an immediate check](server-monitoring.md#requesting-an-immediate-check) for that server as soon as possible.
 
-If the old primary server version is 4.0 or earlier, the client MUST clear its connection pool for the old primary, too:
-the connections are all bad because the old primary has closed its sockets. If the old primary server version is 4.2 or
-newer, the client MUST NOT clear its connection pool for the old primary.
+The client MUST NOT clear its connection pool for the old primary.
 
 See [replica set monitoring with and without a primary](#replica-set-monitoring-with-and-without-a-primary).
 
@@ -1041,7 +1038,7 @@ def handleError(error):
               # Mark the server Unknown
               unknown = new ServerDescription(type=Unknown, error=error, topologyVersion=topologyVersion)
               onServerDescriptionChanged(unknown, connection pool for server)
-            if isShutdown(code) or (error was from <4.2):
+            if isShutdown(code):
               # the pools must only be cleared while the lock is held.
               if type == LoadBalanced:
                 clear connection pool for serviceId
@@ -1252,7 +1249,7 @@ The following subset of "node is recovering" errors is defined to be "node is sh
 | ShutdownInProgress    | 91         |
 
 When handling a "not writable primary" or "node is recovering" error, the client MUST clear the server's connection pool
-if and only if the error is "node is shutting down" or the error originated from server version < 4.2.
+if and only if the error is "node is shutting down".
 
 (See
 [when does a client see "not writable primary" or "node is recovering"?](#when-does-a-client-see-not-writable-primary-or-node-is-recovering),
@@ -1314,14 +1311,13 @@ It is tempting to take these values from the last hello or legacy hello response
 the ServerDescription, but this is an anti-pattern. Multi-threaded and asynchronous clients that do so are prone to
 several classes of race, for example:
 
-- Setup: A MongoDB 3.0 Standalone with authentication enabled, the client must log in with SCRAM-SHA-1.
-- The monitor thread discovers the server and stores maxWireVersion on the ServerDescription
-- An application thread wants a socket, selects the Standalone, and is about to check the maxWireVersion on its
+- Setup: A Standalone server.
+- The monitor thread discovers the server and stores maxWireVersion, maxWriteBatchSize, etc. on the ServerDescription.
+- An application thread wants a socket, selects the Standalone, and is about to read maxWriteBatchSize from its
     ServerDescription when...
-- The monitor thread gets disconnected from server and marks it Unknown, with default maxWireVersion of 0.
-- The application thread resumes, creates a socket, and attempts to log in using MONGODB-CR, since maxWireVersion is
-    *now* reported as 0.
-- Authentication fails, the server requires SCRAM-SHA-1.
+- The monitor thread gets disconnected from the server and marks it Unknown, resetting these fields to their defaults.
+- The application thread resumes, creates a socket, and splits a bulk write based on the now-default maxWriteBatchSize,
+    sending a batch the server rejects.
 
 Better to call hello or legacy hello for each new socket, as required by the [Auth Spec](../auth/auth.md), and use the
 hello or legacy hello response associated with that socket for maxWireVersion, maxBsonObjectSize, etc.: all the fields
@@ -1878,9 +1874,7 @@ These errors indicate one of these:
 
 In any case the error is a symptom that a ServerDescription's type no longer reflects reality.
 
-On MongoDB 4.0 and earlier, a primary closes its connections when it steps down, so in many cases the next operation
-causes a network error rather than "not writable primary". The driver can see a "not writable primary" error in the
-following scenario:
+The driver can see a "not writable primary" error in the following scenario:
 
 1. The client discovers the primary.
 2. The primary steps down.
@@ -1940,6 +1934,8 @@ Mathias Stearn's beautiful design for replica set monitoring in mongos 2.6 contr
 oversaw the specification process.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2015-12-17: Require clients to compare (setVersion, electionId) tuples.
 
