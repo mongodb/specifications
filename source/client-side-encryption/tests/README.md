@@ -4491,7 +4491,7 @@ A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
 2. Open a plain TCP connection to `127.0.0.1:9004`.
 3. Send `CONNECT host:port HTTP/1.1\r\nHost: host:port\r\n\r\n`.
 4. Read the response and verify it begins with `HTTP/1.1 200`.
-5. Return the raw TCP socket.
+5. Return a socket-like object.
 
 A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to
 `127.0.0.1:9005` using `ca.pem` to verify the proxy's certificate.
@@ -4571,7 +4571,7 @@ Perform the following setup.
       "properties": {
         "encrypted_string": {
           "encrypt": {
-            "keyId": [<Binary uuid of dataKeyId>],
+            "keyId": [<dataKeyId>],
             "bsonType": "string",
             "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
           }
@@ -4599,4 +4599,4 @@ Perform the following setup.
     be a Binary value (i.e. still encrypted).
 
 11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`, confirming that KMS requests were routed
-    through the proxy.
+    through the proxy. Expect only one KMS request since the resulting decrypted key is cached.
