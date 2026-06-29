@@ -27,8 +27,7 @@ A BSON document containing the fields making up a MongoDB server command.
 
 #### Wire Protocol
 
-The binary protocol used to talk with MongoDB over a socket. It's made up by the OP_QUERY, OP_GET_MORE, OP_KILL_CURSORS,
-OP_INSERT, OP_UPDATE and OP_DELETE.
+The binary protocol used to talk with MongoDB over a socket.
 
 ## Guidance
 
@@ -49,8 +48,7 @@ Drivers:
 ### find
 
 The [find](https://www.mongodb.com/docs/manual/reference/command/find/) command replaces the query functionality of the
-OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire
-protocol message, the **find** command cannot be used to execute other commands.
+OP_QUERY wire protocol message but cannot execute queries against special collections.
 
 For a successful command, the document returned from the server has the following format:
 
@@ -180,16 +178,15 @@ Further, after these transformation:
 
 #### BatchSize of 1
 
-In 3.2 a batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the
-first batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.
+A batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the first
+batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.
 
 1. **find** command with batchSize=1
 2. **getMore** command with batchSize=1
 3. **getMore** command with batchSize=1
 4. **getMore** command with batchSize=1
 
-The driver **SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier** as the new find command enables the
-user expected behavior of allowing the first result to contain a single document when specifying batchSize=1.
+The `find` command allows the first result to contain a single document when specifying batchSize=1.
 
 #### Tailable cursors
 
@@ -242,8 +239,7 @@ to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is speci
 ### getMore
 
 The [getMore](https://www.mongodb.com/docs/manual/reference/command/getMore/) command replaces the **OP_GET_MORE** wire
-protocol message. The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true when sent to a
-secondary. The OP_QUERY namespace MUST be the same as for the **find** and **killCursors** commands.
+protocol message. The OP_MSG namespace MUST be the same as for the **find** and **killCursors** commands.
 
 ```typescript
 interface GetMoreCommand {
@@ -296,8 +292,8 @@ The driver's local cursor MUST update its `id` and `ns`, as well as store the `n
 ### killCursors
 
 The [killCursors](https://www.mongodb.com/docs/manual/reference/command/killCursors/) command replaces the
-**OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore**
-commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
+**OP_KILL_CURSORS** wire protocol message. The OP_MSG namespace MUST be the same as for the **find** and **getMore**
+commands.
 
 The command response will be as follows:
 
@@ -406,11 +402,6 @@ Like other commands, the find and getMore commands will not use the OP_REPLY res
 [OP_REPLY Documentation](https://www.mongodb.com/docs/meta-driver/latest/legacy/mongodb-wire-protocol/#op-reply)
 
 ## FAQ
-
-### Changes in error handling for 3.2 tailable cursor
-
-Tailable cursors pointing to documents in a capped collection that get overwritten will return a zero document result in
-MongoDB 3.0 or earlier but will return an error in MongoDB 3.2
 
 ### Explain command
 

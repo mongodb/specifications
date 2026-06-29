@@ -3187,7 +3187,6 @@ The test runner MAY ignore the following command failures:
 
 - Interrupted(11601) to work around [SERVER-38335](https://jira.mongodb.org/browse/SERVER-38335).
 - Unauthorized(13) to work around [SERVER-54216](https://jira.mongodb.org/browse/SERVER-54216).
-- CommandNotFound(59) if the command is executed on a pre-3.6 server
 
 Note that Atlas, by design, does not allow database users to kill sessions belonging to other users. This makes it
 impossible to guarantee that an existing transaction will not block test execution. To work around this, test runners

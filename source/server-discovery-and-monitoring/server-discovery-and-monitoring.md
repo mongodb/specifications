@@ -1582,15 +1582,8 @@ drivers continue to maintain the reversed logic when connected to a topology tha
 
 #### Requirements for read-your-writes consistency
 
-Using (electionId, setVersion) only provides read-your-writes consistency if:
-
-- The application uses the same MongoClient instance for write-concern "majority" writes and read-preference "primary"
-    reads, and
-- All members use MongoDB 2.6.10+, 3.0.0+ or 3.2.0+ with replication protocol 0 and clocks are *less* than 30 seconds
-    skewed, or
-- All members run MongoDB 3.2.0 and replication protocol 1 and clocks are *less* skewed than the election timeout
-    (`electionTimeoutMillis`, which defaults to 10 seconds), or
-- All members run MongoDB 3.2.1+ and replication protocol 1 (in which case clocks need not be synchronized).
+Using (electionId, setVersion) only provides read-your-writes consistency if the application uses the same MongoClient
+instance for write-concern "majority" writes and read-preference "primary" reads.
 
 #### Scenario
 
