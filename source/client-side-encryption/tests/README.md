@@ -3974,7 +3974,7 @@ class EncryptOpts {
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
@@ -4162,7 +4162,7 @@ class EncryptOpts {
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
@@ -4203,7 +4203,7 @@ class EncryptOpts {
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
@@ -4419,7 +4419,7 @@ class EncryptOpts {
       diacriticSensitive: false,
       substring: SubstringOpts {
         strMaxLength: 10,
-        strMaxQueryLength: 10,
+        strMaxQueryLength: 6,
         strMinQueryLength: 2,
       }
    },
@@ -4465,7 +4465,7 @@ class EncryptOpts {
       diacriticSensitive: false,
       substring: SubstringOpts {
         strMaxLength: 10,
-        strMaxQueryLength: 10,
+        strMaxQueryLength: 6,
         strMinQueryLength: 2,
       }
    },
