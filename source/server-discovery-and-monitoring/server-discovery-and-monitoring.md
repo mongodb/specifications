@@ -468,9 +468,6 @@ transition to a more useful state.
 
 For simplicity, this is the rule: any server is an RSGhost that reports "isreplicaset: true".
 
-Non-ghost replica set members have reported their setNames since MongoDB 1.6.2. See
-[only support replica set members running MongoDB 1.6.2 or later](#only-support-replica-set-members-running-mongodb-162-or-later).
-
 > [!NOTE]
 > The Java driver does not have a separate state for RSGhost; it is an RSOther server with no hosts list.
 
@@ -1498,9 +1495,6 @@ This spec does not intend to introduce any new configuration options unless abso
 Mongos 2.6 does not monitor arbiters, but it costs little to do so, and in the rare case that all data members are moved
 to new hosts in a short time, an arbiter may be the client's last hope to find the new replica set configuration.
 
-### Only support replica set members running MongoDB 1.6.2 or later
-
-Replica set members began reporting their setNames in that version. Supporting earlier versions is impractical.
 
 ### TopologyType remains Unknown when an RSGhost is discovered
 
