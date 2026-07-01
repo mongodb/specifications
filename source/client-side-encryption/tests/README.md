@@ -3883,8 +3883,10 @@ create the following collections with majority write concern:
     This step requires server pre-9.0.0.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
+    This step requires server pre-9.0.0.
 - `db.substring-ci-di` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring-ci-di.json)
+    This step requires server pre-9.0.0.
 
 Load the file
 [key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
@@ -3976,7 +3978,8 @@ class EncryptOpts {
 }
 ```
 
-Use `explicitEncryptedClient` to insert the following document into `db.substring` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.substring` (if created) with majority write
+concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -4136,6 +4139,8 @@ Assert that no documents are returned.
 
 #### Case 5: can find a document by substring
 
+Skip this test on server 9.0.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
 
 ```typescript
@@ -4169,6 +4174,8 @@ Assert the following document is returned:
 ```
 
 #### Case 6: assert no document found by substring
+
+Skip this test on server 9.0.0+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the following `EncryptOpts`:
 
@@ -4375,6 +4382,8 @@ Assert the following document is returned:
 
 #### Case 10: can find an auto-encrypted case-insensitively indexed document by substring
 
+Skip this test on server 9.0.0+.
+
 This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires
 libmongocrypt 1.18.1+.
 
@@ -4418,6 +4427,8 @@ Assert the following document is returned:
 ```
 
 #### Case 11: can find an auto-encrypted diacritic-insensitively indexed document by substring
+
+Skip this test on server 9.0.0+.
 
 This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test requires
 libmongocrypt 1.18.1+.
