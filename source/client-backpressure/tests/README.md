@@ -119,3 +119,62 @@ option.
 5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
 6. Assert that the total number of started commands is `maxAdaptiveRetries` + 1 (2).
+
+#### Test 5: Overload Errors with retryAfterMS override base backoff
+
+Drivers SHOULD test that overload errors with `retryAfterMS` override the default backoff duration. This test MUST be
+executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
+
+1. Let `client` be a `MongoClient`.
+
+2. Let `coll` be a collection.
+
+3. Configure the random number generator used for exponential backoff jitter to always return a number as close as
+    possible to `1`.
+
+4. Configure the following failPoint:
+
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: 'alwaysOn',
+            data: {
+                failCommands: ['insert'],
+                errorCode: 462,
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
+            }
+        }
+    ```
+
+5. Insert the document `{ a: 1 }`. Expect that the command errors. Measure the duration of the command execution.
+
+    ```javascript
+       const start = performance.now();
+       expect(
+        await coll.insertOne({ a: 1 }).catch(e => e)
+       ).to.be.an.instanceof(MongoServerError);
+       const end = performance.now();
+    ```
+
+6. Run the following command to set up `retryAfterMS` on overload errors.
+
+    ```python
+    client.admin.command("setParameter", 1, overloadRetryAfterMS=50)
+    ```
+
+7. Execute step 5 again.
+
+8. Run the following command to disable `retryAfterMS` on overload errors.
+
+    ```python
+    client.admin.command("setParameter", 1, overloadRetryAfterMS=0)
+    ```
+
+9. Compare the time between the two runs.
+
+    ```python
+    assertTrue(absolute_value(exponential_backoff_time - (with_retry_after_ms_time + 0.2 seconds)) < 0.2 seconds)
+    ```
+
+    The difference in the backoffs is 0.2 seconds. There is a 0.2-second window to account for potential variance between
+    the two runs.
