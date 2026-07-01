@@ -69,9 +69,18 @@ Only `{domainname}` is used during SRV record verification and `{subdomain}` is 
 #### srvAllowedHostsSuffix
 
 This option is used to validate hosts. If present, its value MUST be treated as the `{domainname}` for
-[DNS validation](#querying-dns). For example, `srvAllowedHostsSuffix=.mydomain.net`. If the value does not begin with a
-`.`, for example, `srvAllowedHostsSuffix=mydomain.net`, the `.` MUST be automatically prepended prior to validation. If
-this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
+[DNS validation](#querying-dns) and
+[SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md). For example,
+`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value before
+use:
+
+- If the value does not begin with a `.`, a `.` MUST be automatically prepended. For example,
+    `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
+- The value MUST contain at least two dot-separated labels (i.e. the portion after the leading `.` must itself contain a
+    `.`). For example, `srvAllowedHostsSuffix=.net` MUST raise an error.
+- The value MUST be normalized to lowercase using ASCII case folding before comparison.
+
+If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
 [Connection String Format](#connection-string-format)). This option MUST only be configurable at the level of a
 `MongoClient`.
 
@@ -133,6 +142,11 @@ The priority and weight fields in returned SRV records MUST be ignored.
 If the DNS result returns no SRV records, or no records at all, or a DNS error happens, an error MUST be raised
 indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
 found.
+
+Before validating returned hostnames, drivers MUST normalize them as follows:
+
+- Trailing dots MUST be stripped (e.g. `host.example.com.` becomes `host.example.com`).
+- Hostnames MUST be normalized to lowercase using ASCII case folding.
 
 A driver MUST verify that the host names returned through SRV records share the original SRV's `{domainname}`. In
 addition, SRV records with fewer than three `.` separated parts, the returned hostname MUST have at least one more
@@ -293,7 +307,7 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2026-06-08: Add `srvAllowedHostsSuffix` MongoClient option.
+- 2026-01-01: Add `srvAllowedHostsSuffix` MongoClient option.
 
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
     matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
