@@ -1495,7 +1495,6 @@ This spec does not intend to introduce any new configuration options unless abso
 Mongos 2.6 does not monitor arbiters, but it costs little to do so, and in the rare case that all data members are moved
 to new hosts in a short time, an arbiter may be the client's last hope to find the new replica set configuration.
 
-
 ### TopologyType remains Unknown when an RSGhost is discovered
 
 If the TopologyType is Unknown and the client receives a hello or legacy hello response from

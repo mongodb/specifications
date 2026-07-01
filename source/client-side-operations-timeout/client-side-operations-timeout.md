@@ -536,10 +536,10 @@ rather than adding complexity to the behavior of `timeoutMS`.
 
 The behavior of runCommand varies across drivers. If the provided command document includes a `maxTimeMS` field and the
 `timeoutMS` option is set, some drivers would overwrite the `maxTimeMS` field with the value derived from `timeoutMS`,
-while others would append a second `maxTimeMS` field, which would cause a server error. To be
-prescriptive, we could mandate that drivers raise a client-side error in this case, but this would require a potentially
-expensive lookup in the command document. To avoid this additional cost, drivers are only required to document the
-behavior and suggest that `timeoutMS` be used instead of including a manual `maxTimeMS` field.
+while others would append a second `maxTimeMS` field, which would cause a server error. To be prescriptive, we could
+mandate that drivers raise a client-side error in this case, but this would require a potentially expensive lookup in
+the command document. To avoid this additional cost, drivers are only required to document the behavior and suggest that
+`timeoutMS` be used instead of including a manual `maxTimeMS` field.
 
 ### Why don't drivers use backoff/jitter between retry attempts?
 
