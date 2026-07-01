@@ -1,7 +1,6 @@
 # Index Management
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 
@@ -303,7 +302,7 @@ Java:
 collection.createIndex(new Document("name", 1), new IndexOptions().unique(true));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -334,7 +333,7 @@ collection.createIndexes(asList(
 ));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -400,7 +399,7 @@ Java:
 collection.listIndexes();
 ```
 
-Produces the shell equivalent (>= 3.0.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({ listIndexes: "users" });
@@ -548,7 +547,7 @@ Java:
 collection.indexes().createOne(new Document("name", 1), new IndexOptions().unique(true));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -579,7 +578,7 @@ collection.indexes().createMany(asList(
 ));
 ```
 
-Produces the shell equivalent (>= 2.6.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 db.runCommand({
@@ -649,7 +648,7 @@ for (BsonDocument document: collection.indexes()) {
 }
 ```
 
-Produces the shell equivalent (>= 3.0.0) of:
+Produces the shell equivalent of:
 
 ```javascript
 var indexes = db.runCommand({ listIndexes: "users" });
@@ -710,8 +709,8 @@ interface IndexOptions {
   sparse: Boolean;
 
   /**
-   * Optionally used only in MongoDB 3.0.0 and higher. Allows users to configure the storage
-   * engine on a per-index basis when creating an index.
+   * Optionally allows users to configure the storage engine on a per-index basis when creating
+   * an index.
    */
   storageEngine: Document;
 
@@ -738,10 +737,6 @@ interface IndexOptions {
 
   /**
    * Optionally provides the text index version number.
-   *
-   * MongoDB 2.4 can only support version 1.
-   *
-   * MongoDB 2.6 and higher may support version 1 or 2.
    */
   textIndexVersion: Int32;
 
@@ -752,10 +747,6 @@ interface IndexOptions {
 
   /**
    * Optionally specifies the 2dsphere index version number.
-   *
-   * MongoDB 2.4 can only support version 1.
-   *
-   * MongoDB 2.6 and higher may support version 1 or 2.
    */
   2dsphereIndexVersion: Int32;
 
@@ -783,14 +774,13 @@ interface IndexOptions {
 
   /**
    * Optionally specifies a filter for use in a partial index. Only documents that match the
-   * filter expression are included in the index. New in MongoDB 3.2.
+   * filter expression are included in the index.
    */
   partialFilterExpression: Document;
 
   /**
-   * Optionally specifies a collation to use for the index in MongoDB 3.4 and higher.
-   * If not specified, no collation is sent and the default collation of the collection
-   * server-side is used.
+   * Optionally specifies a collation to use for the index. If not specified, no collation is
+   * sent and the default collation of the collection server-side is used.
    */
   collation: Document;
 
@@ -1197,6 +1187,8 @@ internally by the server on those versions, and its value could have adverse eff
 from mistakenly specifying this option, drivers manually verify it is only sent to 4.4+ servers.
 
 #### Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2025-12-18: Search index tests only assert `latestDefinition.mappings.dynamic` values.
 

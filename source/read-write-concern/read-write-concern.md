@@ -1,7 +1,6 @@
 # Read and Write Concern
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 
@@ -79,10 +78,8 @@ The read concern option is available for the following operations:
 - `geoNear` command
 - `geoSearch` command
 
-Starting in MongoDB 4.2, an `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`;
-however, it does not support the "linearizable" level (attempting to do so will result in a server error).
-
-Server versions before 4.2 do not support a `readConcern` at all for `aggregate` commands with a write stage.
+An `aggregate` command with a write stage (e.g. `$out`, `$merge`) supports a `readConcern`; however, it does not support
+the "linearizable" level (attempting to do so will result in a server error).
 
 The `mapReduce` command where the `out` option is anything other than `{ inline: 1 }` does not support a `readConcern`.
 
@@ -201,16 +198,6 @@ For example:
 ```text
 mongodb://server:27017/db?readConcernLevel=majority
 ```
-
-#### Errors
-
-- MaxWireVersion < 4 Only the server's default `ReadConcern` is support by MaxWireVersion < 4. When using other
-    `readConcernLevels` with clients reporting `MaxWireVersion` < 4, the driver MUST raise an error. This check MUST
-    happen after server selection has occurred in the case of mixed version clusters. It is up to users to appropriately
-    define a `ReadPreference` such that intermittent errors do not occur.
-
-> [!NOTE]
-> `ReadConcern` is only supported for commands.
 
 ### Write Concern
 
@@ -348,26 +335,13 @@ as-is.
 
 The `findAndModify` command takes a named parameter, `writeConcern`. See command documentation for further examples.
 
-If writeConcern is specified for the Collection, `writeConcern` MUST be omitted when sending `findAndModify` with
-MaxWireVersion < 4.
-
-If the findAndModify helper accepts writeConcern as a parameter, the driver MUST raise an error with MaxWireVersion \<
-4\.
-
-> [!NOTE]
-> Driver documentation SHOULD include a warning in their server 3.2 compatible releases that an elevated `WriteConcern`
-> may cause performance degradation when using `findAndModify`. This is because `findAndModify` will now be honoring a
-> potentially high latency setting where it did not before.
-
 ##### Other commands that write
 
 Command helper methods for commands that write, other than those discussed above, MAY accept a write concern or write
-concern options in their parameter list. If the helper accepts a write concern, the driver MUST error if the selected
-server's MaxWireVersion < 5 and a write concern has explicitly been specified.
+concern options in their parameter list.
 
-Helper methods that apply the write concern inherited from the Collection or Database, SHOULD check whether the selected
-server's MaxWireVersion >= 5 and if so, include the inherited write concern in the command on the wire. If the selected
-server's MaxWireVersion < 5, these methods SHOULD silently omit the write concern from the command on the wire.
+Helper methods that apply the write concern inherited from the Collection or Database SHOULD include the inherited write
+concern in the command on the wire.
 
 These commands that write are:
 
@@ -525,10 +499,8 @@ Below are English descriptions of other items that should be tested:
 
 ### ReadConcern
 
-1. Commands supporting a read concern MUST raise an error when MaxWireVersion is less than 4 and a non-default,
-    non-local read concern is specified.
-2. Commands supporting a read concern MUST NOT send the default read concern to the server.
-3. Commands supporting a read concern MUST send any non-default read concern to the server.
+1. Commands supporting a read concern MUST NOT send the default read concern to the server.
+2. Commands supporting a read concern MUST send any non-default read concern to the server.
 
 ### WriteConcern
 
@@ -541,11 +513,6 @@ These are currently under construction.
 
 ## Q & A
 
-Q: Why is specifying a non-default `ReadConcern` for servers < 3.2 an error while a non-default write concern gets
-ignored in `findAndModify`? `findAndModify` is an existing command and since `WriteConcern` may be defined globally,
-anyone using `findAndModify` in their applications with a non-default `WriteConcern` defined globally would have all
-their `findAndModify` operations fail.
-
 Q: Why does a driver send `{ readConcern: { level: "local" } }` to the server when that is the server's default? First,
 to mirror how `WriteConcern` already works, `ReadConcern() does not equal ReadConcern(level=local)` in the same way that
 `WriteConcern() does not equal WriteConcern(w=1)`. This is true for `WriteConcern` because the server's default could be
@@ -555,6 +522,8 @@ don't send one and if a user does specify a `ReadConcern`, we do send one. If th
 instance, we send it.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-05-04: Describe how `readConcern.afterClusterTime` is used in causally-consistent sessions on reads and writes.
 
