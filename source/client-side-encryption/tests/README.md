@@ -3883,9 +3883,12 @@ create the following collections with majority write concern:
     This step requires server pre-9.0.0.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
-    This step requires server pre-9.0.0.
+    This step requires server 9.0.0+.
 - `db.substring-ci-di` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring-ci-di.json)
+    This step requires server 9.0.0+.
+- `db.substring-preview` using the `encryptedFields` option set to the contents of
+    [encryptedFields-substring-preview.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring-preview.json)
     This step requires server pre-9.0.0.
 
 Load the file
@@ -3971,15 +3974,15 @@ class EncryptOpts {
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
 }
 ```
 
-Use `explicitEncryptedClient` to insert the following document into `db.substring` (if created) with majority write
-concern:
+Use `explicitEncryptedClient` to insert the following document into `db.substring` (if created) and
+`db.substring-preview` (if created) with majority write concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -4139,7 +4142,12 @@ Assert that no documents are returned.
 
 #### Case 5: can find a document by substring
 
-Skip this test on server 9.0.0+.
+Run this case multiple times with the following sets of parameters:
+
+- `queryType=substring` and `collection=substring`
+    - Require server 9.0.0+ and libmongocrypt 1.20.0+.
+- `queryType=substringPreview` and `collection=substring-preview`
+    - Require server pre-9.0.0 and libmongocrypt 1.18.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
 
@@ -4147,21 +4155,21 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "<queryType>",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
 }
 ```
 
-Use `explicitEncryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.<collection>` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
@@ -4175,7 +4183,12 @@ Assert the following document is returned:
 
 #### Case 6: assert no document found by substring
 
-Skip this test on server 9.0.0+.
+Run this case multiple times with the following sets of parameters:
+
+- `queryType=substring` and `collection=substring`
+    - Require server 9.0.0+ and libmongocrypt 1.20.0+.
+- `queryType=substringPreview` and `collection=substring-preview`
+    - Require server pre-9.0.0 and libmongocrypt 1.18.1+.
 
 Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the following `EncryptOpts`:
 
@@ -4183,21 +4196,21 @@ Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "<queryType>",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
 }
 ```
 
-Use `explicitEncryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.<collection>` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'qux'>} } }
@@ -4399,14 +4412,14 @@ Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the followin
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       substring: SubstringOpts {
         strMaxLength: 10,
-        strMaxQueryLength: 10,
+        strMaxQueryLength: 6,
         strMinQueryLength: 2,
       }
    },
@@ -4445,14 +4458,14 @@ Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the followi
 class EncryptOpts {
    keyId : <key1ID>,
    algorithm: "String",
-   queryType: "substringPreview",
+   queryType: "substring",
    contentionFactor: 0,
    stringOpts: StringOpts {
       caseSensitive: false,
       diacriticSensitive: false,
       substring: SubstringOpts {
         strMaxLength: 10,
-        strMaxQueryLength: 10,
+        strMaxQueryLength: 6,
         strMinQueryLength: 2,
       }
    },
