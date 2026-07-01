@@ -4600,3 +4600,15 @@ Perform the following setup.
 
 11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`, confirming that KMS requests were routed
     through the proxy. Expect only one KMS request since the resulting decrypted key is cached.
+
+#### Case 4: Error
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a proxy callback that returns an error with a placeholder message "Test Error".
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to fail and the error with message "Test Error" to propagate.
