@@ -1387,7 +1387,7 @@ One of the strings:
     - Used for the `$encStrStartsWith` operator.
 - "suffix" / "suffixPreview"
     - Used for the `$encStrEndsWith` operator.
-- "substringPreview"
+- "substring" / "substringPreview"
     - Used for the `$encStrContains` operator.
 
 queryType only applies when algorithm is "Indexed", "Range", or "String". libmongocrypt returns an error if queryType is
@@ -2545,6 +2545,8 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 
 - 2026-06-25: Add `kmsConnectCallback` to `AutoEncryptionOpts` and `ClientEncryptionOpts` to support HTTP proxy use
     cases.
+
+- 2026-06-22: Add stable support for substring queries
 
 - 2026-06-17: Restore `prefixPreview` and `suffixPreview` as experimental.
 
