@@ -4612,3 +4612,22 @@ Create a `ClientEncryption` object with:
 Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
 
 Expect this to fail and the error with message "Test Error" to propagate.
+
+#### Case 5: callback receives timeout
+
+This case MUST only be run by drivers that have implemented
+[CSOT](../../client-side-operations-timeout/client-side-operations-timeout.md).
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a `MongoClient` configured with `timeoutMS: 1000` as the
+    `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a callback that records the timeout value it receives and then proceeds normally (performs the
+    HTTPS CONNECT through the plain HTTP proxy on port 9004 as described in Setup).
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed.
+
+Assert that the callback was called with a non-zero timeout.

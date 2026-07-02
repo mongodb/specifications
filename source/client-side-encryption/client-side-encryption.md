@@ -533,6 +533,8 @@ This is intended to enable use cases such as routing KMS requests through an HTT
 type is intentionally left unspecified so that drivers may use the type that best fits their language (e.g., a function,
 a callable object).
 
+Drivers supporting CSOT must pass a time limit if set.
+
 Drivers are required to support an HTTP proxy but MAY omit `kmsConnectCallback` if they provide an alternative mechanism
 for proxy support.
 
