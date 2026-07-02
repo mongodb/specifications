@@ -4487,7 +4487,7 @@ Start the following server processes before running test cases in this section.
 
 A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
 
-1. Accept `(host, port)` from the driver.
+1. Accept `(<host>, <port>)` from the driver.
 2. Open a plain TCP connection to `127.0.0.1:9004`.
 3. Send `CONNECT host:port HTTP/1.1\r\nHost: host:port\r\n\r\n`.
 4. Read the response and verify it begins with `HTTP/1.1 200`.
