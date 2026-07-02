@@ -4513,12 +4513,12 @@ A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
 
 1. Accept `(<host>, <port>)` from the driver.
 2. Open a plain TCP connection to `127.0.0.1:9004`.
-3. Send `CONNECT host:port HTTP/1.1\r\nHost: host:port\r\n\r\n`.
+3. Send `CONNECT <host>:<port> HTTP/1.1\r\nHost: <host>:<port>\r\n\r\n`.
 4. Read the response and verify it begins with `HTTP/1.1 200`.
 5. Return a socket-like object.
 
 A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to
-`127.0.0.1:9005` using `ca.pem` to verify the proxy's certificate.
+`127.0.0.1:9005` using [drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem). to verify the proxy's certificate.
 
 #### Case 1: plain HTTP proxy
 
@@ -4648,7 +4648,7 @@ Create a `ClientEncryption` object with:
     `keyVaultClient`.
 - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
 - `kmsConnectCallback`: a callback that records the timeout value it receives and then proceeds normally (performs the
-    HTTPS CONNECT through the plain HTTP proxy on port 9004 as described in Setup).
+    HTTP CONNECT through the plain HTTP proxy on port 9004 as described in Setup).
 
 Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
 
