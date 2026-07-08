@@ -53,10 +53,10 @@ executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint`
     6. Compare the time between the two runs.
 
         ```python
-        assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 0.3 seconds)) < 0.3 seconds)
+        assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 0.6 seconds)) < 0.6 seconds)
         ```
 
-        The sum of 2 backoffs is 0.3 seconds. There is a 0.3-second window to account for potential variance between the
+        The sum of 2 backoffs is 0.6 seconds. There is a 0.6-second window to account for potential variance between the
         two runs.
 
 #### Test 2: REMOVED
@@ -173,8 +173,8 @@ executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint`
 9. Compare the time between the two runs.
 
     ```python
-    assertTrue(absolute_value(exponential_backoff_time - (with_retry_after_ms_time + 0.2 seconds)) < 0.2 seconds)
+    assertTrue(absolute_value(exponential_backoff_time - (with_retry_after_ms_time + 0.5 seconds)) < 0.5 seconds)
     ```
 
-    The difference in the backoffs is 0.2 seconds. There is a 0.2-second window to account for potential variance between
+    The difference in the backoffs is 0.5 seconds. There is a 0.5-second window to account for potential variance between
     the two runs.
