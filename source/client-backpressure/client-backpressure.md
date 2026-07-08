@@ -222,7 +222,7 @@ def execute_command_retryable(command, ...):
                 # If present on the error, baseBackoffMS overrides the base backoff
                 if exc.base_backoff_ms:
                     base_backoff = exc.base_backoff_ms / 1000 # Convert from milliseconds to seconds
-                backoff = jitter * min(MAX_BACKOFF, base_backoff * 2 ** (attempt - 1))
+                backoff = jitter * min(MAX_BACKOFF, base_backoff * 2 ** attempt)
                 # If the delay exceeds the deadline, bail early.
                 if _csot.get_timeout():
                     if time.monotonic() + backoff > _csot.get_deadline():
@@ -439,6 +439,9 @@ another dimension to read preference selection that users need to reason about. 
 to understand and configure.
 
 ## Changelog
+
+- 2026-07-08: Update exponential backoff formula to use the attempt number as the exponent instead of one less than the
+    attempt number.
 
 - 2026-06-16: Add support for baseBackoffMS backoff calculation.
 
