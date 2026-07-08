@@ -120,9 +120,9 @@ option.
 
 6. Assert that the total number of started commands is `maxAdaptiveRetries` + 1 (2).
 
-#### Test 5: Overload Errors with retryAfterMS override base backoff
+#### Test 5: Overload Errors with baseBackoffMS override base backoff
 
-Drivers SHOULD test that overload errors with `retryAfterMS` override the default backoff duration. This test MUST be
+Drivers SHOULD test that overload errors with `baseBackoffMS` override the default backoff duration. This test MUST be
 executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient`.
@@ -156,18 +156,18 @@ executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint`
        const end = performance.now();
     ```
 
-6. Run the following command to set up `retryAfterMS` on overload errors.
+6. Run the following command to set up `baseBackoffMS` on overload errors.
 
     ```python
-    client.admin.command("setParameter", 1, overloadRetryAfterMS=50)
+    client.admin.command("setParameter", 1, externalClientBaseBackoffMS=50)
     ```
 
 7. Execute step 5 again.
 
-8. Run the following command to disable `retryAfterMS` on overload errors.
+8. Run the following command to disable `baseBackoffMS` on overload errors.
 
     ```python
-    client.admin.command("setParameter", 1, overloadRetryAfterMS=0)
+    client.admin.command("setParameter", 1, externalClientBaseBackoffMS=0)
     ```
 
 9. Compare the time between the two runs.
