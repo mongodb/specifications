@@ -123,7 +123,7 @@ option.
 #### Test 5: Overload Errors with baseBackoffMS override base backoff
 
 Drivers SHOULD test that overload errors with `baseBackoffMS` override the default backoff duration. This test MUST be
-executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
+executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command.
 
 1. Let `client` be a `MongoClient`.
 
@@ -140,8 +140,7 @@ executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint`
             mode: 'alwaysOn',
             data: {
                 failCommands: ['insert'],
-                errorCode: 462,
-                errorLabels: ['SystemOverloadedError', 'RetryableError']
+                errorCode: 462, // IngressRequestRateLimitExceeded
             }
         }
     ```
@@ -164,17 +163,21 @@ executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint`
 
 7. Execute step 5 again.
 
-8. Run the following command to disable `baseBackoffMS` on overload errors.
+8. Assert that the server attached `baseBackoffMS` to the error and that the driver parsed it.
+
+9. Run the following command to disable `baseBackoffMS` on overload errors.
 
     ```python
     client.admin.command("setParameter", 1, externalClientBaseBackoffMS=0)
     ```
 
-9. Compare the time between the two runs.
+10. Assert absolute bounds on each run's duration.
 
     ```python
-    assertTrue(absolute_value(exponential_backoff_time - (with_retry_after_ms_time + 0.5 seconds)) < 0.5 seconds)
+    assertGreaterEqual(exponential_backoff_time, 0.6)
+    assertGreaterEqual(with_base_backoff_ms_time, 0.3)
+    assertLess(with_base_backoff_ms_time, 0.6)
     ```
 
-    The difference in the backoffs is 0.5 seconds. There is a 0.5-second window to account for potential variance between
-    the two runs.
+    A run can never be faster than the sum of its backoffs. With jitter pinned to 1, the default backoffs are
+    `0.2 + 0.4 = 0.6s` and the `baseBackoffMS=50` backoffs are `0.1 + 0.2 = 0.3s`.
