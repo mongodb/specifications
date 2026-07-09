@@ -4518,7 +4518,9 @@ A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
 5. Return a socket-like object.
 
 A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to
-`127.0.0.1:9005` using [drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem). to verify the proxy's certificate.
+`127.0.0.1:9005` using
+[drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem)
+to verify the proxy's certificate.
 
 #### Case 1: plain HTTP proxy
 
