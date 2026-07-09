@@ -123,7 +123,7 @@ option.
 #### Test 5: Overload Errors with baseBackoffMS override base backoff
 
 Drivers SHOULD test that overload errors with `baseBackoffMS` override the default backoff duration. This test MUST be
-executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command.
+executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient`.
 
@@ -141,6 +141,7 @@ executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint`
             data: {
                 failCommands: ['insert'],
                 errorCode: 462, // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
             }
         }
     ```
