@@ -160,6 +160,12 @@ tests:
                 listDatabases: 1
                 maxTimeMS: { $$exists: false }
   - description: "timeoutMS can be configured for an operation - createChangeStream on client"
+    runOnRequirements:
+    - minServerVersion: "4.4"
+      topologies: ["replicaset"]
+    - minServerVersion: "4.4"
+      maxServerVersion: "8.99" # Skip server 9.0+ due to reasons noted in DRIVERS-3556.
+      topologies: ["sharded"]
     operations:
       - name: failPoint
         object: testRunner
@@ -452,6 +458,12 @@ tests:
                 ping: 1
                 maxTimeMS: { $$exists: false }
   - description: "timeoutMS can be configured for an operation - createChangeStream on database"
+    runOnRequirements:
+    - minServerVersion: "4.4"
+      topologies: ["replicaset"]
+    - minServerVersion: "4.4"
+      maxServerVersion: "8.99" # Skip server 9.0+ due to reasons noted in DRIVERS-3556.
+      topologies: ["sharded"]
     operations:
       - name: failPoint
         object: testRunner
@@ -1028,6 +1040,12 @@ tests:
                 listIndexes: *collectionName
                 maxTimeMS: { $$exists: false }
   - description: "timeoutMS can be configured for an operation - createChangeStream on collection"
+    runOnRequirements:
+    - minServerVersion: "4.4"
+      topologies: ["replicaset"]
+    - minServerVersion: "4.4"
+      maxServerVersion: "8.99" # Skip server 9.0+ due to reasons noted in DRIVERS-3556.
+      topologies: ["sharded"]
     operations:
       - name: failPoint
         object: testRunner
