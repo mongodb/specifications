@@ -91,7 +91,16 @@ tests:
           isTimeoutError: true
   - description: "operation is retried multiple times for non-zero timeoutMS - {{operation.operation_name}} on {{operation.object}}"
     runOnRequirements:
+    {%- if operation.operation_name == 'createChangeStream' %}
       - minServerVersion: "4.3.1" # failCommand errorLabels option
+        topologies: ["replicaset"]
+      - minServerVersion: "4.3.1" # failCommand errorLabels option
+        maxServerVersion: "8.99" # Skip sharded 9.0+ due to reasons noted in DRIVERS-3556.
+        # Removing the skip may be desired in the future if this test migrates from timeoutMS to maxTimeMS. See DRIVERS-3556 for a suggested approach: add a unified test runner option to advance the config server's cluster time immediately before opening a change stream. Otherwise, existing tests using maxTimeMS < periodicNoopIntervalSecs on 9.0+ sharded clusters may unexpectedly fail with server timeouts.
+        topologies: ["sharded"]
+    {%- else %}
+      - minServerVersion: "4.3.1" # failCommand errorLabels option
+    {%- endif %}
     operations:
       - name: failPoint
         object: testRunner
