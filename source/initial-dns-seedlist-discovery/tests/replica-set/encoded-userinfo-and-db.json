@@ -15,7 +15,7 @@
   "parsed_options": {
     "user": "b*b@f3tt=",
     "password": "$4to@L8=MC",
-    "db": "mydb?"
+    "auth_database": "mydb?"
   },
   "ping": false,
   "comment": "Encoded user, pass, and DB parse correctly"
