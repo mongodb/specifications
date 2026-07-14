@@ -425,5 +425,6 @@ A URI options can be added later if we realise our users need it, while the oppo
 
 ## Changelog
 
+- 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
