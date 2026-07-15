@@ -16,8 +16,6 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ## Terminology
 
-MaxWireVersion The `maxWireVersion` value reported by the `hello` command.
-
 Server Selection The process of selecting a server to read or write from. See
 [the server selection specification](../server-selection/server-selection.md).
 
