@@ -123,7 +123,7 @@ This method should perform the following sequence of actions:
 
 2. If `transactionAttempt` > 0:
 
-    1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), BACKOFF_MAX)`. If
+    1. Calculate `backoffMS` to be `jitter * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt), BACKOFF_MAX)`. If
         elapsed time + `backoffMS` > `TIMEOUT_MS`, then propagate the previously encountered error to the caller of
         `withTransaction` as per [timeout error propagation](#timeout-error-propagation) and return immediately.
         Otherwise, sleep for `backoffMS`.
@@ -218,7 +218,7 @@ withTransaction(callback, options) {
 
     retryTransaction: while (true) {
         if (transactionAttempt > 0) {
-            var backoff = Math.random() * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt - 1), 
+            var backoff = Math.random() * min(BACKOFF_INITIAL * 1.5 ** (transactionAttempt), 
                                               BACKOFF_MAX);
 
             if (Date.now() + backoff - startTime >= timeout) {
@@ -445,6 +445,9 @@ provides an implementation of a technique already described in the MongoDB 4.0 d
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
+
+- 2026-07-08: Update exponential backoff formula to use the attempt number as the exponent instead of one less than the
+    attempt number.
 
 - 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
     wrapping semantics and label propagation in spec and prose tests.

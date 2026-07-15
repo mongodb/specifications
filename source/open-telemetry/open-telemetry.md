@@ -296,9 +296,9 @@ This attribute SHOULD contain:
 
 ###### db.query.text
 
-This attribute contains the full database command executed serialized to extended JSON. If not truncated, the content of
-this attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command monitoring
-excluding the following fields: `lsid`, `$db`, `$clusterTime`, `signature`.
+This attribute contains the full database command executed serialized to Relaxed Extended JSON. If not truncated, the
+content of this attribute SHOULD be equivalent to the `document` field of the CommandStartedEvent of the command
+monitoring excluding the following fields: `lsid`, `$db`, `$clusterTime`, `signature`.
 
 Drivers MUST NOT add this attribute by default. Drivers MUST provide a toggle to enable this attribute. This
 configuration can be implemented with an environment variable
@@ -425,5 +425,6 @@ A URI options can be added later if we realise our users need it, while the oppo
 
 ## Changelog
 
+- 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.

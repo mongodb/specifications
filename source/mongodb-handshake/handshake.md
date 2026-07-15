@@ -53,6 +53,10 @@ is requested or `loadBalanced: True`, drivers MUST also use the `hello` command 
 version is not requested and `loadBalanced: False`, drivers MUST use legacy hello for the first message of the initial
 handshake, and include `helloOk:true` in the handshake request.
 
+Drivers MUST include `backpressure: "2"` in their handshake request in order to explicitly version their supported
+version of the client backpressure specification. The value of `backpressure` MUST be the string `"2"` and not a literal
+number `2`.
+
 If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use the
 `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology monitoring
 commands MUST use the legacy hello command. See the
@@ -80,7 +84,7 @@ if stable_api_configured or client_options.load_balanced:
     cmd = {"hello": 1}
 else:
     cmd = {"legacy hello": 1, "helloOk": 1}
-cmd["backpressure"] = True
+cmd["backpressure"] = "2"
 cmd["client"] = client_metadata
 if client_options.compressors:
     cmd["compression"] = client_options.compressors
@@ -551,6 +555,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-06-25: Clarify the client backpressure component of the handshake.
 - 2026-06-17: Remove pre-4.2 version references.
 - 2026-06-11: Clarify that there is no new behavior as a result of only using OP_MSG for all handshakes.
 - 2026-06-05: Use OP_MSG for all handshakes.
