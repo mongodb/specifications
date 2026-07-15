@@ -129,12 +129,16 @@ rules:
         - To retry `runCommand`, both [retryWrites](../retryable-writes/retryable-writes.md#retrywrites) and
             [retryReads](../retryable-reads/retryable-reads.md#retryreads) MUST be enabled. See
             [Why must both `retryWrites` and `retryReads` be enabled to retry runCommand?](client-backpressure.md#why-must-both-retrywrites-and-retryreads-be-enabled-to-retry-runcommand)
-3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply exponential backoff
-    according to the following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^(attempt - 1))`
-    - `jitter` is a random jitter value between 0 and 1.
-    - `BASE_BACKOFF` is constant 100ms.
-    - `MAX_BACKOFF` is 10000ms.
-    - This results in delays of 100ms and 200ms before accounting for jitter.
+3. If the request is eligible for retry (as outlined in step 2 above), the client MUST apply backoff according to the
+    following formula: `backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2^attempt)`
+    1. `jitter` is a random jitter value between 0 and 1. This averages out to `0.5`.
+    2. `MAX_BACKOFF` is 10000ms.
+    3. `BASE_BACKOFF` is constant 100ms.
+    4. `attempt` is the retry number. The first retry is `attempt = 1`, the second is `attempt = 2`, and so on.
+    5. This results in delays of 100ms and 200ms after accounting for the average jitter.
+    6. If `baseBackoffMS` is present on the error and has a positive value, the client MUST use that value instead of
+        `BASE_BACKOFF`. `baseBackoffMS` represents a server-supplied base backoff to use in place of the driver's
+        default.
 4. If the request is eligible for retry (as outlined in step 2 above) and `enableOverloadRetargeting` is enabled, the
     client MUST add the previously used server's address to the list of deprioritized server addresses for
     [server selection](../server-selection/server-selection.md). Drivers MUST expose `enableOverloadRetargeting` as a
@@ -214,8 +218,11 @@ def execute_command_retryable(command, ...):
 
             if is_overload:
                 jitter = random.random() # Random float between [0.0, 1.0).
-                backoff = jitter * min(MAX_BACKOFF, BASE_BACKOFF * 2 ** (attempt - 1))
-          
+                base_backoff = BASE_BACKOFF
+                # If present on the error, baseBackoffMS overrides the base backoff
+                if exc.base_backoff_ms:
+                    base_backoff = exc.base_backoff_ms / 1000 # Convert from milliseconds to seconds
+                backoff = jitter * min(MAX_BACKOFF, base_backoff * 2 ** attempt)
                 # If the delay exceeds the deadline, bail early.
                 if _csot.get_timeout():
                     if time.monotonic() + backoff > _csot.get_deadline():
@@ -432,6 +439,11 @@ another dimension to read preference selection that users need to reason about. 
 to understand and configure.
 
 ## Changelog
+
+- 2026-07-08: Update exponential backoff formula to use the attempt number as the exponent instead of one less than the
+    attempt number.
+
+- 2026-06-16: Add support for baseBackoffMS backoff calculation.
 
 - 2026-04-14: Clarify correct retry behavior when a mix of overload and non-overload errors are encountered.
 
