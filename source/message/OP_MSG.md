@@ -53,6 +53,7 @@ struct Section {
             cstring    identifier;
             document*  documents;
         };
+        document telemetry; // payloadType == 3
     };
 };
 
@@ -73,6 +74,16 @@ Each `OP_MSG` MUST NOT exceed the `maxMessageSizeBytes` as configured by the Mon
 
 Each `OP_MSG` MUST have one section with `Payload Type 0`, and zero or more `Payload Type 1`. Bulk writes SHOULD use
 `Payload Type 1`, and MUST do so when the batch contains more than one entry.
+
+Each `OP_MSG` request MAY additionally contain **at most one** section with `Payload Type 3`, carrying telemetry
+context. `Payload Type 3` is request-only: drivers MAY send it, and it MUST NOT appear in server replies. Its payload is
+a single BSON document whose contents are defined by the
+[OpenTelemetry specification](../open-telemetry/open-telemetry.md). Servers and intermediaries that do not recognize a
+section kind fail the message (see below), so senders MUST gate emission of this section on server support as defined by
+the OpenTelemetry specification.
+
+Note: `Payload Type 2` is reserved for server-internal use (a security-token section populated by the server and
+infrastructure components, never by drivers), so the next payload type available for driver-emitted content is 3.
 
 Sections may exist in any order. Each `OP_MSG` MAY contain a checksum, and MUST set the relevant `flagBits` when that
 field is included.
@@ -157,13 +168,13 @@ MongoDB server only handles the `exhaustAllowed` bit on the following operations
 ##### sections
 
 Each message contains one or more sections. A section is composed of an uint8 which determines the payload's type, and a
-separate payload field. The payload size for payload type 0 and 1 is determined by the first 4 bytes of the payload
+separate payload field. The payload size for payload type 0, 1, and 3 is determined by the first 4 bytes of the payload
 field (includes the 4 bytes holding the size but not the payload type).
 
-| Field   | Description                                                                       |
-| ------- | --------------------------------------------------------------------------------- |
-| type    | A byte indicating the layout and semantics of payload                             |
-| payload | The payload of a section can either be a single document, or a document sequence. |
+| Field   | Description                                                                                                               |
+| ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| type    | A byte indicating the layout and semantics of payload                                                                     |
+| payload | The payload of a section can either be a single document (Payload Type 0 and 3), or a document sequence (Payload Type 1). |
 
 When the Payload Type is 0, the content of the payload is:
 
@@ -179,11 +190,17 @@ When the Payload Type is 1, the content of the payload is:
 | identifier | A unique identifier (for this message). Generally the name of the "command argument" it contains the value for |
 | documents  | 0 or more BSON documents. Each BSON document cannot be larger than `maxBSONObjectSize`.                        |
 
+When the Payload Type is 3, the content of the payload is:
+
+| Field    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| document | A single BSON document containing telemetry context, as defined by the [OpenTelemetry specification](../open-telemetry/open-telemetry.md). The payload size is inferred from the document's leading int32. Servers enforce a maximum size for this section (4096 bytes as of MongoDB 9.0, see [`kMaxTelemetrySectionSize`](https://github.com/mongodb/mongo/blob/master/src/mongo/rpc/op_msg.cpp#L65-L69)) and reject messages whose telemetry section exceeds it. |
+
 Any unknown Payload Types MUST result in an error and the socket MUST be closed. There is no ordering implied by payload
 types. A section with payload type 1 can be serialized before payload type 0.
 
-A fully constructed `OP_MSG` MUST contain exactly one `Payload Type 0`, and optionally any number of `Payload Type 1`
-where each identifier MUST be unique per message.
+A fully constructed `OP_MSG` MUST contain exactly one `Payload Type 0`, optionally any number of `Payload Type 1` where
+each identifier MUST be unique per message, and optionally at most one `Payload Type 3`.
 
 #### Command Arguments As Payload
 
@@ -405,6 +422,7 @@ In the near future, this opcode is expected to be extended and include support f
 
 ### Changelog
 
+- 2026-07-18: Add `Payload Type 3` (telemetry context BSON document; DRIVERS-3454).
 - 2026-06-05: Use OP_MSG for all messages.
 - 2024-04-30: Convert from RestructuredText to Markdown.
 - 2022-10-05: Remove spec front matter.
