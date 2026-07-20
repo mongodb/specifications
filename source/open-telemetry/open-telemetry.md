@@ -322,6 +322,40 @@ available:
 - `exception.type`
 - `exception.stacktrace`
 
+#### Propagating Trace Context to the Server
+
+Drivers MUST propagate the active trace context to servers that support it, so that server-generated spans join the same
+distributed trace as the driver's spans.
+
+The trace context is carried in an `OP_MSG` section with [`Payload Type 3`](../message/OP_MSG.md), whose payload is a
+single BSON document with the following schema:
+
+```json
+{ "otel": { "traceparent": "<string>" } }
+```
+
+`traceparent` is the [W3C traceparent](https://www.w3.org/TR/trace-context/#traceparent-header) value of the **command
+span**: the propagated context MUST be that of the command span for the command being sent, so server spans join the
+trace as children of the exact command (and retry attempt) that produced them.
+
+Drivers MUST attach the section to a command if and only if all of the following hold:
+
+1. Tracing is enabled for the `MongoClient` (see
+    [Enabling, Disabling, and Configuring OpenTelemetry](#enabling-disabling-and-configuring-opentelemetry)).
+2. The connection's `maxWireVersion` is greater than or equal to 29 (MongoDB 9.0).
+3. A valid `traceparent` value is available from the command span for the command being sent.
+
+A `traceparent` value is valid if and only if it is exactly 55 characters of the form
+`00-<32 lowercase hex>-<16 lowercase hex>-<2 lowercase hex flags>` and neither the trace-id nor the parent-id is all
+zeroes. This mirrors the server-side validation. If no valid value is available, drivers MUST omit the section entirely
+rather than send an invalid or truncated value. Drivers MUST NOT append a `tracestate` suffix. Drivers MUST propagate
+unsampled trace contexts (trace-flags `00`); the sampling decision MUST NOT affect whether the section is attached.
+
+A message MUST NOT contain more than one telemetry section. Commands that carry no command span (for example server
+monitoring, authentication, and security-sensitive commands) naturally send no section, since condition 3 cannot hold.
+
+No tracing data is returned in server responses as part of this feature.
+
 ## Motivation for Change
 
 A common complaint from our support team is that they don't know how to easily get debugging information from drivers.
@@ -423,8 +457,21 @@ Further, we already have two attributes that configure tracing, and we expect th
 
 A URI options can be added later if we realise our users need it, while the opposite is not easily accomplished.
 
+### Wire protocol version gate instead of a hello capability
+
+An alternative was for servers to advertise support via a `hello` response field. Gating on `maxWireVersion` was chosen
+instead: the wire protocol version acts as the schema contract for the telemetry payload, so drivers know exactly which
+fields a server accepts, and any future payload additions require a wire version bump rather than a second, parallel
+negotiation mechanism.
+
+### BSON document instead of a bare traceparent string
+
+Carrying the traceparent inside a BSON document allows future propagation fields to be added to the same section without
+redesigning the payload format.
+
 ## Changelog
 
+- 2026-07-18: Add trace context propagation to the server via the `OP_MSG` telemetry section (DRIVERS-3454).
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
