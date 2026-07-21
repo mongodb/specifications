@@ -527,10 +527,11 @@ The `kmsConnectCallback` property may be specified on [ClientEncryptionOpts](#Cl
 
 When provided, the callback is invoked when establishing a connection to a KMS host, receiving the hostname and port as
 arguments. It MUST return a socket-like object connected to the target host. The driver then wraps the returned socket
-with TLS (using the KMS provider's configured [TLS options](#kms-provider-tls-options)). Drivers supporting CSOT MUST
-pass remaining `timeoutMS`.
+with TLS (using the KMS provider's configured [TLS options](#kms-provider-tls-options)). TLS is negotiated end-to-end
+with the KMS host; SNI and certificate/hostname verification MUST target the KMS host, not the address the callback
+actually connected to (e.g. an HTTP proxy). Drivers supporting CSOT MUST pass remaining `timeoutMS`.
 
-This is intended to enable use cases such as routing KMS requests through an HTTP proxy via HTTPS CONNECT. The callback
+This is intended to enable use cases such as routing KMS requests through an HTTP proxy via HTTP CONNECT. The callback
 type is intentionally left unspecified so that drivers may use the type that best fits their language (e.g., a function,
 a callable object).
 

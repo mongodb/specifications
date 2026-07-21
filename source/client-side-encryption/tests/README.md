@@ -4522,6 +4522,10 @@ A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, e
 [drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem)
 to verify the proxy's certificate.
 
+In every case, after the callback returns its socket, the driver wraps it with TLS negotiated end-to-end with the KMS
+host reached through the tunnel. SNI and certificate/hostname verification MUST target the KMS host, not the address
+(e.g. the proxy) that the callback actually connected to.
+
 #### Case 1: plain HTTP proxy
 
 Create a `ClientEncryption` object with:
@@ -4560,6 +4564,11 @@ Call `client_encryption.createDataKey()` with the same provider and `masterKey` 
 Expect this to succeed.
 
 Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_count` is at least `1`.
+
+This case involves two independent TLS layers: the callback's own client↔proxy TLS connection (verified against
+`ca.pem`, the proxy's CA), and the driver's client↔KMS TLS connection carried end-to-end through the CONNECT tunnel
+(verified against the real KMS host's certificate). Successfully creating the data key confirms the driver verified the
+KMS host's identity rather than the proxy's.
 
 #### Case 3: full auto encryption pipeline via proxy
 
