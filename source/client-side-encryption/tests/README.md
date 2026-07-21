@@ -4657,3 +4657,18 @@ Call `client_encryption.createDataKey()` with the same provider and `masterKey` 
 Expect this to succeed.
 
 Assert that the callback was called with a non-zero timeout.
+
+#### Case 6: Retry
+
+Skip this test if the driver does not implement DRIVERS-1541.
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a callback that fails with an error on its first invocation, then behaves as the plain HTTP
+    proxy callback described in Setup on subsequent invocations.
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed, confirming that the driver retried the `kmsConnectCallback` after its first invocation failed.
