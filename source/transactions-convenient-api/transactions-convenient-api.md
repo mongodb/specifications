@@ -1,16 +1,16 @@
 # Convenient API for Transactions
 
 - Status: Accepted
-- Minimum Server Version: 4.0
 
 ______________________________________________________________________
 
 ## Abstract
 
-Reliably committing a transaction in the face of errors can be a complicated endeavor using the MongoDB 4.0 drivers API.
-This specification introduces a `withTransaction` method on the ClientSession object that allows application logic to be
-executed within a transaction. This method is capable of retrying either the commit operation or entire transaction as
-needed (and when the error permits) to better ensure that the transaction can complete successfully.
+Reliably committing a transaction in the face of errors can be a complicated endeavor using the drivers API introduced
+along with MongoDB 4.0. This specification introduces a `withTransaction` method on the ClientSession object that allows
+application logic to be executed within a transaction. This method is capable of retrying either the commit operation or
+entire transaction as needed (and when the error permits) to better ensure that the transaction can complete
+successfully.
 
 ## META
 
@@ -412,7 +412,7 @@ election.
 
 In order to avoid blocking the application with infinite retry loops, `withTransaction` will cease retrying invocations
 of the callback or commitTransaction if it has exceeded a fixed timeout period of 120 seconds. This limit is a
-non-configurable default and is intentionally twice the value of MongoDB 4.0's default for the
+non-configurable default and is intentionally twice the value of the server's default for the
 [transactionLifetimeLimitSeconds](https://www.mongodb.com/docs/manual/reference/parameters/#param.transactionLifetimeLimitSeconds)
 parameter (60 seconds). Applications that desire longer retry periods may call `withTransaction` additional times as
 needed. Applications that desire shorter retry periods should not use this method.
@@ -441,13 +441,15 @@ implementations may be found via [DRIVERS-556](https://jira.mongodb.org/browse/D
 
 Applications that use transaction guarantees to enforce security rules will benefit from a less error-prone API. Adding
 a helper method to execute a user-defined function within a transaction has few security implications, as it only
-provides an implementation of a technique already described in the MongoDB 4.0 documentation
+provides an implementation of a technique already described in the MongoDB documentation
 ([DRIVERS-488](https://jira.mongodb.org/browse/DRIVERS-488)).
 
 ## Changelog
 
 - 2026-07-08: Update exponential backoff formula to use the attempt number as the exponent instead of one less than the
     attempt number.
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
     wrapping semantics and label propagation in spec and prose tests.

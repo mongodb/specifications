@@ -1,7 +1,6 @@
 # OP_MSG
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ### Abstract
 
@@ -192,7 +191,7 @@ the `identifier` is the command argument's name. Specifying a command argument a
 use a BSON Array. For example, `Payload Type 1` allows an array of documents to be specified as a sequence of BSON
 documents on the wire without the overhead of array keys.
 
-MongoDB 3.6 only allows certain command arguments to be provided this way. These are:
+MongoDB only allows certain command arguments to be provided this way. These are:
 
 | Command Name | Command Argument |
 | ------------ | ---------------- |
@@ -405,6 +404,7 @@ In the near future, this opcode is expected to be extended and include support f
 
 ### Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
 - 2026-06-05: Use OP_MSG for all messages.
 - 2024-04-30: Convert from RestructuredText to Markdown.
 - 2022-10-05: Remove spec front matter.

@@ -99,9 +99,6 @@ A client (driver or mongos) MUST estimate the staleness of each secondary, based
 server hello responses, and select for reads only those secondaries whose estimated staleness is less than or equal to
 maxStalenessSeconds.
 
-If any server's maxWireVersion is less than 5 and maxStalenessSeconds is a positive number, every attempt at server
-selection throws an error.
-
 When there is a known primary, a secondary S's staleness is estimated with this formula:
 
 ```javascript
@@ -378,17 +375,6 @@ Therefore, this spec *also* requires that maxStalenessSeconds is at least 90:
 - To emphasize that maxStalenessSeconds is a low-precision heuristic
 - To avoid the arbitrary-seeming minimum of 70 seconds imposed by single-threaded drivers
 
-### All servers must have wire version 5 to support maxStalenessSeconds
-
-Clients with minWireVersion < 5 MUST throw an error if maxStalenessSeconds is set, and any available server in the
-topology has maxWireVersion less than 5.
-
-An available server is defined in the [Server Selection](../server-selection/server-selection.md#terms) specification.
-
-Servers began reporting lastWriteDate in wire protocol version 5, and clients require some or all servers' lastWriteDate
-in order to estimate any servers' staleness. The exact requirements of the formula vary according to TopologyType, so
-this spec makes a simple ruling: if any server is running an outdated version, maxStalenessSeconds cannot be supported.
-
 ### Rejected ideas
 
 #### Add all secondaries' opTimes to primary's hello response
@@ -468,6 +454,8 @@ server communicates is staleness configuration in its hello response like:
 client-side setting.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2024-08-09: Updated wire versions in tests to 4.0+.
 
