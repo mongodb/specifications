@@ -422,7 +422,7 @@ In the near future, this opcode is expected to be extended and include support f
 
 ### Changelog
 
-- 2026-07-18: Add `Payload Type 3` (telemetry context BSON document; DRIVERS-3454).
+- 2026-07-21: Add `Payload Type 3` (telemetry context BSON document; DRIVERS-3454).
 - 2026-06-05: Use OP_MSG for all messages.
 - 2024-04-30: Convert from RestructuredText to Markdown.
 - 2022-10-05: Remove spec front matter.

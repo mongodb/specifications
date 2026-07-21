@@ -352,7 +352,7 @@ rather than send an invalid or truncated value. Drivers MUST NOT append a `trace
 unsampled trace contexts (trace-flags `00`); the sampling decision MUST NOT affect whether the section is attached.
 
 A message MUST NOT contain more than one telemetry section. Commands that carry no command span (for example server
-monitoring, authentication, and security-sensitive commands) naturally send no section, since condition 3 cannot hold.
+monitoring, authentication, and security-sensitive commands) naturally send no section.
 
 No tracing data is returned in server responses as part of this feature.
 
@@ -471,7 +471,7 @@ redesigning the payload format.
 
 ## Changelog
 
-- 2026-07-18: Add trace context propagation to the server via the `OP_MSG` telemetry section (DRIVERS-3454).
+- 2026-07-21: Add trace context propagation to the server via the `OP_MSG` telemetry section (DRIVERS-3454).
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
