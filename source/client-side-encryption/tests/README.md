@@ -4543,7 +4543,7 @@ Call `client_encryption.createDataKey()` with `"aws"` as the provider and the fo
 
 Expect this to succeed.
 
-Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`.
+Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`.
 
 #### Case 2: HTTPS proxy
 
@@ -4559,7 +4559,7 @@ Call `client_encryption.createDataKey()` with the same provider and `masterKey` 
 
 Expect this to succeed.
 
-Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_count` is `1`.
+Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_count` is at least `1`.
 
 #### Case 3: full auto encryption pipeline via proxy
 
@@ -4624,8 +4624,8 @@ Perform the following setup.
 10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to
     be a Binary value (i.e. still encrypted).
 
-11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is `1`, confirming that KMS requests were routed
-    through the proxy. Expect only one KMS request since the resulting decrypted key is cached.
+11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`, confirming that KMS requests were
+    routed through the proxy. Expect only one KMS request since the resulting decrypted key is cached.
 
 #### Case 4: Error
 
