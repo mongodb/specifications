@@ -324,8 +324,8 @@ available:
 
 #### Propagating Trace Context to the Server
 
-Drivers MUST propagate the active trace context to servers that support it, so that server-generated spans join the same
-distributed trace as the driver's spans.
+Drivers MUST propagate the trace context of the **command span** to servers that support it, so that server-generated
+spans join the same distributed trace as the driver's spans.
 
 The trace context is carried in an `OP_MSG` section with [`Payload Type 3`](../message/OP_MSG.md), whose payload is a
 single BSON document with the following schema:
