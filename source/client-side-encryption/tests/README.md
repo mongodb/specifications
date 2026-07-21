@@ -4637,7 +4637,7 @@ Create a `ClientEncryption` object with:
 
 Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
 
-Expect this to fail and the error with message "Test Error" to propagate.
+Expect this to fail.
 
 #### Case 5: callback receives timeout
 
