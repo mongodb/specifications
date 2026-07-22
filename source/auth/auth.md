@@ -634,8 +634,12 @@ that this be as secure and truly random as possible. For instance, Java provides
 SecureRandom class. SecureRandom is cryptographically generated while Random is just a pseudo-random generator with
 predictable outcomes.
 
-Additionally, drivers MUST enforce a minimum iteration count of 4096 and MUST error if the authentication conversation
-specifies a lower count. This mitigates downgrade attacks by a man-in-the-middle attacker.
+Drivers MUST enforce a minimum iteration count of 4096 and MUST error if the authentication conversation specifies a
+lower count. This mitigates downgrade attacks by a man-in-the-middle attacker.
+
+Drivers MUST enforce a maximum iteration count, defined by the `maxScramIterations` connection string option (default:
+100000), and MUST error if the authentication conversation specifies a higher count. This mitigates client-side denial
+of service attacks in which a malicious server causes CPU exhaustion by specifying an extremely high iteration count.
 
 Drivers MUST NOT advertise support for channel binding, as the server does not support it and legacy servers may fail
 authentication if drivers advertise support. I.e. the client-first-message MUST start with `n,`.
@@ -703,8 +707,12 @@ The MongoDB SCRAM-SHA-256 mechanism works similarly to the SCRAM-SHA-1 mechanism
 - Passwords MUST be prepared with SASLprep, per RFC 5802. Passwords are used directly for key derivation ; they MUST NOT
     be digested as they are in SCRAM-SHA-1.
 
-Additionally, drivers MUST enforce a minimum iteration count of 4096 and MUST error if the authentication conversation
-specifies a lower count. This mitigates downgrade attacks by a man-in-the-middle attacker.
+Drivers MUST enforce a minimum iteration count of 4096 and MUST error if the authentication conversation specifies a
+lower count. This mitigates downgrade attacks by a man-in-the-middle attacker.
+
+Drivers MUST enforce a maximum iteration count, defined by the `maxScramIterations` connection string option (default:
+100000), and MUST error if the authentication conversation specifies a higher count. This mitigates client-side denial
+of service attacks in which a malicious server causes CPU exhaustion by specifying an extremely high iteration count.
 
 Drivers MUST add a top-level `options` field to the saslStart command, whose value is a document containing a field
 named `skipEmptyExchange` whose value is true. Older servers will ignore the `options` field and continue with the
@@ -2034,6 +2042,12 @@ See the speculative authentication section in the [MongoDB Handshake spec](../mo
 For SCRAM-SHA-1 and SCRAM-SHA-256, test that the minimum iteration count is respected. This may be done via unit testing
 of an underlying SCRAM library.
 
+### Maximum iteration count
+
+For SCRAM-SHA-1 and SCRAM-SHA-256, test that the maximum iteration count is respected. This may be done via unit testing
+of an underlying SCRAM library. Ensure drivers use the `maxScramIterations` connection string option when set and fall
+back to 100000 when unset.
+
 ## Backwards Compatibility
 
 Drivers may need to remove support for association of more than one credential with a MongoClient, including
@@ -2142,6 +2156,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2026-06-29: Require SCRAM-SHA-1 and SCRAM-SHA-256 to enforce a maximum iteration count
 
 - 2025-11-25: Remove redundant `*.mongodbgov.net` on `ALLOWED_HOSTS`
 
