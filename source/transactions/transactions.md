@@ -659,9 +659,8 @@ In case of a write concern error, the server response has the following format:
 
 ## Sharded Transactions
 
-MongoDB 4.2 (maxWireVersion 8) introduces support for sharded transactions. Sharded transactions support all of the same
-features as single replica set transaction but introduce two new driver concepts: mongos pinning and the `recoveryToken`
-field.
+MongoDB 4.2 introduces support for sharded transactions. Sharded transactions support all of the same features as single
+replica set transaction but introduce two new driver concepts: mongos pinning and the `recoveryToken` field.
 
 ### Mongos Pinning
 

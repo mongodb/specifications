@@ -1877,8 +1877,8 @@ scenario called "parsing 'not writable primary' and 'node is recovering' errors"
 
 When a server shuts down, it will return one of the "node is shutting down" errors for each attempted operation and
 eventually will close all connections. Keeping a connection to a server which is shutting down open would only produce
-errors on this connection - such a connection will never be usable for any operations. In contrast, when a server 4.2 or
-later returns "not writable primary" error the connection may be usable for other operations (such as secondary reads).
+errors on this connection - such a connection will never be usable for any operations. In contrast, when a server
+returns "not writable primary" error the connection may be usable for other operations (such as secondary reads).
 
 ### What's the point of periodic monitoring?
 

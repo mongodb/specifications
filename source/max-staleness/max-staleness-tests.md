@@ -88,8 +88,8 @@ Initialize a MongoClient with this connection string:
 mongodb://mongos/?readPreference=secondary&maxStalenessSeconds=120
 ```
 
-Where "mongos" is the hostname and port of a mongos server running wire protocol version 5+. Execute a "findOne"
-operation. The MongoClient must include following read preference element with its "find" command:
+Where "mongos" is the hostname and port of a mongos server. Execute a "findOne" operation. The MongoClient must include
+following read preference element with its "find" command:
 
 ```javascript
 $readPreference: {

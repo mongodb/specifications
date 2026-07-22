@@ -679,7 +679,7 @@ interface IndexOptions {
    * Optionally tells the server to build the index in the background and not block
    * other tasks.
    *
-   * @note Starting in MongoDB 4.2, this option is ignored by the server.
+   * @note This option is ignored by the server.
    * @see https://www.mongodb.com/docs/manual/reference/command/createIndexes/
    * @deprecated 4.2
    */

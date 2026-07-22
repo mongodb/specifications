@@ -406,7 +406,7 @@ messages":
 | serverHost         | Log messages specific to a particular server, including heartbeat-related messages | String         | The hostname, IP address, or Unix domain socket path for the endpoint the pool is for.                                                                                                                                                                                                                                                                                                                                                                                                           |
 | serverPort         | Log messages specific to a particular server, including heartbeat-related messages | Int            | (Only present for server-specific log messages) The port for the endpoint the pool is for. Optional; not present for Unix domain sockets. When the user does not specify a port and the default (27017) is used, the driver SHOULD include it here.                                                                                                                                                                                                                                              |
 | driverConnectionId | Heartbeat-related log messages                                                     | Int            | The driver-generated ID for the monitoring connection as defined in the [connection monitoring and pooling specification](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md). Unlike `connectionId` in the above events, this field MUST NOT contain the host/port; that information MUST be in the above fields, `serverHost` and `serverPort`. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of a connection ID. |
-| serverConnectionId | Heartbeat-related log messages                                                     | Int            | The server's ID for the monitoring connection, if known. This value will be unknown and can be omitted in certain cases, e.g. the first "heartbeat started" message for a monitoring connection. Only present on server versions 4.2+.                                                                                                                                                                                                                                                           |
+| serverConnectionId | Heartbeat-related log messages                                                     | Int            | The server's ID for the monitoring connection, if known. This value will be unknown and can be omitted in certain cases, e.g. the first "heartbeat started" message for a monitoring connection.                                                                                                                                                                                                                                                                                                 |
 
 #### "Starting Topology Monitoring" Log Message
 
@@ -556,6 +556,8 @@ placeholders as appropriate:
 See the [README](tests/monitoring/README.md).
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 

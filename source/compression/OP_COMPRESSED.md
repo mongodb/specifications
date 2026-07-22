@@ -310,13 +310,6 @@ normally.
     { "ok" : 1 }
     ```
 
-- Create example program that authenticates to the server using SCRAM-SHA-1, then creates another user (MONGODB-CR),
-    then runs `hello` followed with `serverStatus`.
-
-- Reconnect to the same server using the created MONGODB-CR credentials. Observe that the only command that was
-    decompressed on the server was `serverStatus`, while the server replied with `OP_COMPRESSED` for at least the
-    `serverStatus` command.
-
 ## Motivation For Change
 
 Drivers provide the canonical interface to MongoDB. Most tools for MongoDB are written with the aid of MongoDB drivers.
@@ -403,6 +396,7 @@ needing to (not) compress very few operations.
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
 - 2024-02-16: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.
 - 2021-04-06: Use 'hello' command
