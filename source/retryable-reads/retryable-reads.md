@@ -176,7 +176,6 @@ Drivers MUST attempt to execute the read command exactly once and allow any erro
 following conditions:
 
 - if retryable reads is not enabled **or**
-- if the selected server does not support retryable reads **or**
 - if the session in a transaction
 
 By allowing the error to propagate, the caller is able to infer that one attempt was made.
@@ -186,7 +185,6 @@ By allowing the error to propagate, the caller is able to infer that one attempt
 Drivers MUST only attempt to retry a read command if
 
 - retryable reads are enabled **and**
-- the selected server supports retryable reads **and**
 - the previous attempt yields a retryable error
 
 ##### 3. Deciding to allow retry, encountering the initial retryable error, and selecting a server
@@ -207,9 +205,8 @@ mechanism as a member of the deprioritized server address list only if the error
 server address list. This requirement preserves the existing behavior of retryable reads for non-overload errors and
 avoids unintended consequences for operations utilizing primaryPreferred and secondaryPreferred read preferences.
 
-If the driver cannot select a server for a retry attempt or the newly selected server does not support retryable reads,
-retrying is not possible and drivers MUST raise the previous retryable error. In both cases, the caller is able to infer
-that an attempt was made.
+If the driver cannot select a server for a retry attempt, retrying is not possible and drivers MUST raise the previous
+retryable error. In this case, the caller is able to infer that an attempt was made.
 
 ###### 3b. Sending an equivalent command for a retry attempt
 
