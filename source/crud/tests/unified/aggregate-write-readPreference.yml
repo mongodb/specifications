@@ -3,7 +3,7 @@ description: aggregate-write-readPreference
 schemaVersion: '1.4'
 
 runOnRequirements:
-  # 3.6+ non-standalone is needed to utilize $readPreference in OP_MSG
+  # A non-standalone topology is needed to utilize $readPreference in OP_MSG.
   - minServerVersion: "3.6"
     topologies: [ replicaset, sharded, load-balanced ]
 
