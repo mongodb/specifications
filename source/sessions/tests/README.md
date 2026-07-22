@@ -195,12 +195,7 @@ Skip this test if your driver does not allow forking.
     - Drivers MUST assert that the number of allocated sessions is strictly less than the number of concurrent operations
         in every retry of this test. In this instance it would be less than (but NOT equal to) 8.
 
-### 15. `lsid` is added inside `$query` when using OP_QUERY
-
-This test only applies to drivers that have not implemented OP_MSG and still use OP_QUERY.
-
-- For a command to a mongos that includes a readPreference, verify that the `lsid` on query commands is added inside the
-    `$query` field, and NOT as a top-level field.
+### 15. **Removed**
 
 ### 16. Authenticating as a second user after starting a session results in a server error
 
