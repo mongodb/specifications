@@ -1,0 +1,9 @@
+# srvAllowedHostsSuffix must contain at least two labels. A value of .cc (TLD only)
+# has only one label after the leading dot and MUST raise an error.
+# Note: .cc is used (rather than an unrelated TLD) because the DNS records return
+# hosts ending in .cc, ensuring the test fails only due to TLD validation and not
+# a host mismatch.
+uri: "mongodb+srv://test1.test.build.10gen.cc/?srvAllowedHostsSuffix=.cc"
+seeds: []
+hosts: []
+error: true

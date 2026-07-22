@@ -37,7 +37,8 @@ mongodb+srv://{hostname}/{options}
 `{options}` refers to the optional elements from the [Connection String](../connection-string/connection-string-spec.md)
 specification following the `Host Information`. This includes the `Auth database` and `Connection Options`.
 
-For the purposes of this document, `{hostname}` will be divided using the following terminology. If an SRV `{hostname}`
+For the purposes of this document, `{hostname}` will be divided using the following terminology. If
+`srvAllowedHostsSuffix` has been configured, then that will act as the `{domainname}`. Otherwise, if an SRV `{hostname}`
 has:
 
 1. Three or more `.` separated parts, then the left-most part is the `{subdomain}` and the remaining portion is the
@@ -65,6 +66,24 @@ Only `{domainname}` is used during SRV record verification and `{subdomain}` is 
 
 ### MongoClient Configuration
 
+#### srvAllowedHostsSuffix
+
+This option is used to validate hosts. If present, its value MUST be treated as the `{domainname}` for
+[DNS validation](#querying-dns) and
+[SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md). For example,
+`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value before
+use:
+
+- If the value does not begin with a `.`, a `.` MUST be automatically prepended. For example,
+    `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
+- The value MUST contain at least two dot-separated labels (i.e. the portion after the leading `.` must itself contain a
+    `.`). For example, `srvAllowedHostsSuffix=.net` MUST raise an error.
+- The value MUST be normalized to lowercase using ASCII case folding before comparison.
+
+If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
+[Connection String Format](#connection-string-format)). This option MUST only be configurable at the level of a
+`MongoClient`.
+
 #### srvMaxHosts
 
 This option is used to limit the number of mongos connections that may be created for sharded topologies. This option
@@ -84,9 +103,9 @@ requires a string value and defaults to "mongodb". This option MUST only be conf
 
 #### URI Validation
 
-The driver MUST report an error if either the `srvServiceName` or `srvMaxHosts` URI options are specified with a non-SRV
-URI (i.e. scheme other than `mongodb+srv`). The driver MUST allow specifying the `srvServiceName` and `srvMaxHosts` URI
-options with an SRV URI (i.e. `mongodb+srv` scheme).
+The driver MUST report an error if any of `srvServiceName`, `srvMaxHosts`, or `srvAllowedHostsSuffix` URI options are
+specified with a non-SRV URI (i.e. scheme other than `mongodb+srv`). The driver MUST allow specifying the
+`srvServiceName`, `srvMaxHosts`, and `srvAllowedHostsSuffix` URI options with an SRV URI (i.e. `mongodb+srv` scheme).
 
 If `srvMaxHosts` is a positive integer, the driver MUST throw an error in the following cases:
 
@@ -123,6 +142,11 @@ The priority and weight fields in returned SRV records MUST be ignored.
 If the DNS result returns no SRV records, or no records at all, or a DNS error happens, an error MUST be raised
 indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
 found.
+
+Before validating returned hostnames, drivers MUST normalize them as follows:
+
+- Trailing dots MUST be stripped (e.g. `host.example.com.` becomes `host.example.com`).
+- Hostnames MUST be normalized to lowercase using ASCII case folding.
 
 A driver MUST verify that the host names returned through SRV records share the original SRV's `{domainname}`. In
 addition, SRV records with fewer than three `.` separated parts, the returned hostname MUST have at least one more
@@ -282,6 +306,8 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2026-01-01: Add `srvAllowedHostsSuffix` MongoClient option.
 
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
     matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
