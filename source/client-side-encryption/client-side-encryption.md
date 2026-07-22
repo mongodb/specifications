@@ -1775,13 +1775,6 @@ encrypted data (e.g. ping). See the appendix section:
 
 An encrypted MongoClient MUST attempt to auto decrypt the results of all commands.
 
-Drivers MUST raise an error when attempting to auto encrypt a command if the maxWireVersion is less than 8. The error
-message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2".
-
-Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
-However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-42-server-required)
-
 ## Interaction with Command Monitoring
 
 Unencrypted data MUST NOT appear in the data of any command monitoring events. Encryption MUST occur before generating a
@@ -2524,6 +2517,8 @@ explicit session parameter as described in the [Drivers Sessions Specification](
 ## Changelog
 
 - 2026-06-22: Add stable support for substring queries
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-06-17: Restore `prefixPreview` and `suffixPreview` as experimental.
 

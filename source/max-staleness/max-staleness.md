@@ -87,11 +87,6 @@ A primary's or secondary's hello response contains a "lastWrite" subdocument wit
 - opTime: an opaque value representing the position in the oplog of the most recently seen write. Needed for sharding,
     not used for the maxStalenessSeconds read preference option.
 
-### Wire Version
-
-The maxWireVersion MUST be incremented to 5 to indicate that the server includes maxStalenessSeconds features
-(SERVER-23893).
-
 ### Client
 
 A client (driver or mongos) MUST estimate the staleness of each secondary, based on lastWriteDate values provided in
@@ -147,8 +142,8 @@ See the Server Discovery and Monitoring Spec and Server Selection Spec for detai
 Background: Shard servers and mongos servers in a sharded cluster with CSRS use readConcern "afterOptime" for
 consistency guarantees when querying the shard config.
 
-Besides tracking lastWriteDate, routers and shards additionally track the opTime of CSRS members if they have
-maxWireVersion 5 or greater. (See Server Discovery and Monitoring Spec for details.)
+Besides tracking lastWriteDate, routers and shards additionally track the opTime of CSRS members. (See Server Discovery
+and Monitoring Spec for details.)
 
 When a router or shard selects a CSRS member to read from with readConcern like:
 
