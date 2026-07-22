@@ -1,7 +1,6 @@
 # GridFS Spec
 
 - Status: Accepted
-- Minimum Server Version: 2.2
 
 ______________________________________________________________________
 

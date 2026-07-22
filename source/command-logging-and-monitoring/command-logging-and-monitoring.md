@@ -1,7 +1,6 @@
 # Command Logging and Monitoring
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 

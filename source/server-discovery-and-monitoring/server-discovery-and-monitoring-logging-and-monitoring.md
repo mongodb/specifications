@@ -1,7 +1,6 @@
 # SDAM Logging and Monitoring Specification
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 

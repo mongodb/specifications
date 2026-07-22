@@ -1,7 +1,6 @@
 # Max Staleness
 
 - Status: Accepted
-- Minimum Server Version: 3.4
 
 ## Abstract
 

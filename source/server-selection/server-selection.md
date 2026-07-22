@@ -1,7 +1,6 @@
 # Server Selection
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ## Abstract
 

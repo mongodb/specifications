@@ -1,7 +1,6 @@
 # Write Commands Specification
 
 - Status: Accepted
-- Minimum Server Version: 2.6
 
 ______________________________________________________________________
 
