@@ -1,7 +1,6 @@
 # Sessions Specification
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 
@@ -428,19 +427,6 @@ property of the establishing handshake response has a value or not. If it has a 
 In the case of an explicit session, if sessions are not supported, the driver MUST raise an error. In the case of an
 implicit session, if sessions are not supported, the driver MUST ignore the session.
 
-### Possible race condition when checking for session support
-
-There is a possible race condition that can happen between the time the driver checks whether sessions are supported and
-subsequently sends a command to the server:
-
-- The server might have supported sessions at the time the connection was first opened (and reported a value for
-    logicalSessionTimeoutMinutes in the initial response to the [handshake](../mongodb-handshake/handshake.md)), but
-    have subsequently been downgraded to not support sessions. The server does not close the socket in this scenario, so
-    the driver will conclude that the server at the other end of this connection supports sessions.
-
-There is nothing that the driver can do about this race condition, and the server will just return an error in this
-scenario.
-
 ## Sending the session ID to the server on all commands
 
 When connected to a server that supports sessions a driver MUST append the session ID to every command it sends to the
@@ -791,12 +777,9 @@ Drivers do not need to check the deployment topology or the server version they 
 highest seen `$clusterTime`. They simply need to check for the presence of the `$clusterTime` field in responses
 received from servers.
 
-### Gossipping with mixed server versions
+### Gossipping the cluster time
 
-Drivers MUST check that the server they are sending a command to supports `$clusterTime` before adding `$clusterTime` to
-the command. A server supports `$clusterTime` when the `maxWireVersion` >= 6.
-
-This supports the (presumably short lived) scenario where not all servers have been upgraded to 3.6.
+Drivers MUST add `$clusterTime` to commands sent to the server.
 
 ### Do not gossip on SDAM commands
 
@@ -934,6 +917,7 @@ has risks that do not justify the potential guaranteed `ServerSession` allocatio
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
 - 2025-02-24: Drivers MUST NOT gossip $clusterTime on SDAM commands.
 - 2024-05-08: Migrated from reStructuredText to Markdown.
 - 2017-09-13: If causalConsistency option is omitted assume true

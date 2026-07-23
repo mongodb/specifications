@@ -1,7 +1,6 @@
 # Command Logging and Monitoring
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ______________________________________________________________________
 
@@ -213,7 +212,7 @@ interface CommandStartedEvent {
   /**
    * Returns the server connection id for the command. The server connection id is distinct from
    * the connection id and is returned by the hello or legacy hello response as "connectionId"
-   * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
+   * from the server. Drivers MUST use an Int64 to represent the server connection ID value.
    */
   serverConnectionId: Optional<Int64>;
 
@@ -271,7 +270,7 @@ interface CommandSucceededEvent {
   /**
    * Returns the server connection id for the command. The server connection id is distinct from
    * the connection id and is returned by the hello or legacy hello response as "connectionId"
-   * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
+   * from the server. Drivers MUST use an Int64 to represent the server connection ID value.
    */
   serverConnectionId: Optional<Int64>;
 
@@ -330,7 +329,7 @@ interface CommandFailedEvent {
   /**
    * Returns the server connection id for the command. The server connection id is distinct from
    * the connection id and is returned by the hello or legacy hello response as "connectionId"
-   * from the server on 4.2+. Drivers MUST use an Int64 to represent the server connection ID value.
+   * from the server. Drivers MUST use an Int64 to represent the server connection ID value.
    */
   serverConnectionId: Optional<Int64>;
 
@@ -374,7 +373,7 @@ The following key-value pairs MUST be included in all command messages:
 | driverConnectionId | Int64          | The driver's ID for the connection used for the command. Note this is NOT the same as `CommandStartedEvent.connectionId` defined above, but refers to the `connectionId` defined in the [connection monitoring and pooling specification](../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md). Unlike `CommandStartedEvent.connectionId` this field MUST NOT contain the host/port; that information MUST be in the following fields, `serverHost` and `serverPort`. This field is optional for drivers that do not implement CMAP if they do have an equivalent concept of a connection ID. |
 | serverHost         | String         | The hostname or IP address for the server the command is being run on.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | serverPort         | Int            | The port for the server the command is being run on. Optional; not present for Unix domain sockets. When the user does not specify a port and the default (27017) is used, the driver SHOULD include it here.                                                                                                                                                                                                                                                                                                                                                                                                       |
-| serverConnectionId | Int64          | The server's ID for the connection used for the command. Optional; only present for server versions 4.2+. NOTE: Existing drivers may represent this as an Int32 already. For strongly-typed languages, you may have to introduce a new Int64 field and deprecate the old Int32 field. The next major version should remove the old Int32 field.                                                                                                                                                                                                                                                                     |
+| serverConnectionId | Int64          | The server's ID for the connection used for the command. Optional. NOTE: Existing drivers may represent this as an Int32 already. For strongly-typed languages, you may have to introduce a new Int64 field and deprecate the old Int32 field. The next major version should remove the old Int32 field.                                                                                                                                                                                                                                                                                                            |
 | serviceId          | String         | The hex string representation of the service ID for the command. Optional; only present when the driver is in load balancer mode.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 #### Command Started Message
@@ -443,6 +442,8 @@ released. Requiring the retention of this buffer until command completion could 
 penalties, particularly when event listeners are introduced.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2025-01-22: Clarify durationMS in logs may be Int32/Int64/Double.
 

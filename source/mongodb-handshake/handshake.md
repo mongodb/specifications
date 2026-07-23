@@ -1,13 +1,12 @@
 # MongoDB Handshake
 
 - Status: Accepted
-- Minimum Server Version: 3.4
 
 ______________________________________________________________________
 
 ## Abstract
 
-MongoDB 3.4 has the ability to annotate connections with metadata provided by the connecting client. The intent of this
+MongoDB has the ability to annotate connections with metadata provided by the connecting client. The intent of this
 metadata is to be able to identify client level information about the connection, such as application name, driver name
 and version. The provided information will be logged through the `mongo[d|s].log` and the profile logs; this should
 enable sysadmins to easily backtrack log entries the offending application. The active connection data will also be
@@ -49,11 +48,10 @@ MongoDB uses the `hello` or `isMaster` commands for handshakes and topology moni
 preferred command. `hello` must always be sent using the `OP_MSG` protocol. `isMaster` is referred to as "legacy hello"
 and is maintained for backwards compatibility with servers that do not support the `hello` command.
 
-Drivers MUST use the `OP_MSG` protocol for all handshakes if their minWireVersion is 6 (MongoDB 3.6) or higher. If a
-[server API version](../versioned-api/versioned-api.md) is requested or `loadBalanced: True`, drivers MUST also use the
-`hello` command for the initial handshake. If server API version is not requested and `loadBalanced: False`, drivers
-MUST use legacy hello for the first message of the initial handshake, and include `helloOk:true` in the handshake
-request.
+Drivers MUST use the `OP_MSG` protocol for all handshakes. If a [server API version](../versioned-api/versioned-api.md)
+is requested or `loadBalanced: True`, drivers MUST also use the `hello` command for the initial handshake. If server API
+version is not requested and `loadBalanced: False`, drivers MUST use legacy hello for the first message of the initial
+handshake, and include `helloOk:true` in the handshake request.
 
 Drivers MUST include `backpressure: "2"` in their handshake request in order to explicitly version their supported
 version of the client backpressure specification. The value of `backpressure` MUST be the string `"2"` and not a literal
@@ -61,11 +59,8 @@ number `2`.
 
 If the legacy handshake response includes `helloOk: true`, then subsequent topology monitoring commands MUST use the
 `hello` command. If the legacy handshake response does not include `helloOk: true`, then subsequent topology monitoring
-commands MUST use the legacy hello command. Additionally, note that if the server does not understand `OP_MSG`, the
-server will close the socket. See the Server Discovery and Monitoring spec
-[here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#streaming-hello-or-legacy-hello)
-and
-[here](https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-monitoring.md#error-handling)
+commands MUST use the legacy hello command. See the
+[Server Discovery and Monitoring spec](../server-discovery-and-monitoring/server-discovery-and-monitoring-summary.md)
 for further information.
 
 The initial handshake MUST be performed on every socket to any and all servers upon establishing the connection to
@@ -116,8 +111,7 @@ conn.authenticate(creds, negotiated_mechs, speculative_auth)
 
 #### Hello Command
 
-The initial handshake, as of MongoDB 3.4, supports a new argument, `client`, provided as a BSON object. This object has
-the following structure:
+The initial handshake supports a `client` argument, provided as a BSON object. This object has the following structure:
 
 ```javascript
     {
@@ -545,10 +539,6 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
     - No
 
-- Is establishing the handshake required for connecting to MongoDB 3.4?
-
-    - No, it only augments the connection. MongoDB will not reject connections without it
-
 - Does this affect SDAM implementations?
 
     - Possibly. There are a couple of gotchas. If the application.name is not in the URI...
@@ -566,6 +556,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 ## Changelog
 
 - 2026-06-25: Clarify the client backpressure component of the handshake.
+- 2026-06-17: Remove pre-4.2 version references.
 - 2026-06-11: Clarify that there is no new behavior as a result of only using OP_MSG for all handshakes.
 - 2026-06-05: Use OP_MSG for all handshakes.
 - 2025-09-04: Clarify that drivers do not append the same metadata multiple times.

@@ -1,7 +1,6 @@
 # GridFS Spec
 
 - Status: Accepted
-- Minimum Server Version: 2.2
 
 ______________________________________________________________________
 
@@ -685,8 +684,7 @@ class GridFSFindOptions {
    * can write temporary data to disk while executing the find operation on the files collection.
    *
    * This option is sent only if the caller explicitly provides a value. The default
-   * is to not send a value. For servers < 3.2, this option is ignored and not sent
-   * as allowDiskUse does not exist in the OP_QUERY wire protocol.
+   * is to not send a value.
    *
    * @see https://www.mongodb.com/docs/manual/reference/command/find/
    */
@@ -1091,6 +1089,7 @@ system?") it is a potential area of growth for the future.
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
 - 2024-10-30: Add `delete_by_name` and `rename_by_name`
 - 2024-10-28: Removed deprecated fields from tests: `md5`, `contentType`, `aliases`
 - 2024-02-27: Migrated from reStructuredText to Markdown.

@@ -44,8 +44,6 @@ The driver should implement the following tests:
 
 ### getMore Iteration
 
-This test requires a replica set with server version 4.2 or higher.
-
 Perform the following operations:
 
 - Insert 5 documents into a collection with a majority write concern.
@@ -64,8 +62,6 @@ Perform the following operations:
 
 ### Not Primary - Keep Connection Pool
 
-This test requires a replica set with server version 4.2 or higher.
-
 - Set the following fail point:
     `{configureFailPoint: "failCommand", mode: {times: 1}, data: {failCommands: ["insert"], errorCode: 10107}}`
 - Execute an insert into the test collection of a `{test: 1}` document.
@@ -78,28 +74,7 @@ This test requires a replica set with server version 4.2 or higher.
     [connections.totalCreated](https://www.mongodb.com/docs/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated)
     in [serverStatus](https://www.mongodb.com/docs/manual/reference/command/serverStatus) has not changed.
 
-### Not Primary - Reset Connection Pool
-
-This test requires a replica set with server version 4.0.
-
-- Set the following fail point:
-    `{configureFailPoint: "failCommand", mode: {times: 1}, data: {failCommands: ["insert"], errorCode: 10107}}`
-- Execute an insert into the test collection of a `{test: 1}` document.
-- Verify that the insert failed with an operation failure with 10107 code.
-- If the driver implements the [CMAP](../../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md)
-    specification, verify that a
-    [PoolClearedEvent](../../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md#events) has been
-    published
-- Execute an insert into the test collection of a `{test: 1}` document and verify that it succeeds.
-- If the driver does NOT implement the
-    [CMAP](../../connection-monitoring-and-pooling/connection-monitoring-and-pooling.md) specification, use the
-    [serverStatus](https://www.mongodb.com/docs/manual/reference/command/serverStatus) command to verify
-    [connections.totalCreated](https://www.mongodb.com/docs/manual/reference/command/serverStatus/#serverstatus.connections.totalCreated)
-    has increased by 1.
-
 ### Shutdown in progress - Reset Connection Pool
-
-This test should be run on all server versions >= 4.0.
 
 Perform the following operations on a client configured to NOT retry writes:
 
@@ -119,8 +94,6 @@ Perform the following operations on a client configured to NOT retry writes:
     has increased by 1.
 
 ### Interrupted at shutdown - Reset Connection Pool
-
-This test should be run on all server versions >= 4.0.
 
 Perform the following operations on a client configured to NOT retry writes:
 

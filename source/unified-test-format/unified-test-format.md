@@ -326,9 +326,8 @@ The structure of this object is as follows:
     matching a "sharded" topology, test runners MUST accept any type of sharded cluster (i.e. "sharded" implies
     "sharded-replicaset", but not vice versa).
 
-    The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires that all shard servers be replica sets.
-    Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when targeting 3.6+ server versions in order
-    to avoid unnecessary overhead.
+    The "sharded-replicaset" topology type is deprecated. All shard servers are required to be replica sets. Therefore,
+    tests SHOULD use "sharded" instead of "sharded-replicaset" to avoid unnecessary overhead.
 
     Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded cluster behind a load balancer implicitly
     uses replica sets for its shards.
@@ -3171,10 +3170,10 @@ This section describes some procedures that may be referenced from earlier secti
 
 ##### Terminating Open Transactions
 
-Open transactions can cause tests to block indiscriminately. When connected to MongoDB 3.6 or later, test runners SHOULD
-terminate all open transactions at the start of a test suite and after each failed test by killing all sessions in the
-cluster. Using the internal MongoClient(s), execute the `killAllSessions` command on either the primary or, if connected
-to a sharded cluster, each mongos server.
+Open transactions can cause tests to block indiscriminately. Test runners SHOULD terminate all open transactions at the
+start of a test suite and after each failed test by killing all sessions in the cluster. Using the internal
+MongoClient(s), execute the `killAllSessions` command on either the primary or, if connected to a sharded cluster, each
+mongos server.
 
 For example:
 
@@ -3188,7 +3187,6 @@ The test runner MAY ignore the following command failures:
 
 - Interrupted(11601) to work around [SERVER-38335](https://jira.mongodb.org/browse/SERVER-38335).
 - Unauthorized(13) to work around [SERVER-54216](https://jira.mongodb.org/browse/SERVER-54216).
-- CommandNotFound(59) if the command is executed on a pre-3.6 server
 
 Note that Atlas, by design, does not allow database users to kill sessions belonging to other users. This makes it
 impossible to guarantee that an existing transaction will not block test execution. To work around this, test runners
@@ -3307,11 +3305,6 @@ The `failCommand` fail point allows the client to force the server to return an 
 `data.failCommands` field. Additionally, this fail point is documented in server wiki:
 [The failCommand Fail Point](https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point).
 
-The `failCommand` fail point was introduced in mongod 4.0.0
-([SERVER-34551](https://jira.mongodb.org/browse/SERVER-34551)) and mongos 4.1.5
-([SERVER-35518](https://jira.mongodb.org/browse/SERVER-35518)); however, the fail point was not usable for testing on
-mongos until version 4.1.7 ([SERVER-34943](https://jira.mongodb.org/browse/SERVER-34943)).
-
 The `failCommand` fail point may be configured like so:
 
 ```javascript
@@ -3381,7 +3374,7 @@ Each shard in the cluster is represented by a document in this collection. If th
 the `host` field will contain a single host. If the shard is backed by a replica set, the `host` field contain the name
 of the replica followed by a forward slash and a comma-delimited list of hosts.
 
-Note: MongoDB 3.6+ requires that all shard servers be replica sets.
+Note: All shard servers are replica sets.
 
 ## Design Rationale
 
@@ -3459,6 +3452,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-03-17: **Schema version 1.28.**
 

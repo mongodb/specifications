@@ -1,7 +1,6 @@
 # Causal Consistency Specification
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 
@@ -196,9 +195,9 @@ started with `causalConsistency = true` then all operations using that session w
 
 There are no new server commands related to causal consistency. Instead, causal consistency is implemented by:
 
-1. Saving the `operationTime` returned by 3.6+ servers for all operations in a property of the `ClientSession` object.
-    The server reports the `operationTime` whether the operation succeeded or not and drivers MUST save the
-    `operationTime` in the `ClientSession` whether the operation succeeded or not.
+1. Saving the `operationTime` returned by servers for all operations in a property of the `ClientSession` object. The
+    server reports the `operationTime` whether the operation succeeded or not and drivers MUST save the `operationTime`
+    in the `ClientSession` whether the operation succeeded or not.
 2. Passing that `operationTime` in the `afterClusterTime` field of the `readConcern` field for subsequent causally
     consistent read and write operations (for all commands that support a `readConcern`)
 3. Gossiping clusterTime (described in the Driver Session Specification)
@@ -284,7 +283,7 @@ that causally consistent operations are not causally consistent with unacknowled
 Below is a list of test cases to write.
 
 Note: some tests are only relevant to certain deployments. For the purpose of deciding which tests to run assume that
-any deployment that is version 3.6 or higher and is either a replica set or a sharded cluster supports cluster times.
+any deployment that is either a replica set or a sharded cluster supports cluster times.
 
 1. When a `ClientSession` is first created the `operationTime` has no value.
     - `session = client.startSession()`
@@ -374,7 +373,7 @@ any deployment that is version 3.6 or higher and is either a replica set or a sh
 
 ## Motivation
 
-To support causal consistency. Only supported with server version 3.6 or newer.
+To support causal consistency.
 
 ## Design Rationale
 
