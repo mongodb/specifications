@@ -74,7 +74,67 @@ the following sets of environment variables:
     | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
     | `KUBERNETES_SERVICE_HOST`         | `1`                |
 
-### Test 2: Test that the driver accepts an arbitrary auth mechanism
+### Test 2: Test that agent metadata is properly captured
+
+Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
+the following sets of environment variables, and that `client.env.agent` is populated (or omitted) as described.
+
+1. Generic agent via `AI_AGENT`. `client.env.agent` MUST equal `custom-agent`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AI_AGENT`           | `custom-agent` |
+
+2. Generic agent via `AGENT`. `client.env.agent` MUST equal `custom-agent`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AGENT`              | `custom-agent` |
+
+3. Known agent. `client.env.agent` MUST equal `claude-code`.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `CLAUDECODE`         | `1`   |
+
+4. Precedence - generic wins over known. `client.env.agent` MUST equal `custom-agent` (the value of `AI_AGENT`), not
+    `claude-code`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AI_AGENT`           | `custom-agent` |
+    | `CLAUDECODE`         | `1`            |
+
+5. Precedence - first known wins. `client.env.agent` MUST equal `cursor`.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `CURSOR_AGENT`       | `1`   |
+    | `GEMINI_CLI`         | `1`   |
+
+6. Empty value is treated as unset. `client.env.agent` MUST be omitted. If no other `client.env` fields are populated,
+    `client.env` MUST be entirely omitted.
+
+    | Environment Variable | Value               |
+    | -------------------- | ------------------- |
+    | `AI_AGENT`           | \`\` (empty string) |
+
+7. No agent variables. `client.env.agent` MUST be omitted.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    |                      |       |
+
+8. Agent alongside FaaS. This test MUST verify that both the AWS Lambda metadata and `client.env.agent` (equal to
+    `claude-code`) are present in `client.env`.
+
+    | Environment Variable | Value              |
+    | -------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8` |
+    | `AWS_REGION`         | `us-east-2`        |
+    | `CLAUDECODE`         | `1`                |
+
+### Test 3: Test that the driver accepts an arbitrary auth mechanism
 
 1. Mock the server response in a way that `saslSupportedMechs` array in the `hello` command response contains an
     arbitrary string.

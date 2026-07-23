@@ -142,6 +142,7 @@ The initial handshake supports a `client` argument, provided as a BSON object. T
                 timeout_sec: 42,          /* OPTIONAL */
                 memory_mb: 1024,          /* OPTIONAL */
                 region: "<string>",       /* OPTIONAL */
+                agent: "<string>",        /* OPTIONAL */
                 /* OPTIONAL */
                 container: {
                     runtime: "<string>",  /* OPTIONAL */
@@ -285,8 +286,8 @@ Example:
 
 This value is optional and is not application configurable.
 
-Information about the execution environment, including Function-as-a-Service (FaaS) identification and container
-runtime.
+Information about the execution environment, including Function-as-a-Service (FaaS) identification, container runtime,
+and agentic client (agent) identification.
 
 The contents of `client.env` MUST be adjusted to keep the handshake below the size limit; see
 [Limitations](#limitations) for specifics.
@@ -322,6 +323,36 @@ Depending on which `client.env.name` has been selected, other FaaS fields in `cl
 
 Missing variables or variables with values not matching the expected type MUST cause the corresponding `client.env`
 field to be omitted and MUST NOT cause a user-visible error.
+
+##### Agent
+
+Many AI coding assistants and agentic clients ("agents", e.g. Claude Code, Cursor, Gemini CLI) set an environment
+variable in the process environment when they execute shell commands or code on a user's behalf. `client.env.agent`
+captures which agent, if any, is driving the client, so that agent-mediated usage of MongoDB can be distinguished from
+direct human usage.
+
+`client.env.agent` is a single string, determined by which of the following environment variables are populated. The
+list MUST be evaluated in order, and the first match determines the value; subsequent entries MUST NOT be considered:
+
+| Order | Environment Variable | `client.env.agent` value |
+| ----- | -------------------- | ------------------------ |
+| 1     | `AI_AGENT`           | The value of `AI_AGENT`  |
+| 2     | `AGENT`              | The value of `AGENT`     |
+| 3     | `CLAUDECODE`         | `claude-code`            |
+| 4     | `CURSOR_AGENT`       | `cursor`                 |
+| 5     | `GEMINI_CLI`         | `gemini-cli`             |
+| 6     | `CODEX_SANDBOX`      | `codex`                  |
+| 7     | `AUGMENT_AGENT`      | `augment`                |
+| 8     | `OPENCODE_CLIENT`    | `opencode`               |
+
+For entries 1 and 2 (`AI_AGENT` and `AGENT`), the value of `client.env.agent` is the value of the environment variable.
+For entries 3 through 8, the value of `client.env.agent` is the fixed string in the table above, regardless of the value
+of the environment variable.
+
+An environment variable is considered populated if it is present in the environment with a non-empty value. If none of
+the above environment variables are populated, `client.env.agent` MUST be entirely omitted.
+
+Determination of `client.env.agent` MUST NOT cause a user-visible error.
 
 ##### Container
 
@@ -469,7 +500,7 @@ which will result in handshake failure. Drivers MUST validate these values and t
 if necessary. Implementers SHOULD cumulatively update fields in the following order until the document is under the size
 limit:
 
-1. Omit fields from `env` except `env.name`.
+1. Omit fields from `env` except `env.name` and `env.agent`.
 2. Omit fields from `os` except `os.type`.
 3. Omit the `env` document entirely.
 4. Truncate `platform`.
@@ -555,6 +586,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-07-22: Add `env.agent` to `client` document for agentic client identification.
 - 2026-06-25: Clarify the client backpressure component of the handshake.
 - 2026-06-17: Remove pre-4.2 version references.
 - 2026-06-11: Clarify that there is no new behavior as a result of only using OP_MSG for all handshakes.
