@@ -386,6 +386,7 @@ class AutoEncryptionOpts {
    bypassQueryAnalysis: Optional<Boolean>; // Default false.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
    credentialProviders: Optional<CredentialProviders>;
+   kmsConnectCallback: Optional<Callback>; // Optional to implement.
 }
 ```
 
@@ -518,6 +519,26 @@ const client = new MongoClient(process.env.MONGODB_URI, {
   }
 }
 ```
+
+#### kmsConnectCallback
+
+The `kmsConnectCallback` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
+[AutoEncryptionOpts](#AutoEncryptionOpts).
+
+When provided, the callback is invoked when establishing a connection to a KMS host, receiving the hostname and port as
+arguments. It MUST return a socket-like object connected to the target host. The driver then wraps the returned socket
+with TLS (using the KMS provider's configured [TLS options](#kms-provider-tls-options)). TLS is negotiated end-to-end
+with the KMS host; SNI and certificate/hostname verification MUST target the KMS host, not the address the callback
+actually connected to (e.g. an HTTP proxy). Drivers supporting CSOT MUST pass remaining `timeoutMS`.
+
+This is intended to enable use cases such as routing KMS requests through an HTTP proxy via HTTP CONNECT. The callback
+type is intentionally left unspecified so that drivers may use the type that best fits their language (e.g., a function,
+a callable object).
+
+Drivers supporting CSOT must pass a time limit if set.
+
+Drivers are required to support an HTTP proxy but MAY omit `kmsConnectCallback` if they provide an alternative mechanism
+for proxy support.
 
 #### kmsProviders
 
@@ -1101,6 +1122,7 @@ interface ClientEncryptionOpts {
    credentialProviders: CredentialProviders;
    tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
+   kmsConnectCallback?: Callback; // Optional to implement.
 };
 
 interface KMSProvidersTLSOptions {
@@ -2515,6 +2537,9 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-06-25: Add `kmsConnectCallback` to `AutoEncryptionOpts` and `ClientEncryptionOpts` to support HTTP proxy use
+    cases.
 
 - 2026-06-22: Add stable support for substring queries
 

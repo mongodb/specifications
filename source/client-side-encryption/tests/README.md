@@ -4480,3 +4480,200 @@ Assert the following document is returned:
 ```javascript
 { "encryptedText": "foocafébaz" }
 ```
+
+### 28. KMS Connect Callback
+
+The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it
+returns is used for the KMS connection. All cases require real AWS KMS credentials; skip any case if they are not
+available.
+
+Drivers that do not implement `kmsConnectCallback` MUST use an alternative means of connecting to the HTTP proxy.
+
+#### Setup
+
+Start the following server processes before running test cases in this section.
+
+1. The KMS HTTP proxy in plain HTTP mode on port 9004:
+
+    ```shell
+    python -u kms_http_proxy.py --port 9004
+    ```
+
+2. The KMS HTTP proxy in HTTPS mode on port 9005:
+
+    ```shell
+    python -u kms_http_proxy.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9005
+    ```
+
+A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
+
+1. Accept `(<host>, <port>)` from the driver.
+2. Open a plain TCP connection to `127.0.0.1:9004`.
+3. Send `CONNECT <host>:<port> HTTP/1.1\r\nHost: <host>:<port>\r\n\r\n`.
+4. Read the response and verify it begins with `HTTP/1.1 200`.
+5. Return a socket-like object.
+
+A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to
+`127.0.0.1:9005` using
+[drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem)
+to verify the proxy's certificate.
+
+In every case, after the callback returns its socket, the driver wraps it with TLS negotiated end-to-end with the KMS
+host reached through the tunnel. SNI and certificate/hostname verification MUST target the KMS host, not the address
+(e.g. the proxy) that the callback actually connected to.
+
+#### Case 1: plain HTTP proxy
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
+
+Call `client_encryption.createDataKey()` with `"aws"` as the provider and the following `masterKey`:
+
+```javascript
+{
+  "region": "us-east-1",
+  "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+}
+```
+
+Expect this to succeed.
+
+Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`.
+
+#### Case 2: HTTPS proxy
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: the HTTPS proxy callback described in Setup.
+
+Reset the proxy metrics: `POST https://127.0.0.1:9005/reset` (use `ca.pem` to verify the proxy's TLS certificate).
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed.
+
+Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_count` is at least `1`.
+
+This case involves two independent TLS layers: the callback's own client↔proxy TLS connection (verified against
+`ca.pem`, the proxy's CA), and the driver's client↔KMS TLS connection carried end-to-end through the CONNECT tunnel
+(verified against the real KMS host's certificate). Successfully creating the data key confirms the driver verified the
+KMS host's identity rather than the proxy's.
+
+#### Case 3: full auto encryption pipeline via proxy
+
+This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic
+through a proxy.
+
+Perform the following setup.
+
+1. Create a `MongoClient` without encryption enabled (referred to as `client`).
+
+2. Using `client`, drop the collections `keyvault.datakeys` and `db.coll`.
+
+3. Create a `ClientEncryption` object (referred to as `client_encryption`) with:
+
+    - `keyVaultNamespace` set to `keyvault.datakeys`, `keyVaultClient` set to `client`.
+    - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+    - `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+4. Call `client_encryption.createDataKey()` with `"aws"` as the provider and the following `masterKey`:
+
+    ```javascript
+    {
+      "region": "us-east-1",
+      "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+    }
+    ```
+
+    Expect this to succeed. Store the returned UUID as `dataKeyId`.
+
+5. Build a JSON schema for `db.coll` using `dataKeyId`:
+
+    ```javascript
+    {
+      "bsonType": "object",
+      "properties": {
+        "encrypted_string": {
+          "encrypt": {
+            "keyId": [<dataKeyId>],
+            "bsonType": "string",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+          }
+        }
+      }
+    }
+    ```
+
+6. Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
+
+7. Create a `MongoClient` configured with auto encryption (referred to as `client_encrypted`) with these
+    `AutoEncryptionOpts`:
+
+    - `keyVaultNamespace`: `keyvault.datakeys`.
+    - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+    - `schemaMap`: `{ "db.coll": <schema from step 5> }`.
+    - `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+8. Use `client_encrypted` to insert `{ "_id": 1, "encrypted_string": "hello" }` into `db.coll`. Expect this to succeed.
+
+9. Use `client_encrypted` to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect the returned document to
+    contain `{ "encrypted_string": "hello" }`.
+
+10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to
+    be a Binary value (i.e. still encrypted).
+
+11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`, confirming that KMS requests were
+    routed through the proxy. Expect only one KMS request since the resulting decrypted key is cached.
+
+#### Case 4: Error
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a proxy callback that returns an error with a placeholder message "Test Error".
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to fail.
+
+#### Case 5: callback receives timeout
+
+This case MUST only be run by drivers that have implemented
+[CSOT](../../client-side-operations-timeout/client-side-operations-timeout.md).
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a `MongoClient` configured with `timeoutMS: 1000` as the
+    `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a callback that records the timeout value it receives and then proceeds normally (performs the
+    HTTP CONNECT through the plain HTTP proxy on port 9004 as described in Setup).
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed.
+
+Assert that the callback was called with a non-zero timeout.
+
+#### Case 6: Retry
+
+Skip this test if the driver does not implement DRIVERS-1541.
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a callback that fails with an error on its first invocation, then behaves as the plain HTTP
+    proxy callback described in Setup on subsequent invocations.
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed, confirming that the driver retried the `kmsConnectCallback` after its first invocation failed.
