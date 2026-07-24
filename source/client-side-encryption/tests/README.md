@@ -4646,7 +4646,7 @@ Create a `ClientEncryption` object with:
 
 - `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
 - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
-- `kmsConnectCallback`: a proxy callback that returns an error with a placeholder message "Test Error".
+- `kmsConnectCallback`: a proxy callback that returns an error.
 
 Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
 
