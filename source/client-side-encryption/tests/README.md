@@ -4522,6 +4522,8 @@ A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, e
 [drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem)
 to verify the proxy's certificate.
 
+The proxy exposes two control endpoints: `POST /reset` zeroes the counters, and `GET /metrics` returns a plaintext body of the form `connect_count <N>` (one `key value` pair per line), where `<N>` is the number of TCP connections the proxy has accepted since the last reset.
+
 In every case, after the callback returns its socket, the driver wraps it with TLS negotiated end-to-end with the KMS
 host reached through the tunnel. SNI and certificate/hostname verification MUST target the KMS host, not the address
 (e.g. the proxy) that the callback actually connected to.
