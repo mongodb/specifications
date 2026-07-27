@@ -27,8 +27,8 @@
         },
         {
             "description": "Multi Element Array with duplicate indexes",
-            "degenerate_bson": "1b000000046100130000001030000a000000103000140000000000",
-            "canonical_bson": "1b000000046100130000001030000a000000103100140000000000",
+            "degenerate_bson": "1B000000046100130000001030000A000000103000140000000000",
+            "canonical_bson": "1B000000046100130000001030000A000000103100140000000000",
             "canonical_extjson": "{\"a\" : [{\"$numberInt\": \"10\"}, {\"$numberInt\": \"20\"}]}"
         }
     ],
