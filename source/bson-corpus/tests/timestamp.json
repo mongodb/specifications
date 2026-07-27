@@ -28,7 +28,7 @@
     "decodeErrors": [
         {
             "description": "Truncated timestamp field",
-            "bson": "0f0000001161002A00000015CD5B00"
+            "bson": "0F0000001161002A00000015CD5B00"
         }
     ]
 }
