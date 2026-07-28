@@ -1,7 +1,6 @@
 # Server Selection
 
 - Status: Accepted
-- Minimum Server Version: 2.4
 
 ## Abstract
 
@@ -393,9 +392,6 @@ mongos MUST reject a read with `maxStalenessSeconds` that is not a positive inte
 
 mongos MUST reject a read if `maxStalenessSeconds` is less than smallestMaxStalenessSeconds, with error code 160
 (SERVER-24421).
-
-During server selection, drivers (but not mongos) with `minWireVersion` < 5 MUST raise an error if `maxStalenessSeconds`
-is a positive number, and any available server's `maxWireVersion` is less than 5.[^1]
 
 After filtering servers according to `mode`, and before filtering with `tag_sets`, eligibility MUST be determined from
 `maxStalenessSeconds` as follows:
@@ -1158,10 +1154,6 @@ def getServer(criteria):
             throw invalid wire protocol range error with details
 
         if maxStalenessSeconds is set:
-            if client minWireVersion < 5 and "<any available server's maxWireVersion < 5">:
-                client.lock.release()
-                throw error
-
             if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
                 if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
                     maxStalenessSeconds < smallestMaxStalenessSeconds):
@@ -1245,9 +1237,6 @@ def getServer(criteria):
             # throw invalid wire version range error with details
 
         if maxStalenessSeconds is set:
-            if client minWireVersion < 5 and "<any available server's maxWireVersion < 5>":
-                # throw error
-
             if topologyDescription.type in (ReplicaSetWithPrimary, ReplicaSetNoPrimary):
                 if (maxStalenessSeconds * 1000 < heartbeatFrequencyMS + idleWritePeriodMS or
                     maxStalenessSeconds < smallestMaxStalenessSeconds):
@@ -1628,6 +1617,8 @@ a retry on that operation unless there are no other suitable servers.
 
 ## Changelog
 
+- 2026-06-17: Remove pre-4.2 version references.
+
 - 2025-12-08: Require server deprioritization for all topology types and clarify the order of server candidate
     filtering.
 
@@ -1702,6 +1693,3 @@ a retry on that operation unless there are no other suitable servers.
 - 2024-02-07: Migrated from reStructuredText to Markdown.
 
 - 2025-02-25: Note the deprecation of hedged reads.
-
-[^1]: mongos 3.4 refuses to connect to mongods with maxWireVersion < 5, so it does no additional wire version checks
-    related to maxStalenessSeconds.

@@ -22,9 +22,9 @@ The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SH
 
 ### Required Server Versions
 
-The server supports attaching a stapled OCSP response with versions ≥ 4.4. Future backports will bring stapling support
-to server versions ≥ 3.6. Drivers need not worry about the version of the server as a driver's TLS library should
-automatically perform the proper certificate revocation checking behavior once OCSP is enabled.
+The server supports attaching a stapled OCSP response with versions ≥ 4.4. Drivers need not worry about the version of
+the server as a driver's TLS library should automatically perform the proper certificate revocation checking behavior
+once OCSP is enabled.
 
 ### Enabling OCSP Support by Default
 
@@ -286,8 +286,7 @@ A driver with control over its OCSP behavior will react the same in "Malicious S
 
 ### Atlas Connectivity Tests
 
-No additional Atlas connectivity tests will be added because the existing tests should provide sufficient coverage
-(provided that one of the non-free tier clusters is upgraded ≥ 3.6).
+No additional Atlas connectivity tests will be added because the existing tests should provide sufficient coverage.
 
 ### Suggested OCSP Behavior
 
@@ -534,6 +533,8 @@ library has contacted the OCSP endpoint specified in the server's certificate. T
     OCSP cache for a response from an OCSP endpoint specified in the server's certificate.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2024-08-20: Migrated from reStructuredText to Markdown.
 

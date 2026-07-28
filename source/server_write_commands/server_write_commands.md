@@ -1,7 +1,6 @@
 # Write Commands Specification
 
 - Status: Accepted
-- Minimum Server Version: 2.6
 
 ______________________________________________________________________
 
@@ -478,16 +477,9 @@ Yes. The drivers are still required to serve a {w:0} write concern by returning 
 as possible. But a driver should send the request to the server via a write command and should, therefore, take the
 corresponding response off the wire -- even if the caller is not interested in that result.
 
-### What happens if a driver receives a write request against an old server?
-
-It must convert that request into write operations + gle's and use the old op codes.
-
-### Are we discontinuing the use of getLastError?
-
-Yes but as of 2.6 the existing getLastError behavior is supported for backward compatibility. Note also that
-`getLastError` was removed in server version 5.1.
-
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2024-11-11: Add note that getLastError has been removed from the server.
 

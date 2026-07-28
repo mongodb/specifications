@@ -62,7 +62,7 @@ debugger, code coverage tool, etc.
 #### 2.1 Retryable Reads Are Retried on a Different mongos When One is Available
 
 This test MUST be executed against a sharded cluster that has at least two mongos instances, supports `retryReads=true`,
-and has enabled the `configureFailPoint` command (MongoDB 4.2+).
+and has enabled the `configureFailPoint` command.
 
 1. Create two clients `s0` and `s1` that each connect to a single mongos from the sharded cluster. They must not connect
     to the same mongos.
@@ -94,7 +94,7 @@ and has enabled the `configureFailPoint` command (MongoDB 4.2+).
 #### 2.2 Retryable Reads Are Retried on the Same mongos When No Others are Available
 
 This test MUST be executed against a sharded cluster that supports `retryReads=true` and has enabled the
-`configureFailPoint` command (MongoDB 4.2+).
+`configureFailPoint` command.
 
 1. Create a client `s0` that connects to a single mongos from the cluster.
 
@@ -321,6 +321,8 @@ This test MUST be executed against a MongoDB 4.4+ server that supports `retryRea
     ```
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-04-14: Add prose tests for retry behavior when a mix of overload and non-overload errors are encountered.
 

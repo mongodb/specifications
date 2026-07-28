@@ -66,8 +66,7 @@ Test that a client initialized with this string checks a standalone server rough
 
 Configure a client with heartbeatFrequencyMS of 500 milliseconds.
 
-Connect to a MongoDB replica set member with maxWireVersion at least 5. (Only replica set members with maxWireVersion 5
-have a lastWriteDate in the legacy hello reply.)
+Connect to a MongoDB replica set member.
 
 Insert a document and wait one second.
 
@@ -81,11 +80,6 @@ but less than 10 seconds greater.
 (This test is as lenient as possible, while still testing that the driver parses lastWriteDate and converts it to an
 appropriate unit.)
 
-### Absent lastWriteDate
-
-Connect to a MongoDB server with maxWireVersion less than 5. Check that the driver's ServerDescription for this server
-has no lastWriteDate, represented with null, zero, or however the driver represents a non-value.
-
 ### Direct connection to mongos
 
 Initialize a MongoClient with this connection string:
@@ -94,8 +88,8 @@ Initialize a MongoClient with this connection string:
 mongodb://mongos/?readPreference=secondary&maxStalenessSeconds=120
 ```
 
-Where "mongos" is the hostname and port of a mongos server running wire protocol version 5+. Execute a "findOne"
-operation. The MongoClient must include following read preference element with its "find" command:
+Where "mongos" is the hostname and port of a mongos server. Execute a "findOne" operation. The MongoClient must include
+following read preference element with its "find" command:
 
 ```javascript
 $readPreference: {

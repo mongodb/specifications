@@ -58,8 +58,6 @@ for differing bulk encoding performance.
 
 ### 2. maxTimeMS is not set for commands sent to mongocryptd
 
-This test MUST only be run against enterprise server versions 4.2 and higher.
-
 1. Launch a mongocryptd process on 23000.
 2. Create a MongoClient (referred to as `client`) using the URI `mongodb://localhost:23000/?timeoutMS=1000`.
 3. Using `client`, execute the `{ ping: 1 }` command against the `admin` database.
