@@ -349,9 +349,8 @@ A `traceparent` value is valid if and only if it is exactly 55 characters of the
 `00-<trace-id: 32 lowercase hex>-<parent-id: 16 lowercase hex>-<trace-flags: 2 lowercase hex>` (the field names are
 those of the [W3C traceparent header](https://www.w3.org/TR/trace-context/#traceparent-header); `00` is the version) and
 neither the trace-id nor the parent-id is all zeroes. This mirrors the server-side validation. If no valid value is
-available, drivers MUST omit the section entirely rather than send an invalid or truncated value. Drivers MUST NOT
-append a `tracestate` suffix. Drivers MUST propagate unsampled trace contexts (trace-flags `00`); the sampling decision
-MUST NOT affect whether the section is attached.
+available, drivers MUST omit the section entirely rather than send an invalid or truncated value. Drivers MUST propagate
+unsampled trace contexts (trace-flags `00`); the sampling decision MUST NOT affect whether the section is attached.
 
 A message MUST NOT contain more than one telemetry section. Commands that carry no command span (for example server
 monitoring, authentication, and security-sensitive commands) naturally send no section.
