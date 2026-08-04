@@ -74,7 +74,16 @@ the following sets of environment variables:
     | `AWS_LAMBDA_FUNCTION_MEMORY_SIZE` | `1024`             |
     | `KUBERNETES_SERVICE_HOST`         | `1`                |
 
-### Test 2: Test that agent metadata is properly captured
+### Test 2: Test that the driver accepts an arbitrary auth mechanism
+
+1. Mock the server response in a way that `saslSupportedMechs` array in the `hello` command response contains an
+    arbitrary string.
+
+2. Create and connect a `Connection` object that connects to the server that returns the mocked response.
+
+3. Assert that no error is raised.
+
+### Test 3: Test that agent metadata is properly captured
 
 Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
 the following sets of environment variables, and that `client.env.agent` is populated (or omitted) as described.
@@ -133,15 +142,6 @@ the following sets of environment variables, and that `client.env.agent` is popu
     | `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8` |
     | `AWS_REGION`         | `us-east-2`        |
     | `CLAUDECODE`         | `1`                |
-
-### Test 3: Test that the driver accepts an arbitrary auth mechanism
-
-1. Mock the server response in a way that `saslSupportedMechs` array in the `hello` command response contains an
-    arbitrary string.
-
-2. Create and connect a `Connection` object that connects to the server that returns the mocked response.
-
-3. Assert that no error is raised.
 
 ## Client Metadata Update Prose Tests
 

@@ -332,13 +332,12 @@ field to be omitted and MUST NOT cause a user-visible error.
 
 ##### Agent
 
-Many AI coding assistants and agentic clients ("agents", e.g. Claude Code, Cursor, Gemini CLI) set an environment
-variable in the process environment when they execute shell commands or code on a user's behalf. `client.env.agent`
-captures which agent, if any, is driving the client, so that agent-mediated usage of MongoDB can be distinguished from
-direct human usage.
+Agents are AI coding assistants and agentic clients, such as Claude Code, Cursor, and Gemini CLI. Most agents set an
+environment variable when they execute shell commands or code on a user's behalf. `client.env.agent` captures which
+agent, if any, is driving the client. This distinguishes agent-mediated usage of MongoDB from direct human usage.
 
-`client.env.agent` is a single string, determined by which of the following environment variables are populated. The
-list MUST be evaluated in order, and the first match determines the value; subsequent entries MUST NOT be considered:
+`client.env.agent` is a single string. Its value is determined by the environment variables below. Drivers MUST evaluate
+the list in order. The first populated variable determines the value, and subsequent entries MUST NOT be considered.
 
 | Order | Environment Variable | `client.env.agent` value |
 | ----- | -------------------- | ------------------------ |
@@ -351,12 +350,11 @@ list MUST be evaluated in order, and the first match determines the value; subse
 | 7     | `AUGMENT_AGENT`      | `augment`                |
 | 8     | `OPENCODE_CLIENT`    | `opencode`               |
 
-For entries 1 and 2 (`AI_AGENT` and `AGENT`), the value of `client.env.agent` is the value of the environment variable.
-For entries 3 through 8, the value of `client.env.agent` is the fixed string in the table above, regardless of the value
-of the environment variable.
+For entries 1 and 2, `client.env.agent` is the value of the environment variable. For entries 3 through 8,
+`client.env.agent` is the fixed string in the table above, regardless of the value of the environment variable.
 
-An environment variable is considered populated if it is present in the environment with a non-empty value. If none of
-the above environment variables are populated, `client.env.agent` MUST be entirely omitted.
+A variable is considered populated if it is present in the environment with a non-empty value. If none of the variables
+above are populated, `client.env.agent` MUST be entirely omitted.
 
 Determination of `client.env.agent` MUST NOT cause a user-visible error.
 
