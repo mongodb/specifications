@@ -128,11 +128,8 @@ the following sets of environment variables, and that `client.env.agent` is popu
     | -------------------- | ------------------- |
     | `AI_AGENT`           | `""` (empty string) |
 
-7. No agent variables. `client.env.agent` MUST be omitted.
-
-    | Environment Variable | Value |
-    | -------------------- | ----- |
-    |                      |       |
+7. No agent variables. None of the environment variables in the `client.env.agent` table are set. `client.env.agent`
+    MUST be omitted.
 
 8. Agent alongside FaaS. This test MUST verify that both the AWS Lambda metadata and `client.env.agent` (equal to
     `claude-code`) are present in `client.env`.
