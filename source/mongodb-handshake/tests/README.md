@@ -4,7 +4,7 @@
 
 ### Test 1: Test that environment metadata is properly captured
 
-Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
 the following sets of environment variables:
 
 1. Valid AWS
@@ -85,7 +85,7 @@ the following sets of environment variables:
 
 ### Test 3: Test that agent metadata is properly captured
 
-Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
 the following sets of environment variables, and that `client.env.agent` is populated (or omitted) as described.
 
 1. Generic agent via `AI_AGENT`. `client.env.agent` MUST equal `custom-agent`.
