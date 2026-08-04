@@ -126,7 +126,7 @@ the following sets of environment variables, and that `client.env.agent` is popu
 
     | Environment Variable | Value               |
     | -------------------- | ------------------- |
-    | `AI_AGENT`           | \`\` (empty string) |
+    | `AI_AGENT`           | `""` (empty string) |
 
 7. No agent variables. `client.env.agent` MUST be omitted.
 
