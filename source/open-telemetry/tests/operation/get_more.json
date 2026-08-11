@@ -88,7 +88,13 @@
                 "db.namespace": "operation-get-more",
                 "db.collection.name": "test",
                 "db.operation.name": "find",
-                "db.operation.summary": "find operation-get-more.test"
+                "db.operation.summary": "find operation-get-more.test",
+                "db.mongodb.cursor_id": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
               },
               "nested": [
                 {
@@ -150,7 +156,13 @@
                 "db.namespace": "operation-get-more",
                 "db.collection.name": "test",
                 "db.operation.name": "getMore",
-                "db.operation.summary": "getMore operation-get-more.test"
+                "db.operation.summary": "getMore operation-get-more.test",
+                "db.mongodb.cursor_id": {
+                  "$$type": [
+                    "int",
+                    "long"
+                  ]
+                }
               },
               "nested": [
                 {
@@ -243,7 +255,10 @@
                 "db.namespace": "operation-get-more",
                 "db.collection.name": "test",
                 "db.operation.name": "find",
-                "db.operation.summary": "find operation-get-more.test"
+                "db.operation.summary": "find operation-get-more.test",
+                "db.mongodb.cursor_id": {
+                  "$$exists": false
+                }
               },
               "nested": [
                 {

@@ -50,11 +50,13 @@ tests:
               db.collection.name: *collection0Name
               db.operation.name: find
               db.operation.summary: find operation-get-more.test
+              # This find created a cursor with a non-zero id, since batchSize 2 leaves it open,
+              # so cursor_id is required on the operation span as well as the command span.
+              db.mongodb.cursor_id: { $$type: [ int, long ] }
             # Negative assertion: this `nested` array lists the `find` command span and nothing
             # else. A driver that nests the getMore under the cursor-creating operation produces a
-            # second entry here, which `ignoreExtraSpans: false` must reject. See Task 3 — the
-            # unified test format spec has to say that ignoreExtraSpans applies to nested spans
-            # for this half of the assertion to be enforceable.
+            # second entry here, which `ignoreExtraSpans: false` rejects, because the unified test
+            # format spec states that ignoreExtraSpans applies at every level of the span tree.
             nested:
               - name: find
                 attributes:
@@ -82,6 +84,8 @@ tests:
               db.collection.name: *collection0Name
               db.operation.name: getMore
               db.operation.summary: getMore operation-get-more.test
+              # This operation operates on an existing cursor, so cursor_id is required here too.
+              db.mongodb.cursor_id: { $$type: [ int, long ] }
             nested:
               - name: getMore
                 attributes:
@@ -134,6 +138,9 @@ tests:
               db.collection.name: *collection0Name
               db.operation.name: find
               db.operation.summary: find operation-get-more.test
+              # This find returned everything in the first batch, so no cursor was left open and
+              # cursor_id must be omitted from the operation span as well as the command span.
+              db.mongodb.cursor_id: { $$exists: false }
             nested:
               - name: find
                 attributes:
