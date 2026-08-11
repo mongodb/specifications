@@ -794,6 +794,11 @@ The structure of this object is as follows:
         - If `true`, additional unexpected spans are allowed.
         - If `false` or omitted, the test runner MUST fail if any unexpected spans are detected.
 
+        This applies at every level of the span tree, not only to the top-level `spans` array. If `false` or omitted, a span
+        nested under an expected span but absent from that span's [nested](#expectTracingMessages) array is an unexpected
+        span, and the test runner MUST fail. This allows a test to assert that a command span is *not* nested under a
+        particular operation span by omitting it from that operation's `nested` array.
+
     - `spans`: Required array of span objects. Each span describes an expected tracing event.
 
         Span object properties:
@@ -3452,6 +3457,9 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-08-11: Clarified that `ignoreExtraSpans` applies at every level of the span tree, so that a test can assert a
+    span is not nested under a given parent by omitting it from that parent's `nested` array.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
