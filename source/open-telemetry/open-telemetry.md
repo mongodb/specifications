@@ -137,12 +137,16 @@ the `withTransaction` span.
 
 ##### Cursor Iteration (`getMore`)
 
-The rules in this section apply when a cursor is returned to the caller and the caller drives iteration — for example,
-the application holds a cursor object and calls its iteration method. When the driver instead iterates a cursor
-internally in order to satisfy a single public API call — for example a `find` helper that returns an array of all
-matching documents, or `listCollections` returning a list — the driver MUST NOT create additional operation spans. All
-`getMore` command spans for that call MUST be nested under that call's single operation span, because the driver
-operation has not finished.
+This section covers both ways a cursor can be iterated, and the rule differs between them.
+
+If the driver does not expose the cursor to the caller, and instead iterates it internally to produce the return value
+of one public API call — a `find` helper that returns an array of all matching documents, or `listCollections` returning
+a list — then the driver MUST NOT create additional operation spans for that iteration. Every `getMore` command span
+belonging to that call MUST be nested under that call's single operation span, because the driver operation has not
+finished.
+
+If the driver returns the cursor to the caller and the caller drives iteration, the rules in the rest of this section
+apply.
 
 When the caller drives iteration and the driver sends a `getMore` command to fetch a further batch, the driver MUST
 create a new operation span for that `getMore`. This span MUST follow the same rules as any other driver operation span:
@@ -241,10 +245,11 @@ Examples:
 
 ###### db.mongodb.cursor_id
 
-If the operation creates a cursor, or operates on an existing cursor, the `cursor_id` attribute MUST be added to the
-operation span, following the same rules as the command span attribute of the same name (see
-[db.mongodb.cursor_id](#command-cursor-id) under Command Span Attributes). In particular, it MUST be omitted rather than
-added with a value of `0`.
+If the operation creates a cursor, or operates on a single existing cursor, the `cursor_id` attribute MUST be added to
+the operation span, following the same rules as the command span attribute of the same name, including the omissions
+described there (see [db.mongodb.cursor_id](#command-cursor-id) under Command Span Attributes). In particular, it MUST
+be omitted rather than added with a value of `0`, and it MUST be omitted from an operation span for a command that may
+operate on more than one cursor at once, such as `killCursors`.
 
 When a driver iterates a cursor internally to satisfy a single public API call, the value is the id of the cursor the
 operation created. For a caller-driven `getMore` operation, the value is the cursor id the driver sent.

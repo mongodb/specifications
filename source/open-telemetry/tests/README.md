@@ -65,5 +65,6 @@ expectTracingMessages:
 2. Create a `MongoClient` and insert three documents into a test collection.
 3. Create a cursor over that collection with `find` and a `batchSize` of `2`, then iterate the cursor until it is
     exhausted. This sends exactly one `getMore`, and the server's reply to that `getMore` returns a cursor id of `0`.
-4. Assert that the `getMore` command span has a `db.mongodb.cursor_id` attribute.
-5. Assert that its value is the non-zero cursor id the driver sent in the `getMore` command, and is not `0`.
+4. Assert that both the `getMore` operation span and the `getMore` command span have a `db.mongodb.cursor_id` attribute.
+5. Assert that on each of those two spans, the value is the non-zero cursor id the driver sent in the `getMore` command,
+    and is not `0`.
