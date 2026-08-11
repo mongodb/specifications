@@ -135,6 +135,30 @@ When a user commits or aborts a transaction with `commitTransaction` or `abortTr
 In case of `withTransaction` operation spans for operations that are executed inside the callbacks SHOULD be nested into
 the `withTransaction` span.
 
+##### Cursor Iteration (`getMore`)
+
+When a host application iterates a cursor and the driver sends a `getMore` command to fetch a further batch, the driver
+MUST create a new operation span for that `getMore`. This span MUST follow the same rules as any other driver operation
+span: it MUST be named according to [Operation Span Name](#operation-span-name) (e.g.,
+`getMore warehouse_db.users_coll`) and MUST be created within the current span of the host application.
+
+This operation span MUST NOT be nested under the operation span of the command that created the cursor (e.g., the `find`
+or `aggregate` operation span). A host application may perform unrelated work between consuming one batch and requesting
+the next — processing documents, calling other services — and nesting each `getMore` under the cursor-creating
+operation's span would incorrectly attribute that unrelated work to the original operation.
+
+Since the span is created within the host application's current span, the usual nesting rules continue to apply. In
+particular, if a cursor is iterated inside a `withTransaction` callback, the `getMore` operation span is nested into the
+`withTransaction` span like any other operation executed in that callback.
+
+Because each `getMore` operation span is scoped to a single batch fetch, no span remains open for the lifetime of a
+cursor. This also resolves the case of a cursor that is iterated indefinitely or never exhausted (e.g., a tailable
+cursor): there is no lifetime-scoped span, so there is nothing left unfinished. Each `getMore` operation span MUST be
+finished once its command, including any retries, completes — exactly like any other operation span.
+
+The `getMore` command span MUST be nested under this `getMore` operation span, following the rules in
+[Instrumenting Server Commands](#instrumenting-server-commands).
+
 ##### Operation Span Name
 
 The span name SHOULD be:
@@ -310,7 +334,17 @@ On the `MongoClient` level this configuration can be implemented with a `MongoCl
 
 ###### db.mongodb.cursor_id
 
-If the command returns a cursor, or uses a cursor, the `cursor_id` attribute SHOULD be added.
+If the command creates a cursor (e.g., `find`, `aggregate`, `listIndexes`) and the server returns a non-zero cursor id,
+the `cursor_id` attribute MUST be added.
+
+If the command operates on an existing cursor (e.g., `getMore`), the `cursor_id` attribute MUST be added, using the
+cursor id the driver sent in the command. It MUST still be added when the server's reply to that command returns a
+cursor id of `0` to indicate the cursor is now exhausted: the command did operate on a cursor, and the id it operated on
+is the one worth recording.
+
+A cursor id of `0` means no server-side cursor remains. Drivers MUST NOT add the `cursor_id` attribute with a value of
+`0`, and MUST omit it entirely when a cursor-creating command's reply returns a cursor id of `0` (i.e., the command
+returned all of its results in the first batch and no cursor was left open).
 
 ##### Exceptions
 
@@ -357,6 +391,7 @@ The OpenTelemetry specification covers all driver operations including but not l
 | `dropCollection`         | [tests/operation/drop_collection.yml](tests/operation/drop_collection.yml)     |
 | `dropIndexes`            | [tests/operation/drop_indexes.yml](tests/operation/drop_indexes.yml)           |
 | `find`                   | [tests/operation/find.yml](tests/operation/find.yml)                           |
+| `getMore`                | [tests/operation/get_more.yml](tests/operation/get_more.yml)                   |
 | `listCollections`        | [tests/operation/list_collections.yml](tests/operation/list_collections.yml)   |
 | `listDatabases`          | [tests/operation/list_databases.yml](tests/operation/list_databases.yml)       |
 | `listIndexes`            | [tests/operation/list_indexes.yml](tests/operation/list_indexes.yml)           |
@@ -425,6 +460,9 @@ A URI options can be added later if we realise our users need it, while the oppo
 
 ## Changelog
 
+- 2026-08-11: Specified that each `getMore` command is nested under its own new operation span, sibling to the operation
+    span of the command that created the cursor. Specified that `db.mongodb.cursor_id` MUST be added to command spans
+    that create or use a cursor, and MUST be omitted rather than set to `0` when no server-side cursor remains.
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
