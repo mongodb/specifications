@@ -42,6 +42,7 @@
 - [OpenTelemetry](open-telemetry/open-telemetry.md)
 - [Performance Benchmarking](benchmarking/benchmarking.md)
 - [Polling SRV Records for mongos Discovery](polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md)
+- [Public Suffix List](public-suffix-list/public-suffix-list.md)
 - [Read and Write Concern](read-write-concern/read-write-concern.md)
 - [Retryable Reads](retryable-reads/retryable-reads.md)
 - [Retryable Writes](retryable-writes/retryable-writes.md)

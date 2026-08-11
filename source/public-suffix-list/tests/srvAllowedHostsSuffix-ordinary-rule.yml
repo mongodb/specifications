@@ -1,0 +1,7 @@
+# "dr.in" is an ordinary rule in the Public Suffix List, so it is itself a public
+# suffix and must be rejected.
+uri: "mongodb+srv://test1.test.build.10gen.cc/?srvAllowedHostsSuffix=dr.in"
+seeds: []
+hosts: []
+error: true
+comment: Should fail because srvAllowedHostsSuffix is a public suffix matched by the ordinary rule "dr.in".
