@@ -201,6 +201,7 @@ Spans SHOULD have the following attributes:
 | `db.collection.name`   | `string` | The collection being accessed within the database stated in `db.namespace` | Required if available |
 | `db.operation.name`    | `string` | The name of the driver operation being executed                            | Required              |
 | `db.operation.summary` | `string` | Equivalent to span name                                                    | Required              |
+| `db.mongodb.cursor_id` | `int64`  | If a cursor is created or used in the operation (see below)                | Conditional           |
 
 Not all attributes are available at the moment of span creation. Drivers need to add attributes at later stages, which
 requires an operation span to be available throughout the complete operation lifecycle.
@@ -235,6 +236,18 @@ Examples:
 - `commitTransaction` → *omitted*
 - `abortTransaction` → *omitted*
 - client `bulkWrite` → *omitted*
+
+<span id="operation-cursor-id"></span>
+
+###### db.mongodb.cursor_id
+
+If the operation creates a cursor, or operates on an existing cursor, the `cursor_id` attribute MUST be added to the
+operation span, following the same rules as the command span attribute of the same name (see
+[db.mongodb.cursor_id](#command-cursor-id) under Command Span Attributes). In particular, it MUST be omitted rather than
+added with a value of `0`.
+
+When a driver iterates a cursor internally to satisfy a single public API call, the value is the id of the cursor the
+operation created. For a caller-driven `getMore` operation, the value is the cursor id the driver sent.
 
 ##### Exceptions
 
@@ -345,6 +358,8 @@ added and truncated to the provided value (similar to the Logging specification)
 
 On the `MongoClient` level this configuration can be implemented with a `MongoClient` option, for example,
 `tracing.query_text_max_length`.
+
+<span id="command-cursor-id"></span>
 
 ###### db.mongodb.cursor_id
 
@@ -480,8 +495,9 @@ A URI options can be added later if we realise our users need it, while the oppo
 
 - 2026-08-11: Specified that each `getMore` command is nested under its own new operation span, sibling to the operation
     span of the command that created the cursor, when the caller drives cursor iteration. Specified that
-    `db.mongodb.cursor_id` MUST be added to command spans that create a cursor with a non-zero id or that operate on a
-    single existing cursor, and MUST be omitted rather than set to `0` when no server-side cursor remains.
+    `db.mongodb.cursor_id` MUST be added to operation spans and to command spans that create a cursor with a non-zero id
+    or that operate on a single existing cursor, and MUST be omitted rather than set to `0` when no server-side cursor
+    remains.
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
