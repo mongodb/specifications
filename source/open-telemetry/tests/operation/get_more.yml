@@ -98,7 +98,11 @@ tests:
                   server.port: { $$type: [ int, long ] }
                   db.query.summary: getMore operation-get-more.test
                   # This getMore drains the cursor, so the server's reply carries cursor id 0.
-                  # The attribute must still be present, holding the non-zero id the driver sent.
+                  # The attribute must still be present. $$type only enforces presence and BSON
+                  # type — it cannot express "non-zero", because the unified test format has no
+                  # numeric comparison operator, and 0 satisfies $$type: int. The requirement that
+                  # this holds the non-zero id the driver sent rather than the reply's 0 is covered
+                  # by prose test 3 in ../README.md.
                   db.mongodb.cursor_id: { $$type: [ int, long ] }
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]

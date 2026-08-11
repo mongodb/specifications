@@ -795,9 +795,9 @@ The structure of this object is as follows:
         - If `false` or omitted, the test runner MUST fail if any unexpected spans are detected.
 
         This applies at every level of the span tree, not only to the top-level `spans` array. If `false` or omitted, a span
-        nested under an expected span but absent from that span's [nested](#expectTracingMessages) array is an unexpected
-        span, and the test runner MUST fail. This allows a test to assert that a command span is *not* nested under a
-        particular operation span by omitting it from that operation's `nested` array.
+        nested under an expected span but absent from that span's `nested` array is an unexpected span, and the test
+        runner MUST fail. This allows a test to assert that a command span is *not* nested under a particular operation
+        span by omitting it from that operation's `nested` array.
 
     - `spans`: Required array of span objects. Each span describes an expected tracing event.
 

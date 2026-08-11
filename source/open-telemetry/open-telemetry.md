@@ -137,10 +137,20 @@ the `withTransaction` span.
 
 ##### Cursor Iteration (`getMore`)
 
-When a host application iterates a cursor and the driver sends a `getMore` command to fetch a further batch, the driver
-MUST create a new operation span for that `getMore`. This span MUST follow the same rules as any other driver operation
-span: it MUST be named according to [Operation Span Name](#operation-span-name) (e.g.,
-`getMore warehouse_db.users_coll`) and MUST be created within the current span of the host application.
+The rules in this section apply when a cursor is returned to the caller and the caller drives iteration — for example,
+the application holds a cursor object and calls its iteration method. When the driver instead iterates a cursor
+internally in order to satisfy a single public API call — for example a `find` helper that returns an array of all
+matching documents, or `listCollections` returning a list — the driver MUST NOT create additional operation spans. All
+`getMore` command spans for that call MUST be nested under that call's single operation span, because the driver
+operation has not finished.
+
+When the caller drives iteration and the driver sends a `getMore` command to fetch a further batch, the driver MUST
+create a new operation span for that `getMore`. This span MUST follow the same rules as any other driver operation span:
+it MUST be named according to [Operation Span Name](#operation-span-name) and MUST be created within the current span of
+the host application. For a cursor over a collection the name is `getMore db.collection_name` (e.g.,
+`getMore warehouse_db.users_coll`). For a cursor that does not target a specific collection — for example a cursor from
+`listCollections` or a database-level `aggregate` — `db.collection.name` is omitted and the name is `getMore db` (e.g.,
+`getMore warehouse_db`), per [db.collection.name](#dbcollectionname).
 
 This operation span MUST NOT be nested under the operation span of the command that created the cursor (e.g., the `find`
 or `aggregate` operation span). A host application may perform unrelated work between consuming one batch and requesting
@@ -154,7 +164,11 @@ particular, if a cursor is iterated inside a `withTransaction` callback, the `ge
 Because each `getMore` operation span is scoped to a single batch fetch, no span remains open for the lifetime of a
 cursor. This also resolves the case of a cursor that is iterated indefinitely or never exhausted (e.g., a tailable
 cursor): there is no lifetime-scoped span, so there is nothing left unfinished. Each `getMore` operation span MUST be
-finished once its command, including any retries, completes — exactly like any other operation span.
+finished once its command completes.
+
+A `getMore` command is not retryable, but a change stream may resume after a `getMore` fails. A resume MUST NOT extend
+the failed `getMore` operation span. Drivers MUST finish that span with its error, and the `killCursors`, `aggregate`,
+and `getMore` commands issued to re-establish the cursor MUST be nested under new operation spans of their own.
 
 The `getMore` command span MUST be nested under this `getMore` operation span, following the rules in
 [Instrumenting Server Commands](#instrumenting-server-commands).
@@ -270,7 +284,7 @@ Spans SHOULD have the following attributes:
 | `db.mongodb.server_connection_id` | `int64`  | Server connection id                                                                                                                                     | Required if available        |
 | `db.mongodb.driver_connection_id` | `int64`  | Local connection id                                                                                                                                      | Required if available        |
 | `db.query.text`                   | `string` | Database command that was sent to the server. Content should be equivalent to the `document` field of the CommandStartedEvent of the command monitoring. | Conditional                  |
-| `db.mongodb.cursor_id`            | `int64`  | If a cursor is created or used in the operation                                                                                                          | Required if available        |
+| `db.mongodb.cursor_id`            | `int64`  | If a cursor is created or used in the command (see below)                                                                                                | Conditional                  |
 | `db.mongodb.lsid`                 | `string` | Logical session id                                                                                                                                       | Required if available        |
 | `db.mongodb.txn_number`           | `int64`  | Transaction number                                                                                                                                       | Required if available        |
 
@@ -337,10 +351,14 @@ On the `MongoClient` level this configuration can be implemented with a `MongoCl
 If the command creates a cursor (e.g., `find`, `aggregate`, `listIndexes`) and the server returns a non-zero cursor id,
 the `cursor_id` attribute MUST be added.
 
-If the command operates on an existing cursor (e.g., `getMore`), the `cursor_id` attribute MUST be added, using the
-cursor id the driver sent in the command. It MUST still be added when the server's reply to that command returns a
+If the command operates on a single existing cursor (e.g., `getMore`), the `cursor_id` attribute MUST be added, using
+the cursor id the driver sent in the command. It MUST still be added when the server's reply to that command returns a
 cursor id of `0` to indicate the cursor is now exhausted: the command did operate on a cursor, and the id it operated on
 is the one worth recording.
+
+If a command may operate on more than one cursor at once — for example `killCursors`, whose `cursors` field is an array
+— the `cursor_id` attribute MUST be omitted. The attribute is a single `int64` and has no defined value for such a
+command.
 
 A cursor id of `0` means no server-side cursor remains. Drivers MUST NOT add the `cursor_id` attribute with a value of
 `0`, and MUST omit it entirely when a cursor-creating command's reply returns a cursor id of `0` (i.e., the command
@@ -461,8 +479,9 @@ A URI options can be added later if we realise our users need it, while the oppo
 ## Changelog
 
 - 2026-08-11: Specified that each `getMore` command is nested under its own new operation span, sibling to the operation
-    span of the command that created the cursor. Specified that `db.mongodb.cursor_id` MUST be added to command spans
-    that create or use a cursor, and MUST be omitted rather than set to `0` when no server-side cursor remains.
+    span of the command that created the cursor, when the caller drives cursor iteration. Specified that
+    `db.mongodb.cursor_id` MUST be added to command spans that create a cursor with a non-zero id or that operate on a
+    single existing cursor, and MUST be omitted rather than set to `0` when no server-side cursor remains.
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
