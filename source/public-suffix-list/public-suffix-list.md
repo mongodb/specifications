@@ -102,13 +102,10 @@ label removed.
 
 ## Test Plan
 
-The `srvAllowedHostsSuffix-psl-*` tests in the
-[Initial DNS Seedlist Discovery tests](../initial-dns-seedlist-discovery/tests/replica-set) verify that a driver parses
-the list correctly. There is one case per rule form: an ordinary rule, a wildcard rule matched by a value that does not
-appear literally in the list, and an exception rule that overrides a wildcard rule.
-
-They live with the seedlist discovery tests because `srvAllowedHostsSuffix` is a connection string option, so a driver
-implements the parsing of the PSL and the uri option together.
+See [tests/README.md](tests/README.md). It defines prose tests covering each rule form, and points at the
+`srvAllowedHostsSuffix-psl-*` tests in the
+[Initial DNS Seedlist Discovery tests](../initial-dns-seedlist-discovery/tests/replica-set) that cover the two cases
+observable through a connection string.
 
 ## Design Rationale
 

@@ -1,7 +1,0 @@
-{
-  "uri": "mongodb+srv://test1.test.build.10gen.cc/?srvAllowedHostsSuffix=abc.nom.br",
-  "seeds": [],
-  "hosts": [],
-  "error": true,
-  "comment": "Should fail because srvAllowedHostsSuffix is a public suffix matched by the wildcard rule \"*.nom.br\"."
-}
