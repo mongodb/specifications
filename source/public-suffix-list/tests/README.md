@@ -30,10 +30,10 @@ These tests exercise the lookup directly rather than through a connection string
 ## Connection String Tests
 
 The `srvAllowedHostsSuffix-psl-*` tests in the
-[Initial DNS Seedlist Discovery tests](../../initial-dns-seedlist-discovery/tests/replica-set) cover the two cases that
-are observable through a connection string: a suffix that is a public suffix (`cc`) is rejected, and one that is not
-(`10gen.cc`) is accepted. Both use a suffix the test SRV hosts end with, so the host suffix check passes and the public
-suffix check is the only thing that can change the outcome.
+[Initial DNS Seedlist Discovery tests](https://github.com/mongodb/specifications/tree/master/source/initial-dns-seedlist-discovery/tests/replica-set)
+cover the two cases that are observable through a connection string: a suffix that is a public suffix (`cc`) is
+rejected, and one that is not (`10gen.cc`) is accepted. Both use a suffix the test SRV hosts end with, so the host
+suffix check passes and the public suffix check is the only thing that can change the outcome.
 
 They live with the seedlist discovery tests because `srvAllowedHostsSuffix` is a connection string option, so a driver
 implements the parsing of the PSL and the uri option together.
