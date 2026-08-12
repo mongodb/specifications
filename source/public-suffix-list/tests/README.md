@@ -11,20 +11,19 @@ itself a public suffix.
 
 These tests exercise the lookup directly rather than through a connection string.
 
-1. A single-label ordinary rule. `10gen.cc` has the public suffix `cc`, since only the parent is in the list. Assert
-    that `is_public_suffix("cc") -> true` and `is_public_suffix("10gen.cc") -> false`.
-2. A multi-label ordinary rule, matched in preference to the shorter `ac`. `foo.com.ac` has the public suffix `com.ac`.
+1. A multi-label ordinary rule, matched in preference to the shorter `ac`. `foo.com.ac` has the public suffix `com.ac`.
     Assert that `is_public_suffix("com.ac") -> true` and `is_public_suffix("foo.com.ac") -> false`.
-3. A wildcard rule, `*.nom.br`, matching a value that does not appear literally in the list, so a driver that only
-    compares for equality will not find it. A `*` matches exactly one label, so the rule does not extend to cover `x`:
-    `x.abc.nom.br` has the public suffix `abc.nom.br`. Assert that `is_public_suffix("abc.nom.br") -> true` and
-    `is_public_suffix("x.abc.nom.br") -> false`.
-4. A wildcard rule, `*.ck`, with no exception rule applying. `a.b.ck` has the public suffix `b.ck`. Assert that
+2. A wildcard rule, `*.nom.br`, matching a value that does not appear literally in the list, so a driver that only
+    compares for equality will not find it. It prevails over the shorter ordinary rule `br`, and its `*` matches
+    exactly one label, so it does not extend to cover `x`: `x.abc.nom.br` has the public suffix `abc.nom.br`. Assert
+    that `is_public_suffix("abc.nom.br") -> true` and `is_public_suffix("x.abc.nom.br") -> false`.
+3. A wildcard rule, `*.ck`, with no shorter ordinary rule. `a.b.ck` has the public suffix `b.ck`. Assert that
     `is_public_suffix("b.ck") -> true` and `is_public_suffix("a.b.ck") -> false`.
-5. An exception rule, `!www.ck`, prevailing over `*.ck` and having its leftmost label removed. `www.ck` has the public
-    suffix `ck`, even though `ck` is not itself a rule in the list. Assert that `is_public_suffix("ck") -> true` and
+4. An exception rule, `!www.ck`, prevailing over `*.ck` and having its leftmost label removed. Compared with the
+    previous test, the exception is the only thing that changes the answer: `www.ck` has the public suffix `ck`, even
+    though `ck` is not itself a rule in the list. Assert that `is_public_suffix("ck") -> true` and
     `is_public_suffix("www.ck") -> false`.
-6. No rule matches, so the prevailing rule is `*` and the rightmost label alone is the public suffix. `foo.nosuchtld`
+5. No rule matches, so the prevailing rule is `*` and the rightmost label alone is the public suffix. `foo.nosuchtld`
     has the public suffix `nosuchtld`. Assert that `is_public_suffix("nosuchtld") -> true` and
     `is_public_suffix("foo.nosuchtld") -> false`.
 
