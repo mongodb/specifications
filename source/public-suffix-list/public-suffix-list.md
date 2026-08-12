@@ -48,7 +48,7 @@ than from publicsuffix.org or any other source. How a driver takes delivery of t
 its own repository and refreshing that copy from here is expected -- but the contents MUST match
 [public_suffix_list.dat](public_suffix_list.dat) as committed.
 
-Whichever a driver chooses, the parsing/usage of the PSL MUST pass the tests in [tests](tests/).
+Whichever a driver chooses, the parsing/usage of the PSL MUST pass the tests in [tests](tests/README.md).
 
 Drivers SHOULD NOT fetch the list from the network at runtime, and SHOULD instead resolve it from a copy shipped with
 the driver.
@@ -159,9 +159,9 @@ The script downloads the list from <https://publicsuffix.org/list/public_suffix_
 expected section markers are present, strips comment and blank lines, and writes the result. Passing `--check` reports
 whether the committed file is up to date without writing anything, exiting non-zero if it is stale.
 
-The [sync-psl](../../.github/workflows/sync-psl.yml) GitHub Actions workflow runs the script on the first day of each
-month and opens a pull request when the regenerated file differs from the committed one. It can also be triggered
-manually via `workflow_dispatch`.
+The [sync-psl](https://github.com/mongodb/specifications/tree/master/.github/workflows/sync-psl.yml) GitHub Actions
+workflow runs the script on the first day of each month and opens a pull request when the regenerated file differs from
+the committed one. It can also be triggered manually via `workflow_dispatch`.
 
 ## Upstream license and attribution
 
