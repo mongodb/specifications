@@ -104,8 +104,8 @@ label removed.
 
 See [tests/README.md](tests/README.md). It defines prose tests covering each rule form, and points at the
 `srvAllowedHostsSuffix-psl-*` tests in the
-[Initial DNS Seedlist Discovery tests](../initial-dns-seedlist-discovery/tests/replica-set) that cover the two cases
-observable through a connection string.
+[Initial DNS Seedlist Discovery tests](https://github.com/mongodb/specifications/tree/master/source/initial-dns-seedlist-discovery/tests/replica-set)
+that cover the two cases observable through a connection string.
 
 ## Design Rationale
 
