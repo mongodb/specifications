@@ -1,6 +1,6 @@
 # Public Suffix List
 
-- Status: In Progress
+- Status: Draft
 - Minimum Server Version: N/A
 
 ______________________________________________________________________
