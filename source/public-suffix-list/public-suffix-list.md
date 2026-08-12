@@ -48,7 +48,7 @@ than from publicsuffix.org or any other source. How a driver takes delivery of t
 its own repository and refreshing that copy from here is expected -- but the contents MUST match
 [public_suffix_list.dat](public_suffix_list.dat) as committed.
 
-Whichever a driver chooses, the parsing/usage of the PSL MUST pass the tests in [tests](tests/README.md).
+Whichever a driver chooses, the parsing/usage of the PSL MUST pass the tests described in the [Test Plan](#test-plan).
 
 Drivers SHOULD NOT fetch the list from the network at runtime, and SHOULD instead resolve it from a copy shipped with
 the driver.
@@ -102,10 +102,13 @@ label removed.
 
 ## Test Plan
 
-The tests in [tests](tests/) verify that a driver parses the list correctly, using the `srvAllowedHostsSuffix`
-connection string option as the vehicle. There is one case per rule form: an ordinary rule, a wildcard rule matched by a
-value that does not appear literally in the list, and an exception rule that overrides a wildcard rule. See
-[tests/README.md](tests/README.md) for the format.
+The `srvAllowedHostsSuffix-psl-*` tests in the
+[Initial DNS Seedlist Discovery tests](../initial-dns-seedlist-discovery/tests/replica-set) verify that a driver parses
+the list correctly. There is one case per rule form: an ordinary rule, a wildcard rule matched by a value that does not
+appear literally in the list, and an exception rule that overrides a wildcard rule.
+
+They live with the seedlist discovery tests because `srvAllowedHostsSuffix` is a connection string option, so a driver
+implements the parsing of the PSL and the uri option together.
 
 ## Design Rationale
 
