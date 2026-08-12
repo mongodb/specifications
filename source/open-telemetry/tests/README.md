@@ -68,3 +68,16 @@ expectTracingMessages:
 4. Assert that both the `getMore` operation span and the `getMore` command span have a `db.mongodb.cursor_id` attribute.
 5. Assert that on each of those two spans, the value is the cursor id the driver sent in the `getMore` command, and not
     the `0` returned in that command's reply.
+
+*Test 4: `getMore` inside a transaction nests under the transaction span*
+
+This test requires a replica set or a sharded cluster running server version 4.4 or later.
+
+1. Create a `MongoClient` with tracing enabled on the client, using the `tracing.enabled` client option.
+2. Insert three documents into a test collection.
+3. Start a session and call `withTransaction`. In the callback, create a cursor over that collection with `find` and a
+    `batchSize` of `2`, then iterate the cursor until it is exhausted. This sends exactly one `getMore` inside the
+    transaction.
+4. Assert that a `transaction` span was emitted, and that both the `find` operation span and the `getMore` operation
+    span are nested directly under it.
+5. Assert that the `getMore` operation span is a sibling of the `find` operation span, and is not nested under it.
