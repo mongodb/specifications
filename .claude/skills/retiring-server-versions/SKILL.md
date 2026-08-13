@@ -22,8 +22,12 @@ expect to re-sweep every time a reviewer finds a new *shape* of miss — not jus
 
 ## When to Use
 
-- The project's minimum supported server version has just been raised (e.g. `DRIVERS-XXXX` "Remove pre-N.N references
-    from specs and tests").
+- You're working a ticket to remove old server version references (e.g. `DRIVERS-XXXX` "Remove pre-N.N references from
+    specs and tests").
+    - Only expected once *all* drivers have dropped support for the old server (e.g. `DRIVERS-XXXX` "Mark Server version
+        N.N as EOL" is complete). Drivers that track this repo via a git submodule pick up test deletions as soon as they
+        bump the submodule, so removing tests ahead of the EOL silently drops coverage for drivers that still support the
+        old version.
 - You're removing dead version-gated conditionals, fallback branches, or "only applies to old versions" prose.
 - A reviewer keeps finding pre-floor references you thought you'd already cleaned up.
 
@@ -81,6 +85,11 @@ right up front.
     unrunnable and must be handled as a FIX, not left alone.
 - Features/commands removed **at** the new floor, not before it (e.g. `copydb` removed exactly at 4.2 is out of scope
     for a "remove pre-4.2 references" pass — same bucket as anything at/above the floor)
+- Deliberately-invalid schema fixtures under `source/unified-test-format/tests/invalid/`. These hardcode nonsense
+    versions (`maxServerVersion: 0`, `minServerVersion: "1.2.3.4"`) precisely to prove the schema rejects them. Because
+    they sit below *every* conceivable floor, they match the `maxServerVersion` sweep in Step 4 on every retirement,
+    forever, and look exactly like dead weight — but deleting them breaks schema validation. Verified: they surface only
+    in the `maxServerVersion` sweeps, not in the numeric or table-cell searches.
 
 Capture ambiguous cases as a third "borderline" bucket for human triage rather than guessing either direction.
 
@@ -104,32 +113,37 @@ try to exclude that with lookarounds; it's a feature, not noise, since a patch-s
 only affected `4.2.0`-`4.2.5`) is exactly the kind of hit you need to see and classify, not filter out. Multi-digit
 collisions like `14.2` are excluded by the *left*-anchored patterns (`<`, `pre-`, since the anchor must sit immediately
 before the digit) but NOT by the *right*-anchored ones (`+`, `or higher` — e.g. `14.2+` and `14.2 or higher` both still
-match, since nothing constrains what precedes the number). This hasn't mattered yet (no MongoDB version starts with a
-leading digit that creates a collision), but don't assume all four patterns are equally guarded — they aren't.
+match, since nothing constrains what precedes the number). No shipped MongoDB release creates such a collision today,
+but that expires once the server reaches double-digit majors — a `5.0` retirement collides with `15.0`, a `6.0` one with
+`16.0`. Don't assume all four patterns are equally guarded; they aren't. If the colliding version exists by the time you
+read this, add an explicit left guard — `(^|[^0-9])` — to the right-anchored patterns only.
 
 ### Numeric comparisons
 
 This is one single-floor pass (see Step 1 — don't bundle separate floor-raises together), and you already know both
 numbers involved: the old floor being retired (e.g. 4.2) and the new floor (e.g. 4.4). Don't search broadly across every
 historical version; that mostly re-surfaces content from *previous* retirements that was already correctly classified as
-historical narrative last time (tested: a broad `< ?[0-9]+\.[0-9]+` search returns 19 hits here, of which 10 are noise —
-unrelated numeric comparisons, other libraries' version checks, and legitimate current boundaries well above the new
-floor — versus 9 for the scoped version below, with no real hits lost). Scope the search to just the two numbers in
-play, and include `<=` alongside `<` — a bare `< ?` anchor misses `<=` entirely, and this repo has a real,
-currently-live example (`MongoDB \<= 4.2, a monitor uses the Polling Protocol...`) that only the `<=?` form catches:
+historical narrative last time (tested: a broad `< ?[0-9]+\.[0-9]+` search here returns roughly half noise — unrelated
+numeric comparisons, other libraries' version checks, and legitimate current boundaries well above the new floor — while
+the scoped version below loses no real hits). Scope the search to just the two numbers in play, and include `<=`
+alongside `<` — a bare `< ?` anchor misses `<=` entirely, and this repo has a real, currently-live example
+(`MongoDB \<= 4.2, a monitor uses the Polling Protocol...` in `server-monitoring.md`) that only the `<=?` form catches.
+Note the backslash in that quote is really on disk, not a typo: `mdformat` escapes a bare `<` in prose as `\<`. The
+patterns below still match it (`<=` is a substring of `\<=`), but don't anchor a pattern to a character immediately
+preceding `<`, and expect `\<` in the grep output.
 
 ```
 grep -rnE "<=? ?(4\.2|4\.4)\b" source --include="*.md"
 grep -rnE "\bpre-?(4\.2|4\.4)\b" source --include="*.md"
 ```
 
-(substitute your own old-floor/new-floor numbers for `4\.2`/`4\.4`). The first is nearly clean (tested: 10 hits, 9
-real). The second is noisier — most of its hits are `## Changelog` entries like "Remove pre-4.2 version references,"
-which are never in scope (see Step 2). Both commands can surface Changelog hits (e.g. "2020-01-10: Error if hint
-specified... for servers < 4.2"); skip anything inside a Changelog section before reading further, for either command.
-The English-language equivalents ("older than", "prior to") are much lower precision as bare phrases — tested samples
-were mostly unrelated to server versions at all (e.g. "prior to each test run", "prior to garbage collection") — so
-treat them as a supplementary spot-check, not a primary tool.
+(substitute your own old-floor/new-floor numbers for `4\.2`/`4\.4`). The first is nearly clean. The second is noisier —
+most of its hits are `## Changelog` entries like "Remove pre-4.2 version references," which are never in scope (see Step
+2). Both commands can surface Changelog hits (e.g. "2020-01-10: Error if hint specified... for servers < 4.2"); skip
+anything inside a Changelog section before reading further, for either command. The English-language equivalents ("older
+than", "prior to") are much lower precision as bare phrases — tested samples were mostly unrelated to server versions at
+all (e.g. "prior to each test run", "prior to garbage collection") — so treat them as a supplementary spot-check, not a
+primary tool.
 
 ### "X.Y or higher/+" qualifiers — check both below the floor and at it
 
@@ -140,26 +154,45 @@ grep -rnE "(4\.2|4\.4)\+" source --include="*.md"
 grep -rnE "(4\.2|4\.4) or (higher|later|newer|greater|above)" source --include="*.md"
 ```
 
-(substitute your own old-floor/new-floor numbers). Tested clean in this repo (21 and 9 hits respectively — versus 109
-and 22 for the broad, number-agnostic version, with the extra hits being entirely legitimate current-and-above-floor
-content like "server 7.0+" or "9.0+", not dead weight for this retirement). Classify every hit against the new floor
-explicitly — a hit whose number equals the new floor exactly (e.g. "4.4 or higher" when 4.4 *is* the new floor) is just
-as dead as one below it, but easy to overlook because the number looks current at a glance. Treating "at the floor" hits
-as their own deliberate pass, not an afterthought, is the single most commonly skipped step.
+(substitute your own old-floor/new-floor numbers). Tested clean in this repo; the broad, number-agnostic version returns
+several times as many hits, and the extra ones are entirely legitimate current-and-above-floor content like "server
+7.0+" or "9.0+", not dead weight for this retirement. Classify every hit against the new floor explicitly — a hit whose
+number equals the new floor exactly (e.g. "4.4 or higher" when 4.4 *is* the new floor) is just as dead as one below it,
+but easy to overlook because the number looks current at a glance. Treating "at the floor" hits as their own deliberate
+pass, not an afterthought, is the single most commonly skipped step.
 
 ### Wire-version proxies, spelled out
 
 Wire version numbers are too short to grep for bare — a bare `9` returns hundreds of unrelated line/port/byte-count
-hits. Anchor to the word instead:
+hits. Anchor to the word instead, and search both wire versions in play (the retiring version's and the new floor's),
+mirroring the two-number scoping used everywhere else in this step:
 
 ```
-grep -rnE "(wire ?[Vv]ersion|[Mm]ax[Ww]ireVersion|[Mm]in[Ww]ireVersion)['\"]? *(is |>=? ?|<=? ?|of |as )?9\b" source --include="*.md"
+grep -rnE "(wire ?[Vv]ersion|[Mm]ax[Ww]ireVersion|[Mm]in[Ww]ireVersion)['\"]? *(is |>=? ?|<=? ?|of |as )?(8|9)\b" source --include="*.md"
 ```
 
-Adjust the trailing digit to whichever wire version you're searching for. Don't convert between server version and wire
-version from memory — use the canonical table in
-[`source/wireversion-featurelist/wireversion-featurelist.md`](../../../source/wireversion-featurelist/wireversion-featurelist.md)
-(that file is itself out of scope for this cleanup — it's inherently a version-mapping reference, not a version gate).
+Substitute the two wire versions you're retiring across (here `8` = server 4.2 and `9` = server 4.4). Keep the trailing
+`\b`: it's what stops `9` from matching inside `93`, and it matters more, not less, for multi-digit wire versions.
+
+Zero hits is a common and usually genuine result — only a handful of wire numbers are spelled out in prose anywhere in
+this repo. Before trusting a zero, confirm your two numbers rather than your regex: **the canonical table can lag the
+server.** As of this writing it stops at 8.0 (wire 25) and has no row for 9.0 at all, even though ~22 files already
+reference 9.0 — so an 8.0 retirement cannot look its new floor up there. If your version is missing from the table, take
+the number from the server's `releases.yml` (linked at the bottom of that file) and consider adding the missing row as a
+separate PR; do not extrapolate it.
+
+**Never compute a wire version from a server version — always look it up** in the canonical table at
+[`source/wireversion-featurelist/wireversion-featurelist.md`](../../../source/wireversion-featurelist/wireversion-featurelist.md).
+Two traps make arithmetic actively wrong from 5.0 onward:
+
+- **They go multi-digit.** Server 4.4 is wire 9, but 5.0 is wire **13** — so a pattern written as a single trailing
+    digit stops working the moment you retire 4.4 or later.
+- **The sequence has gaps.** 4.4 → 5.0 skips wire 10–12, and 6.2 → 7.0 skips wire 20. There is no reliable offset to
+    add; since server 5.1 the wire version is derived from the number of releases since 4.0, not from the version
+    number.
+
+That table file is itself out of scope for this cleanup — it's inherently a version-mapping reference, not a version
+gate.
 
 ### Table cells / structured data
 
@@ -168,10 +201,14 @@ repo-wide like every other search in this step (not scoped to one file you alrea
 "sweep the whole repo" rule):
 
 ```
-grep -rnE '\|\s*[2-4]\.[0-9]' source --include="*.md"
+grep -rnE '\|\s*(4\.2|4\.4)' source --include="*.md"
 ```
 
-(tested: 22 hits repo-wide; adjust the digit range `[2-4]` to whatever's relevant for your retirement).
+(substitute your own retiring/new-floor numbers, exactly as in the patterns above — don't broaden this to a digit range
+like `[2-4]\.[0-9]`. A range re-surfaces every historical version's table rows, which Step 4's opening argument already
+rejects, and it silently matches nothing once you're retiring 5.0 or later.) Expect
+`wireversion-featurelist/wireversion-featurelist.md` to dominate the hits; it is out of scope by definition (see
+"Wire-version proxies" above), so skip it and read the rest.
 
 ### Comments inside YAML test files
 
@@ -211,25 +248,24 @@ for f in $(grep -rl "maxServerVersion" source --include="*.yml"); do
 done
 ```
 
-Both commands print *every* `maxServerVersion` line, not just dead ones (tested in this repo: 22 raw file-level hits,
-140 raw per-test hits) — including ones at or above the new floor (e.g. `maxServerVersion: "7.0.99"`), which are never
-in scope (see Step 2 LEAVE: at/above the floor is fine). Read each hit's value against the new floor to classify it;
-only after that filtering did this repo yield 7 real file-level hits (e.g.
-`crud/tests/unified/deleteOne-hint-serverError.yml` with a top-level `maxServerVersion: 4.3.3`) and 53 real per-test
-hits (e.g. `insertOne-serverErrors.yml`, where only 3 of its 8 tests are individually gated dead).
+Both commands print *every* `maxServerVersion` line, not just dead ones — including ones at or above the new floor (e.g.
+`maxServerVersion: "7.0.99"`), which are never in scope (see Step 2 LEAVE: at/above the floor is fine). Expect the raw
+hit list to be several times larger than the real one; read each hit's value against the new floor to classify it. Only
+after that filtering does a real file-level set emerge (e.g. `crud/tests/unified/deleteOne-hint-serverError.yml` with a
+top-level `maxServerVersion: 4.3.3`), and note that a per-test hit rarely means the whole file is dead (e.g.
+`insertOne-serverErrors.yml`, where only a minority of its tests are individually gated dead).
 
 Unlike numbered markdown prose tests (Step 6 — mark `**Removed**`, never delete-and-renumber), these unified-test
 entries are matched by description string, not by ordinal position, and aren't referenced by index across drivers — so
 it's safe to delete them outright, no marker needed. Before deleting from a `.yml`, check whether it has a `.template`
-source (see "Generated + `.template` file pairs" below) — if so, edit the template and regenerate via `make -C source`
-rather than hand-deleting the generated file directly.
+source (see "Generated + `.template` file pairs" below) — if so, edit the template and regenerate rather than
+hand-deleting the generated file directly.
 
 ### Illustrative examples citing the current floor
 
 An example error message or scenario can hardcode today's specific numbers (e.g. "wire version 8... MongoDB 4.2") and go
-stale when the floor moves, even though it isn't a live conditional. A bare search for the old floor's number is too
-noisy to use directly (87 hits in this repo for a bare "4.2"); narrow it to quoted/blockquote text, which is where
-hardcoded examples usually live:
+stale when the floor moves, even though it isn't a live conditional. A bare search for the old floor's number is far too
+noisy to use directly; narrow it to quoted/blockquote text, which is where hardcoded examples usually live:
 
 ```
 grep -rnE '"[^"]*4\.2[^"]*"|>\s*".*4\.2' source --include="*.md"
@@ -237,7 +273,7 @@ grep -rnE '"[^"]*4\.2[^"]*"|>\s*".*4\.2' source --include="*.md"
 
 (adjust `4\.2` to the old floor). This heuristic is not exhaustive — an example can appear outside quotes too — so still
 read context around any bare-floor-number hits you find through other means; it just gives you a fast, low-noise
-starting point instead of triaging 80+ hits by hand.
+starting point instead of triaging the full bare-number hit list by hand.
 
 ### Stale identifier/file naming
 
@@ -247,13 +283,16 @@ example values like `Int32: 42`). Search filenames and identifiers directly inst
 
 ```
 find source -iname "*pre[0-9][0-9]*" -o -iname "*post[0-9][0-9]*" -o -iname "*pre-[0-9][0-9]*" -o -iname "*post-[0-9][0-9]*"
-grep -rnE "def [a-zA-Z_]*(pre|post)_?[0-9]{2}[a-zA-Z_]*\(" source --include="*.py"
+grep -rnE "def [a-zA-Z_]*(pre|post)_?[0-9]{2,}[a-zA-Z_]*\(" source --include="*.py"
 ```
 
 The first finds filenames, the second finds generator function names. Both are zero-noise in this repo as of this
-writing (they return exactly the known `post-42-*` cluster and its generator function, nothing else) — adjust the digit
-patterns for the versions you're retiring. This is especially worth checking where a "pre-X" counterpart has already
-been removed, since the surviving "post-X" name no longer makes sense on its own.
+writing (they return exactly the known `post-42-*` cluster and its generator function, nothing else). Unlike the
+patterns above, these are deliberately *not* scoped to the two versions in play — the whole point is to surface stale
+names you don't already know about, and there are few enough to read by hand. Note the `{2,}` rather than `{2}`: an
+undotted `10.0` is `100`, three digits, so a fixed two-digit quantifier would start missing names once the server
+reaches double-digit majors. This is especially worth checking where a "pre-X" counterpart has already been removed,
+since the surviving "post-X" name no longer makes sense on its own.
 
 ### Removed commands/mechanisms
 
@@ -271,11 +310,23 @@ search.
 Some YAML test files are generated, not hand-authored — check for a "Tests in this file are generated from
 X.yml.template" comment at the top of the `.yml`, or a sibling file under `etc/templates/X.yml.template`. If you find
 one, edit the `.template` source, not the generated `.yml` directly (a hand-edit to the generated file alone gets
-silently overwritten the next time someone regenerates it), then run `make -C source` to propagate the change to the
-generated `.yml` and its `.json`. If `make -C source` fails, fix the tooling (e.g. a Node/js-yaml version mismatch) —
+silently overwritten the next time someone regenerates it), then regenerate.
+
+Regeneration is two separate steps, and `make -C source` only does the second one:
+
+1. **Template → `.yml`**: `make` does *not* process `.template` files. Each template family has its own generator
+    script, and the authoritative list of them is the "Regenerate JSON test files" step in
+    [`.github/workflows/unified-tests.yml`](../../../.github/workflows/unified-tests.yml) (e.g.
+    `python3 ./source/client-side-operations-timeout/etc/generate-basic-tests.py ./source/client-side-operations-timeout/etc/templates ./source/client-side-operations-timeout/tests`).
+    Run the script matching the template you edited, using that workflow's invocation verbatim rather than guessing
+    at arguments. That workflow is also what regenerates these files in CI, so anything it doesn't run won't be
+    regenerated automatically either.
+2. **`.yml` → `.json`**: `make -C source` (this is all the Makefile does).
+
+If either step fails, fix the tooling (e.g. a Node/js-yaml version mismatch, or a missing `pymongo`/`pyyaml`/`jinja2`) —
 don't hand-edit the generated files to match your template change instead. Hand-syncing risks drifting from what the
-generator would actually produce, and that drift can go unnoticed indefinitely. If you can't get `make` working, don't
-make this edit; flag the blocked file to the operator instead of guessing.
+generator would actually produce, and that drift can go unnoticed indefinitely. If you can't get regeneration working,
+don't make this edit; flag the blocked file to the operator instead of guessing.
 
 ## Step 5: Verify Judgment Calls Against Ground Truth
 
