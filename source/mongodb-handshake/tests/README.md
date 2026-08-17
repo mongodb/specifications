@@ -4,7 +4,7 @@
 
 ### Test 1: Test that environment metadata is properly captured
 
-Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
 the following sets of environment variables:
 
 1. Valid AWS
@@ -82,6 +82,63 @@ the following sets of environment variables:
 2. Create and connect a `Connection` object that connects to the server that returns the mocked response.
 
 3. Assert that no error is raised.
+
+### Test 3: Test that agent metadata is properly captured
+
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
+the following sets of environment variables, and that `client.env.agent` is populated (or omitted) as described.
+
+1. Generic agent via `AI_AGENT`. `client.env.agent` MUST equal `custom-agent`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AI_AGENT`           | `custom-agent` |
+
+2. Generic agent via `AGENT`. `client.env.agent` MUST equal `custom-agent`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AGENT`              | `custom-agent` |
+
+3. Known agent. `client.env.agent` MUST equal `claude-code`.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `CLAUDECODE`         | `1`   |
+
+4. Precedence - generic wins over known. `client.env.agent` MUST equal `custom-agent` (the value of `AI_AGENT`), not
+    `claude-code`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AI_AGENT`           | `custom-agent` |
+    | `CLAUDECODE`         | `1`            |
+
+5. Precedence - first known wins. `client.env.agent` MUST equal `cursor`.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `CURSOR_AGENT`       | `1`   |
+    | `GEMINI_CLI`         | `1`   |
+
+6. Empty value is treated as unset. `client.env.agent` MUST be omitted. If no other `client.env` fields are populated,
+    `client.env` MUST be entirely omitted.
+
+    | Environment Variable | Value               |
+    | -------------------- | ------------------- |
+    | `AI_AGENT`           | `""` (empty string) |
+
+7. No agent variables. None of the environment variables in the `client.env.agent` table are set. `client.env.agent`
+    MUST be omitted.
+
+8. Agent alongside FaaS. This test MUST verify that both the AWS Lambda metadata and `client.env.agent` (equal to
+    `claude-code`) are present in `client.env`.
+
+    | Environment Variable | Value              |
+    | -------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8` |
+    | `AWS_REGION`         | `us-east-2`        |
+    | `CLAUDECODE`         | `1`                |
 
 ## Client Metadata Update Prose Tests
 
