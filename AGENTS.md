@@ -114,6 +114,9 @@ files instead of altering existing ones.
 - For spec changes that remove functionality: use `runOnRequirements` (unified tests) or have drivers skip the test
     (non-unified tests like SDAM).
 - Outdated prose tests must not be removed — mark them as such (e.g., strikethrough or *Removed*).
+- Retiring an EOL server version (removing now-dead version-gated tests, prose, and pseudocode after the minimum
+    supported server version is raised) is a repo-wide sweep with many non-obvious traps. Use the
+    `retiring-server-versions` skill for the full checklist before starting one.
 
 ### Prose Test Numbering
 

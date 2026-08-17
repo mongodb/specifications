@@ -481,6 +481,8 @@ A URI options can be added later if we realise our users need it, while the oppo
     `db.mongodb.cursor_id` MUST be added to operation spans and to command spans that create a cursor with a non-zero id
     or that operate on a single existing cursor, and MUST be omitted rather than set to `0` when no server-side cursor
     remains.
+- 2026-07-31: Allowed the `update` test to accept `multi` and `upsert` at their default values, and added `initialData`
+    to the operation tests that create or modify collections.
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
 - 2026-02-09: Renamed `db.system` to `db.system.name` according to the corresponding update of OpenTelemetry semantic
     conventions.
