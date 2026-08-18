@@ -151,8 +151,9 @@ collection, or `getMore db` when the cursor targets no specific collection (e.g.
 
 This operation span MUST NOT be nested under the operation span of the command that created the cursor. A host
 application may do unrelated work between batches, and nesting each `getMore` under the cursor-creating operation would
-attribute that work to the original operation. Ordinary nesting still applies otherwise: a cursor iterated inside a
-`withTransaction` callback nests into the `withTransaction` span.
+attribute that work to the original operation. Ordinary nesting still applies otherwise. A cursor iterated inside a
+`withTransaction` callback nests into the `withTransaction` span, and a cursor iterated inside a transaction started
+with the core transaction API nests into the pseudo operation `transaction` span.
 
 Each `getMore` operation span MUST be finished once its command completes. No span is scoped to a cursor's lifetime, so
 a cursor that is never exhausted (e.g., a tailable cursor) leaves nothing unfinished.

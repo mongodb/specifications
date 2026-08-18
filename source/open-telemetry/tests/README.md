@@ -69,7 +69,10 @@ expectTracingMessages:
 5. Assert that on each of those two spans, the value is the cursor id the driver sent in the `getMore` command, and not
     the `0` returned in that command's reply.
 
-*Test 4: `getMore` inside a transaction nests under the transaction span*
+*Test 4: `getMore` inside a `withTransaction` callback nests under the transaction span*
+
+This test covers the convenient transaction API. The core transaction API case is covered by the unified test
+[tests/transaction/get_more.yml](transaction/get_more.yml).
 
 This test requires a replica set or a sharded cluster running server version 4.4 or later.
 
