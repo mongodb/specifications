@@ -16,6 +16,9 @@ from pathlib import Path
 
 PSL_URL = "https://publicsuffix.org/list/public_suffix_list.dat"
 
+# Seconds to wait on the download in a local run.
+TIMEOUT_SECONDS = 30
+
 # source/public-suffix-list/etc/sync-psl.py -> source/public-suffix-list
 SPEC_DIR = Path(__file__).resolve().parent.parent
 DEST = SPEC_DIR / "public_suffix_list.dat"
@@ -23,7 +26,10 @@ DEST = SPEC_DIR / "public_suffix_list.dat"
 
 def fetch():
     request = urllib.request.Request(PSL_URL, headers={"User-Agent": "mongodb-specifications-sync-psl"})
-    with urllib.request.urlopen(request) as response:
+    with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
+        if not response.url.startswith("https://"):
+            sys.exit(f"Refusing to use non-HTTPS response URL {response.url!r}.")
+
         data = response.read()
 
     text = data.decode("utf-8")
