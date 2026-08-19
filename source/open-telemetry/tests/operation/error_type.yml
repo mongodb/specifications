@@ -4,6 +4,8 @@ createEntities:
   - client:
       id: &client0 client0
       useMultipleMongoses: false
+      uriOptions:
+        retryReads: false
       observeTracingMessages:
         enableCommandPayload: false
   - client:
