@@ -239,6 +239,7 @@ Spans SHOULD have the following attributes:
 | `db.collection.name`              | `string` | The collection being accessed within the database stated in `db.namespace`                                                                               | Required if available        |
 | `db.command.name`                 | `string` | The name of the server command being executed                                                                                                            | Required                     |
 | `db.response.status_code`         | `string` | MongoDB error code represented as a string. This attribute should be added only if an error happens.                                                     | Required if an error happens |
+| `error.type`                      | `string` | See [error.type](#errortype) below.                                                                                                                      | Required if an error happens |
 | `server.port`                     | `int64`  | Server port number                                                                                                                                       | Required                     |
 | `server.address`                  | `string` | Name of the database host, or IP address if name is not known                                                                                            | Required                     |
 | `network.transport`               | `string` | MUST be 'tcp' or 'unix' depending on the protocol                                                                                                        | Required                     |
@@ -311,6 +312,22 @@ On the `MongoClient` level this configuration can be implemented with a `MongoCl
 ###### db.mongodb.cursor_id
 
 If the command returns a cursor, or uses a cursor, the `cursor_id` attribute SHOULD be added.
+
+###### error.type
+
+This attribute SHOULD match `db.response.status_code` when the command failed with a server error (i.e., the server
+returned an error code in its response). Otherwise, this attribute SHOULD be the name of the exception class the driver
+raises to the application.
+
+Drivers MUST NOT set this attribute when the command succeeds. Per the
+[OpenTelemetry semantic conventions for `error.type`](https://opentelemetry.io/docs/specs/semconv/registry/attributes/error/#error-type),
+this attribute SHOULD have a low number of distinct values, since it is intended to be used as a dimension for grouping
+and alerting on failures in tracing backends.
+
+`error.type` is a span attribute, deliberately duplicating the information carried by the `exception.type` attribute of
+the exception *event* recorded on the same span (see Exceptions below). The duplication is intentional: tracing backends
+query and aggregate on span attributes, not on the attributes of events nested within a span, so `error.type` is what
+makes error class queryable at the span level.
 
 ##### Exceptions
 
@@ -425,6 +442,7 @@ A URI options can be added later if we realise our users need it, while the oppo
 
 ## Changelog
 
+- 2026-08-19: Add `error.type` to the Command Span Attributes table.
 - 2026-07-31: Allowed the `update` test to accept `multi` and `upsert` at their default values, and added `initialData`
     to the operation tests that create or modify collections.
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
