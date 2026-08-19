@@ -211,6 +211,10 @@ if available:
 - `exception.type`
 - `exception.stacktrace`
 
+Unlike command spans, operation spans MUST NOT have an `error.type` attribute: an operation can succeed overall (e.g.
+via retry) even when one of its underlying commands failed, so `error.type`'s command-level derivation does not carry
+over to the operation span.
+
 #### Instrumenting Server Commands
 
 Drivers MUST create a span for every server command sent to the server as a result of a public API call, except for
@@ -442,7 +446,7 @@ A URI options can be added later if we realise our users need it, while the oppo
 
 ## Changelog
 
-- 2026-08-19: Add `error.type` to the Command Span Attributes table.
+- 2026-08-19: Add `error.type` to the Command Span Attributes table. Operation spans MUST NOT carry `error.type`.
 - 2026-07-31: Allowed the `update` test to accept `multi` and `upsert` at their default values, and added `initialData`
     to the operation tests that create or modify collections.
 - 2026-06-16: Clarified that the `db.query.text` attribute should be serialized to Relaxed Extended JSON.
