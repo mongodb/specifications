@@ -87,7 +87,7 @@ fail to match rules that should match.
 ### Determining the public suffix
 
 To determine the public suffix of a domain, a driver using the vendored file MUST follow the
-[algorithm published by publicsuffix.org](https://publicsuffix.org/list/):
+[algorithm published by the publicsuffix folks](https://github.com/publicsuffix/list/wiki/Format#algorithm):
 
 1. Compare the domain's labels against each rule's labels from right to left, treating `*` as matching any single label.
     Collect every rule that matches.
