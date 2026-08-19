@@ -57,7 +57,7 @@
                 "failCommands": [
                   "find"
                 ],
-                "errorCode": 89
+                "errorCode": 8
               }
             }
           }
@@ -96,6 +96,9 @@
                 },
                 "exception.stacktrace": {
                   "$$type": "string"
+                },
+                "error.type": {
+                  "$$exists": false
                 }
               },
               "nested": [
@@ -107,8 +110,8 @@
                     "db.collection.name": "test",
                     "db.command.name": "find",
                     "network.transport": "tcp",
-                    "db.response.status_code": "89",
-                    "error.type": "89",
+                    "db.response.status_code": "8",
+                    "error.type": "8",
                     "exception.message": {
                       "$$type": "string"
                     },
