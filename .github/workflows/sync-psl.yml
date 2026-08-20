@@ -62,7 +62,7 @@ jobs:
           `source/public-suffix-list/public_suffix_list.dat` via `source/public-suffix-list/etc/sync-psl.py`.
 
           Please review the diff before merging. If an earlier sync pull request is still open,
-          merge or close this one and that one together -- they change the same file.
+          merge the latest PR and close the other(s) -- they change the same file.
           EOF
           )
           gh pr create \
