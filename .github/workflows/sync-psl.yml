@@ -6,10 +6,6 @@ on:
     - cron: "0 12 1 * *"
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 env:
   PSL: source/public-suffix-list/public_suffix_list.dat
 
@@ -18,6 +14,9 @@ jobs:
     name: Sync PSL and open a PR
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
