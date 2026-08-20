@@ -1,0 +1,72 @@
+name: Sync Public Suffix List
+
+on:
+  schedule:
+    # 12:00 UTC on the first day of each month.
+    - cron: "0 12 1 * *"
+  workflow_dispatch:
+
+env:
+  PSL: source/public-suffix-list/public_suffix_list.dat
+
+jobs:
+  sync:
+    name: Sync PSL and open a PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync the Public Suffix List
+        run: python3 source/public-suffix-list/etc/sync-psl.py
+      - name: Check whether the list changed
+        id: changed
+        run: |
+          if git diff --quiet -- "$PSL"; then
+            echo "The list is unchanged; nothing to do."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Commit and push
+        id: push
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Each run gets its own branch, so nothing is ever force-pushed over. A run that
+          # collides with an earlier branch from the same day is rejected rather than
+          # overwriting it.
+          today=$(date -u +%Y-%m-%d)
+          branch="sync-psl-$today"
+          git switch -c "$branch"
+          git add -- "$PSL"
+          git commit -m "[$today] Sync the Public Suffix List"
+          git push origin "$branch"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "today=$today" >> "$GITHUB_OUTPUT"
+      - name: Open a pull request
+        if: steps.changed.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.push.outputs.branch }}
+          TODAY: ${{ steps.push.outputs.today }}
+        run: |
+          body=$(cat <<'EOF'
+          The upstream [Public Suffix List](https://publicsuffix.org/list/) has changed.
+
+          This pull request was opened automatically by the `sync-psl` workflow, which regenerates
+          `source/public-suffix-list/public_suffix_list.dat` via `source/public-suffix-list/etc/sync-psl.py`.
+
+          Please review the diff before merging. If an earlier sync pull request is still open,
+          merge the latest PR and close the other(s) -- they change the same file.
+          EOF
+          )
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "[$TODAY] Sync the Public Suffix List" \
+            --body "$body"
