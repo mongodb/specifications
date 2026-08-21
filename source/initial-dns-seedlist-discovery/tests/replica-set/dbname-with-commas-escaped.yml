@@ -10,4 +10,4 @@ options:
   replicaSet: repl0
   ssl: true
 parsed_options:
-  defaultDatabase: some,db
+  auth_database: some,db
