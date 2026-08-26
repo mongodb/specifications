@@ -1,5 +1,5 @@
 description: operation getMore
-schemaVersion: '1.27'
+schemaVersion: '1.29'
 createEntities:
   - client:
       id: &client0 client0
@@ -52,7 +52,7 @@ tests:
               db.operation.summary: find operation-get-more.test
               # This find created a cursor with a non-zero id, since batchSize 2 leaves it open,
               # so cursor_id is required on the operation span as well as the command span.
-              db.mongodb.cursor_id: { $$type: [ int, long ] }
+              db.mongodb.cursor_id: { $$gte: 1 }
             # Negative assertion: this `nested` array lists the `find` command span and nothing
             # else. A driver that nests the getMore under the cursor-creating operation produces a
             # second entry here, which `ignoreExtraSpans: false` rejects, because the unified test
@@ -72,7 +72,7 @@ tests:
                   server.address: { $$type: string }
                   server.port: { $$type: [ int, long ] }
                   db.query.summary: find operation-get-more.test
-                  db.mongodb.cursor_id: { $$type: [ int, long ] }
+                  db.mongodb.cursor_id: { $$gte: 1 }
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]
                   db.mongodb.driver_connection_id:
@@ -85,7 +85,7 @@ tests:
               db.operation.name: getMore
               db.operation.summary: getMore operation-get-more.test
               # This operation operates on an existing cursor, so cursor_id is required here too.
-              db.mongodb.cursor_id: { $$type: [ int, long ] }
+              db.mongodb.cursor_id: { $$gte: 1 }
             nested:
               - name: getMore
                 attributes:
@@ -102,12 +102,9 @@ tests:
                   server.port: { $$type: [ int, long ] }
                   db.query.summary: getMore operation-get-more.test
                   # This getMore drains the cursor, so the server's reply carries cursor id 0.
-                  # The attribute must still be present. $$type only enforces presence and BSON
-                  # type — it cannot express "non-zero", because the unified test format has no
-                  # numeric comparison operator, and 0 satisfies $$type: int. The requirement that
-                  # this holds the non-zero id the driver sent rather than the reply's 0 is covered
-                  # by prose test 3 in ../README.md.
-                  db.mongodb.cursor_id: { $$type: [ int, long ] }
+                  # Asserting a lower bound of 1 is what pins the requirement: a driver that
+                  # recorded the reply's 0 instead of the id it sent would fail here.
+                  db.mongodb.cursor_id: { $$gte: 1 }
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]
                   db.mongodb.driver_connection_id:

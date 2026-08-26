@@ -2935,6 +2935,19 @@ test runner MUST assert that the actual value is less than or equal to the speci
 the rules specified in [Flexible Numeric Comparisons](#flexible-numeric-comparisons) for this operator. For example, an
 expected value of `1` would match an actual value of `1.0` and `0.0` but would not match `1.1`.
 
+##### $$gte
+
+Syntax:
+
+```yaml
+{ $$gte: 1 }
+```
+
+This operator can be used anywhere a matched value is expected (including [expectResult](#operation_expectResult)). The
+test runner MUST assert that the actual value is greater than or equal to the specified value. Test runners MUST also
+apply the rules specified in [Flexible Numeric Comparisons](#flexible-numeric-comparisons) for this operator. For
+example, an expected value of `1` would match an actual value of `1.0` and `1.1` but would not match `0.0`.
+
 ##### $$matchAsDocument
 
 Syntax:
@@ -3456,6 +3469,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-08-26: **Schema version 1.29.**
+
+    Introduced the `$$gte` operator, the lower-bound counterpart to `$$lte`.
 
 - 2026-08-11: Clarified that `ignoreExtraSpans` applies at every level of the span tree, so that a test can assert a
     span is not nested under a given parent by omitting it from that parent's `nested` array.
