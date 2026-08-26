@@ -3472,10 +3472,9 @@ other specs *and* collating spec changes developed in parallel or during the sam
 
 - 2026-08-26: **Schema version 1.29.**
 
-    Introduced the `$$gte` operator, the lower-bound counterpart to `$$lte`.
-
-- 2026-08-11: Clarified that `ignoreExtraSpans` applies at every level of the span tree, so that a test can assert a
-    span is not nested under a given parent by omitting it from that parent's `nested` array.
+    Introduced the `$$gte` operator, the lower-bound counterpart to `$$lte`. Also clarified that `ignoreExtraSpans`
+    applies at every level of the span tree, so that a test can assert a span is not nested under a given parent by
+    omitting it from that parent's `nested` array. Both changes require runner support, so they share this version.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
