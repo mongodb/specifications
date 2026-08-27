@@ -64,8 +64,8 @@ expectTracingMessages:
 This test covers the convenient transaction API. The core transaction API case is covered by the unified test
 [tests/transaction/get_more.yml](transaction/get_more.yml).
 
-This test requires transactions: a replica set running server version 4.0 or later, or a sharded cluster running server
-version 4.1.8 or later, matching the requirements of that unified test.
+This test requires a replica set or a sharded cluster running server version 4.4 or later, matching the existing
+convenient transaction API fixture [tests/transaction/convenient.yml](transaction/convenient.yml).
 
 1. Create a `MongoClient` with tracing enabled.
 2. Insert three documents into a test collection.
