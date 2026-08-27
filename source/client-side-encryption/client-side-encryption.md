@@ -2489,7 +2489,7 @@ ensuring that the key encryption key never leaves the server.
 
 ## Future work
 
-### Make libmonogocrypt cache window configurable
+### Make libmongocrypt cache window configurable
 
 There's a principle at MongoDB, "no knobs", that we should honor wherever possible. Configurability is bad, mandating
 one well-chosen value is good. But if our default caching behavior is discovered unsuitable for some use cases we may
