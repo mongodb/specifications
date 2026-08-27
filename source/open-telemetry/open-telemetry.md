@@ -159,8 +159,10 @@ Each `getMore` operation span MUST be finished once its command completes. No sp
 a cursor that is never exhausted (e.g., a tailable cursor) leaves nothing unfinished.
 
 A `getMore` is not retryable, but a change stream may resume after one fails. A resume MUST NOT extend the failed
-`getMore` operation span: drivers MUST finish that span with its error, and the `killCursors`, `aggregate`, and
-`getMore` commands that re-establish the cursor MUST each be nested under new operation spans.
+`getMore` operation span: drivers MUST finish that span with its error, and the `aggregate` and `getMore` commands that
+re-establish the cursor MUST each be nested under new operation spans. Drivers MUST NOT create an operation span for the
+`killCursors` a resume sends; it is internal cleanup rather than a public API call, so its command span is created
+within whatever span is current.
 
 ##### Operation Span Name
 

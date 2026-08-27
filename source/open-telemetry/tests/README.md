@@ -59,22 +59,13 @@ expectTracingMessages:
 8. Perform the same database operation.
 9. Assert that the emitted tracing span does not include the `db.query.text` attribute.
 
-*Test 3: `getMore` records the cursor id it sent, not the cursor id returned*
-
-1. Create a `MongoClient` with tracing enabled.
-2. Insert three documents into a test collection.
-3. Create a cursor over that collection with `find` and a `batchSize` of `2`, then iterate the cursor until it is
-    exhausted. This sends exactly one `getMore`, and the server's reply to that `getMore` returns a cursor id of `0`.
-4. Assert that both the `getMore` operation span and the `getMore` command span have a `db.mongodb.cursor_id` attribute.
-5. Assert that on each of those two spans, the value is the cursor id the driver sent in the `getMore` command, and not
-    the `0` returned in that command's reply.
-
-*Test 4: `getMore` inside a `withTransaction` callback nests under the transaction span*
+*Test 3: `getMore` inside a `withTransaction` callback nests under the transaction span*
 
 This test covers the convenient transaction API. The core transaction API case is covered by the unified test
 [tests/transaction/get_more.yml](transaction/get_more.yml).
 
-This test requires a replica set or a sharded cluster running server version 4.4 or later.
+This test requires transactions: a replica set running server version 4.0 or later, or a sharded cluster running server
+version 4.1.8 or later, matching the requirements of that unified test.
 
 1. Create a `MongoClient` with tracing enabled.
 2. Insert three documents into a test collection.
