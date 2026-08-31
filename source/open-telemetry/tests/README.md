@@ -75,3 +75,17 @@ convenient transaction API fixture [tests/transaction/convenient.yml](transactio
 4. Assert that a `transaction` span was emitted, and that both the `find` operation span and the `getMore` operation
     span are nested directly under it.
 5. Assert that the `getMore` operation span is a sibling of the `find` operation span, and is not nested under it.
+
+*Test 4: `getMore` records the cursor id it sent, not the cursor id returned*
+
+The unified fixtures assert `db.mongodb.cursor_id: { $$gte: 1 }`, which rules out the `0` the reply carries. This test
+asserts the stronger claim that the value equals the id the driver sent, which no matching operator can express.
+
+1. Create a `MongoClient` with tracing enabled.
+2. Insert three documents into a test collection.
+3. Create a cursor over that collection with `find` and a `batchSize` of `2`. Consume the first batch, then record the
+    cursor id before iterating further.
+4. Iterate the cursor until it is exhausted. This sends exactly one `getMore`, and the server's reply to that `getMore`
+    returns a cursor id of `0`.
+5. Assert that both the `getMore` operation span and the `getMore` command span have a `db.mongodb.cursor_id` attribute
+    whose value equals the cursor id recorded in step 3.
