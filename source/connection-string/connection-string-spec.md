@@ -216,6 +216,9 @@ The values in connection options MUST be URL decoded by the parser. The values c
     Deprecated boolean value for "journal" : "1", please update to "journal=true"
     ```
 
+    The message MUST NOT disclose sensitive values; see
+    [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
+
 - Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
     order as they appear in the Connection String. For example:
 
