@@ -79,6 +79,9 @@ encoding rules of RFC 3986 and SHOULD throw an exception if disallowed character
 backwards-compatibility reasons, drivers MAY allow reserved characters other than "@" and ":" to be present in user
 information without percent-encoding.
 
+These encoding requirements exist so that a connection string parses unambiguously. They are not a confidentiality
+measure: see [Disclosure of Sensitive Values](#disclosure-of-sensitive-values).
+
 ### Host Information
 
 Unlike a standard URI, the connection string allows for identifying multiple hosts. The host information section of the
@@ -107,7 +110,7 @@ The host information cannot contain an unescaped slash ("/"), if it does then an
 users that paths must be URL encoded. For example:
 
 ```text
-Unsupported host '/tmp/mongodb-27017.sock', UNIX socket domain paths must be URL encoded.
+Unsupported host: UNIX socket domain paths must be URL encoded.
 ```
 
 Support for UNIX domain sockets and IP Literals is OPTIONAL.
@@ -178,6 +181,9 @@ keys. For example:
 Unsupported option 'connectMS'.
 ```
 
+The message MUST NOT disclose sensitive values; see
+[Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
+
 Keys should be descriptive and follow existing conventions:
 
 ##### Time based keys
@@ -243,6 +249,9 @@ Any invalid Values for a given key MUST be ignored and MUST log a WARN level mes
 ```text
 Unsupported value for "fsync" : "ifPossible"
 ```
+
+The message MUST NOT disclose sensitive values; see
+[Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
 
 ### Repeated Keys
 
