@@ -53,3 +53,66 @@ the driver's URI parsing component.
 
 The file `valid-db-with-dotted-name.yml` is a special case for testing drivers that allow dotted namespaces, instead of
 only database names, in the Auth Database portion of the URI.
+
+## Credential disclosure tests
+
+`credential-disclosure.yml` is a separate corpus for the requirements in
+[Disclosure of Sensitive Values](../connection-string-spec.md#disclosure-of-sensitive-values). Its cases have only two
+keys:
+
+- `description`: A string describing the test.
+- `uri`: A string containing the URI to be parsed.
+
+Every URI carries a sentinel password, in one of two forms:
+
+- the literal `SENTINELpassword1234`, or
+- that same literal fully percent-encoded, as `%53%45%4E%54%49%4E%45%4C%70%61%73%73%77%6F%72%64%31%32%33%34`.
+
+The sentinel is deliberately alphanumeric, so that no percent-encoding of the URI can split it and a driver can detect
+it by scanning for it as a fixed string. A driver MUST scan for both forms, case-insensitively: the literal form because
+drivers lowercase option keys, and the encoded form because a driver that echoes the URI without decoding it still
+discloses a credential that is trivially recoverable. Cases carrying the encoded form exist because several drivers
+decode a component before including it in a message. No other normalization is required.
+
+For each case:
+
+- If the driver rejects the URI, neither form of the sentinel may appear in the resulting error message.
+- Any warning the driver logs while parsing the URI must contain neither form of the sentinel.
+- If the driver accepts the URI, the case asserts nothing.
+
+The last clause is deliberate. These URIs are malformed in ways this specification does not fully pin down, so drivers
+legitimately differ on which of them parse. Where a driver accepts one, the sentinel has been relocated into a parsed
+component such as the database name or an option value; that is a separate defect from the message hygiene these tests
+cover, and it is tracked separately. Tightening this into an unconditional "the sentinel appears nowhere" assertion
+would fail drivers for a defect these tests are not about.
+
+Drivers SHOULD run each case twice: once catching the error and inspecting only its message, and once letting the error
+escape to the language runtime's default handler. Drivers have been observed to disclose on one path and not the other.
+
+The corpus is curated rather than exhaustive. When adding cases, include at least one per structural family per
+disclosure mechanism, and prefer a URI shape that is known to leak in more than one driver: cross-driver provenance is
+what makes a case worth its place, since a corpus assembled from any single driver's own ideas has repeatedly been shown
+to miss shapes that leak in most of the others.
+
+## Prose Tests
+
+These tests cover requirements that cannot be expressed as a list of URIs. They use the sentinel password
+`SENTINELpassword1234`.
+
+1. **Redacted string representation.** Construct a connection string object, and a client if the driver's API requires
+    one, from `mongodb://testuser:SENTINELpassword1234@localhost:27017/db`. This URI is valid, so no error is raised.
+    Assert that the sentinel does not appear in any idiomatic representation of the object: the language's string
+    conversion, its debug or inspection representation, and its serialized form if the object is serializable. Assert
+    that a fixed placeholder appears in place of the password, and that the placeholder does not vary with the
+    password's length.
+
+2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
+    assert that it returns the password, and confirm by inspection that its name makes the disclosure evident.
+
+3. **Unrecognized option values are not logged.** Parse
+    `mongodb://localhost:27017/?notARealOption=SENTINELpassword1234`. Assert that the driver logs a WARN level message
+    identifying the key `notARealOption`, and that the sentinel does not appear in it.
+
+4. **Sensitive option values are not logged.** Parse
+    `mongodb://localhost:27017/?authMechanismProperties=SENTINELpassword1234`, whose value is malformed because it
+    contains no colon. Assert that any message the driver emits does not contain the sentinel.
