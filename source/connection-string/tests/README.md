@@ -68,8 +68,8 @@ Every URI carries a sentinel password, in one of two forms:
 - the literal `SENTINELpassword1234`, or
 - that same literal fully percent-encoded, as `%53%45%4E%54%49%4E%45%4C%70%61%73%73%77%6F%72%64%31%32%33%34`.
 
-The sentinel is deliberately alphanumeric, so that no percent-encoding of the URI can split it and a driver can detect
-it by scanning for it as a fixed string. A driver MUST scan for both forms, case-insensitively: the literal form because
+The sentinel is deliberately alphanumeric so that no percent-encoding of the URI can split it and a driver can detect it
+by scanning for it as a fixed string. A driver MUST scan for both forms, case-insensitively: the literal form because
 drivers lowercase option keys, and the encoded form because a driver that echoes the URI without decoding it still
 discloses a credential that is trivially recoverable. Cases carrying the encoded form exist because several drivers
 decode a component before including it in a message. No other normalization is required.
@@ -82,9 +82,9 @@ For each case:
 
 The last clause is deliberate. These URIs are malformed in ways this specification does not fully pin down, so drivers
 legitimately differ on which of them parse. Where a driver accepts one, the sentinel has been relocated into a parsed
-component such as the database name or an option value; that is a separate defect from the message hygiene these tests
-cover, and it is tracked separately. Tightening this into an unconditional "the sentinel appears nowhere" assertion
-would fail drivers for a defect these tests are not about.
+component such as the database name or an option value, and that is a separate defect from the message hygiene these
+tests cover, and it is tracked separately. Tightening this into an unconditional "the sentinel appears nowhere"
+assertion would fail drivers for a defect these tests are not about.
 
 Drivers SHOULD run each case twice: once catching the error and inspecting only its message, and once letting the error
 escape to the language runtime's default handler. Drivers have been observed to disclose on one path and not the other.
@@ -103,8 +103,7 @@ These tests cover requirements that cannot be expressed as a list of URIs. They 
     one, from `mongodb://testuser:SENTINELpassword1234@localhost:27017/db`. This URI is valid, so no error is raised.
     Assert that the sentinel does not appear in any idiomatic representation of the object: the language's string
     conversion, its debug or inspection representation, and its serialized form if the object is serializable. Assert
-    that a fixed placeholder appears in place of the password, and that the placeholder does not vary with the
-    password's length.
+    that the placeholder `<redacted>` appears in place of the password.
 
 2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
     assert that it returns the password, and confirm by inspection that its name makes the disclosure evident.

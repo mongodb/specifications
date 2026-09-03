@@ -125,8 +125,8 @@ to URI options apply here.
 
 ### Sensitive options
 
-The value of a sensitive option MUST NOT appear in an error message, a log message, or a string representation of a
-connection string. See
+The value of a sensitive option MUST NOT appear in any diagnostic, log message, or string representation of a connection
+string. See
 [Disclosure of Sensitive Values](../connection-string/connection-string-spec.md#disclosure-of-sensitive-values).
 
 The following options are sensitive:
@@ -137,8 +137,8 @@ The following options are sensitive:
 - `authMechanismProperties`, in its entirety, because its sub-values carry credentials such as AWS session tokens and
     OIDC access tokens.
 
-A specification that defines a connection option MUST state whether the option's value is sensitive, and this
-specification MUST be updated to list it here if it is.
+A specification that defines a new connection parameter MUST state whether the argument is potentially sensitive, and
+this specification MUST be updated to list it here if it is.
 
 ## Test Plan
 
@@ -204,7 +204,8 @@ changes.
 
 - 2026-09-03: Add `srvAllowedHostsSuffix` option.
 
-- 2026-09-02: Add the list of sensitive options and require new options to declare whether their values are sensitive.
+- 2026-09-02: Add the list of sensitive parameters and require new parameters in other specification documents to
+    declare whether their arguments are sensitive.
 
 - 2026-06-17: Remove pre-4.2 version references.
 

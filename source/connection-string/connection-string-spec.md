@@ -181,7 +181,7 @@ keys. For example:
 Unsupported option 'connectMS'.
 ```
 
-The message MUST NOT disclose sensitive values; see
+The message MUST NOT disclose sensitive values: see
 [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
 
 Keys should be descriptive and follow existing conventions:
@@ -216,7 +216,7 @@ The values in connection options MUST be URL decoded by the parser. The values c
     Deprecated boolean value for "journal" : "1", please update to "journal=true"
     ```
 
-    The message MUST NOT disclose sensitive values; see
+    The message MUST NOT disclose sensitive values: see
     [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
 
 - Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
@@ -253,7 +253,7 @@ Any invalid Values for a given key MUST be ignored and MUST log a WARN level mes
 Unsupported value for "fsync" : "ifPossible"
 ```
 
-The message MUST NOT disclose sensitive values; see
+The message MUST NOT disclose sensitive values: see
 [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
 
 ### Repeated Keys
@@ -310,33 +310,34 @@ vice versa) so long as that behavior is documented.
 
 ### Disclosure of Sensitive Values
 
-Connection strings routinely carry secrets. A connection string that a driver rejects — most often because of an
-operator typo rather than an attacker — is nonetheless commonly written to an application log, where any credential it
-contains becomes durable. This section defines what a driver MUST NOT disclose when reporting on a connection string.
+Connection strings routinely carry secrets in plaintext. A connection string that a driver rejects (most often because
+of a simple spelling error or syntax mistake rather than an attacker) is nonetheless commonly written to an application
+log, where any credential it contains becomes durable. This section defines what a driver MUST NOT disclose when
+reporting on a connection string.
 
 #### Sensitive values
 
 For the purposes of this section, a "sensitive value" is any of the following:
 
-- The password component of the [Userinfo](#userinfo-optional), whether or not the connection string parses
+- The password component of the [Userinfo](#userinfo-optional) segment, whether or not the connection string parses
     successfully.
-- The value of a connection option whose defining specification declares its value to be sensitive. See
+- The argument of a URI parameter whose defining specification declares its value to be sensitive. See
     [Sensitive options](../uri-options/uri-options.md#sensitive-options).
-- The value of an option key that the driver does not recognize. A driver cannot determine whether such a value is
-    sensitive, so it MUST be treated as sensitive.
+- The argument associated with a URI parameter that the driver does not recognize. A driver cannot determine whether
+    such a value is sensitive, so it MUST be treated as sensitive.
 
 #### Reporting a parse failure
 
-When a driver fails to parse a connection string, the resulting exception or error message MUST NOT contain the
-connection string, nor any substring of it. The message MAY describe:
+Until a driver has successfully parsed a connection string, any diagnostic warning or error it emits MUST NOT contain
+the connection string, nor any substring of it. A message MAY describe:
 
-- which component of the connection string is at fault, identified by name (for example "port", "host identifier", or
-    "auth database");
-- the position of that component among repeated components (for example "the second host identifier");
-- what the parser expected instead.
+- The component of the connection string that is at fault, identified by name (for example "port", "host identifier", or
+    "auth database").
+- The position of that component among repeated components (for example "the second host identifier").
+- What the parser expected instead.
 
-A driver MUST NOT satisfy this requirement by masking, redacting, or otherwise transforming the connection string it was
-given.
+A driver MUST NOT attempt to satisfy this requirement by masking, redacting, or otherwise transforming the connection
+string that it was given.
 
 #### Reporting an unsupported key or invalid value
 
@@ -345,15 +346,15 @@ A WARN level message reporting an unsupported, unrecognized, deprecated or repea
 A WARN level message reporting an invalid value MUST identify the key. The message MUST NOT contain the value if the key
 is sensitive or is not recognized by the driver, and MAY contain the value otherwise.
 
-A driver MUST NOT emit a message containing any text derived from the connection string, including an option key, before
-parsing has completed successfully. If parsing fails, only messages permitted by
-[Reporting a parse failure](#reporting-a-parse-failure) may be emitted.
+These permissions apply only once parsing has completed successfully. Until then, no text derived from the connection
+string, including a URI parameter key or its argument, may appear in any message: see
+[Reporting a parse failure](#reporting-a-parse-failure).
 
 #### String representations
 
 Any idiomatic string conversion, debug representation, or serialization of a connection string, or of client
-configuration derived from one, MUST replace the password with a fixed placeholder. The placeholder MUST NOT vary with
-the content or the length of the credential.
+configuration derived from one, MUST replace the userinfo password and sensitive parameter arguments with the
+placeholder `<redacted>`, exactly as spelled here.
 
 Such a representation MUST be constructed from the parsed components of the connection string rather than by
 transforming the connection string itself, and MUST NOT fall back to the connection string when parsing did not
@@ -532,30 +533,35 @@ by default.
 
 Q: Why may a parse failure message not quote any part of the connection string
 
-A failed parse means the driver's own component boundaries are not trustworthy, so no span of the input is known not to
-be the password. Two shapes demonstrate this. If the at-sign ("@") is absent entirely, `user:password` is reinterpreted
-as a host list, which a driver will echo freely because a hostname is not thought of as secret. If the password contains
-a single unencoded at-sign, the tail of the password is parsed as the hostname. Masking cannot close this, because the
-masking logic and the parsing logic disagree about where the userinfo ends; that disagreement produces messages that
-print the credential alongside a redaction marker, which is more dangerous than an obvious disclosure because it appears
-to have been handled.
+A failed parse means the driver's understanding of the user's intended component boundaries is not trustworthy, so no
+span of the input is known *not* to be the password. Two shapes demonstrate this:
 
-Q: Why must option keys not be echoed before parsing has succeeded
+- If the at-sign ("@") is absent entirely, `user:password` is reinterpreted as a host list, which a driver might print
+    freely because a hostname is not thought of as secret.
+- If the password contains a single unencoded at-sign, the tail of the password is parsed as the hostname.
 
-A fragment of a password can be parsed into the key position. Given `mongodb://user:x?SECRET=1@localhost:27017/admin`, a
-driver that reports unrecognized keys as it encounters them discloses the credential even if it goes on to reject the
-connection string, and a driver that accepts such a string discloses it with no error raised at all.
+Masking *cannot* close this because the masking logic and the parsing logic disagree about where the userinfo ends. That
+disagreement may even be harmful by providing a false sense of security, because it produces messages that print the
+credential alongside a redaction marker, giving the impression that a successful redaction took place when it did not.
+
+Q: Why must URI parameters not be echoed before parsing has succeeded
+
+A fragment of a password can be parsed into the key position if the password contains an unencoded question mark "`?`".
+Given `mongodb://user:x?SECRET=1@localhost:27017/admin`, a driver that reports unrecognized keys as it encounters them
+discloses the credential even if it goes on to reject the connection string.
 
 Q: Is percent-encoding the password sufficient to protect it
 
 No. A driver that decodes a component before including it in a message discloses the credential in plaintext regardless
 of how it was encoded, and where the raw string is echoed instead, the encoded form remains trivially recoverable. The
-encoding rules for [Userinfo](#userinfo-optional) exist so that a connection string parses unambiguously; they are not a
+encoding rules for [Userinfo](#userinfo-optional) exist so that a connection string parses unambiguously. They are not a
 confidentiality measure.
 
 ## Changelog
 
-- 2026-09-02: Require that credentials not be disclosed in parse errors, warning logs, or string representations.
+- 2026-09-02: Require that credentials and sensitive URI parameter arguments are not disclosed in parse errors, warning
+    logs, or string representations, and prescribe `<redacted>` as the placeholder. Remove the example that showed
+    printing the value of a Unix domain socket path.
 
 - 2024-05-29: Clarify handling of key-value pairs and add specification test.
 
