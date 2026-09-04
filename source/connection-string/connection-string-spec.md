@@ -319,8 +319,8 @@ reporting on a connection string.
 
 For the purposes of this section, a "sensitive value" is any of the following:
 
-- The password component of the [Userinfo](#userinfo-optional) segment, whether or not the connection string parses
-    successfully.
+- The username and password components of the [Userinfo](#userinfo-optional) segment, whether or not the connection
+    string parses successfully.
 - The argument of a URI parameter whose defining specification declares its value to be sensitive. See
     [Sensitive options](../uri-options/uri-options.md#sensitive-options).
 - The argument associated with a URI parameter that the driver does not recognize. A driver cannot determine whether
@@ -353,8 +353,9 @@ string, including a URI parameter key or its argument, may appear in any message
 #### String representations
 
 Any idiomatic string conversion, debug representation, or serialization of a connection string, or of client
-configuration derived from one, MUST replace the userinfo password and sensitive parameter arguments with the
-placeholder `<redacted>`, exactly as spelled here.
+configuration derived from one, MUST replace the username and password components of the [Userinfo](#userinfo-optional)
+segment, and the arguments of sensitive parameters, with a fixed marker that is the same regardless of the value it
+replaces (e.g. `<redacted>`, `<hidden>`).
 
 Such a representation MUST be constructed from the parsed components of the connection string rather than by
 transforming the connection string itself, and MUST NOT fall back to the connection string when parsing did not
@@ -559,9 +560,9 @@ confidentiality measure.
 
 ## Changelog
 
-- 2026-09-02: Require that credentials and sensitive URI parameter arguments are not disclosed in parse errors, warning
-    logs, or string representations, and prescribe `<redacted>` as the placeholder. Remove the example that showed
-    printing the value of a Unix domain socket path.
+- 2026-09-02: Require that credentials, and sensitive URI parameter arguments are not disclosed in parse errors, warning
+    logs, or string representations, and that a string representation replaces them with a fixed marker. Remove the
+    example that showed printing the value of a Unix domain socket path.
 
 - 2024-05-29: Clarify handling of key-value pairs and add specification test.
 

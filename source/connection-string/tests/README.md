@@ -63,7 +63,7 @@ keys:
 - `description`: A string describing the test.
 - `uri`: A string containing the URI to be parsed.
 
-Every URI carries a sentinel password, in one of two forms:
+Every URI carries a sentinel credential, in the username or the password component, in one of two forms:
 
 - the literal `SENTINELpassword1234`, or
 - that same literal fully percent-encoded, as `%53%45%4E%54%49%4E%45%4C%70%61%73%73%77%6F%72%64%31%32%33%34`.
@@ -96,21 +96,22 @@ to miss shapes that leak in most of the others.
 
 ## Prose Tests
 
-These tests cover requirements that cannot be expressed as a list of URIs. They use the sentinel password
-`SENTINELpassword1234`.
+These tests cover requirements that cannot be expressed as a list of URIs. They use the sentinel credentials
+`SENTINELuser5678` and `SENTINELpassword1234`.
 
 1. **Redacted string representation.** Construct a connection string object, and a client if the driver's API requires
-    one, from `mongodb://testuser:SENTINELpassword1234@localhost:27017/db`. This URI is valid, so no error is raised.
-    Assert that the sentinel does not appear in any idiomatic representation of the object: the language's string
+    one, from `mongodb://SENTINELuser5678:SENTINELpassword1234@localhost:27017/db`. This URI is valid, so no error is
+    raised. Assert that neither sentinel appears in any idiomatic representation of the object: the language's string
     conversion, its debug or inspection representation, and its serialized form if the object is serializable. Assert
-    that the placeholder `<redacted>` appears in place of the password.
+    that the driver's redaction marker appears in place of both the username and the password, and that it is the same
+    marker in both positions.
 
 2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
-    assert that it returns the password, and confirm by inspection that its name makes the disclosure evident.
+    assert that it returns both sentinels, and confirm by inspection that its name makes the disclosure evident.
 
 3. **Unrecognized option values are not logged.** Parse
-    `mongodb://localhost:27017/?notARealOption=SENTINELpassword1234`. Assert that the driver logs a WARN level message
-    identifying the key `notARealOption`, and that the sentinel does not appear in it.
+    `mongodb://localhost:27017/?notARealOption=SENTINELpassword1234`. Assert that the driver does not log the sentinel
+    password string.
 
 4. **Sensitive option values are not logged.** Parse
     `mongodb://localhost:27017/?authMechanismProperties=SENTINELpassword1234`, whose value is malformed because it
