@@ -328,8 +328,9 @@ For the purposes of this section, a "sensitive value" is any of the following:
 
 #### Reporting a parse failure
 
-Until a driver has successfully parsed a connection string, any diagnostic warning or error it emits MUST NOT contain
-the connection string, nor any substring of it. A message MAY describe:
+Until a driver has successfully parsed a connection string, any diagnostic warning or error it emits MUST NOT include
+any part of the connection string, whether in the form given or after decoding, re-encoding, or any other
+transformation. A message MAY describe:
 
 - The component of the connection string that is at fault, identified by name (for example "port", "host identifier", or
     "auth database").
@@ -346,8 +347,9 @@ A WARN level message reporting an unsupported, unrecognized, deprecated or repea
 A WARN level message reporting an invalid value MUST identify the key. The message MUST NOT contain the value if the key
 is sensitive or is not recognized by the driver, and MAY contain the value otherwise.
 
-These permissions apply only once parsing has completed successfully. Until then, no text derived from the connection
-string, including a URI parameter key or its argument, may appear in any message: see
+A driver MUST defer any message permitted by this section until it has parsed the connection string successfully, and
+MUST discard the message if parsing fails. Until parsing succeeds, no text derived from the connection string, including
+a URI parameter key or its argument, may appear in any message. A driver MAY still emit a message permitted by
 [Reporting a parse failure](#reporting-a-parse-failure).
 
 #### String representations
@@ -358,8 +360,14 @@ segment, and the arguments of sensitive parameters, with a fixed marker that is 
 replaces (e.g. `<redacted>`, `<hidden>`).
 
 Such a representation MUST be constructed from the parsed components of the connection string rather than by
-transforming the connection string itself, and MUST NOT fall back to the connection string when parsing did not
-complete.
+transforming the connection string itself.
+
+Where parsing did not complete, such a representation MUST be a fixed string that contains no text derived from the
+connection string, and MUST NOT be the same as the marker that replaces a sensitive value, so that a reader can
+distinguish a connection string that never parsed from one whose sensitive values were replaced (for example,
+`<unparsed connection string>`). It MUST NOT raise an error: these APIs are commonly invoked by loggers and debuggers,
+including while an error is already being handled. A driver whose connection string type cannot exist in an unparsed
+state satisfies this requirement trivially.
 
 A driver MAY expose a separately named API that returns the unredacted representation, provided that its name makes the
 disclosure evident.
@@ -560,9 +568,11 @@ confidentiality measure.
 
 ## Changelog
 
-- 2026-09-02: Require that credentials, and sensitive URI parameter arguments are not disclosed in parse errors, warning
-    logs, or string representations, and that a string representation replaces them with a fixed marker. Remove the
-    example that showed printing the value of a Unix domain socket path.
+- 2026-09-11: Require that credentials, and sensitive URI parameter arguments are not disclosed in parse errors, warning
+    logs, or string representations, and that a string representation replaces them with a fixed marker. Require that
+    diagnostics naming a URI parameter are deferred until parsing succeeds, and that a string representation of a
+    connection string that did not parse is a fixed string and does not raise. Remove the example that showed printing
+    the value of a Unix domain socket path.
 
 - 2024-05-29: Clarify handling of key-value pairs and add specification test.
 
