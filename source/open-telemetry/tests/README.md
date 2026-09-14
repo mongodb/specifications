@@ -89,3 +89,90 @@ asserts the stronger claim that the value equals the id the driver sent, which n
     returns a cursor id of `0`.
 5. Assert that both the `getMore` operation span and the `getMore` command span have a `db.mongodb.cursor_id` attribute
     whose value equals the cursor id recorded in step 3.
+
+#### Server Trace Context Propagation
+
+The following tests verify that servers join the driver's distributed trace (see
+[Propagating Trace Context to the Server](../open-telemetry.md#propagating-trace-context-to-the-server)). Server-created
+spans are only observable through the server's OpenTelemetry file exporter, which writes spans as OTLP JSON — one export
+batch per line (NDJSON) — to a directory on the server's filesystem. There is no wire protocol to retrieve them: the
+test runner reads the files directly and therefore must share a filesystem with the server.
+
+These tests require:
+
+- A MongoDB 9.0+ (`maxWireVersion` >= 29) deployment compiled with OpenTelemetry support, started with the OpenTelemetry
+    file exporter configured. [drivers-evergreen-tools](https://github.com/mongodb-labs/drivers-evergreen-tools)
+    provisions this when orchestration is started with `OTEL=1`, and communicates the trace directory to the test suite
+    via the `OTEL_TRACE_DIR` environment variable (see `.evergreen/orchestration/README.md` in that repository). Enable
+    `OTEL` only in a dedicated task or variant pinned to a 9.0+ server.
+- Skip these tests when `OTEL_TRACE_DIR` is unset or empty. This covers every environment that did not opt in; drivers
+    do not need any further environment detection.
+
+Reading server spans:
+
+- Read all files recursively under `OTEL_TRACE_DIR` (each cluster member writes to its own per-port subdirectory). Parse
+    each line as an OTLP JSON export batch and collect the spans from `resourceSpans[].scopeSpans[].spans[]`. `traceId`,
+    `spanId`, and `parentSpanId` are lowercase hex strings.
+- Spans are batched (default flush interval 1000 ms), so poll with a generous timeout (e.g. 30 seconds) rather than
+    sleeping once.
+- Select only spans whose `traceId` matches a span emitted by the test's own `MongoClient`; the directory may contain
+    spans from other tests or from the server's internal sampling.
+
+*Test 5: Server spans join the driver's trace*
+
+1. Create a `MongoClient` with tracing enabled, connected to the deployment described above.
+2. Perform an `insertOne` operation on a test collection and record the driver's **command span** for the resulting
+    `insert` command (its `traceId` and `spanId`).
+3. Poll `OTEL_TRACE_DIR` until a server span appears whose `traceId` equals the command span's `traceId`, or the timeout
+    elapses.
+4. Assert that exactly one such server span exists for the `insert` command and that its `parentSpanId` equals the
+    driver command span's `spanId`.
+
+*Test 6: One server span per retry attempt*
+
+This test uses a retryable read so that it runs on all topologies, including standalone (retryable writes require a
+replica set or sharded cluster).
+
+1. Create a `MongoClient` with tracing enabled and retryable reads enabled (the default).
+
+2. Configure the following failpoint (on sharded clusters, configure it on the same `mongos` the client is connected
+    to):
+
+    ```javascript
+    {
+        configureFailPoint: "failCommand",
+        mode: { times: 1 },
+        data: {
+            failCommands: ["find"],
+            errorCode: 91           // ShutdownInProgress (retryable)
+        }
+    }
+    ```
+
+3. Perform a `find` operation and assert it succeeds. Record the driver's command spans for both `find` attempts (the
+    failed first attempt and the successful retry); assert they share one `traceId` and have distinct `spanId` values.
+
+4. Poll `OTEL_TRACE_DIR` for server spans with that `traceId`.
+
+5. Assert that there are exactly two server spans whose `parentSpanId` is one of the two command span `spanId`s, and
+    that each attempt's command span has exactly one such child (i.e. the server spans are parented per attempt, not
+    both under one span).
+
+6. Disable the failpoint.
+
+*Test 7: No trace context for authentication and monitoring commands*
+
+1. Create a `MongoClient` with tracing enabled against a deployment that requires authentication.
+2. Perform a `find` operation on a test collection, so that connection handshakes, authentication (e.g.
+    `saslStart`/`saslContinue`), and server monitoring (`hello`) have all occurred.
+3. Record the set of `traceId` values of every span emitted by the driver.
+4. Poll `OTEL_TRACE_DIR` until the server span for the `find` command appears (this bounds the wait for the remaining
+    assertions), then collect all server spans whose `traceId` is in the recorded set.
+5. Assert that no collected server span corresponds to an authentication or monitoring command (`hello`, legacy hello,
+    `saslStart`, `saslContinue`, `authenticate`): the driver attaches no trace context to those commands, so any server
+    spans they produce cannot join the driver's traces.
+
+> [!NOTE]
+> The server may create spans for commands the driver did not trace (head-based sampling applies server-side too).
+> Assertions are therefore always made on the join between driver `traceId`s and server spans, never on the raw contents
+> of the trace directory.
