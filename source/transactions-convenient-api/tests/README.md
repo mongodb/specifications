@@ -105,14 +105,15 @@ Drivers should test that retries within `withTransaction` do not occur immediate
         ```
 5. Compare the durations of the two runs.
     ```python
-    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 3.6 seconds)) < 0.5 seconds)
+    assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 2.3 seconds)) < 0.5 seconds)
     ```
-    The sum of 13 backoffs is roughly 3.6 seconds. There is a half-second window to account for potential variance
+    The sum of 13 backoffs is roughly 2.3 seconds. There is a half-second window to account for potential variance
     between the two runs.
 
 ## Changelog
 
-- 2206-07-08: Update Backoff test to use updated exponential formula.
+- 2026-07-22: Fix Backoff test to use the correct sum of backoffs.
+- 2026-07-08: Update Backoff test to use updated exponential formula.
 - 2026-04-02: [DRIVERS-3436](https://github.com/mongodb/specifications/pull/1920) Refine withTransaction timeout error
     wrapping semantics and label propagation in spec and prose tests
 - 2026-03-03: Clarify exponential backoff jitter upper bound.

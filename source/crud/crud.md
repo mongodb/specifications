@@ -97,6 +97,19 @@ A non-exhaustive list of acceptable naming deviations are as follows:
 - Using "isOrdered" rather than "ordered". Some languages idioms prefer the use of "is", "has", or "was" and this is
     acceptable.
 
+#### Database and Collection Name Validation
+
+An operation on a database whose name contains a period (`.`) MUST result in an error, client-side or server-side.
+Periods inside collection names remain legal.
+
+Where the driver itself combines a database and a collection name into a single namespace string, the driver MUST reject
+a period in the database component with a client-side error, because the server cannot tell it apart from a valid
+namespace. This applies, for example, to an API such as `renameCollection` that takes a namespace as an argument instead
+of a separate database name.
+
+An operation on a database or collection whose name contains a NUL byte (`U+0000`) MUST result in an error, client-side
+or server-side. A driver MUST NOT silently truncate the name.
+
 #### Timeouts
 
 Drivers MUST enforce timeouts for all operations per the
@@ -2615,6 +2628,8 @@ the Stable API, it was decided that this change was acceptable to make in minor 
 aforementioned allowance in the SemVer spec.
 
 ## Changelog
+
+- 2026-08-17: Require an error for a period in a database name and for a NUL byte in database and collection names.
 
 - 2026-06-17: Remove pre-4.2 version references.
 

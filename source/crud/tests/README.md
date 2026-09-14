@@ -678,3 +678,25 @@ CommandStartedEvents. For each of `insertOne`, client `bulkWrite`, and collectio
     field of `request.documents[0]` is `_id`.
 - Otherwise, capture the CommandStartedEvent (referred to as `event`) emitted by the command and assert that the first
     field of `event.command.documents[0]` is `_id`.
+
+### 17. Ensure database and collection names are validated
+
+Construct a `MongoClient` (referred to as `client`).
+
+A period (`.`) in a database name would silently retarget the operation to another database. Assert that each of the
+following operations raises an error, either client-side or server-side:
+
+```javascript
+client.getDatabase("foo.bar").getCollection("coll").insertOne({})
+client.getCollection("foo.bar", "coll").insertOne({})
+```
+
+A NUL byte (`U+0000`) in a database or collection name truncates or invalidates the name. Drivers MUST NOT silently
+truncate the name. Assert that each of the following operations raises an error, either client-side or server-side:
+
+```javascript
+client.getDatabase("foo\0bar").getCollection("coll").insertOne({})
+client.getDatabase("db").getCollection("foo\0bar").insertOne({})
+client.bulkWrite([InsertOne { "namespace": "foo\0bar.coll", "document": {} }])
+client.bulkWrite([InsertOne { "namespace": "db.foo\0bar", "document": {} }])
+```

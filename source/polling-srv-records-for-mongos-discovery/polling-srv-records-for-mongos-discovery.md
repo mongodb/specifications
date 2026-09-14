@@ -53,9 +53,14 @@ initial seedlist discovery. Periodic scan MUST follow these rules:
     and protocol. The SRV service name is provided in the
     [srvServiceName](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvservicename) URI option and
     defaults to `mongodb`. The protocol is always `tcp`. After prefixing, the URI should look like:
-    `_{srvServiceName}._tcp.{hostname}.{domainname}`.
-- A driver MUST verify that the host names returned through SRV records have the same parent `{domainname}`. When this
-    verification fails, a driver:
+    `_{srvServiceName}._tcp.{hostname}.{domainname}`. Here `{hostname}.{domainname}` is the host from the connection
+    string, and is not affected by
+    [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvallowedhostssuffix):
+    that option changes which parent domain returned host names are verified against, not which records are queried.
+- A driver MUST verify that the host names returned through SRV records have the same parent `{domainname}`. When
+    [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvallowedhostssuffix)
+    is configured, its value is the parent domain used for this verification instead of the `{domainname}` derived from
+    the connection string. When this verification fails, a driver:
     - MUST NOT add such a non-compliant host name to the topology
     - MUST NOT raise an error
     - SHOULD log the non-compliance, including the host name
@@ -164,6 +169,8 @@ This specification has no security implications beyond the ones associated with 
 No future work is expected.
 
 ## Changelog
+
+- 2026-09-03: Account for the `srvAllowedHostsSuffix` MongoClient option when verifying returned host names.
 
 - 2024-08-22: Migrated from reStructuredText to Markdown.
 

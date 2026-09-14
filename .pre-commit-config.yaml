@@ -89,4 +89,5 @@ repos:
     args: ["-L", "fle,re-use,merchantibility,synching,crate,nin,infinit,te,checkin,aks"]
     exclude: |
             (?x)^(.*\.rst
+            |source/public-suffix-list/public_suffix_list\.dat
             )$

@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.28.0
+- Current Schema Version: 1.29.0
 
 ______________________________________________________________________
 
@@ -793,6 +793,10 @@ The structure of this object is as follows:
 
         - If `true`, additional unexpected spans are allowed.
         - If `false` or omitted, the test runner MUST fail if any unexpected spans are detected.
+
+        This applies at every level of the span tree, not only to the top-level `spans` array. A span nested under an
+        expected span, but absent from that span's `nested` array, is an unexpected span. A test can therefore assert that
+        a command span is *not* nested under a given operation span by omitting it from that operation's `nested` array.
 
     - `spans`: Required array of span objects. Each span describes an expected tracing event.
 
@@ -2931,6 +2935,19 @@ test runner MUST assert that the actual value is less than or equal to the speci
 the rules specified in [Flexible Numeric Comparisons](#flexible-numeric-comparisons) for this operator. For example, an
 expected value of `1` would match an actual value of `1.0` and `0.0` but would not match `1.1`.
 
+##### $$gte
+
+Syntax:
+
+```yaml
+{ $$gte: 1 }
+```
+
+This operator can be used anywhere a matched value is expected (including [expectResult](#operation_expectResult)). The
+test runner MUST assert that the actual value is greater than or equal to the specified value. Test runners MUST also
+apply the rules specified in [Flexible Numeric Comparisons](#flexible-numeric-comparisons) for this operator. For
+example, an expected value of `1` would match an actual value of `1.0` and `1.1` but would not match `0.0`.
+
 ##### $$matchAsDocument
 
 Syntax:
@@ -3452,6 +3469,12 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-08-26: **Schema version 1.29.**
+
+    Introduced the `$$gte` operator, the lower-bound counterpart to `$$lte`. Also clarified that `ignoreExtraSpans`
+    applies at every level of the span tree, so that a test can assert a span is not nested under a given parent by
+    omitting it from that parent's `nested` array. Both changes require runner support, so they share this version.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
