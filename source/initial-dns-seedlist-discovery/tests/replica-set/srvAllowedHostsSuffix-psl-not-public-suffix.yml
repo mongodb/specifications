@@ -11,5 +11,4 @@ hosts:
     - localhost:27019
 options:
     ssl: true
-    srvAllowedHostsSuffix: "10gen.cc"
 ping: true

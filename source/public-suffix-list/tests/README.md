@@ -36,13 +36,18 @@ This test utilizes the rule `!www.ck` in the PSL, which overrides the `*.ck` rul
 When no rule matches, the prevailing rule is `*` and the rightmost label alone is the public suffix. Assert that
 `is_public_suffix("nosuchtld") -> true` and `is_public_suffix("foo.nosuchtld") -> false`.
 
+### 6. An internationalized rule
+
+This test utilizes the rules `рф` and `公司.cn` in the PSL, which are stored as Unicode while the hostnames being compared
+are Punycode-encoded. Assert that `is_public_suffix("xn--p1ai") -> true`,
+`is_public_suffix("example.xn--p1ai") -> false`, and `is_public_suffix("xn--55qx5d.cn") -> true`.
+
 ## Connection String Tests
 
 The `srvAllowedHostsSuffix-psl-*` tests in the
 [Initial DNS Seedlist Discovery tests](https://github.com/mongodb/specifications/tree/master/source/initial-dns-seedlist-discovery/tests/replica-set)
 cover the two cases that are observable through a connection string: a suffix that is a public suffix (`cc`) is
-rejected, and one that is not (`10gen.cc`) is accepted. Both use a suffix the test SRV hosts end with, so the host
-suffix check passes and the public suffix check is the only thing that can change the outcome.
+rejected, and one that is not (`10gen.cc`) is accepted.
 
 They live with the seedlist discovery tests because `srvAllowedHostsSuffix` is a connection string option, so a driver
 should implement the parsing of the PSL and the uri option together.

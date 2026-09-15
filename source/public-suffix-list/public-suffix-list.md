@@ -84,6 +84,10 @@ vendored file MUST therefore convert one side before comparing, so that a Punyco
 `xn--` labels) and the Unicode rules it is compared against are in the same form. Comparing the two forms directly will
 fail to match rules that should match.
 
+Note: The leading `*` and `!` markers in the PSL are not part of a label and MUST NOT be included in that conversion. A
+driver MUST strip them before converting a rule and reapply them after, so that a rule such as `!公司.cn` converts to
+`!xn--55qx5d.cn` rather than being mangled.
+
 ### Determining the public suffix
 
 To determine the public suffix of a domain, a driver using the vendored file MUST follow the
@@ -186,5 +190,8 @@ reproduced verbatim and in their original order; only the surrounding comments a
 notice does not apply to the rest of this repository.
 
 ## Changelog
+
+- 2026-09-03: Clarify that markers shouldn't be converted to Punycode and add a prose test covering internationalized
+    (Punycode vs. Unicode) rules.
 
 - 2026-08-11: Vendor the Public Suffix List and add a script to sync it.
