@@ -193,7 +193,6 @@ Spans SHOULD have the following attributes:
 | `db.operation.name`    | `string` | The name of the driver operation being executed                            | Required              |
 | `db.operation.summary` | `string` | Equivalent to span name                                                    | Required              |
 | `db.mongodb.cursor_id` | `int64`  | If a cursor is created or used in the operation (see below)                | Conditional           |
-| `error.type`           | `string` | The exception class's name, if the operation fails (see below)             | Required if it fails  |
 
 Not all attributes are available at the moment of span creation. Drivers need to add attributes at later stages, which
 requires an operation span to be available throughout the complete operation lifecycle.
@@ -252,6 +251,8 @@ if available:
 - `exception.type`
 - `exception.stacktrace`
 
+###### error.type
+
 Operation spans MUST NOT have an `error.type` attribute when the operation succeeds, even if one of its commands failed:
 an operation can succeed through a retry, so a failed command's `error.type` does not carry over. Drivers MUST add this
 attribute to the span when the operation itself fails. Its value SHOULD be the name of the exception class raised to the
@@ -285,7 +286,6 @@ Spans SHOULD have the following attributes:
 | `db.collection.name`              | `string` | The collection being accessed within the database stated in `db.namespace`                                                                               | Required if available        |
 | `db.command.name`                 | `string` | The name of the server command being executed                                                                                                            | Required                     |
 | `db.response.status_code`         | `string` | MongoDB error code represented as a string. This attribute should be added only if an error happens.                                                     | Required if an error happens |
-| `error.type`                      | `string` | See [error.type](#errortype) below.                                                                                                                      | Required if an error happens |
 | `server.port`                     | `int64`  | Server port number                                                                                                                                       | Required                     |
 | `server.address`                  | `string` | Name of the database host, or IP address if name is not known                                                                                            | Required                     |
 | `network.transport`               | `string` | MUST be 'tcp' or 'unix' depending on the protocol                                                                                                        | Required                     |
@@ -372,6 +372,16 @@ attribute MUST be omitted: it is a single `int64` and has no defined value for s
 A cursor id of `0` means no server-side cursor remains. Drivers MUST NOT add the attribute with a value of `0`, and MUST
 omit it when a cursor-creating command's reply returns `0`.
 
+##### Exceptions
+
+If the server command fails with an exception, drivers MUST record an exception to the current command span. When
+recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute if
+available:
+
+- `exception.message`
+- `exception.type`
+- `exception.stacktrace`
+
 ###### error.type
 
 This attribute SHOULD match `db.response.status_code` when the command failed with a server error, meaning the server
@@ -385,18 +395,8 @@ this attribute SHOULD have a low number of distinct values, because tracing back
 and alerting on failures.
 
 `error.type` is the OpenTelemetry semantic-convention attribute for this purpose, and the name tracing backends
-recognize for it. `exception.type` (see Exceptions below) is not part of that convention, even though drivers also add
-it to the span. For a non-server error, `error.type` carries the same value as `exception.type`.
-
-##### Exceptions
-
-If the server command fails with an exception, drivers MUST record an exception to the current command span. When
-recording an exception, drivers SHOULD add the following attributes to the span, when the content for the attribute if
-available:
-
-- `exception.message`
-- `exception.type`
-- `exception.stacktrace`
+recognize for it. `exception.type` (see the exception attributes above) is not part of that convention, even though
+drivers also add it to the span. For a non-server error, `error.type` carries the same value as `exception.type`.
 
 #### Propagating Trace Context to the Server
 
