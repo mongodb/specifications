@@ -193,7 +193,7 @@ Spans SHOULD have the following attributes:
 | `db.operation.name`    | `string` | The name of the driver operation being executed                            | Required                        |
 | `db.operation.summary` | `string` | Equivalent to span name                                                    | Required                        |
 | `db.mongodb.cursor_id` | `int64`  | If a cursor is created or used in the operation (see below)                | Conditional                     |
-| `error.type`           | `string` | (see [error.type](#errortype) below)                                       | Required if the operation fails |
+| `error.type`           | `string` | (see [error.type](#errortype-operation-spans) below)                       | Required if the operation fails |
 
 Not all attributes are available at the moment of span creation. Drivers need to add attributes at later stages, which
 requires an operation span to be available throughout the complete operation lifecycle.
@@ -252,7 +252,7 @@ if available:
 - `exception.type`
 - `exception.stacktrace`
 
-###### error.type
+###### error.type (operation spans)
 
 Operation spans MUST NOT have an `error.type` attribute when the operation succeeds, even if one of its commands failed:
 an operation can succeed through a retry, so a failed command's `error.type` does not carry over. Drivers MUST add this
@@ -287,7 +287,7 @@ Spans SHOULD have the following attributes:
 | `db.collection.name`              | `string` | The collection being accessed within the database stated in `db.namespace`                                                                               | Required if available         |
 | `db.command.name`                 | `string` | The name of the server command being executed                                                                                                            | Required                      |
 | `db.response.status_code`         | `string` | MongoDB error code represented as a string. This attribute should be added only if an error happens.                                                     | Required if an error happens  |
-| `error.type`                      | `string` | (see [error.type](#errortype-1) below)                                                                                                                   | Required if the command fails |
+| `error.type`                      | `string` | (see [error.type](#errortype-command-spans) below)                                                                                                       | Required if the command fails |
 | `server.port`                     | `int64`  | Server port number                                                                                                                                       | Required                      |
 | `server.address`                  | `string` | Name of the database host, or IP address if name is not known                                                                                            | Required                      |
 | `network.transport`               | `string` | MUST be 'tcp' or 'unix' depending on the protocol                                                                                                        | Required                      |
@@ -384,7 +384,7 @@ available:
 - `exception.type`
 - `exception.stacktrace`
 
-###### error.type
+###### error.type (command spans)
 
 Drivers MUST add this attribute to the command span when the command fails. This attribute SHOULD match
 `db.response.status_code` when the command failed with a server error, meaning the server returned an error code in its
