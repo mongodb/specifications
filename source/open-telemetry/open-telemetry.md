@@ -391,7 +391,7 @@ operation may still succeed.
 
 Drivers MUST NOT set this attribute when the command succeeds. Per the
 [OpenTelemetry semantic conventions for `error.type`](https://opentelemetry.io/docs/specs/semconv/registry/attributes/error/#error-type),
-this attribute SHOULD have a low number of distinct values, because tracing backends use it as a dimension for grouping
+this attribute SHOULD have a low cardinality, because tracing backends use it as a dimension for grouping
 and alerting on failures.
 
 `error.type` is the OpenTelemetry semantic-convention attribute for this purpose, and the name tracing backends
