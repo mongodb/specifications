@@ -384,7 +384,7 @@ available:
 
 ###### error.type
 
-This attribute SHOULD match `db.response.status_code` when the command failed with a server error, meaning the server
+Drivers MUST add this attribute to the command span when the command fails. This attribute SHOULD match `db.response.status_code` when the command failed with a server error, meaning the server
 returned an error code in its response. Otherwise, this attribute SHOULD be the name of the exception class associated
 with that command's failure, whether or not the operation ultimately raises it to the application: a retry of the same
 operation may still succeed.
