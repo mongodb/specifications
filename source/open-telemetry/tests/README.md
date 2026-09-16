@@ -90,29 +90,31 @@ asserts the stronger claim that the value equals the id the driver sent, which n
 5. Assert that both the `getMore` operation span and the `getMore` command span have a `db.mongodb.cursor_id` attribute
     whose value equals the cursor id recorded in step 3.
 
-*Test 5: `error.type` is present for a non-server error*
+*Test 5: `error.type` is the exception class name for a non-server error*
 
 The unified fixture [tests/operation/error_type.yml](operation/error_type.yml) asserts that `error.type` is a string on
-both the command and operation spans for a non-server error. The specification recommends that the value be the
-exception class name (`SHOULD`), so a driver is not required to assert an exact value here.
+both the command and operation spans for a non-server error, but matching cannot compare two observed attributes. This
+test asserts the value the fixture cannot: `error.type` equals the `exception.type` recorded on the same span, the
+exception class name.
 
 1. Create a `MongoClient` with tracing enabled and `retryReads` disabled.
 2. Configure a `failCommand` fail point on `find` with `closeConnection: true`.
 3. Call `find` on a test collection and let it fail.
-4. Assert that the command span has an `error.type` attribute.
-5. Assert that the operation span has an `error.type` attribute.
+4. Assert that the command span's `error.type` attribute equals its `exception.type` attribute.
+5. Assert that the operation span's `error.type` attribute equals its `exception.type` attribute.
 
-*Test 6: `error.type` is present on the operation span for a server error*
+*Test 6: `error.type` on the operation span is the exception class name for a server error*
 
 The unified fixture's server-error case asserts only that the operation span's `error.type` is a string, since matching
 cannot compare one observed attribute against another, or assert that it differs from the command span's server error
 code. The specification recommends that the operation span's `error.type` be the exception class name, not the server
-error code (`SHOULD`), so a driver is not required to assert an exact value here.
+error code. This test asserts both.
 
 1. Create a `MongoClient` with tracing enabled.
 2. Configure a `failCommand` fail point on `find` with a non-retryable `errorCode`.
 3. Call `find` on a test collection and let it fail.
-4. Assert that the operation span has an `error.type` attribute.
+4. Assert that the operation span's `error.type` attribute equals its `exception.type` attribute, and that both differ
+    from the `db.response.status_code` attribute on the `find` command span.
 
 #### Server Trace Context Propagation
 
