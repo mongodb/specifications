@@ -134,8 +134,6 @@ The following options are sensitive:
 - `proxyUsername`
 - `proxyPassword`
 - `tlsCertificateKeyFilePassword`
-- `authMechanismProperties`, in its entirety, because its sub-values carry credentials such as AWS session tokens and
-    OIDC access tokens.
 
 A specification that defines a new connection parameter MUST state whether the argument is potentially sensitive, and
 this specification MUST be updated to list it here if it is.

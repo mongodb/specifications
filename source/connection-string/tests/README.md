@@ -109,10 +109,17 @@ These tests cover requirements that cannot be expressed as a list of URIs. They 
 2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
     assert that it returns both sentinels, and confirm by inspection that its name makes the disclosure evident.
 
-3. **Unrecognized option values are not logged.** Parse
-    `mongodb://localhost:27017/?notARealOption=SENTINELpassword1234`. Assert that the driver does not log the sentinel
-    password string.
+3. **Unrecognized option arguments are not logged.** Parse
+    `mongodb://localhost:27017/?notARealOption=SENTINELpassword1234`. Assert that no message the driver emits contains
+    the sentinel.
 
-4. **Sensitive option values are not logged.** Parse
-    `mongodb://localhost:27017/?authMechanismProperties=SENTINELpassword1234`, whose value is malformed because it
-    contains no colon. Assert that any message the driver emits does not contain the sentinel.
+4. **Sensitive option arguments are not logged.** Parse `mongodb://localhost:27017/?proxyPassword=SENTINELpassword1234`.
+    The [SOCKS5 specification](../../socks5-support/socks5.md#proxypassword) requires an error when `proxyPassword` is
+    given without `proxyHost` and `proxyUsername`, so a message is guaranteed. Assert that no message the driver emits
+    contains the sentinel.
+
+5. **Credentials in a key position are not logged.** Parse
+    `mongodb://localhost:27017/?proxyPasswordSENTINELpassword1234`, in which a missing "=" has merged a password into
+    the option key. This connection string parses successfully, so the driver's own diagnostics for an unrecognized key
+    are the only disclosure path, and withholding messages until parsing succeeds does not protect it. Assert that no
+    message the driver emits contains the sentinel.

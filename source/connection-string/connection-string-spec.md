@@ -178,11 +178,17 @@ Keys that aren't supported by a driver MUST be ignored. A WARN level logging mes
 keys. For example:
 
 ```text
-Unsupported option 'connectMS'.
+Unsupported option 'srvMaxHosts'.
 ```
 
-The message MUST NOT disclose sensitive values: see
-[Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
+If the driver cannot match the key to an option name that it knows, the message MUST NOT reproduce the key. For example:
+
+```text
+Unsupported option at character 16.
+```
+
+See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for what such a
+message may contain.
 
 Keys should be descriptive and follow existing conventions:
 
@@ -213,11 +219,11 @@ The values in connection options MUST be URL decoded by the parser. The values c
     WARNING level (as appropriate for your language). For example:
 
     ```text
-    Deprecated boolean value for "journal" : "1", please update to "journal=true"
+    Deprecated boolean value for "journal", please update to "journal=true"
     ```
 
-    The message MUST NOT disclose sensitive values: see
-    [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
+    See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for what such a
+    message may contain.
 
 - Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
     order as they appear in the Connection String. For example:
@@ -250,11 +256,11 @@ The values in connection options MUST be URL decoded by the parser. The values c
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
 ```text
-Unsupported value for "fsync" : "ifPossible"
+Unsupported value for "fsync"
 ```
 
-The message MUST NOT disclose sensitive values: see
-[Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
+See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for what such a
+message may contain.
 
 ### Repeated Keys
 
@@ -342,14 +348,14 @@ string that it was given.
 
 #### Reporting an unsupported key or invalid value
 
-A WARN level message reporting an unsupported, unrecognized, deprecated or repeated key MAY identify the key.
+A message reporting an unsupported, unrecognized, deprecated or repeated key, or an invalid value, MUST NOT include any
+text from the connection string. It MUST NOT include the argument of a key, and it MUST NOT include a key that the
+driver cannot match to an option name that it knows. This holds whether or not parsing succeeds: either a key or an
+argument may contain text the user intended as part of a credential.
 
-A WARN level message reporting an invalid value MUST identify the key. The message MUST NOT contain the value if the key
-is sensitive or is not recognized by the driver, and MAY contain the value otherwise.
-
-A driver MUST defer any message permitted by this section until it has parsed the connection string successfully, and
-MUST discard the message if parsing fails. Until parsing succeeds, no text derived from the connection string, including
-a URI parameter key or its argument, may appear in any message. A driver MAY still emit a message permitted by
+The message MAY identify a key by the canonical name defined for that option in a specification, written as the driver
+knows it rather than copied from the connection string. The message MAY also report the position of the offending key or
+argument within the connection string, for example as a character offset. See also
 [Reporting a parse failure](#reporting-a-parse-failure).
 
 #### String representations
@@ -553,11 +559,23 @@ Masking *cannot* close this because the masking logic and the parsing logic disa
 disagreement may even be harmful by providing a false sense of security, because it produces messages that print the
 credential alongside a redaction marker, giving the impression that a successful redaction took place when it did not.
 
-Q: Why must URI parameters not be echoed before parsing has succeeded
+Q: Why may a driver not name a key that it does not recognize
 
-A fragment of a password can be parsed into the key position if the password contains an unencoded question mark "`?`".
-Given `mongodb://user:x?SECRET=1@localhost:27017/admin`, a driver that reports unrecognized keys as it encounters them
-discloses the credential even if it goes on to reject the connection string.
+Because such a key can itself contain text the user intended as part of a credential, and that does not require a parse
+failure. Given `mongodb://host/?proxyPasswordpwd=123`, where the user's password was `pwd=123` and they omitted the "="
+after `proxyPassword`, the connection string parses successfully and the credential is split across an unrecognized key
+and its argument. No error is raised, so withholding the message only until parsing succeeds does not protect it, and a
+driver cannot distinguish such a key from an ordinary misspelling.
+
+A key that the driver can match to an option name it knows is different: the name it reports comes from its own list
+rather than from the connection string, and reporting it is considerably more useful than reporting a position alone.
+This is the case the warning exists to serve, since an option one driver does not support is often supported by another.
+
+A password could in principle contain the spelling of a known option, as in
+`mongodb://host/?proxyUsername=foo&proxyPassword=pwd123&proxyUsername=bar` where the password was
+`pwd123&proxyUsername=bar` and was not percent-encoded, leading a driver to report a repeated key that is also text from
+the password. That case is pathological, and it discloses only that the password contains the name of a known option, so
+it does not justify withholding a useful diagnostic.
 
 Q: Is percent-encoding the password sufficient to protect it
 
@@ -568,11 +586,11 @@ confidentiality measure.
 
 ## Changelog
 
-- 2026-09-11: Require that credentials, and sensitive URI parameter arguments are not disclosed in parse errors, warning
-    logs, or string representations, and that a string representation replaces them with a fixed marker. Require that
-    diagnostics naming a URI parameter are deferred until parsing succeeds, and that a string representation of a
-    connection string that did not parse is a fixed string and does not raise. Remove the example that showed printing
-    the value of a Unix domain socket path.
+- 2026-09-21: Require that credentials and sensitive URI parameter arguments are not disclosed in parse errors, warning
+    logs, or string representations, and that a string representation replaces them with a fixed marker. Require that a
+    diagnostic message never includes text from the connection string, other than the canonical name of an option that
+    the driver recognizes, and that a string representation of a connection string that did not parse is a fixed string
+    and does not raise. Update the example messages so that none of them prints an option argument.
 
 - 2024-05-29: Clarify handling of key-value pairs and add specification test.
 
