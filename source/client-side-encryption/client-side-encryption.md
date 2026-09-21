@@ -50,8 +50,8 @@ MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
 
 MongoDB 8.2 added unstable support for QE string queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
 
-MongoDB 9.0 dropped `queryType=prefixPreview|suffixPreview` and added `queryType=prefix|suffix`
-([SPM-4539](https://jira.mongodb.org/browse/SPM-4539))
+MongoDB 9.0 dropped `queryType=prefixPreview|suffixPreview|substringPreview` and added
+`queryType=prefix|suffix|substring` ([SPM-4539](https://jira.mongodb.org/browse/SPM-4539))
 
 ## META
 
