@@ -20,7 +20,10 @@
     {
       "client": {
         "id": "failPointClient",
-        "useMultipleMongoses": false
+        "useMultipleMongoses": false,
+        "uriOptions": {
+          "appName": "commandLoggingRedactionTest"
+        }
       }
     },
     {
@@ -101,7 +104,8 @@
                 "failCommands": [
                   "authenticate"
                 ],
-                "closeConnection": true
+                "closeConnection": true,
+                "appName": "commandLoggingRedactionTest"
               }
             }
           }
@@ -222,7 +226,8 @@
                 "failCommands": [
                   "saslStart"
                 ],
-                "closeConnection": true
+                "closeConnection": true,
+                "appName": "commandLoggingRedactionTest"
               }
             }
           }
@@ -343,7 +348,8 @@
                 "failCommands": [
                   "saslContinue"
                 ],
-                "closeConnection": true
+                "closeConnection": true,
+                "appName": "commandLoggingRedactionTest"
               }
             }
           }
