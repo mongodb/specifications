@@ -543,7 +543,7 @@ covered by Tests 1 through 3.
 | 3    | Trailing delimiter retained                 | (F1, null)                            | `<driver-name>\|F1`            | `<driver-version>\|`                 |
 | 4    | Equal versions do not collapse              | (F1, `<driver-version>`)              | `<driver-name>\|F1`            | `<driver-version>\|<driver-version>` |
 | 5    | Equal names do not collapse                 | (`<driver-name>`, 1.0)                | `<driver-name>\|<driver-name>` | `<driver-version>\|1.0`              |
-| 6    | Duplicates still deduplicate                | (F1, 1.0), (F1, 1.0)                  | `<driver-name>\|F1`            | `<driver-version>\|1.0`              |
+| 6    | Duplicates deduplicate                | (F1, 1.0), (F1, 1.0)                  | `<driver-name>\|F1`            | `<driver-version>\|1.0`              |
 | 7    | All versions absent                         | (F1, null), (F2, null)                | `<driver-name>\|F1\|F2`        | `<driver-version>\|\|`               |
 | 8    | All names absent                            | (null, 1.0), (null, 2.0)              | `<driver-name>\|\|`            | `<driver-version>\|1.0\|2.0`         |
 | 9    | Non-adjacent duplicate                      | (F1, 1.0), (F2, 2.0), (F1, 1.0)       | `<driver-name>\|F1\|F2`        | `<driver-version>\|1.0\|2.0`         |
