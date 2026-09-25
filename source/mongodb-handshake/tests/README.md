@@ -543,12 +543,13 @@ covered by Tests 1 through 3.
 | 3    | Trailing delimiter retained                 | (F1, null)                            | `<driver-name>\|F1`            | `<driver-version>\|`                 |
 | 4    | Equal versions do not collapse              | (F1, `<driver-version>`)              | `<driver-name>\|F1`            | `<driver-version>\|<driver-version>` |
 | 5    | Equal names do not collapse                 | (`<driver-name>`, 1.0)                | `<driver-name>\|<driver-name>` | `<driver-version>\|1.0`              |
-| 6    | Duplicates deduplicate                | (F1, 1.0), (F1, 1.0)                  | `<driver-name>\|F1`            | `<driver-version>\|1.0`              |
+| 6    | Duplicates deduplicate                      | (F1, 1.0), (F1, 1.0)                  | `<driver-name>\|F1`            | `<driver-version>\|1.0`              |
 | 7    | All versions absent                         | (F1, null), (F2, null)                | `<driver-name>\|F1\|F2`        | `<driver-version>\|\|`               |
 | 8    | All names absent                            | (null, 1.0), (null, 2.0)              | `<driver-name>\|\|`            | `<driver-version>\|1.0\|2.0`         |
 | 9    | Non-adjacent duplicate                      | (F1, 1.0), (F2, 2.0), (F1, 1.0)       | `<driver-name>\|F1\|F2`        | `<driver-version>\|1.0\|2.0`         |
 | 10   | Platform-only difference is not a duplicate | (F1, 1.0, P1), (F1, 1.0, P2)          | `<driver-name>\|F1\|F1`        | `<driver-version>\|1.0\|1.0`         |
 | 11   | Wrapper matching the driver's own identity  | (`<driver-name>`, `<driver-version>`) | `<driver-name>\|<driver-name>` | `<driver-version>\|<driver-version>` |
+| 12   | Duplicates with an unset field deduplicate  | (F1, null), (F1, null)                | `<driver-name>\|F1`            | `<driver-version>\|`                 |
 
 > [!NOTE]
 > Cases 1 and 8 only apply to drivers whose API allows `driver.name` to be unset. Drivers that require a name MAY skip
