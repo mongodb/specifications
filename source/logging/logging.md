@@ -106,12 +106,12 @@ Drivers MUST support configuring where log messages should be output, including 
 Drivers MUST support configuring the maximum logged length for extended JSON documents in log messages. The unit here is
 flexible and can be bytes, Unicode code points, code units, or graphemes, depending on what a driver is able to
 accomplish with its language's string APIs. The default max length is 1000 of whichever unit is selected. If the chosen
-unit is anything other than a Unicode code point, the driver MUST ensure that it gracefully handles cases where the
-truncation length falls mid code point, by either rounding the length up or down to the closest code point boundary or
-using the Unicode replacement character, to avoid producing invalid Unicode data. Drivers MUST implement truncation
-naively by simply truncating the output at the required length; i.e. do not attempt to implement truncation such that
-the output is still valid JSON. Truncated extended JSON MUST have a trailing ellipsis `...` appended to indicate to the
-user that truncation occurred. The ellipsis MUST NOT count toward the max length.
+unit is anything other than a Unicode code point, the driver MUST NOT split a Unicode code point at the truncation
+boundary; instead, the driver MUST round to the nearest code point boundary or substitute the Unicode replacement
+character, to avoid producing invalid Unicode data. With respect to JSON structure, drivers MUST implement truncation
+naively by simply truncating the output at the required length; i.e. do not attempt to produce valid JSON after
+truncation. Truncated extended JSON MUST have a trailing ellipsis `...` appended to indicate to the user that truncation
+occurred. The ellipsis MUST NOT count toward the max length.
 
 > **Fallback Implementation method**: Environment variable `MONGODB_LOG_MAX_DOCUMENT_LENGTH`. When unspecified, any
 > extended JSON representation of a document which is longer than the default max length MUST be truncated to that
@@ -402,6 +402,9 @@ this issue, we could try to address it at the specification level by e.g. requir
 on individual clients or for particular namespaces.
 
 ## Changelog
+
+- 2026-05-13: Clarify truncation requirements: Unicode code point safety and naive JSON truncation are separate concerns
+    that do not contradict each other.
 
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 
