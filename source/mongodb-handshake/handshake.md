@@ -444,9 +444,9 @@ be appended to their respective fields, and be delimited by a `|` character. For
 
 Entries in `driver.name` and `driver.version` MUST correspond one-to-one by index, so that splitting both fields on the
 delimiter and pairing them by position recovers which version belongs to which library. Every set of `DriverInfoOptions`
-MUST contribute exactly one entry to each field, and an unset field MUST contribute an empty entry
-rather than being skipped. Empty entries are significant and MUST NOT be stripped, including when they are trailing. For
-example, if `Framework2` reports no version:
+MUST contribute exactly one entry to each field, and an unset field MUST contribute an empty entry rather than being
+skipped. Empty entries are significant and MUST NOT be stripped, including when they are trailing. For example, if
+`Framework2` reports no version:
 
 ```typescript
 {
