@@ -13,7 +13,7 @@ CLAUDE.md @mongodb/dbx-spec-maintainers-cross-spec-consistency
 # Backpressure
 /source/client-backpressure/ @mongodb/dbx-spec-maintainers-backpressure
 
-#Benchmarking
+# Benchmarking
 /source/benchmarking/ @mongodb/dbx-spec-maintainers-benchmarking
 
 # BSON & Extended JSON
@@ -38,6 +38,7 @@ CLAUDE.md @mongodb/dbx-spec-maintainers-cross-spec-consistency
 # Connection Establishment
 /source/load-balancers/ @mongodb/dbx-spec-maintainers-connection-establishment
 /source/mongodb-handshake/ @mongodb/dbx-spec-maintainers-connection-establishment
+/source/ocsp-support/ @mongodb/dbx-spec-maintainers-connection-establishment
 /source/socks5-support/ @mongodb/dbx-spec-maintainers-connection-establishment
 /source/versioned-api/ @mongodb/dbx-spec-maintainers-connection-establishment
 /source/wireversion-featurelist/ @mongodb/dbx-spec-maintainers-connection-establishment
