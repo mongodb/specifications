@@ -142,12 +142,10 @@ Before each test case, perform the setup.
     - The framework metadata is appended to the existing `DriverInfoOptions` in the `client.driver` fields of the `hello`
         command, with values separated by a pipe `|`.
 
-        - `client.driver.name`:
-            - If test case's name is non-null: `library|<name>`
-            - Otherwise, the field remains unchanged: `library`
-        - `client.driver.version`:
-            - If test case's version is non-null: `1.2|<version>`
-            - Otherwise, the field remains unchanged: `1.2`
+        - `client.driver.name` is `library|<name>`, where `<name>` is the empty string if the test case's name is null. The
+            delimiter is appended unconditionally so name and version stay aligned by index.
+        - `client.driver.version` is `1.2|<version>`, where `<version>` is the empty string if the test case's version is
+            null.
         - `client.platform`:
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
@@ -202,12 +200,10 @@ Before each test case, perform the setup.
     - The framework metadata is appended to the existing `DriverInfoOptions` in the `client.driver` fields of the `hello`
         command, with values separated by a pipe `|`.
 
-        - `client.driver.name`:
-            - If test case's name is non-null: `library|<name>`
-            - Otherwise, the field remains unchanged: `library`
-        - `client.driver.version`:
-            - If test case's version is non-null: `1.2|<version>`
-            - Otherwise, the field remains unchanged: `1.2`
+        - `client.driver.name` is `library|<name>`, where `<name>` is the empty string if the test case's name is null. The
+            delimiter is appended unconditionally so name and version stay aligned by index.
+        - `client.driver.version` is `1.2|<version>`, where `<version>` is the empty string if the test case's version is
+            null.
         - `client.platform`:
             - If test case's platform is non-null: `Library Platform|<platform>`
             - Otherwise, the field remains unchanged: `Library Platform`
@@ -512,3 +508,91 @@ These tests require a mechanism for observing handshake documents sent to the se
 3. Assert that for every handshake document intercepted:
 
     1. The document has a field `backpressure` whose value is `"2"`.
+
+### Test 10: Entries in `driver.name` and `driver.version` correspond by index
+
+Drivers should verify that each appended `DriverInfoOptions` contributes exactly one entry to `client.driver.name` and
+one to `client.driver.version`, so that the two fields can be split on the delimiter to recover which version belongs to
+which library.
+
+The driver's own name and version always occupy the first entry of each field, so every expected value below is written
+relative to them. `<driver-name>` and `<driver-version>` stand for the values the driver reports for itself.
+
+These tests require a mechanism for observing handshake documents sent to the server.
+
+#### Setup
+
+Repeat for each parameterized test case:
+
+1. Create a `MongoClient` instance with a `maxIdleTimeMS` set to `1ms`
+
+2. Send a `ping` command to the server and verify that the command succeeds.
+
+3. Wait 5ms for the connection to become idle.
+
+#### Parameterized test cases
+
+Each case appends the listed `DriverInfoOptions` in order. `null` means the field is not set. `platform` is set only in
+Case 10, which exercises duplicate detection across every field; `platform` is not itself index-aligned and is otherwise
+covered by Tests 1 through 3.
+
+| Case | Description                                 | Appended options                      | Expected `driver.name`         | Expected `driver.version`            |
+| ---- | ------------------------------------------- | ------------------------------------- | ------------------------------ | ------------------------------------ |
+| 1    | Gap in middle (name)                        | (null, null), (F2, null)              | `<driver-name>\|\|F2`          | `<driver-version>\|\|`               |
+| 2    | Gap in middle (version)                     | (F1, null), (F2, 2.0)                 | `<driver-name>\|F1\|F2`        | `<driver-version>\|\|2.0`            |
+| 3    | Trailing delimiter retained                 | (F1, null)                            | `<driver-name>\|F1`            | `<driver-version>\|`                 |
+| 4    | Equal versions do not collapse              | (F1, `<driver-version>`)              | `<driver-name>\|F1`            | `<driver-version>\|<driver-version>` |
+| 5    | Equal names do not collapse                 | (`<driver-name>`, 1.0)                | `<driver-name>\|<driver-name>` | `<driver-version>\|1.0`              |
+| 6    | Duplicates deduplicate                      | (F1, 1.0), (F1, 1.0)                  | `<driver-name>\|F1`            | `<driver-version>\|1.0`              |
+| 7    | All versions absent                         | (F1, null), (F2, null)                | `<driver-name>\|F1\|F2`        | `<driver-version>\|\|`               |
+| 8    | All names absent                            | (null, 1.0), (null, 2.0)              | `<driver-name>\|\|`            | `<driver-version>\|1.0\|2.0`         |
+| 9    | Non-adjacent duplicate                      | (F1, 1.0), (F2, 2.0), (F1, 1.0)       | `<driver-name>\|F1\|F2`        | `<driver-version>\|1.0\|2.0`         |
+| 10   | Platform-only difference is not a duplicate | (F1, 1.0, P1), (F1, 1.0, P2)          | `<driver-name>\|F1\|F1`        | `<driver-version>\|1.0\|1.0`         |
+| 11   | Wrapper matching the driver's own identity  | (`<driver-name>`, `<driver-version>`) | `<driver-name>\|<driver-name>` | `<driver-version>\|<driver-version>` |
+| 12   | Duplicates with an unset field deduplicate  | (F1, null), (F1, null)                | `<driver-name>\|F1`            | `<driver-version>\|`                 |
+
+> [!NOTE]
+> Cases 1 and 8 only apply to drivers whose API allows `driver.name` to be unset. Drivers that require a name MAY skip
+> them.
+
+### Test 11: Appending metadata containing the delimiter raises an error
+
+Drivers should verify that appending a `DriverInfoOptions` whose fields contain the `|` delimiter raises an error, and
+that the metadata accumulated before the failed append is left unchanged.
+
+These tests require a mechanism for observing handshake documents sent to the server.
+
+##### Parameterized test cases
+
+| Case | Field containing the delimiter | Name          | Version | Platform              |
+| ---- | ------------------------------ | ------------- | ------- | --------------------- |
+| 1    | `name`                         | `frame\|work` | 2.0     | Framework Platform    |
+| 2    | `version`                      | framework     | `2\|0`  | Framework Platform    |
+| 3    | `platform`                     | framework     | 2.0     | `Framework\|Platform` |
+
+##### Running a test case
+
+1. Create a `MongoClient` instance with:
+
+    - `maxIdleTimeMS` set to `1ms`
+
+    - Client metadata initialized with the following `DriverInfoOptions`:
+
+        - name: `library`
+        - version: `1.2`
+        - platform: `Library Platform`
+
+2. Send a `ping` command to the server and verify that the command succeeds.
+
+3. Wait 5ms for the connection to become idle.
+
+4. Append the `DriverInfoOptions` from the selected test case and assert that an error is raised.
+
+5. Wait 5ms for the connection to become idle so that the next operation establishes a new connection and handshakes
+    again.
+
+6. Assert that the intercepted `client` document is unchanged by the failed append, that is:
+
+    - `client.driver.name` is `<driver-name>|library`
+    - `client.driver.version` is `<driver-version>|1.2`
+    - `client.platform` is `<driver-platform>|Library Platform`

@@ -413,7 +413,7 @@ Drivers MUST provide an API that allows appending `DriverInfoOptions` to a `Mong
 adhering to the pattern described below while following idioms of the language of the driver:
 
 ```java
-interface MongoClient { 
+interface MongoClient {
   void appendMetadata(DriverInfoOptions driverInfoOptions);
   // other existing members of MongoClient
 }
@@ -442,14 +442,40 @@ be appended to their respective fields, and be delimited by a `|` character. For
 }
 ```
 
+Entries in `driver.name` and `driver.version` MUST correspond one-to-one by index, so that splitting both fields on the
+delimiter and pairing them by position recovers which version belongs to which library. Every set of `DriverInfoOptions`
+MUST contribute exactly one entry to each field, and an unset field MUST contribute an empty entry rather than being
+skipped. Empty entries are significant and MUST NOT be stripped, including when they are trailing. For example, if
+`Framework2` reports no version:
+
+```typescript
+{
+    client: {
+        driver: {
+            name: "PyMongo|Framework1|Framework2|Framework3",
+            version: "3.6.0|1.5||3.5"
+        }
+    }
+}
+```
+
+Without the empty entry, `3.5` would appear to belong to `Framework2`.
+
+This requirement does not apply to `platform`, which is a single field with no counterpart to align against.
+
 Some client libraries provide APIs that accept a pre-initialized MongoClient as an argument. In these circumstances, it
 is possible for multiple library objects to be associated with the same MongoClient, which could result in the same
 metadata being appended multiple times. Drivers MUST ensure that any duplicate `DriverInfoOptions` objects provided to a
 MongoClient or appended to a MongoClient do not result in additional metadata being appended. See
 [Supporting Wrapping Libraries](#supporting-wrapping-libraries).
 
-**NOTE:** All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatention.
-Drivers MUST throw an error if any of these strings contains that character.
+Two `DriverInfoOptions` are duplicates only when every field is equal. Drivers MUST NOT compare fields in isolation: two
+distinct libraries that happen to report the same version are not duplicates, and both MUST contribute an entry.
+Suppressing one of them would break the index correspondence between `driver.name` and `driver.version`.
+
+> [!NOTE]
+> All strings provided as part of the driver info MUST NOT contain the delimiter used for metadata concatenation.
+> Drivers MUST throw an error if any of these strings contains that character.
 
 ### Deviations
 
@@ -555,6 +581,8 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-09-11: Require `driver.name` and `driver.version` entries to correspond by index, and clarify that duplicate
+    detection compares whole `DriverInfoOptions`.
 - 2026-06-25: Clarify the client backpressure component of the handshake.
 - 2026-06-17: Remove pre-4.2 version references.
 - 2026-06-11: Clarify that there is no new behavior as a result of only using OP_MSG for all handshakes.
