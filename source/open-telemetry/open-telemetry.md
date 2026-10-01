@@ -488,7 +488,7 @@ The OpenTelemetry specification covers all driver operations including but not l
 ## Backwards Compatibility
 
 Introduction of OpenTelemetry in new driver versions should not significantly affect existing applications that do not
-enable OpenTelemetry. However, since the no-op tracing operation may introduce some performance degradation (see
+enable OpenTelemetry. However, since the disabled instrumentation may introduce some performance degradation (see
 [Performance Implications section](#performance-implications)), customers should be informed of this feature and how to
 disable it completely.
 
@@ -533,8 +533,8 @@ Therefore, drivers SHOULD:
 Deferring attributes is an acceptable trade-off: only custom samplers keying on deferred attributes are affected.
 
 Drivers SHOULD compute values that do not change during the life of an object once, and reuse them: connection
-attributes for the life of a connection, operation names per operation type, the formatted session id per session. Such
-caches MUST be safe for concurrent use.
+attributes for the life of a connection, operation names per operation type, the formatted session id per server
+session. Such caches MUST be safe for concurrent use.
 
 Drivers MAY skip all span work — making the span current, adding attributes, recording the outcome, ending the span —
 when the created span's context is not valid, i.e. its trace id or span id is all zeroes (see
@@ -548,45 +548,35 @@ Drivers MUST benchmark the following configurations, and record the overhead of 
 metric of its own. The benchmark harness, not the driver, installs and configures the SDK and its sampler for the SDK
 configurations. No configuration has an active parent span, so that `api-only` produces no valid span in any driver.
 
-| Configuration | Tracing setup                                                                       |
-| :------------ | :---------------------------------------------------------------------------------- |
-| `off`         | tracing disabled; the baseline                                                      |
-| `api-only`    | tracing enabled; no SDK, so every tracing call is a no-op                           |
-| `sdk-ratio`   | tracing enabled; SDK installed; ratio sampler with a representative ratio (e.g. 1%) |
-| `sdk-always`  | tracing enabled; SDK installed; every span sampled                                  |
+| Configuration | Tracing setup                                                                                     |
+| :------------ | :------------------------------------------------------------------------------------------------ |
+| `off`         | tracing disabled; the baseline                                                                    |
+| `api-only`    | tracing enabled; no SDK, so every tracing call is a no-op                                         |
+| `sdk-ratio`   | tracing enabled; SDK installed; `TraceIdRatioBased` sampler with a representative ratio (e.g. 1%) |
+| `sdk-always`  | tracing enabled; SDK installed; every span sampled                                                |
 
 The differences between consecutive configurations are meaningful: `off` → `api-only` is the cost of the driver's own
 code, which drivers control, and `api-only` → `sdk-ratio` → `sdk-always` adds the cost of the SDK and of recording. If
 `sdk-ratio` costs nearly as much as `sdk-always`, attribute building is not gated on the sampling decision.
 
-Additionally, when a driver first releases OpenTelemetry support, it MUST compare `off` once against the last driver
-version without OpenTelemetry support, to show that the disabled instrumentation has no measurable overhead.
+Additionally, when a driver first releases OpenTelemetry support, it SHOULD compare its default configuration (normally
+`off`) once against the commit before OpenTelemetry support was added, and record the overhead it measures.
 
 Drivers SHOULD use their standardized performance testing infrastructure (see
 [Performance Benchmarking](../benchmarking/benchmarking.md)) rather than a purpose-built OpenTelemetry benchmark.
 
 Drivers SHOULD measure the `Small doc insertOne` and `Find one by ID` tasks, through both the synchronous and the
-asynchronous API where a driver has both. Tasks that never talk to a server (e.g. BSON micro-benchmarks) MUST be
-excluded: they create no spans.
+asynchronous API where a driver has both.
 
-Each configuration MUST run in its own process, because an SDK cannot be reliably removed once installed, and `off` and
-`api-only` require that none was.
-
-The overheads measured are small differences between two noisy numbers, so the comparison MUST be robust to the host
-changing speed during a run and between runs. Drivers SHOULD run the whole set of configurations interleaved and rotate
-their order between repetitions, run compared configurations on the same host, and judge the trend over several runs
-rather than a single run against a threshold.
+The overheads measured are small differences between two noisy numbers. Drivers SHOULD run the whole set of
+configurations interleaved and rotate their order between repetitions, run compared configurations on the same host, and
+judge the trend over several runs rather than a single run against a threshold.
 
 Drivers SHOULD run the benchmarks in the runtime's default production configuration, with warm-up and iterations as in
 [Performance Benchmarking](../benchmarking/benchmarking.md).
 
-Drivers SHOULD record, in addition to the throughput score:
-
-- The CPU time per operation of the threads executing the operations, or process CPU time with background work held
-    constant. It excludes waiting on the server and so is less noisy than throughput. Drivers MAY also record it
-    excluding garbage collection time, where the runtime reports it.
-- The number of spans per operation for each task, so that a zero overhead is not mistaken for an efficient
-    implementation.
+Drivers MAY also record the CPU time per operation alongside the throughput score: it excludes waiting on the server, so
+it is usually less noisy than throughput.
 
 SDK configurations SHOULD NOT install an exporter or a span processor. Spans are still sampled and recorded without
 them; processing cost depends on the host application's choice of processor.
