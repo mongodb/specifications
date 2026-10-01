@@ -429,7 +429,9 @@ those of the [W3C traceparent header](https://www.w3.org/TR/trace-context/#trace
 `parent-id` carries the command span's own span id — the parent of the spans the server creates) and neither the
 trace-id nor the parent-id is all zeroes. This mirrors the server-side validation. If no valid value is available,
 drivers MUST omit the section entirely rather than send an invalid or truncated value. Drivers MUST propagate unsampled
-trace contexts (trace-flags `00`); the sampling decision MUST NOT affect whether the section is attached.
+trace contexts (trace-flags `00`); the sampling decision MUST NOT affect whether the section is attached. In particular,
+a span that is not recording but has a valid context MUST still be made current, so that its context is propagated;
+drivers MUST NOT use `isRecording` to skip that work (see [Implementation Guidelines](#implementation-guidelines)).
 
 A message MUST NOT contain more than one telemetry section. Commands that carry no command span (for example server
 monitoring, authentication, and security-sensitive commands) naturally send no section.
@@ -514,10 +516,10 @@ guidelines.
 
 ### Implementation Guidelines
 
-Not every trace is going to be recorded: samplers decide whether a span is recorded, and the OpenTelemetry API exposes
-this decision via `isRecording` — a method that requires the span to be already created. Only the attributes provided at
-span creation are visible to the sampler; attributes set later are not. Building every attribute before creating the
-span therefore pays the full cost even for spans that will never be recorded.
+Not every span is recorded: samplers decide whether a span is recorded, and the OpenTelemetry API exposes this decision
+via `isRecording` — a method that requires the span to be already created. Only the attributes provided at span creation
+are visible to the sampler; attributes set later are not. Building every attribute before creating the span therefore
+pays the full cost even for spans that will never be recorded.
 
 Therefore, drivers SHOULD:
 
@@ -543,72 +545,86 @@ when the created span's context is not valid, i.e. its trace id or span id is al
 [IsValid](https://opentelemetry.io/docs/specs/otel/trace/api/#isvalid)). An invalid context has no trace identity: it
 cannot be propagated, continued, or correlated with anything downstream, so any work on such a span is wasted. This is a
 state check on the span at hand, not the prohibited detection of whether the OpenTelemetry SDK is available: a custom
-API-only tracer provider that returns spans with valid contexts gets the full tracing path. Drivers MUST NOT use
-`isRecording` for this short-circuit: a valid but unsampled span MUST still be made current, so that its context is
-propagated (see [Propagating Trace Context to the Server](#propagating-trace-context-to-the-server)).
+API-only tracer provider that returns spans with valid contexts gets the full tracing path. The short-circuit keys on
+context validity, not on `isRecording`: a valid but unsampled span still has to be made current (see
+[Propagating Trace Context to the Server](#propagating-trace-context-to-the-server)).
 
 ### Benchmarking
 
-Drivers MUST benchmark the following driver versions in the following configurations, and record the overhead of every
-configuration relative to the baseline:
+Drivers MUST benchmark the following configurations, and record the overhead of every configuration relative to the
+baseline. The benchmark harness, not the driver, installs and configures the OpenTelemetry SDK and its sampler for the
+SDK configurations; this does not conflict with the rule that drivers MUST NOT configure OpenTelemetry on the host
+application level. No configuration has an active parent span: with a valid parent, a tracer without an SDK returns
+spans with the parent's valid context, and `api-only` would no longer measure the same thing across drivers.
 
-| Configuration | Driver version                             | OpenTelemetry setup                                                                        | What it measures                                                                                                                                                                                                                              |
-| :------------ | :----------------------------------------- | :----------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pre-otel`    | last version without OpenTelemetry support | none                                                                                       | The reference for `off`: proves that merely shipping the disabled instrumentation costs nothing. Compared once, when OpenTelemetry support is first released.                                                                                 |
-| `off`         | version with OpenTelemetry                 | tracing disabled                                                                           | The baseline. All other configurations MUST be compared to it.                                                                                                                                                                                |
-| `api-only`    | version with OpenTelemetry                 | tracing enabled; OpenTelemetry API available, no SDK                                       | The overhead of the driver's own implementation: without an SDK every OpenTelemetry API method is a no-op, so everything measured here is the driver's code.                                                                                  |
-| `sdk-never`   | version with OpenTelemetry                 | tracing enabled; SDK installed; sampler drops every trace                                  | The overhead of the OpenTelemetry SDK regardless of the sampling decision. Also a direct check of the guidelines above: if this configuration costs nearly as much as `sdk-always`, attribute building is not gated on the sampling decision. |
-| `sdk-parent`  | version with OpenTelemetry                 | tracing enabled; SDK installed; parent-based sampler with a representative ratio (e.g. 1%) | A realistic production setting.                                                                                                                                                                                                               |
-| `sdk-always`  | version with OpenTelemetry                 | tracing enabled; SDK installed; every trace sampled                                        | The full overhead of the OpenTelemetry implementation; the ceiling.                                                                                                                                                                           |
+| Configuration | OpenTelemetry setup                                                                        |
+| :------------ | :----------------------------------------------------------------------------------------- |
+| `off`         | tracing disabled; the baseline                                                             |
+| `api-only`    | tracing enabled; OpenTelemetry API available, no SDK                                       |
+| `sdk-never`   | tracing enabled; SDK installed; sampler drops every trace                                  |
+| `sdk-parent`  | tracing enabled; SDK installed; parent-based sampler with a representative ratio (e.g. 1%) |
+| `sdk-always`  | tracing enabled; SDK installed; every trace sampled                                        |
 
-The ladder is chosen so that the differences between consecutive configurations are meaningful: `off` → `api-only` is
-the driver-side cost, `api-only` → `sdk-never` is the SDK bookkeeping, and `sdk-never` → `sdk-always` is the cost of
-actually recording.
+`off` is the baseline that all other configurations are compared to. `api-only` measures the driver's own
+implementation: without an SDK every OpenTelemetry API method is a no-op. `sdk-never` adds the SDK's cost regardless of
+the sampling decision, and is a direct check of the guidelines above: if it costs nearly as much as `sdk-always`,
+attribute building is not gated on the sampling decision. `sdk-parent` is a realistic production setting, and
+`sdk-always` the full cost of the feature. The differences between consecutive configurations are meaningful: `off` →
+`api-only` is the driver-side cost, `api-only` → `sdk-never` is the SDK bookkeeping, and `sdk-never` → `sdk-always` is
+the cost of recording.
+
+Additionally, when a driver first releases OpenTelemetry support, it MUST compare `off` once against the last driver
+version without OpenTelemetry support, to show that the disabled instrumentation has no measurable overhead. Drivers
+that already shipped OpenTelemetry support before this requirement was added need not do so.
 
 Drivers SHOULD use their standardized performance testing infrastructure (see
 [Performance Benchmarking](../benchmarking/benchmarking.md)) rather than a purpose-built OpenTelemetry benchmark: the
-configurations above are just more configurations of the same tasks. The following rules apply to the setup:
+configurations above are just more configurations of the same tasks.
 
-- Drivers SHOULD measure the `Small doc insertOne` and `Find one by ID` tasks. They perform one small operation per
-    command against the server, so the driver's own cost, and with it the cost of tracing, is the largest share of each
-    operation. Other tasks are a poor signal: `Run command` sends `hello`, which drivers do not trace;
-    `Find many and empty the cursor` creates few spans per document; large-document and bulk tasks are dominated by the
-    server.
-- Benchmark tasks that never talk to a server (e.g. BSON micro-benchmarks) MUST be excluded: they create no spans and
-    only add noise to the comparison.
-- Each configuration MUST run in its own process. OpenTelemetry cannot be reconfigured once its SDK has been installed
-    into a process, and `api-only` requires that the SDK was never loaded.
-- Configurations MUST be run interleaved — the whole set, then the whole set again — rather than one configuration to
-    completion and then the next. The quantity being measured is a difference between two configurations, and a machine
-    that slows down halfway through a run would otherwise report the difference as overhead.
-- The order of configurations SHOULD be rotated between repetitions, so that each configuration runs in each position
-    equally often. With a fixed order, an effect tied to the position within a repetition shows up as a difference
-    between configurations.
-- Tasks whose overheads are compared with each other MUST run on the same host. Hosts differ in speed by more than the
+Drivers SHOULD measure the `Small doc insertOne` and `Find one by ID` tasks. They perform one small operation per
+command against the server, so the driver's own cost, and with it the cost of tracing, is the largest share of each
+operation. Other tasks are a poor signal: `Run command` has no namespace or collection, so its spans are not
+representative; `Find many and empty the cursor` creates few spans relative to the documents it processes;
+large-document and bulk tasks are dominated by the server. Benchmark tasks that never talk to a server (e.g. BSON
+micro-benchmarks) MUST be excluded: they create no spans.
+
+Each configuration MUST run in its own process: OpenTelemetry cannot be reconfigured once its SDK has been installed
+into a process, and `api-only` requires that the SDK was never loaded.
+
+The overheads measured are small differences between two noisy numbers, so the comparison MUST be robust to the host
+changing speed during a run and between runs. Drivers SHOULD:
+
+- Run the configurations interleaved — the whole set, then the whole set again — rather than one configuration to
+    completion and then the next, so that a host that slows down halfway through a run is not reported as overhead.
+- Rotate the order of configurations between repetitions, so that each configuration runs in each position equally
+    often; with a fixed order, an effect tied to the position shows up as a difference between configurations.
+- Run tasks whose overheads are compared with each other on the same host: hosts differ in speed by more than the
     overhead of tracing does.
-- Drivers SHOULD run the benchmarks with the runtime configuration typical for production, e.g. with a JIT compiler
-    enabled where the language runtime offers one. The cost of tracing is mostly the cost of calling into the
-    OpenTelemetry API, which an interpreter can make several times higher than a JIT does.
-- Drivers SHOULD record, in addition to the throughput score, the CPU time per operation. CPU time leaves out the time
-    spent waiting on the server, so it shows the cost of tracing with less noise than throughput. Where the runtime
-    reports time spent in garbage collection, drivers SHOULD also record CPU time per operation excluding it: when and
-    for how long the collector runs can vary between processes by more than the cost of tracing.
-- The overhead of each configuration relative to the baseline SHOULD be recorded as a metric of its own, so that it can
-    be watched for regressions directly, and so that host-to-host variation cancels out of it.
-- SDK configurations SHOULD NOT install an exporter or a span processor. The cost to attribute to the driver is creating
-    and recording spans; a processor charges the SDK's export machinery to the driver's account and adds variance.
-    Sampled spans are still fully recorded without one.
-- A task is only a useful signal if it creates spans, and how many spans a task creates is driver-specific. Drivers
-    SHOULD report the number of spans per operation for each task, or at least name the tasks that create no spans, so
-    that a measured zero overhead is never read as evidence of an efficient implementation.
+- Not compare a single run against a fixed threshold, but look at the trend over several runs: a single run on shared CI
+    hosts can be off by a large share of the overhead itself.
 
-The overheads measured are small differences between two noisy numbers. A single run on shared CI hosts can be off by a
-large share of the overhead itself, so drivers SHOULD NOT compare a single run against a fixed threshold, and SHOULD
-look at the trend over several runs instead.
+Drivers SHOULD run the benchmarks in the runtime's default production configuration. The cost of tracing is mostly the
+cost of calling into the OpenTelemetry API, and its size depends heavily on how the runtime executes code.
 
-Additionally, drivers MAY guard the tracing hot path with an allocation-based unit test, asserting the number of objects
-allocated per traced command: allocation counts are near-deterministic and catch this class of regression in seconds
-rather than in a multi-hour benchmark.
+Drivers SHOULD record, in addition to the throughput score:
+
+- The CPU time per operation. CPU time leaves out the time spent waiting on the server, so it shows the cost of tracing
+    with less noise than throughput. Where the runtime reports time spent in garbage collection, drivers MAY also record
+    CPU time per operation excluding it: when and for how long the collector runs can vary between processes by more
+    than the cost of tracing.
+- The overhead of each configuration relative to the baseline as a metric of its own, so that it can be watched for
+    regressions directly and so that host-to-host variation cancels out of it.
+- The number of spans per operation for each task, or at least the names of the tasks that create no spans, so that a
+    measured zero overhead is never read as evidence of an efficient implementation. How many spans a task creates is
+    driver-specific.
+
+SDK configurations SHOULD NOT install an exporter or a span processor. The cost to attribute to the driver is creating
+and recording spans; a processor charges the SDK's export machinery to the driver's account and adds variance. Sampled
+spans are still fully recorded without one.
+
+Drivers MAY guard the tracing hot path with an allocation-based unit test, asserting the number of objects allocated per
+traced command: allocation counts are near-deterministic and catch this class of regression in seconds rather than in a
+multi-hour benchmark.
 
 ## Future Work
 
@@ -659,16 +675,18 @@ redesigning the payload format.
 
 ### What overhead is achievable?
 
-The figures below were measured with the Ruby driver, on the `Small doc insertOne` and `Find one by ID` tasks against a
-standalone server on the same host. They are a reference for what an implementation can achieve, not requirements: the
-cost of tracing depends on the language runtime, the host and the workload, and it shrinks as a share of each operation
-once there is network latency or concurrency.
+The figures below were measured with one driver's implementation, on the `Small doc insertOne` and `Find one by ID`
+tasks against a standalone server on the same host. They are a reference for what an implementation can achieve, not
+requirements and not targets: the cost of tracing depends on the language runtime, the host and the workload, and it
+shrinks as a share of each operation once there is network latency or concurrency. Other runtimes can be expected to
+land elsewhere.
 
-An implementation that built every attribute eagerly, before the [Implementation Guidelines](#implementation-guidelines)
-were applied, gave up 9–17% of throughput in `api-only`, 13–22% in `sdk-never` and 20–26% in `sdk-always`. Applying the
-guidelines cut this to 5–7%, 9–11% and 16% respectively, with Ruby's interpreter.
+With an interpreting runtime, an implementation that built every attribute eagerly, before the
+[Implementation Guidelines](#implementation-guidelines) were applied, lost 9–17% of throughput in `api-only`, 13–22% in
+`sdk-never` and 20–26% in `sdk-always`. Applying the guidelines reduced the throughput loss to 5–7%, 9–11% and 16%.
 
-With the YJIT compiler enabled, as Ruby applications commonly run in production, the CPU time added per operation was:
+With the same runtime's JIT compiler enabled, which is its production configuration, the CPU time added per operation
+was:
 
 | Configuration | Added CPU time per operation | Share of the operation's CPU time |
 | :------------ | :--------------------------- | :-------------------------------- |
@@ -677,20 +695,17 @@ With the YJIT compiler enabled, as Ruby applications commonly run in production,
 | `sdk-parent`  | 5 µs                         | 6–7%                              |
 | `sdk-always`  | 8 µs                         | 9–11%                             |
 
-Each of these operations creates two spans, an operation span and a command span, so the cost per span ranged from about
-1–1.5 µs without an SDK to about 4 µs when every span was recorded. On shared CI hosts, which were 2–3 times slower, the
-absolute figures were correspondingly higher and the shares similar, but a single run varied by several microseconds per
-operation.
-
-As a rule of thumb, an implementation that follows the guidelines and runs under the runtime's production configuration
-can keep the overhead on these tasks to about 5% without an SDK, about 10% with an SDK that samples few traces, and
-about 15% when every trace is recorded.
+Each of these operations creates two spans, an operation span and a command span, so the CPU time per span ranged from
+about 1–1.5 µs without an SDK to about 4 µs when every span was recorded. On shared CI hosts, which were 2–3 times
+slower, the added CPU time was correspondingly higher and its share similar, but a single run varied by several
+microseconds per operation.
 
 ## Changelog
 
 - 2026-10-01: Added the Performance Implications section: sampling-aware implementation guidelines and the required
     benchmark configurations and setup, and a Design Rationale entry with the overhead achieved by an implementation
-    that follows the guidelines (DRIVERS-3620).
+    that follows the guidelines. Specified that a valid but unsampled span MUST still be made current so that its
+    context is propagated (DRIVERS-3620).
 
 - 2026-08-19: Specified the `error.type` attribute on command spans, which drivers MUST add when a command fails and
     which matches `db.response.status_code` when the command failed with a server error and is otherwise the name of the
