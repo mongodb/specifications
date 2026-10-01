@@ -249,6 +249,84 @@ Depending on how drivers implement BSON encoding, they MAY expect an error when 
 Document or Regex class) or when encoding a language representation to BSON (e.g. converting a dictionary, which might
 allow null bytes in its keys, to raw BSON bytes).
 
+### 2. Test duplicate keys
+
+The following tests exercise behavior for encoding and decoding BSON with duplicate keys. The expectations depend on the
+implementation. Duplicate keys are not prohibited by the [specification](https://bsonspec.org/spec.html), but are
+inconsistently handled by the MongoDB server ([SERVER-6439](https://jira.mongodb.org/browse/SERVER-6439)).
+
+#### 2.1 Test encoding
+
+If the language BSON builder API permits, test appending duplicate BSON keys. In pseudo-code:
+
+```python
+builder = bson.builder()
+builder.append("foo", 1)
+builder.append("foo", 2)
+got = builder.encode()
+# Assert implementation-defined behavior.
+```
+
+#### 2.2 Test decoding
+
+Test decoding BSON data for a document containing duplicate keys:
+
+```python
+# Bytes represent BSON for { 'foo': 1, 'foo': 2 }
+data = bytes.fromhex("1700000010666f6f000100000010666f6f000200000000")
+```
+
+Behavior may differ between decoding APIs. Drivers MUST test each of the following that their BSON library provides:
+
+- Iterating elements without converting to a map (e.g. a BSON document iterator or reader). In pseudo-code:
+
+    ```python
+    elements = list(bson.iter_elements(data))
+    # Assert implementation-defined behavior.
+    ```
+
+- Looking up a key in a document. In pseudo-code:
+
+    ```python
+    got = bson.document(data)["foo"]
+    # Assert implementation-defined behavior.
+    ```
+
+- Converting to a native language map or dictionary. In pseudo-code:
+
+    ```python
+    got = bson.decode(data)
+    # Assert implementation-defined behavior.
+    ```
+
+- Converting to Extended JSON. In pseudo-code:
+
+    ```python
+    got = bson.to_extended_json(data)
+    # Assert implementation-defined behavior.
+    ```
+
+#### 2.3 Test round-trip
+
+Test decoding BSON data containing duplicate keys to a language representation and encoding it back to BSON. In
+pseudo-code:
+
+```python
+# Bytes represent BSON for { 'foo': 1, 'foo': 2 }
+data = bytes.fromhex("1700000010666f6f000100000010666f6f000200000000")
+got = bson.encode(bson.decode(data))
+# Assert implementation-defined behavior.
+```
+
+#### 2.4 Test parsing Extended JSON
+
+Test parsing an Extended JSON document containing duplicate keys to BSON. In pseudo-code:
+
+```python
+got = bson.from_extended_json('{ "foo": 1, "foo": 2 }')
+# Assert implementation-defined behavior.
+```
+
 ## Implementation Notes
 
 ### A tool for visualizing BSON
@@ -337,6 +415,8 @@ alone and can be confirmed to be internally consistent via the assertions. This 
 development.
 
 ## Changelog
+
+- 2026-09-30: Add prose tests for duplicate keys.
 
 - 2024-01-22: Migrated from reStructuredText to Markdown.
 
