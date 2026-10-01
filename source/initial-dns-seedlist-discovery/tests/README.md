@@ -48,6 +48,79 @@ For this test, run each of the following cases:
 - the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
+### 5. srvHostValidator accepts a host the default verification would reject
+
+When `srvHostValidator` is configured, it replaces the default verification entirely, so a returned address that the
+default verification check would reject must be accepted if the validator returns `true`.
+
+Configure a validator that returns `true` for every host name, then run each of the following cases:
+
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com`, which does not share the SRV's domain name,
+    produces a seedlist containing `blogs.evil.com`
+- the SRV `mongodb+srv://mongo.local` resolving to `mongo.local`, which does not add a domain level to an SRV hostname
+    with fewer than three `.` separated parts, produces a seedlist containing `mongo.local`
+
+### 6. Reject a host the default verification would accept
+
+Configure a validator that returns `false` for every host name and assert that the SRV `mongodb+srv://blogs.mongodb.com`
+resolving to `cluster.mongodb.com` throws an error, even though the returned address shares the SRV's domain name.
+
+### 7. The validator receives the normalized host name
+
+The returned address is normalized before verification, so the validator must be passed the normalized form rather than
+the address exactly as returned by DNS.
+
+Configure a validator that records the host names it is passed and returns `true`, then run the SRV
+`mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` and assert that the validator was passed
+`cluster.mongodb.com`.
+
+### 8. Wrap an error raised by the validator
+
+When the validator raises an error during initial seedlist resolution, the driver must catch it and re-raise it wrapped
+in a driver error rather than letting it propagate unchanged.
+
+Configure a validator that raises an error and assert that the SRV `mongodb+srv://blogs.mongodb.com` resolving to
+`cluster.mongodb.com` throws an error which retains the error raised by the validator.
+
+### 9. Throw when both `srvAllowedHostsSuffix` and `srvHostValidator` are configured
+
+The two options are mutually exclusive.
+
+Assert that configuring a MongoClient with both `srvAllowedHostsSuffix=.mongodb.com` and any `srvHostValidator` throws
+an error.
+
+### 10. Accept a mixed case returned address with `srvAllowedHostsSuffix`
+
+Returned addresses must be normalized before verification.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=.mongodb.com` and assert that the SRV
+`mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` produces a seedlist containing
+`cluster.mongodb.com`.
+
+### 11. Throw when `srvHostValidator` is not callable
+
+Drivers whose language cannot express a non-callable value for `srvHostValidator` -- because the type is checked when
+the program is compiled -- MUST skip this test.
+
+Assert that configuring a MongoClient with a `srvHostValidator` that is not callable, such as the string
+`"notacallable"`, throws a error.
+
+### 12. Accept a reserved single label as `srvAllowedHostsSuffix`
+
+A single label is a public suffix under the Public Suffix List's `*` rule, but the names reserved for private or special
+use listed in [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery.md#srvallowedhostssuffix) must be accepted
+despite that.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=localhost` and assert that the SRV `mongodb+srv://cluster.localhost`
+resolving to `db.cluster.localhost` produces a seedlist containing `db.cluster.localhost`.
+
+### 13. Throw when `srvHostValidator` is used with a non-SRV URI
+
+`srvHostValidator` only has an effect on SRV resolution, so it MUST NOT be accepted alongside a non-SRV URI.
+
+Assert that configuring a MongoClient with any `srvHostValidator` and the non-SRV URI `mongodb://localhost:27017` throws
+an error.
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,
