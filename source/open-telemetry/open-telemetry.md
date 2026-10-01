@@ -72,8 +72,8 @@ Drivers SHOULD support configuring OpenTelemetry on multiple levels.
     environment variable `OTEL_#{LANG}_INSTRUMENTATION_MONGODB_ENABLED`. Drivers MAY provide other means to globally
     disable OpenTelemetry that are more suitable for their language ecosystem. This option MUST override settings on the
     higher level.
-- **Host Application Level**: If the host application enables OpenTelemetry for all available instrumentations (e.g.,
-    Ruby), and a driver can detect this, OpenTelemetry SHOULD be enabled in the driver.
+- **Host Application Level**: If the host application enables OpenTelemetry for all available instrumentations, and a
+    driver can detect this, OpenTelemetry SHOULD be enabled in the driver.
 
 Drivers MUST NOT try to detect whether the OpenTelemetry SDK library is available, and enable tracing based on this.
 Drivers MUST NOT add means that configure OpenTelemetry SDK (e.g., setting a specific exporter). Drivers MUST NOT add
