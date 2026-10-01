@@ -185,7 +185,7 @@ changes.
 
 ## Changelog
 
-- 2026-09-30: Clarify that `srvAllowedHostsSuffix` values are validated only by the steps in the Initial DNS Seedlist
+- 2026-10-01: Clarify that `srvAllowedHostsSuffix` values are validated only by the steps in the Initial DNS Seedlist
     Discovery spec.
 
 - 2026-09-03: Add `srvAllowedHostsSuffix` option.

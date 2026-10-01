@@ -429,9 +429,9 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 ## ChangeLog
 
-- 2026-09-30: Specify that `srvAllowedHostsSuffix` has no hostname syntax validation beyond the listed steps (allowing
-    underscores), and that a `srvHostValidator` of the wrong type, or one returning a non-bool value, results in an
-    error during initial seedlist discovery and is treated as `false` during SRV polling.
+- 2026-10-01: Specify that `srvAllowedHostsSuffix` has no hostname syntax validation beyond the listed steps, and that a
+    `srvHostValidator` of the wrong type, or one returning a non-bool value, results in an error during initial seedlist
+    discovery and is treated as `false` during SRV polling.
 
 - 2026-09-16: Add `srvHostValidator` as a MongoClient option, and allow `srvAllowedHostsSuffix` to be a single label
     when that label is one of a fixed list of names reserved for private or special use.
