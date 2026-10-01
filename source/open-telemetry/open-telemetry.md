@@ -552,13 +552,12 @@ configurations. No configuration has an active parent span, so that `api-only` p
 | :------------ | :---------------------------------------------------------------------------------- |
 | `off`         | tracing disabled; the baseline                                                      |
 | `api-only`    | tracing enabled; no SDK, so every tracing call is a no-op                           |
-| `sdk-never`   | tracing enabled; SDK installed; sampler drops every span                            |
 | `sdk-ratio`   | tracing enabled; SDK installed; ratio sampler with a representative ratio (e.g. 1%) |
 | `sdk-always`  | tracing enabled; SDK installed; every span sampled                                  |
 
-The differences between consecutive configurations are meaningful: `off` → `api-only` is the driver-side cost,
-`api-only` → `sdk-never` is the SDK bookkeeping, and `sdk-never` → `sdk-always` is the cost of recording. If `sdk-never`
-costs nearly as much as `sdk-always`, attribute building is not gated on the sampling decision.
+The differences between consecutive configurations are meaningful: `off` → `api-only` is the cost of the driver's own
+code, which drivers control, and `api-only` → `sdk-ratio` → `sdk-always` adds the cost of the SDK and of recording. If
+`sdk-ratio` costs nearly as much as `sdk-always`, attribute building is not gated on the sampling decision.
 
 Additionally, when a driver first releases OpenTelemetry support, it MUST compare `off` once against the last driver
 version without OpenTelemetry support, to show that the disabled instrumentation has no measurable overhead.
@@ -650,7 +649,6 @@ With the measured driver's runtime in its production configuration, the CPU time
 | Configuration | Added CPU time per operation | Share of the operation's CPU time |
 | :------------ | :--------------------------- | :-------------------------------- |
 | `api-only`    | 2–3 µs                       | 3–4%                              |
-| `sdk-never`   | 4 µs                         | 5–6%                              |
 | `sdk-ratio`   | 5 µs                         | 6–7%                              |
 | `sdk-always`  | 8 µs                         | 9–11%                             |
 
