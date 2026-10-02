@@ -257,7 +257,7 @@ inconsistently handled by the MongoDB server ([SERVER-6439](https://jira.mongodb
 
 #### 2.1 Test encoding
 
-If the language BSON builder API permits, test appending duplicate BSON keys. In pseudo-code:
+Test appending duplicate BSON keys using supported BSON builder API. In pseudo-code:
 
 ```python
 builder = bson.builder()
@@ -318,7 +318,7 @@ Behavior may differ between decoding APIs. Drivers MUST test each of the followi
     - Error raised.
     - Last-one wins: `got` is `{ "foo": 2 }`.
     - First-one wins: `got` is `{ "foo": 1 }`.
-    - Both values preserved in-order (if the language type permits duplicate keys): `got` is `{ "foo": 1, "foo": 2 }`.
+    - Both values preserved in-order (only when the map type supports duplicate keys): `got` is `{ "foo": 1, "foo": 2 }`.
 
 - Converting to Extended JSON. In pseudo-code:
 
