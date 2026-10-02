@@ -253,7 +253,8 @@ allow null bytes in its keys, to raw BSON bytes).
 
 The following tests exercise behavior for encoding and decoding BSON with duplicate keys. The expectations depend on the
 implementation. Duplicate keys are not prohibited by the [specification](https://bsonspec.org/spec.html), but are
-inconsistently handled by the MongoDB server ([SERVER-6439](https://jira.mongodb.org/browse/SERVER-6439)).
+inconsistently handled by the MongoDB server ([SERVER-6439](https://jira.mongodb.org/browse/SERVER-6439)). The expected
+behavior must be consistent with its corresponding API documentation.
 
 #### 2.1 Test encoding
 
