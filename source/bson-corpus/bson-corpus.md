@@ -268,7 +268,7 @@ got = builder.encode()
 
 Expect one of the following implementation-defined results:
 
-- Error raised.
+- Duplicate key error raised.
 - Last-one wins: `got` is `{ "foo": 2 }`.
 - First-one wins: `got` is `{ "foo": 1 }`.
 - Both values preserved in-order: `got` is `{ "foo": 1, "foo": 2 }`.
@@ -292,7 +292,7 @@ Behavior may differ between decoding APIs. Drivers MUST test each of the followi
 
     Expect one of the following implementation-defined results:
 
-    - Error raised.
+    - Duplicate key error raised.
     - Both elements returned in-order: `elements` is `[("foo", 1), ("foo", 2)]`.
 
 - Looking up a key in a document. In pseudo-code:
@@ -303,7 +303,7 @@ Behavior may differ between decoding APIs. Drivers MUST test each of the followi
 
     Expect one of the following implementation-defined results:
 
-    - Error raised.
+    - Duplicate key error raised.
     - Last-one wins: `got` is `2`.
     - First-one wins: `got` is `1`.
 
@@ -315,7 +315,7 @@ Behavior may differ between decoding APIs. Drivers MUST test each of the followi
 
     Expect one of the following implementation-defined results:
 
-    - Error raised.
+    - Duplicate key error raised.
     - Last-one wins: `got` is `{ "foo": 2 }`.
     - First-one wins: `got` is `{ "foo": 1 }`.
     - Both values preserved in-order (only when the map type supports duplicate keys): `got` is `{ "foo": 1, "foo": 2 }`.
@@ -328,7 +328,7 @@ Behavior may differ between decoding APIs. Drivers MUST test each of the followi
 
     Expect one of the following implementation-defined results:
 
-    - Error raised.
+    - Duplicate key error raised.
     - Last-one wins: `got` is `'{ "foo": 2 }'`.
     - First-one wins: `got` is `'{ "foo": 1 }'`.
     - Both values preserved in-order: `got` is `'{ "foo": 1, "foo": 2 }'`.
@@ -346,7 +346,7 @@ got = bson.encode(bson.decode(data))
 
 Expect one of the following implementation-defined results:
 
-- Error raised.
+- Duplicate key error raised.
 - Last-one wins: `got` is BSON for `{ "foo": 2 }`.
 - First-one wins: `got` is BSON for `{ "foo": 1 }`.
 - Both values preserved in-order: `got` is equal to `data`.
@@ -361,7 +361,7 @@ got = bson.from_extended_json('{ "foo": 1, "foo": 2 }')
 
 Expect one of the following implementation-defined results:
 
-- Error raised.
+- Duplicate key error raised.
 - Last-one wins: `got` is BSON for `{ "foo": 2 }`.
 - First-one wins: `got` is BSON for `{ "foo": 1 }`.
 - Both values preserved in-order: `got` is BSON for `{ "foo": 1, "foo": 2 }`.
