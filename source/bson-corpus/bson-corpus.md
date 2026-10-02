@@ -264,8 +264,14 @@ builder = bson.builder()
 builder.append("foo", 1)
 builder.append("foo", 2)
 got = builder.encode()
-# Assert implementation-defined behavior.
 ```
+
+Expect one of the following implementation-defined results:
+
+- Error raised.
+- Last-one wins: `got` is `{ "foo": 2 }`.
+- First-one wins: `got` is `{ "foo": 1 }`.
+- Both values preserved in-order: `got` is `{ "foo": 1, "foo": 2 }`.
 
 #### 2.2 Test decoding
 
@@ -282,29 +288,50 @@ Behavior may differ between decoding APIs. Drivers MUST test each of the followi
 
     ```python
     elements = list(bson.iter_elements(data))
-    # Assert implementation-defined behavior.
     ```
+
+    Expect one of the following implementation-defined results:
+
+    - Error raised.
+    - Both elements returned in-order: `elements` is `[("foo", 1), ("foo", 2)]`.
 
 - Looking up a key in a document. In pseudo-code:
 
     ```python
     got = bson.document(data)["foo"]
-    # Assert implementation-defined behavior.
     ```
+
+    Expect one of the following implementation-defined results:
+
+    - Error raised.
+    - Last-one wins: `got` is `2`.
+    - First-one wins: `got` is `1`.
 
 - Converting to a native language map or dictionary. In pseudo-code:
 
     ```python
     got = bson.decode(data)
-    # Assert implementation-defined behavior.
     ```
+
+    Expect one of the following implementation-defined results:
+
+    - Error raised.
+    - Last-one wins: `got` is `{ "foo": 2 }`.
+    - First-one wins: `got` is `{ "foo": 1 }`.
+    - Both values preserved in-order (if the language type permits duplicate keys): `got` is `{ "foo": 1, "foo": 2 }`.
 
 - Converting to Extended JSON. In pseudo-code:
 
     ```python
     got = bson.to_extended_json(data)
-    # Assert implementation-defined behavior.
     ```
+
+    Expect one of the following implementation-defined results:
+
+    - Error raised.
+    - Last-one wins: `got` is `'{ "foo": 2 }'`.
+    - First-one wins: `got` is `'{ "foo": 1 }'`.
+    - Both values preserved in-order: `got` is `'{ "foo": 1, "foo": 2 }'`.
 
 #### 2.3 Test round-trip
 
@@ -315,8 +342,14 @@ pseudo-code:
 # Bytes represent BSON for { 'foo': 1, 'foo': 2 }
 data = bytes.fromhex("1700000010666f6f000100000010666f6f000200000000")
 got = bson.encode(bson.decode(data))
-# Assert implementation-defined behavior.
 ```
+
+Expect one of the following implementation-defined results:
+
+- Error raised.
+- Last-one wins: `got` is BSON for `{ "foo": 2 }`.
+- First-one wins: `got` is BSON for `{ "foo": 1 }`.
+- Both values preserved in-order: `got` is equal to `data`.
 
 #### 2.4 Test parsing Extended JSON
 
@@ -324,8 +357,14 @@ Test parsing an Extended JSON document containing duplicate keys to BSON. In pse
 
 ```python
 got = bson.from_extended_json('{ "foo": 1, "foo": 2 }')
-# Assert implementation-defined behavior.
 ```
+
+Expect one of the following implementation-defined results:
+
+- Error raised.
+- Last-one wins: `got` is BSON for `{ "foo": 2 }`.
+- First-one wins: `got` is BSON for `{ "foo": 1 }`.
+- Both values preserved in-order: `got` is BSON for `{ "foo": 1, "foo": 2 }`.
 
 ## Implementation Notes
 
