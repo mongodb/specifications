@@ -63,7 +63,8 @@ keys:
 - `description`: A string describing the test.
 - `uri`: A string containing the URI to be parsed.
 
-Every URI carries a sentinel credential, in the username or the password component, in one of two forms:
+Every URI carries a sentinel credential. It appears in the username, the password, an option key, or an option argument,
+in one of two forms:
 
 - the literal `SENTINELpassword1234`, or
 - that same literal fully percent-encoded, as `%53%45%4E%54%49%4E%45%4C%70%61%73%73%77%6F%72%64%31%32%33%34`.
@@ -77,22 +78,27 @@ decode a component before including it in a message. No other normalization is r
 For each case:
 
 - If the driver rejects the URI, neither form of the sentinel may appear in the resulting error message.
-- Any warning the driver logs while parsing the URI must contain neither form of the sentinel.
-- If the driver accepts the URI, the case asserts nothing.
+- Whether or not the driver accepts the URI, neither form of the sentinel may appear in any message the driver logs
+    while parsing it.
+- If the driver accepts the URI, nothing further is asserted about the components it parsed.
 
-The last clause is deliberate. These URIs are malformed in ways this specification does not fully pin down, so drivers
-legitimately differ on which of them parse. Where a driver accepts one, the sentinel has been relocated into a parsed
-component such as the database name or an option value, and that is a separate defect from the message hygiene these
-tests cover, and it is tracked separately. Tightening this into an unconditional "the sentinel appears nowhere"
-assertion would fail drivers for a defect these tests are not about.
+The last clause is deliberate. Several of these URIs are malformed in ways this specification does not fully pin down,
+so drivers legitimately differ on which of them parse. Where a driver accepts one, the sentinel may have been relocated
+into a parsed component such as the database name or an option argument; that is a separate defect from the message
+hygiene these tests cover, and it is tracked separately. Asserting that the sentinel appears nowhere in the parsed
+result would fail drivers for a defect these tests are not about. The requirement on logged messages is not weakened by
+acceptance, because a driver that accepts a URI can still disclose a credential while warning about it.
 
 Drivers SHOULD run each case twice: once catching the error and inspecting only its message, and once letting the error
 escape to the language runtime's default handler. Drivers have been observed to disclose on one path and not the other.
 
-The corpus is curated rather than exhaustive. When adding cases, include at least one per structural family per
-disclosure mechanism, and prefer a URI shape that is known to leak in more than one driver: cross-driver provenance is
-what makes a case worth its place, since a corpus assembled from any single driver's own ideas has repeatedly been shown
-to miss shapes that leak in most of the others.
+The corpus is curated rather than exhaustive, and is maintained by hand: add new cases to the file directly. Each
+description ends with a short identifier naming the shape under test, numbered where several cases share a shape, so a
+driver can refer to a case in a skip list or a bug report.
+
+When adding cases, include at least one per structural family per disclosure mechanism, and prefer a URI shape that is
+known to leak in more than one driver: cross-driver provenance is what makes a case worth its place, since a corpus
+assembled from any single driver's own ideas has repeatedly been shown to miss shapes that leak in most of the others.
 
 ## Prose Tests
 
@@ -108,18 +114,3 @@ These tests cover requirements that cannot be expressed as a list of URIs. They 
 
 2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
     assert that it returns both sentinels, and confirm by inspection that its name makes the disclosure evident.
-
-3. **Unrecognized option arguments are not logged.** Parse
-    `mongodb://localhost:27017/?notARealOption=SENTINELpassword1234`. Assert that no message the driver emits contains
-    the sentinel.
-
-4. **Sensitive option arguments are not logged.** Parse `mongodb://localhost:27017/?proxyPassword=SENTINELpassword1234`.
-    The [SOCKS5 specification](../../socks5-support/socks5.md#proxypassword) requires an error when `proxyPassword` is
-    given without `proxyHost` and `proxyUsername`, so a message is guaranteed. Assert that no message the driver emits
-    contains the sentinel.
-
-5. **Credentials in a key position are not logged.** Parse
-    `mongodb://localhost:27017/?proxyPasswordSENTINELpassword1234`, in which a missing "=" has merged a password into
-    the option key. This connection string parses successfully, so the driver's own diagnostics for an unrecognized key
-    are the only disclosure path, and withholding messages until parsing succeeds does not protect it. Assert that no
-    message the driver emits contains the sentinel.

@@ -184,7 +184,7 @@ Unsupported option 'srvMaxHosts'.
 If the driver cannot match the key to an option name that it knows, the message MUST NOT reproduce the key. For example:
 
 ```text
-Unsupported option at character 16.
+Unsupported option 16 characters into the query segment.
 ```
 
 See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for what such a
@@ -355,7 +355,8 @@ argument may contain text the user intended as part of a credential.
 
 The message MAY identify a key by the canonical name defined for that option in a specification, written as the driver
 knows it rather than copied from the connection string. The message MAY also report the position of the offending key or
-argument within the connection string, for example as a character offset. See also
+argument, expressed as a number of characters into the query segment, that is, measured from the character following the
+question mark ("?") that begins the [Connection Options](#connection-options-optional). See also
 [Reporting a parse failure](#reporting-a-parse-failure).
 
 #### String representations
@@ -576,6 +577,14 @@ A password could in principle contain the spelling of a known option, as in
 `pwd123&proxyUsername=bar` and was not percent-encoded, leading a driver to report a repeated key that is also text from
 the password. That case is pathological, and it discloses only that the password contains the name of a known option, so
 it does not justify withholding a useful diagnostic.
+
+Q: Does reporting a position disclose anything
+
+A little, and deliberately so. A position is measured from the start of the query segment rather than from the start of
+the connection string, so it reveals nothing about the length of the userinfo, and therefore nothing about the length of
+the password. It does bound the combined length of the keys and arguments that precede it in the query segment, one of
+which may be the argument of a sensitive option. That is accepted: without a position the message has nothing actionable
+left in it, and a reader who holds the connection string is the one the message is for.
 
 Q: Is percent-encoding the password sufficient to protect it
 
