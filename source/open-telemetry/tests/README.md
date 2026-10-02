@@ -202,3 +202,18 @@ replica set or sharded cluster).
 > The server may create spans for commands the driver did not trace (head-based sampling applies server-side too).
 > Assertions are therefore always made on the join between driver `traceId`s and server spans, never on the raw contents
 > of the trace directory.
+
+#### Unrecorded Parent Spans
+
+*Test 10: No command span under an unrecorded operation span*
+
+This test verifies that drivers do not create a command span when the operation span is not being recorded (see
+[Instrumenting Server Commands](../open-telemetry.md#instrumenting-server-commands)). It needs a sampler that ignores
+the parent's decision: with a parent-based sampler, a command span under an unrecorded operation span is not recorded
+either, so the test could not tell whether it was created.
+
+1. Install a tracer provider whose sampler drops spans that carry the `db.operation.name` attribute (operation spans)
+    and records all other spans.
+2. Create a `MongoClient` with tracing enabled that uses this tracer provider.
+3. Perform an `insertOne` operation on a test collection.
+4. Assert that no recorded span carries the `db.command.name` attribute with the value `insert`.
