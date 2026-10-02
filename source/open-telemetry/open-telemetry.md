@@ -262,12 +262,7 @@ application, the same value as the operation span's `exception.type` attribute a
 #### Instrumenting Server Commands
 
 Drivers MUST create a span for every server command sent to the server as a result of a public API call, except for
-sensitive commands as listed in the command logging and monitoring specification, and except as described below.
-
-Drivers MUST NOT create a command span when the current span, normally the operation span, has a valid context but is
-not being recorded (`isRecording` in the OpenTelemetry API, or the tracing API's equivalent). A command span created
-there is either not recorded as well, or, with a sampler that ignores the parent's decision, exported without its
-parent. A command sent with no current span is not affected.
+sensitive commands as listed in the command logging and monitoring specification.
 
 Spans for commands MUST be nested to the span for the corresponding driver operation span. If the command is being
 retried, the driver MUST create a separate span for each retry; all the retries MUST be nested to the same operation
@@ -419,17 +414,14 @@ single BSON document with the following schema:
 
 `traceparent` is the [W3C traceparent](https://www.w3.org/TR/trace-context/#traceparent-header) value of the **command
 span**: the propagated context MUST be that of the command span for the command being sent, so server spans join the
-trace as children of the exact command (and retry attempt) that produced them. If no command span was created because
-the current span is not being recorded (see [Instrumenting Server Commands](#instrumenting-server-commands)), the
-propagated context MUST be that of the current span.
+trace as children of the exact command (and retry attempt) that produced them.
 
 Drivers MUST attach the section to a command if and only if all of the following hold:
 
 1. Tracing is enabled for the `MongoClient` (see
     [Enabling, Disabling, and Configuring OpenTelemetry](#enabling-disabling-and-configuring-opentelemetry)).
 2. The connection's `maxWireVersion` is greater than or equal to 29 (MongoDB 9.0).
-3. A valid `traceparent` value is available from the command span for the command being sent, or from the current span
-    when no command span was created because it is not being recorded.
+3. A valid `traceparent` value is available from the command span for the command being sent.
 
 A `traceparent` value is valid if and only if it is exactly 55 characters of the form
 `00-<trace-id: 32 lowercase hex>-<parent-id: 16 lowercase hex>-<trace-flags: 2 lowercase hex>` (the field names are
@@ -439,7 +431,7 @@ trace-id nor the parent-id is all zeroes. This mirrors the server-side validatio
 drivers MUST omit the section entirely rather than send an invalid or truncated value. Drivers MUST propagate unsampled
 trace contexts (trace-flags `00`); the sampling decision MUST NOT affect whether the section is attached.
 
-A message MUST NOT contain more than one telemetry section. Commands that are never traced (for example server
+A message MUST NOT contain more than one telemetry section. Commands that carry no command span (for example server
 monitoring, authentication, and security-sensitive commands) naturally send no section.
 
 No tracing data is returned in server responses as part of this feature.
@@ -653,9 +645,6 @@ With the measured driver's runtime in its production configuration, the CPU time
 Each of these operations creates two spans, an operation span and a command span.
 
 ## Changelog
-
-- 2026-10-02: Specified that drivers MUST NOT create a command span when the current span is not being recorded, and
-    propagate the current span's context instead (DRIVERS-3620).
 
 - 2026-10-01: Added the Performance Implications section (DRIVERS-3620).
 
