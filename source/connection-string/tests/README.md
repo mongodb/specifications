@@ -85,7 +85,7 @@ For each case:
 The last clause is deliberate. Several of these URIs are malformed in ways this specification does not fully pin down,
 so drivers legitimately differ on which of them parse. Where a driver accepts one, the sentinel may have been relocated
 into a parsed component such as the database name or an option argument; that is a separate defect from the message
-hygiene these tests cover, and it is tracked separately. Asserting that the sentinel appears nowhere in the parsed
+hygiene these tests cover. Asserting that the sentinel appears nowhere in the parsed
 result would fail drivers for a defect these tests are not about. The requirement on logged messages is not weakened by
 acceptance, because a driver that accepts a URI can still disclose a credential while warning about it.
 
