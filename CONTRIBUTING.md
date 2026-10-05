@@ -70,7 +70,7 @@ The bulk of the document. Contains all actual requirements and the use of keywor
 
 Guidance for driver authors specific to actual implementation. This can include allowances for language differences, examples of non-obvious complexity in code, and the like.
 
-## Rationale 
+## Design Rationale
 
 Motivations for the design choices made in the specification. Answer the "why" of choices, not the "how".
 If there are notable rejected designs, include brief explanations for their rejection in a "Rejected Alternatives" subsection.
