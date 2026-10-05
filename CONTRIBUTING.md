@@ -10,22 +10,31 @@ resolution should be added as a new guideline here.
 ## Style and formatting
 
 - All prose must use proper English grammar: write in complete sentences, start with a capital letter, use correct
-    punctuation, and end with a period.
+    punctuation, and end with a period. [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt) terms defined in a
+    specification's `META` section are exempt.
 - Avoid metaphors, similes, analogies, and other figurative language.
 - Use numbered lists for enumerating steps in a process.
 - Use bulleted lists for enumerating related but unordered lists of items.
 
 ## Pseudocode
 
-- Consider adding pseudocode following a numbered list of MUST steps that defines an algorithm or system.
+- Consider adding pseudocode following a numbered list of MUST steps that defines an algorithm or a description of a
+    schema.
 - Comments must follow the standards above for prose style.
-- Use Python syntax for algorithms, Typescript syntax for BSON and wire documents, and plain text for systems.
+- Use Python syntax for algorithms and Typescript syntax for BSON and wire documents.
+- Pseudocode is purely explanatory, not normative. It cannot substitute for a prose description of a required behavior.
 
 ## Tests
 
-- Prefer unified tests over prose tests whenever possible.
+- Tests are required for every behavior required in the specification.
+- Prefer unified tests over prose tests whenever possible, and prefer unified tests over new test formats. Prefer
+    expanding unified test capabilities over prose tests where expansion would permit the testing of new behaviors.
 - Specify all environmental and topological requirements for each test.
-- Tests belong in a separate `tests/README.md` file within the specification directory, not in the specification itself.
+- Do not assume a specific driver architecture when creating tests unless that architecture is explicitly required by
+    the specification.
+- Tests belong in a separate `tests/` directory within specification directory, not in the specification itself.
+    - Prose tests belong in a `tests/README.md` file.
+    - Unified tests belong in a `tests/unified` subdirectory.
 
 ## Changelog
 
@@ -46,7 +55,8 @@ resolution should be added as a new guideline here.
 
 ## Document Structure
 
-- All specifications must be written exclusively using the following required sections in the order they appear in:
+- Specifications must use the following sections, in this order, when present. Abstract, META, Specification, and
+    Changelog are required.
 
 ```
 ## Abstract 
