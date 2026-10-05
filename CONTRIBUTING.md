@@ -5,57 +5,61 @@ apply to all specification prose, pseudocode, tests, and comments, both human an
 both when writing and reviewing specification changes.
 
 This is a living document: when an issue or difference of opinion occurs several times across reviews, the final
-resolution should be added as a new guideline here.
+resolution SHOULD be added as a new guideline here.
 
 ## Style and formatting
 
-- All prose must use proper English grammar: write in complete sentences, start with a capital letter, use correct
+- All prose MUST use proper English grammar: write in complete sentences, start with a capital letter, use correct
     punctuation, and end with a period. [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt) terms defined in a
     specification's `META` section are exempt.
-- Avoid metaphors, similes, analogies, and other figurative language.
-- Use numbered lists for enumerating steps in a process.
-- Use bulleted lists for enumerating related but unordered lists of items.
+- Authors MUST avoid metaphors, similes, analogies, and other figurative language.
+- Authors MUST use numbered lists for enumerating steps in a process.
+- Authors MUST use bulleted lists for enumerating related but unordered lists of items.
 
 ## Pseudocode
 
-- Consider adding pseudocode following a numbered list of MUST steps that defines an algorithm or a description of a
+- Authors SHOULD add pseudocode following a numbered list of MUST steps that defines an algorithm or a description of a
     schema.
-- Comments must follow the standards above for prose style.
-- Use Python syntax for algorithms and Typescript syntax for BSON and wire documents.
-- Pseudocode is purely explanatory, not normative. It cannot substitute for a prose description of a required behavior.
+- Comments MUST follow the standards above for prose style.
+- Authors MUST use Python syntax for algorithms and Typescript syntax for BSON and wire documents.
+- Pseudocode MUST be purely explanatory, not normative. It cannot substitute for a prose description of a required
+    behavior.
 
 ## Tests
 
-- Tests are required for every behavior required in the specification.
-- Prefer unified tests over prose tests whenever possible, and prefer unified tests over new test formats. Prefer
-    expanding unified test capabilities over prose tests where expansion would permit the testing of new behaviors.
-- Specify all environmental and topological requirements for each test.
-- Do not assume a specific driver architecture when creating tests unless that architecture is explicitly required by
-    the specification.
-- Tests belong in a separate `tests/` directory within specification directory, not in the specification itself.
-    - Prose tests belong in a `tests/README.md` file.
-    - Unified tests belong in a `tests/unified` subdirectory.
+- Tests MUST cover every behavior required in the specification.
+- Authors SHOULD use unified tests over prose tests whenever possible.
+    - Authors SHOULD prefer unified tests over new test formats.
+    - Authors SHOULD expand unified test capabilities over prose tests where expansion would permit the testing of new
+        behaviors.
+- Authors MUST specify all environmental and topological requirements for each test.
+- Authors MUST NOT assume a specific driver architecture when creating tests unless that architecture is explicitly
+    required by the specification.
+- Tests MUST be in a separate `tests/` directory within specification directory, not in the specification itself.
+    - Prose tests MUST be in a `tests/README.md` file.
+    - Unified tests MUST be in a `tests/unified` subdirectory.
 
 ## Changelog
 
-- All changes require a changelog entry in the modified specification.
-- Changelog entries are concise summaries of their described changes.
-- Changelog entries are in reverse chronological order, with the latest change at the top.
-- Each entry follows a standard format: `YYYY-MM-DD: Description.`, and is separated from its neighbors by a blank line.
+- All changes MUST have a changelog entry in the modified specification.
+- Changelog entries MUST be concise summaries of their described changes.
+- Changelog entries MUST be in reverse chronological order, with the latest change at the top.
+- Each entry MUST follow a standard format: `YYYY-MM-DD: Description.`, and MUST be separated from its neighbors by a
+    blank line.
 
 ## Links
 
-- Cross-spec links use relative paths instead of absolute ones.
-- Link to terms defined in another specification instead of re-defining.
+- Cross-spec links MUST use relative paths instead of absolute ones.
+- Terms defined in another specification MUST be linked instead of re-defining.
 
 ## Deprecation
 
-- Mark deprecated features as deprecated and remove them entirely from the specification once no driver + server pair
-    supports them.
+- Deprecated features MUST be marked as deprecated and removed entirely from the specification once no driver + server
+    pair supports them.
 
 ## Document Structure
 
-- Specifications must use the following sections, in this order, when present. Abstract, META, Specification, and
+- Specifications MUST use the following sections, in this order, when present. Abstract, META, Specification, and
     Changelog are required.
 
 ```
@@ -112,4 +116,4 @@ A dated, bulleted list of changes made to the specification.
 
 ## LLM usage
 
-- All changes are owned by and are the responsibility of the author, regardless of how they were created.
+- Authors MUST be responsible for and own all changes made under their name, regardless of how they were created.
