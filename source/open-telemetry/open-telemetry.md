@@ -630,19 +630,13 @@ redesigning the payload format.
 
 ### What overhead is achievable?
 
-The figures below were measured with one driver's implementation, on the `Small doc insertOne` and `Find one by ID`
-tasks against a standalone server on the same host. They are a reference for what an implementation can achieve, not
-requirements and not targets: other runtimes can be expected to land elsewhere.
-
-With the measured driver's runtime in its production configuration, the CPU time added per operation was:
-
-| Configuration | Added CPU time per operation | Share of the operation's CPU time |
-| :------------ | :--------------------------- | :-------------------------------- |
-| `api-only`    | 2–3 µs                       | 3–4%                              |
-| `sdk-ratio`   | 5 µs                         | 6–7%                              |
-| `sdk-always`  | 8 µs                         | 9–11%                             |
-
-Each of these operations creates two spans, an operation span and a command span.
+The overhead of tracing depends on the language runtime, the host and the workload, so this specification sets no
+numeric target. A reference implementation that follows the [Implementation Guidelines](#implementation-guidelines)
+measured the CPU time it adds per operation on the `Small doc insertOne` and `Find one by ID` tasks, each of which
+creates an operation span and a command span. The current figures, together with the environment they were measured in,
+are reported in that implementation's pull request:
+[mongo-ruby-driver#3108](https://github.com/mongodb/mongo-ruby-driver/pull/3108). They are a reference for what an
+implementation can achieve, not requirements: other runtimes can be expected to land elsewhere.
 
 ## Changelog
 
