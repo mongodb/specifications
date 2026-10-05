@@ -95,7 +95,7 @@ Answers to questions that have or will frequently come up for driver authors wor
 
 A link to the separate test document associated with the specification.
 
-## CHANGELOG 
+## Changelog
 
 A dated, bulleted list of changes made to the specification.
 ```
