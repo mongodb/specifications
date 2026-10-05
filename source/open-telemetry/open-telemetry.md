@@ -508,10 +508,9 @@ guidance of the Command Logging and Monitoring spec.
 
 Drivers MUST measure the performance impact of their OpenTelemetry implementations as described in
 [Benchmarking](#benchmarking), and SHOULD follow the [Implementation Guidelines](#implementation-guidelines). This
-specification sets no numeric limit: the cost depends on the language runtime, the host and the workload. For reference,
-[What overhead is achievable?](#what-overhead-is-achievable) describes the results of an implementation that follows the
-guidelines. In this section, "SDK" means the tracer implementation a host application installs; where tracing is built
-into the runtime, it means the component that subscribes to and records the runtime's spans.
+specification sets no numeric limit: the cost depends on the language runtime, the host and the workload. In this
+section, "SDK" means the tracer implementation a host application installs; where tracing is built into the runtime, it
+means the component that subscribes to and records the runtime's spans.
 
 ### Implementation Guidelines
 
@@ -627,16 +626,6 @@ negotiation mechanism.
 
 Carrying the traceparent inside a BSON document allows future propagation fields to be added to the same section without
 redesigning the payload format.
-
-### What overhead is achievable?
-
-The overhead of tracing depends on the language runtime, the host and the workload, so this specification sets no
-numeric target. A reference implementation that follows the [Implementation Guidelines](#implementation-guidelines)
-measured the CPU time it adds per operation on the `Small doc insertOne` and `Find one by ID` tasks, each of which
-creates an operation span and a command span. The current figures, together with the environment they were measured in,
-are reported in that implementation's pull request:
-[mongo-ruby-driver#3108](https://github.com/mongodb/mongo-ruby-driver/pull/3108). They are a reference for what an
-implementation can achieve, not requirements: other runtimes can be expected to land elsewhere.
 
 ## Changelog
 
