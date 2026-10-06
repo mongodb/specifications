@@ -18,6 +18,8 @@ createEntities:
         - commandStartedEvent
         - commandSucceededEvent
         - commandFailedEvent
+      uriOptions:
+        appName: "retryableWriteHandshakeTest"
   - database:
       id: &database database
       client: *client

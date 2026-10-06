@@ -14,16 +14,16 @@
         "useMultipleMongoses": false,
         "observeLogMessages": {
           "command": "debug"
+        },
+        "uriOptions": {
+          "appName": "commandLoggingRedactionTest"
         }
       }
     },
     {
       "client": {
         "id": "failPointClient",
-        "useMultipleMongoses": false,
-        "uriOptions": {
-          "appName": "commandLoggingRedactionTest"
-        }
+        "useMultipleMongoses": false
       }
     },
     {

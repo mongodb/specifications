@@ -12,11 +12,11 @@ createEntities:
       useMultipleMongoses: false
       observeLogMessages:
         command: debug
+      uriOptions:
+        appName: "commandLoggingRedactionTest"
   - client:
       id: &failPointClient failPointClient
       useMultipleMongoses: false
-      uriOptions:
-        appName: "commandLoggingRedactionTest"
   - database:
       id: &database database
       client: *client
