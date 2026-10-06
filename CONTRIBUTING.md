@@ -16,6 +16,12 @@ resolution SHOULD be added as a new guideline here.
 - Authors MUST use numbered lists for enumerating steps in a process.
 - Authors MUST use bulleted lists for enumerating related but unordered lists of items.
 
+## RFC 2119 keywords
+
+- Authors MUST use "MUST" wherever alignment of drivers across languages is required.
+- Authors MUST use "SHOULD" only when valid exceptions to a requirement exist and can be documented.
+- When in doubt, authors MUST use "MUST" instead of "SHOULD".
+
 ## Pseudocode
 
 - Authors SHOULD add pseudocode following a numbered list of MUST steps that defines an algorithm or a description of a
