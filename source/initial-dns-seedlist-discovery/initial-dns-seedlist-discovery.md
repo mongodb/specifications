@@ -71,8 +71,8 @@ Only `{domainname}` is used during SRV record verification and `{subdomain}` is 
 This option is used to validate hosts. If present, its value MUST be treated as the `{domainname}` for
 [DNS validation](#querying-dns) and
 [SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md). For example,
-`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply the following normalization and validation to the value, in
-this order:
+`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply only the following normalization and validation to the value,
+in this order:
 
 1. Any leading or trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as
     `mydomain.net`. If the resulting stripped value is empty, an error MUST be raised.
@@ -118,12 +118,16 @@ for SRV host validation. If both `srvAllowedHostsSuffix` and `srvHostValidator` 
 Drivers MAY raise this error at any point between MongoClient construction and DNS resolution. The signature of
 `srvHostValidator` MUST take in a string representing the SRV resolved hostname after applying the normalization
 described in [Querying DNS](#querying-dns), and return a bool representing whether the given SRV hostname is valid or
-not. If `srvHostValidator` raises an error during initial seedlist resolution, the driver MUST catch that error and wrap
-it prior to re-raising the error to the user. During
-[SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md), a driver MUST
-NOT raise an error; an error raised by the validator is instead treated as though the validator had returned `false`.
-Since this is a synchronous callback, drivers should advise users to not write a validator that blocks. This option MUST
-only be configurable at the level of a `MongoClient`.
+not. In languages that do not enforce types at compile time, drivers MUST raise an error if the provided
+`srvHostValidator` is not a callable of the expected type. Drivers MAY raise this error at any point between MongoClient
+construction and DNS resolution. During initial seedlist discovery, if `srvHostValidator` returns a value that is not a
+bool, drivers MUST treat it as though the validator raised an error. If `srvHostValidator` raises an error during
+initial seedlist resolution, the driver MUST catch that error and wrap it prior to re-raising the error to the user.
+During [SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md), a driver
+MUST NOT raise an error; an error raised by the validator is instead treated as though the validator had returned
+`false` and any value that is not the boolean `true` MUST be treated as `false`. Since this is a synchronous callback,
+drivers should advise users to not write a validator that blocks. This option MUST only be configurable at the level of
+a `MongoClient`.
 
 Notably, `srvHostValidator` relaxes existing security measures and must be used with caution. Thus, drivers MUST
 document that this parameter is a dangerous option. For example, something like "WARNING: Modifying the default SRV
@@ -424,6 +428,10 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2026-10-01: Specify that `srvAllowedHostsSuffix` has no hostname syntax validation beyond the listed steps, and that a
+    `srvHostValidator` of the wrong type, or one returning a non-bool value, results in an error during initial seedlist
+    discovery and is treated as `false` during SRV polling.
 
 - 2026-09-16: Add `srvHostValidator` as a MongoClient option, and allow `srvAllowedHostsSuffix` to be a single label
     when that label is one of a fixed list of names reserved for private or special use.
