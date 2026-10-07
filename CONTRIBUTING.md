@@ -70,7 +70,7 @@ resolution SHOULD be added as a new guideline here.
     cluster, and load balanced.
 - Authors MUST make manual changes to `.yml` test files and then generate the `.json` versions using
     [these instructions](./README.md#converting-to-json).
-- Authors MUST NOT make manual changes to `.json` test files.
+- Authors MUST NOT make manual changes to `.json` test files generated from a `.yml` source.
 
 ## Changelog
 
