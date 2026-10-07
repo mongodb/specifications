@@ -60,11 +60,10 @@ resolution SHOULD be added as a new guideline here.
 - Tests MUST be in a separate `tests/` directory within specification directory, not in the specification itself.
     - Prose tests MUST be in a `tests/README.md` file.
     - Unified tests MUST be in a `tests/unified` subdirectory.
-- Authors MUST NOT remove deprecated prose tests, but instead strike through their content or otherwise explicitly mark
-    them as such.
 - Authors MUST use `runOnRequirements` (for unified tests) or instructions on skipping (for other tests) to ensure tests
     are only executed when supported.
 - Tests not run by any driver MUST be deleted.
+- Authors MUST re-number existing prose tests to prevent numbering gaps when deleting unused prose tests.
 - Unified tests MUST use the lowest possible schema version that satisfies their requirements.
 - Tests MUST verify or explicitly exclude behavior for all four supported topologies: standalone, replica set, sharded
     cluster, and load balanced.
@@ -156,7 +155,8 @@ A dated, bulleted list of changes made to the specification.
 ## PR Requirements
 
 - PR titles MUST include a DRIVERS ticket (e.g., `DRIVERS-1234`).
-- Authors MUST test changes in at least one language driver.
-- Authors MUST include links to the driver implementation PRs in the PR description (e.g.,
-    `Python implementation: https://github.com/mongodb/mongo-python-driver/pull/…`).
-- Tests MUST pass against all supported server versions and topologies.
+- PRs that modify driver or test behavior MUST also fulfill these requirements:
+    - Authors MUST test changes in at least one language driver.
+    - Authors MUST include links to the driver implementation PRs in the PR description (e.g.,
+        `Python implementation: https://github.com/mongodb/mongo-python-driver/pull/…`).
+    - Tests MUST pass against all supported server versions and topologies.
