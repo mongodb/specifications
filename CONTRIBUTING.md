@@ -150,7 +150,7 @@ A dated, bulleted list of changes made to the specification.
 
 ## LLM usage
 
-- Authors MUST take responsibility for and own all changes made under their name, regardless of how they were created.
+- Authors MUST take responsibility for all changes made under their name, regardless of how they were created.
 
 ## PR Requirements
 
