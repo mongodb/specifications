@@ -52,7 +52,7 @@ resolution SHOULD be added as a new guideline here.
         behaviors.
 - Authors MUST number prose tests starting with `1.`.
 - Authors MUST add new tests to the end of list of prose tests.
-- Authors MUST not modify existing tests unless to fix correctness issues. Create new tests instead of modifying
+- Authors MUST NOT modify existing tests unless to fix correctness issues. Create new tests instead of modifying
     existing ones.
 - Authors MUST specify all environmental and topological requirements for each test.
 - Authors MUST NOT assume a specific driver architecture when creating tests unless that architecture is explicitly
