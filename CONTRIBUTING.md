@@ -60,7 +60,7 @@ resolution SHOULD be added as a new guideline here.
 - Tests MUST be in a separate `tests/` directory within specification directory, not in the specification itself.
     - Prose tests MUST be in a `tests/README.md` file.
     - Unified tests MUST be in a `tests/unified` subdirectory.
-- Authors MUST not remove deprecated prose tests, but instead strike through their content or otherwise explicitly mark
+- Authors MUST NOT remove deprecated prose tests, but instead strike through their content or otherwise explicitly mark
     them as such.
 - Authors MUST use `runOnRequirements` (for unified tests) or instructions on skipping (for other tests) to ensure tests
     are only executed when supported.
