@@ -73,6 +73,7 @@ tests:
             data:
               failCommands: [ping, saslContinue]
               closeConnection: true
+              appName: "retryableReadHandshakeTest"
       - name: runCommand
         object: *database
         arguments: { commandName: ping, command: { ping: 1 } }
@@ -125,6 +126,7 @@ tests:
             data:
               failCommands: [ping, saslContinue]
               closeConnection: true
+              appName: "retryableReadHandshakeTest"
       - name: runCommand
         object: *database
         arguments: { commandName: ping, command: { ping: 1 } }
