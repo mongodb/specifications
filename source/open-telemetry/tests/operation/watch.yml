@@ -1,0 +1,73 @@
+description: operation watch
+schemaVersion: '1.27'
+runOnRequirements:
+  - minServerVersion: "4.0.0"
+    topologies: [ replicaset, sharded, load-balanced ]
+    serverless: forbid
+
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: false
+      observeTracingMessages:
+        enableCommandPayload: true
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name operation-watch
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name test
+
+initialData:
+  - collectionName: *collection0Name
+    databaseName: *database0Name
+    documents: []
+
+tests:
+  - description: watch
+    operations:
+      # The `watch` operation name is asserted even though the test runner uses the
+      # createChangeStream operation to invoke the driver's watch helper.
+      - name: createChangeStream
+        object: *collection0
+        arguments:
+          pipeline: []
+
+    expectTracingMessages:
+      - client: *client0
+        ignoreExtraSpans: false
+        spans:
+          - name: watch operation-watch.test
+            attributes:
+              db.system.name: mongodb
+              db.namespace: *database0Name
+              db.collection.name: *collection0Name
+              db.operation.name: watch
+              db.operation.summary: watch operation-watch.test
+            nested:
+              - name: aggregate
+                attributes:
+                  db.system.name: mongodb
+                  db.namespace: *database0Name
+                  db.collection.name: *collection0Name
+                  db.command.name: aggregate
+                  network.transport: tcp
+                  db.response.status_code: { $$exists: false }
+                  exception.message: { $$exists: false }
+                  exception.type: { $$exists: false }
+                  exception.stacktrace: { $$exists: false }
+                  server.address: { $$type: string }
+                  server.port: { $$type: [ int, long ] }
+                  db.query.summary: aggregate operation-watch.test
+                  # The $changeStream stage and its options vary across drivers, so only the root
+                  # command name is asserted here.
+                  db.query.text:
+                    $$matchAsDocument:
+                      $$matchAsRoot:
+                        aggregate: test
+                  db.mongodb.server_connection_id:
+                    $$type: [ int, long ]
+                  db.mongodb.driver_connection_id:
+                    $$type: [ int, long ]
