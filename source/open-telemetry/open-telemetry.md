@@ -172,7 +172,8 @@ The span name SHOULD be:
 - `driver_operation_name db.collection_name` if the operation is executed on a collection (e.g.,
     `collection.findOneAndDelete(filter)` will report `findAndModify warehouse_db.users_coll`).
 
-- `driver_operation_name db` if there is no specific collection for the operation (e.g., `runCommand warehouse_db`).
+- `driver_operation_name db` if there is no specific collection for the operation (e.g.,
+    `listCollections warehouse_db`).
 
 **Note**: since the `findOneAndDelete` operation is implemented as a `findAndModify` command, the operation name in the
 span is `findAndModify`. This ensures consistency between drivers when naming operations. See the
