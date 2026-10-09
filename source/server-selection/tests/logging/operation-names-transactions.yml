@@ -99,6 +99,16 @@ tests:
 
   - description: "core transaction API logs the callback's operations and commitTransaction"
     operations:
+      # ensure we've discovered the primary before starting, so we don't get an unexpected "waiting" message
+      # when server selection happens for the insert, or have extra logs from the driver performing server
+      # expected events are initial cluster type change from unknown to ReplicaSet, and connect events for each of 3 servers.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 4
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -146,6 +156,16 @@ tests:
 
   - description: "abortTransaction"
     operations:
+      # ensure we've discovered the primary before starting, so we don't get an unexpected "waiting" message
+      # when server selection happens for the insert, or have extra logs from the driver performing server
+      # expected events are initial cluster type change from unknown to ReplicaSet, and connect events for each of 3 servers.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 4
       - name: startTransaction
         object: *session
       - name: insertOne
@@ -193,6 +213,16 @@ tests:
 
   - description: "watch reports watch"
     operations:
+      # ensure we've discovered the primary before starting, so we don't get an unexpected "waiting" message
+      # when server selection happens for the insert, or have extra logs from the driver performing server
+      # expected events are initial cluster type change from unknown to ReplicaSet, and connect events for each of 3 servers.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 4
       - name: createChangeStream
         object: *collection
         arguments:
@@ -224,6 +254,16 @@ tests:
           - replicaset
         serverless: forbid
     operations:
+      # ensure we've discovered the primary before starting, so we don't get an unexpected "waiting" message
+      # when server selection happens for the insert, or have extra logs from the driver performing server
+      # expected events are initial cluster type change from unknown to ReplicaSet, and connect events for each of 3 servers.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 4
       - name: clientBulkWrite
         object: *client
         arguments:

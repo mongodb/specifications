@@ -70,6 +70,16 @@ tests:
 
   - description: "update"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: updateOne
         object: *collection
         arguments:
@@ -97,6 +107,16 @@ tests:
 
   - description: "delete"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: deleteOne
         object: *collection
         arguments:
@@ -123,6 +143,16 @@ tests:
 
   - description: "find"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: find
         object: *collection
         arguments:
@@ -149,6 +179,16 @@ tests:
 
   - description: "aggregate"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: aggregate
         object: *collection
         arguments:
@@ -176,6 +216,16 @@ tests:
 
   - description: "distinct"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: distinct
         object: *collection
         arguments:
@@ -202,6 +252,16 @@ tests:
 
   - description: "estimatedDocumentCount reports count"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: estimatedDocumentCount
         object: *collection
     expectLogMessages:
@@ -226,6 +286,16 @@ tests:
 
   - description: "countDocuments"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: countDocuments
         object: *collection
         arguments:
@@ -253,6 +323,16 @@ tests:
 
   - description: "createCollection"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: createCollection
         object: *database
         arguments:
@@ -279,6 +359,16 @@ tests:
 
   - description: "dropCollection"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: dropCollection
         object: *database
         arguments:
@@ -305,6 +395,16 @@ tests:
 
   - description: "renameCollection"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       # Drop the rename target first so the test is repeatable against a persistent server.
       - name: dropCollection
         object: *database
@@ -352,6 +452,16 @@ tests:
 
   - description: "createIndexes and dropIndexes"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: createIndexes
         object: *collection
         arguments:
@@ -400,6 +510,16 @@ tests:
 
   - description: "listCollections"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: listCollections
         object: *database
     expectLogMessages:
@@ -424,6 +544,16 @@ tests:
 
   - description: "listDatabases"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: listDatabases
         object: *client
     expectLogMessages:
@@ -448,6 +578,16 @@ tests:
 
   - description: "listIndexes"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: listIndexes
         object: *collection
     expectLogMessages:
@@ -472,6 +612,16 @@ tests:
 
   - description: "findOneAndUpdate reports findAndModify"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: findOneAndUpdate
         object: *collection
         arguments:
@@ -499,6 +649,16 @@ tests:
 
   - description: "collection bulkWrite with mixed write models reports bulkWrite"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: bulkWrite
         object: *collection
         arguments:
@@ -534,6 +694,16 @@ tests:
 
   - description: "collection bulkWrite with uniform insert write models reports insert"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: bulkWrite
         object: *collection
         arguments:
@@ -564,6 +734,16 @@ tests:
 
   - description: "collection bulkWrite with uniform update write models reports update"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: bulkWrite
         object: *collection
         arguments:
@@ -596,6 +776,16 @@ tests:
 
   - description: "collection bulkWrite with uniform delete write models reports delete"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: bulkWrite
         object: *collection
         arguments:
@@ -626,6 +816,16 @@ tests:
 
   - description: "runCommand"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: runCommand
         object: *database
         arguments:
@@ -653,6 +853,16 @@ tests:
 
   - description: "cursor-returning runCommand"
     operations:
+      # ensure we've discovered the server so it is immediately available
+      # and no extra "waiting for suitable server" messages are emitted.
+      # expected topology events reflect initial server discovery and server connect event.
+      - name: waitForEvent
+        object: testRunner
+        arguments:
+          client: *client
+          event:
+            topologyDescriptionChangedEvent: {}
+          count: 2
       - name: runCursorCommand
         object: *database
         arguments:

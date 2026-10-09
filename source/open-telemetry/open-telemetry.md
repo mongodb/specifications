@@ -468,42 +468,43 @@ See [OpenTelemetry Tests](tests/README.md) for the test plan.
 
 The OpenTelemetry specification covers all driver operations including but not limited to the following operations:
 
-| Operation                         | Test                                                                                   |
-| :-------------------------------- | :------------------------------------------------------------------------------------- |
-| `aggregate`                       | [tests/operation/aggregate.yml](tests/operation/aggregate.yml)                         |
-| `findAndModify`                   | [tests/operation/find_and_modify.yml](tests/operation/find_and_modify.yml)             |
-| `bulkWrite` (client-level)        | [tests/operation/bulk_write.yml](tests/operation/bulk_write.yml)                       |
-| `bulkWrite` (collection-level)    | [tests/operation/collection_bulk_write.yml](tests/operation/collection_bulk_write.yml) |
-| `commitTransaction`               | [tests/transaction/core_api.yml](tests/transaction/core_api.yml)                       |
-| `abortTransaction`                | [tests/transaction/core_api.yml](tests/transaction/core_api.yml)                       |
-| `withTransaction`                 | [tests/transaction/convenient.yml](tests/transaction/convenient.yml)                   |
-| `createCollection`                | [tests/operation/create_collection.yml](tests/operation/create_collection.yml)         |
-| `createIndexes`                   | [tests/operation/create_indexes.yml](tests/operation/create_indexes.yml)               |
-| `distinct`                        | [tests/operation/distinct.yml](tests/operation/distinct.yml)                           |
-| `dropCollection`                  | [tests/operation/drop_collection.yml](tests/operation/drop_collection.yml)             |
-| `dropIndexes`                     | [tests/operation/drop_indexes.yml](tests/operation/drop_indexes.yml)                   |
-| `find`                            | [tests/operation/find.yml](tests/operation/find.yml)                                   |
-| `getMore`                         | [tests/operation/get_more.yml](tests/operation/get_more.yml)                           |
-| `listCollections`                 | [tests/operation/list_collections.yml](tests/operation/list_collections.yml)           |
-| `listDatabases`                   | [tests/operation/list_databases.yml](tests/operation/list_databases.yml)               |
-| `listIndexes`                     | [tests/operation/list_indexes.yml](tests/operation/list_indexes.yml)                   |
-| `mapReduce`                       | [tests/operation/map_reduce.yml](tests/operation/map_reduce.yml)                       |
-| `count`                           | [tests/operation/count.yml](tests/operation/count.yml)                                 |
-| `insert`                          | [tests/operation/insert.yml](tests/operation/insert.yml)                               |
-| `delete`                          | [tests/operation/delete.yml](tests/operation/delete.yml)                               |
-| `update`                          | [tests/operation/update.yml](tests/operation/update.yml)                               |
-| `createSearchIndexes`             | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)                   |
-| `dropSearchIndex`                 | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)                   |
-| `updateSearchIndex`               | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)                   |
-| `renameCollection`                | [tests/operation/rename_collection.yml](tests/operation/rename_collection.yml)         |
-| `countDocuments`                  | [tests/operation/count_documents.yml](tests/operation/count_documents.yml)             |
-| `watch`                           | [tests/operation/watch.yml](tests/operation/watch.yml)                                 |
-| `runCommand` (document-returning) | [tests/operation/run_command.yml](tests/operation/run_command.yml)                     |
-| `runCommand` (cursor-returning)   | [tests/operation/run_cursor_command.yml](tests/operation/run_cursor_command.yml)       |
+| Operation                                  | Test                                                                                   |
+| :----------------------------------------- | :------------------------------------------------------------------------------------- |
+| `aggregate`                                | [tests/operation/aggregate.yml](tests/operation/aggregate.yml)                         |
+| `findAndModify`                            | [tests/operation/find_and_modify.yml](tests/operation/find_and_modify.yml)             |
+| `bulkWrite` (client-level)                 | [tests/operation/bulk_write.yml](tests/operation/bulk_write.yml)                       |
+| `bulkWrite` (collection-level)             | [tests/operation/collection_bulk_write.yml](tests/operation/collection_bulk_write.yml) |
+| `commitTransaction`                        | [tests/transaction/core_api.yml](tests/transaction/core_api.yml)                       |
+| `abortTransaction`                         | [tests/transaction/core_api.yml](tests/transaction/core_api.yml)                       |
+| `withTransaction` (no `db.operation.name`) | [tests/transaction/convenient.yml](tests/transaction/convenient.yml)                   |
+| `createCollection`                         | [tests/operation/create_collection.yml](tests/operation/create_collection.yml)         |
+| `createIndexes`                            | [tests/operation/create_indexes.yml](tests/operation/create_indexes.yml)               |
+| `distinct`                                 | [tests/operation/distinct.yml](tests/operation/distinct.yml)                           |
+| `dropCollection`                           | [tests/operation/drop_collection.yml](tests/operation/drop_collection.yml)             |
+| `dropIndexes`                              | [tests/operation/drop_indexes.yml](tests/operation/drop_indexes.yml)                   |
+| `find`                                     | [tests/operation/find.yml](tests/operation/find.yml)                                   |
+| `getMore`                                  | [tests/operation/get_more.yml](tests/operation/get_more.yml)                           |
+| `listCollections`                          | [tests/operation/list_collections.yml](tests/operation/list_collections.yml)           |
+| `listDatabases`                            | [tests/operation/list_databases.yml](tests/operation/list_databases.yml)               |
+| `listIndexes`                              | [tests/operation/list_indexes.yml](tests/operation/list_indexes.yml)                   |
+| `mapReduce`                                | [tests/operation/map_reduce.yml](tests/operation/map_reduce.yml)                       |
+| `count`                                    | [tests/operation/count.yml](tests/operation/count.yml)                                 |
+| `insert`                                   | [tests/operation/insert.yml](tests/operation/insert.yml)                               |
+| `delete`                                   | [tests/operation/delete.yml](tests/operation/delete.yml)                               |
+| `update`                                   | [tests/operation/update.yml](tests/operation/update.yml)                               |
+| `createSearchIndexes`                      | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)                   |
+| `dropSearchIndex`                          | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)                   |
+| `updateSearchIndex`                        | [tests/operation/atlas_search.yml](tests/operation/atlas_search.yml)                   |
+| `renameCollection`                         | [tests/operation/rename_collection.yml](tests/operation/rename_collection.yml)         |
+| `countDocuments`                           | [tests/operation/count_documents.yml](tests/operation/count_documents.yml)             |
+| `watch`                                    | [tests/operation/watch.yml](tests/operation/watch.yml)                                 |
+| `runCommand` (document-returning)          | [tests/operation/run_command.yml](tests/operation/run_command.yml)                     |
+| `runCommand` (cursor-returning)            | [tests/operation/run_cursor_command.yml](tests/operation/run_cursor_command.yml)       |
 
 The table above lists the operations drivers SHOULD cover, and the operation name drivers MUST report in
-`db.operation.name` for each. Operation names match the corresponding public API method names except where noted. The
-operation names relate to the underlying server commands as follows:
+`db.operation.name` for each, except where the table notes that none is reported. Operation names match the
+corresponding public API method names except where noted. The operation names relate to the underlying server commands
+as follows:
 
 - `createCollection` sends a `create` command and `dropCollection` sends a `drop` command. These names were shipped by
     existing drivers before this table was written, so the operation names are documented as-is rather than renamed to
