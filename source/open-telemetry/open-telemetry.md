@@ -132,8 +132,9 @@ When a user commits or aborts a transaction with `commitTransaction` or `abortTr
 
 ##### `withTransaction`
 
-In case of `withTransaction` operation spans for operations that are executed inside the callbacks SHOULD be nested into
-the `withTransaction` span.
+`withTransaction` has no span of its own. The driver MUST NOT create a `withTransaction` span: the operations executed
+inside the callback are nested in the pseudo `transaction` span (see [Transactions](#transactions)) like any other
+operation in the transaction, and the driver reports no `db.operation.name` for the helper itself.
 
 ##### Cursor Iteration (`getMore`)
 
@@ -152,8 +153,8 @@ collection, or `getMore db` when the cursor targets no specific collection (e.g.
 This operation span MUST NOT be nested under the operation span of the command that created the cursor. A host
 application may do unrelated work between batches, and nesting each `getMore` under the cursor-creating operation would
 attribute that work to the original operation. Ordinary nesting still applies otherwise. A cursor iterated inside a
-`withTransaction` callback nests into the `withTransaction` span, and a cursor iterated inside a transaction started
-with the core transaction API nests into the pseudo operation `transaction` span.
+`withTransaction` callback nests into the pseudo operation `transaction` span, the same as a cursor iterated inside a
+transaction started with the core transaction API.
 
 Each `getMore` operation span MUST be finished once its command completes. No span is scoped to a cursor's lifetime, so
 a cursor that is never exhausted (e.g., a tailable cursor) leaves nothing unfinished.
@@ -177,11 +178,11 @@ The span name SHOULD be:
 span is `findAndModify`. This ensures consistency between drivers when naming operations. See the
 [covered operations](#covered-operations) table below for mapping of public API methods to operation names.
 
-**Note**: drivers expose two generic command helpers: one that returns a document (e.g., `Database.command` in PyMongo)
-and one that returns a cursor (e.g., `Database.cursor_command` in PyMongo). Both helpers report the operation name
-`runCommand`, regardless of the command they send. A helper that returns a cursor usually targets a collection, unlike a
-helper that returns a document. For the span of a helper that returns a cursor, `db.namespace` MUST be set to the
-database the helper runs against, and `db.collection.name` MUST be set when the command targets a collection (e.g.,
+**Note**: drivers MAY expose two generic command helpers: one that returns a document (e.g., `Database.command` in
+PyMongo) and one that returns a cursor (e.g., `Database.cursor_command` in PyMongo). Both helpers report the operation
+name `runCommand`, regardless of the command they send. A helper that returns a cursor usually targets a collection,
+unlike a helper that returns a document. For the span of a helper that returns a cursor, `db.namespace` MUST be set to
+the database the helper runs against, and `db.collection.name` MUST be set when the command targets a collection (e.g.,
 `find`) and omitted otherwise (e.g., `listCollections`).
 
 **Note**: for a collection-level `bulkWrite`, the operation name is `bulkWrite` when the write models are mixed, and the
@@ -500,8 +501,9 @@ The OpenTelemetry specification covers all driver operations including but not l
 | `runCommand` (document-returning) | [tests/operation/run_command.yml](tests/operation/run_command.yml)                     |
 | `runCommand` (cursor-returning)   | [tests/operation/run_cursor_command.yml](tests/operation/run_cursor_command.yml)       |
 
-The table above lists the public API methods drivers SHOULD cover, and the operation name drivers MUST report in
-`db.operation.name` for each. The operation names relate to the underlying server commands as follows:
+The table above lists the operations drivers SHOULD cover, and the operation name drivers MUST report in
+`db.operation.name` for each. Operation names match the corresponding public API method names except where noted. The
+operation names relate to the underlying server commands as follows:
 
 - `createCollection` sends a `create` command and `dropCollection` sends a `drop` command. These names were shipped by
     existing drivers before this table was written, so the operation names are documented as-is rather than renamed to
@@ -509,11 +511,16 @@ The table above lists the public API methods drivers SHOULD cover, and the opera
 - Collection-level `bulkWrite` sends `insert`, `update`, and `delete` commands. The operation name is `bulkWrite` when
     the write models are mixed, and the write type's name (`insert`, `update`, or `delete`) when every model in the call
     is of the same type.
+- `insert`, `update`, `delete`, and `findAndModify` are the CRUD specification's operation names covering the
+    `insertOne`/`insertMany`, `updateOne`/`updateMany`/`replaceOne`, `deleteOne`/`deleteMany`, and
+    `findOneAndDelete`/`findOneAndReplace`/`findOneAndUpdate` helpers.
 - `count` is the operation name for the `estimatedDocumentCount` helper (the CRUD specification's name for it); the name
     matches the `count` command the helper sends.
 - `countDocuments` and `watch` send `aggregate` commands. The operation names are the logical helper names rather than
     the command name, to be more descriptive of intent.
-- `withTransaction` is a driver-side helper with no underlying command, so the operation name is the helper name.
+- `withTransaction` is a driver-side helper with no underlying command and no span of its own (see
+    [`withTransaction`](#withtransaction)), so drivers report no operation name for it; the callback's operations and
+    the `commitTransaction`/`abortTransaction` report their own operation names.
 - Both generic command helpers report the operation name `runCommand`, regardless of the command they send. See
     [Operation Span Name](#operation-span-name).
 
@@ -589,7 +596,8 @@ redesigning the payload format.
 
 - 2026-10-08: Expanded the covered operations table with the missing operations and documented how the reported
     operation names relate to the underlying server commands. Specified that server selection logging reports the same
-    operation names.
+    operation names. Aligned the `withTransaction` guidance with the test fixture: the helper has no span of its own,
+    the callback's operations are nested in the pseudo `transaction` span, and the helper reports no operation name.
 
 - 2026-08-19: Specified the `error.type` attribute on command spans, which drivers MUST add when a command fails and
     which matches `db.response.status_code` when the command failed with a server error and is otherwise the name of the
