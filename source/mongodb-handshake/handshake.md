@@ -342,7 +342,7 @@ list in order. The first populated variable determines the value. Drivers MUST N
 | 5     | `CLINE_ACTIVE`           | `cline`                  |
 | 6     | `GEMINI_CLI`             | `gemini_cli`             |
 | 7     | `AUGMENT_AGENT`          | `auggie_cli`             |
-| 8     | `OPENCODE_CLIENT`        | `opencode_client`        |
+| 8     | `OPENCODE`               | `opencode_client`        |
 | 9     | `TRAE_AI_SHELL_ID`       | `trae_ai`                |
 | 10    | `GOOSE_TERMINAL`         | `goose`                  |
 | 11    | `GOOSE_AGENT`            | `goose`                  |
@@ -383,6 +383,9 @@ Determination of `client.env.agent` MUST NOT cause a user-visible error.
 > [mongosh](https://github.com/mongodb-js/mongosh) implements, so drivers and the shell report the same known agent
 > under the same name. New agents will appear over time. Drivers MUST NOT add entries on their own; a change to this
 > specification extends the list.
+>
+> Detection of opencode does not match mongosh, which checks `OPENCODE_CLIENT`. opencode does not set that variable; it
+> sets `OPENCODE`. This specification checks `OPENCODE`.
 >
 > Normalization of `AI_AGENT` does not match mongosh, which keeps whitespace, reports a whitespace-only value, and does
 > not truncate. [MONGOSH-3696](https://jira.mongodb.org/browse/MONGOSH-3696) proposes that mongosh adopt the behavior
