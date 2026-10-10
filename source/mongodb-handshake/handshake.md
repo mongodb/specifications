@@ -142,6 +142,7 @@ The initial handshake supports a `client` argument, provided as a BSON object. T
                 timeout_sec: 42,          /* OPTIONAL */
                 memory_mb: 1024,          /* OPTIONAL */
                 region: "<string>",       /* OPTIONAL */
+                agent: "<string>",        /* OPTIONAL */
                 /* OPTIONAL */
                 container: {
                     runtime: "<string>",  /* OPTIONAL */
@@ -285,8 +286,8 @@ Example:
 
 This value is optional and is not application configurable.
 
-Information about the execution environment, including Function-as-a-Service (FaaS) identification and container
-runtime.
+Information about the execution environment, including Function-as-a-Service (FaaS) identification, container runtime,
+and agentic client (agent) identification.
 
 The contents of `client.env` MUST be adjusted to keep the handshake below the size limit; see
 [Limitations](#limitations) for specifics.
@@ -322,6 +323,73 @@ Depending on which `client.env.name` has been selected, other FaaS fields in `cl
 
 Missing variables or variables with values not matching the expected type MUST cause the corresponding `client.env`
 field to be omitted and MUST NOT cause a user-visible error.
+
+##### Agent
+
+Agents are AI coding assistants and agentic clients, such as Claude Code, Cursor, and Gemini CLI. Most agents set an
+environment variable when they run shell commands or code for a user. `client.env.agent` records which agent, if any,
+drives the client. This distinguishes agent-mediated use of MongoDB from direct human use.
+
+`client.env.agent` is a single string. The environment variables below determine its value. Drivers MUST evaluate the
+list in order. The first populated variable determines the value. Drivers MUST NOT consider later entries.
+
+| Order | Environment Variable     | `client.env.agent` value |
+| ----- | ------------------------ | ------------------------ |
+| 1     | `CLAUDECODE`             | `claude_code`            |
+| 2     | `CLAUDE_CODE_ENTRYPOINT` | `claude_code`            |
+| 3     | `CURSOR_AGENT`           | `cursor`                 |
+| 4     | `CODEX_SANDBOX`          | `codex_cli`              |
+| 5     | `CLINE_ACTIVE`           | `cline`                  |
+| 6     | `GEMINI_CLI`             | `gemini_cli`             |
+| 7     | `AUGMENT_AGENT`          | `auggie_cli`             |
+| 8     | `OPENCODE`               | `opencode_client`        |
+| 9     | `TRAE_AI_SHELL_ID`       | `trae_ai`                |
+| 10    | `GOOSE_TERMINAL`         | `goose`                  |
+| 11    | `GOOSE_AGENT`            | `goose`                  |
+| 12    | `AI_AGENT`               | See below.               |
+
+For entries 1 through 11, `client.env.agent` is the fixed string in the table, whatever the value of the populated
+variable. These variables identify a known agent, so the name does not depend on the value.
+
+Entry 12, `AI_AGENT`, is a generic variable that any agent may set. It is evaluated last, so a known agent is always
+reported under its fixed name. Normalize its value, then:
+
+- If the normalized value is `1` or `true`, `client.env.agent` MUST be the fixed string `ai_agent`. These values
+    identify an agent without naming it.
+- Otherwise, `client.env.agent` MUST be the normalized value.
+
+Normalization removes leading and trailing whitespace and converts the value to lowercase. Drivers MUST then truncate
+the value to the largest valid UTF-8 prefix of 64 bytes or fewer. Drivers MUST drop a character that does not fit.
+Drivers MUST NOT split a character or replace one with U+FFFD.
+
+`AI_AGENT` is the only entry whose value is reported, and therefore the only unbounded one. The 64-byte limit stops a
+long value from costing both `client.env.agent` and other fields under [Limitations](#limitations).
+
+> [!NOTE]
+> Truncation at a fixed byte count splits a character if the limit falls inside one, and some string APIs then
+> substitute U+FFFD, which is lossy and longer than the bytes it replaces. Use an API that truncates on a character
+> boundary, or walk back from byte 64 to the start of the character that contains it.
+
+Agents may include version information in this value, so it is not a fixed set of strings. Entries 1 through 11 report a
+name from the table, but an agent reports its own `AI_AGENT` value, which is therefore not generically queryable.
+
+A variable is populated if it is present and non-empty after normalization. A whitespace-only value is therefore not
+populated. If no variable above is populated, `client.env.agent` MUST be omitted.
+
+Determination of `client.env.agent` MUST NOT cause a user-visible error.
+
+> [!NOTE]
+> The variables above, and the names they map to, match the detection that
+> [mongosh](https://github.com/mongodb-js/mongosh) implements, so drivers and the shell report the same known agent
+> under the same name. New agents will appear over time. Drivers MUST NOT add entries on their own; a change to this
+> specification extends the list.
+>
+> Detection of opencode does not match mongosh, which checks `OPENCODE_CLIENT`. opencode does not set that variable; it
+> sets `OPENCODE`. This specification checks `OPENCODE`.
+>
+> Normalization of `AI_AGENT` does not match mongosh, which keeps whitespace, reports a whitespace-only value, and does
+> not truncate. [MONGOSH-3696](https://jira.mongodb.org/browse/MONGOSH-3696) proposes that mongosh adopt the behavior
+> above.
 
 ##### Container
 
@@ -495,10 +563,13 @@ which will result in handshake failure. Drivers MUST validate these values and t
 if necessary. Implementers SHOULD cumulatively update fields in the following order until the document is under the size
 limit:
 
-1. Omit fields from `env` except `env.name`.
-2. Omit fields from `os` except `os.type`.
-3. Omit the `env` document entirely.
-4. Truncate `platform`.
+1. Omit fields from `env` except `env.name` and `env.agent`.
+2. Omit `env.agent`. If `env` then has no remaining fields, omit `env` entirely.
+3. Omit fields from `os` except `os.type`.
+4. Omit the `env` document entirely.
+5. Truncate `platform`.
+
+`env.agent` is omitted before `env.name` because drivers have reported `env.name` since before `env.agent` existed.
 
 Additionally, implementers are encouraged to place high priority information about the platform earlier in the string,
 in order to avoid possible truncating of those details.
@@ -581,6 +652,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-09-22: Add `env.agent` to `client` document for agentic client identification.
 - 2026-09-11: Require `driver.name` and `driver.version` entries to correspond by index, and clarify that duplicate
     detection compares whole `DriverInfoOptions`.
 - 2026-06-25: Clarify the client backpressure component of the handshake.
