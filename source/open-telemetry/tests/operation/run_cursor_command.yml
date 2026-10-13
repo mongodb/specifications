@@ -35,6 +35,7 @@ tests:
           commandName: listCollections
         expectResult:
           - name: test
+            type: collection
 
     expectTracingMessages:
       - client: *client0

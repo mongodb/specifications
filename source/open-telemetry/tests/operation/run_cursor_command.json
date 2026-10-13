@@ -58,7 +58,8 @@
           },
           "expectResult": [
             {
-              "name": "test"
+              "name": "test",
+              "type": "collection"
             }
           ]
         }
