@@ -516,6 +516,8 @@ to cover the same sequence of events.
 
 ## Changelog
 
+- 2026-10-13: Add tests for `IllegalOperation` error passthrough.
+
 - 2026-06-17: Remove pre-4.2 version references.
 
 - 2026-04-14: Add prose tests for retry behavior when a mix of overload and non-overload errors are encountered.

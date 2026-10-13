@@ -1,0 +1,135 @@
+description: "retryable-writes IllegalOperation error passthrough"
+
+schemaVersion: "1.3"
+
+runOnRequirements:
+  - topologies: [ single, replicaset, sharded, load-balanced ]
+
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: false
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &databaseName retryable-writes-tests
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collectionName coll
+  - client:
+      id: &clientRetryWritesFalse clientRetryWritesFalse
+      uriOptions:
+        retryWrites: false
+      useMultipleMongoses: false
+  - database:
+      id: &databaseRetryWritesFalse databaseRetryWritesFalse
+      client: *clientRetryWritesFalse
+      databaseName: *databaseName
+  - collection:
+      id: &collectionRetryWritesFalse collectionRetryWritesFalse
+      database: *databaseRetryWritesFalse
+      collectionName: *collectionName
+
+initialData:
+  - collectionName: *collectionName
+    databaseName: *databaseName
+    documents: []
+
+# Drivers replace the message of an IllegalOperation error only when its errmsg starts with "Transaction numbers".
+# Any other IllegalOperation error MUST reach the application unmodified.
+tests:
+  - description: "InsertOne preserves an unrelated IllegalOperation error"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              errorCode: 20 # IllegalOperation
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: { _id: 1 }
+        expectError:
+          errorCode: 20
+          errorCodeName: IllegalOperation
+          errorContains: "'failCommand' failpoint" # 4.2 says "due to" where later servers say "via"
+          errorLabelsOmit: [ RetryableWriteError ]
+
+  - description: "InsertOne preserves an unrelated IllegalOperation error when retryWrites is false"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *clientRetryWritesFalse
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              errorCode: 20 # IllegalOperation
+      - name: insertOne
+        object: *collectionRetryWritesFalse
+        arguments:
+          document: { _id: 1 }
+        expectError:
+          errorCode: 20
+          errorCodeName: IllegalOperation
+          errorContains: "'failCommand' failpoint"
+          errorLabelsOmit: [ RetryableWriteError ]
+
+  - description: "ClientBulkWrite preserves an unrelated IllegalOperation error"
+    runOnRequirements:
+      - minServerVersion: "8.0" # bulkWrite added in server 8.0
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ bulkWrite ]
+              errorCode: 20 # IllegalOperation
+      - name: clientBulkWrite
+        object: *client0
+        arguments:
+          models:
+            - insertOne:
+                namespace: retryable-writes-tests.coll
+                document: { _id: 1 }
+        expectError:
+          errorCode: 20
+          errorCodeName: IllegalOperation
+          errorContains: "'failCommand' failpoint"
+          errorLabelsOmit: [ RetryableWriteError ]
+
+  - description: "InsertOne replaces the message of a transaction numbers IllegalOperation error"
+    runOnRequirements:
+      - minServerVersion: "8.3" # failCommand errorMsg added in server 8.3
+        # A transaction number is never sent to a standalone.
+        topologies: [ replicaset, sharded, load-balanced ]
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *client0
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              errorCode: 20 # IllegalOperation
+              errorMsg: "Transaction numbers are only allowed on storage engines that support document-level locking"
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document: { _id: 1 }
+        expectError:
+          errorContains: "This MongoDB deployment does not support retryable writes. Please add retryWrites=false to your connection string."
