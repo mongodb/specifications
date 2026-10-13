@@ -3,7 +3,8 @@ description: "operation-names-standalone"
 schemaVersion: "1.14"
 
 runOnRequirements:
-  - topologies:
+  - minServerVersion: "4.4"
+    topologies:
       - single
 
 createEntities:
