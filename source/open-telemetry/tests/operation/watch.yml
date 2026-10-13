@@ -46,6 +46,9 @@ tests:
               db.collection.name: *collection0Name
               db.operation.name: watch
               db.operation.summary: watch operation-watch.test
+              # The $changeStream aggregate creates a cursor with a non-zero id, so cursor_id is
+              # required on the operation span as well as the command span.
+              db.mongodb.cursor_id: { $$gte: 1 }
             nested:
               - name: aggregate
                 attributes:
@@ -67,6 +70,7 @@ tests:
                     $$matchAsDocument:
                       $$matchAsRoot:
                         aggregate: test
+                  db.mongodb.cursor_id: { $$gte: 1 }
                   db.mongodb.server_connection_id:
                     $$type: [ int, long ]
                   db.mongodb.driver_connection_id:
