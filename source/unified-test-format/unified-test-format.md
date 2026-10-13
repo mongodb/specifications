@@ -3350,8 +3350,8 @@ db.adminCommand({
     connection will be closed, and the client will see a network error.
 - `errorCode`: Optional integer, which is unset by default. If set, the command will not be executed and the specified
     command error code will be returned as a command error.
-- `errorMsg`: Optional string, which is unset by default. If set, the error returned by the fail point uses this
-    message instead of the server's default message. New in server 8.3.0
+- `errorMsg`: Optional string, which is unset by default. If set, the error returned by the fail point uses this message
+    instead of the server's default message. New in server 8.3.0
     ([SERVER-118030](https://jira.mongodb.org/browse/SERVER-118030)).
 - `errorLabels`: Optional array of strings. If set, this list overrides the server's normal behavior for adding error
     labels. An empty array may be used to suppress the server from adding error labels to the response. New in server
