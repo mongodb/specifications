@@ -3332,6 +3332,7 @@ db.adminCommand({
       failCommands: [<string>, ...],
       closeConnection: <boolean>,
       errorCode: <integer>,
+      errorMsg: <string>,
       errorLabels: [<string>, ...],
       writeConcernError: <object>,
       appName: <string>,
@@ -3349,6 +3350,9 @@ db.adminCommand({
     connection will be closed, and the client will see a network error.
 - `errorCode`: Optional integer, which is unset by default. If set, the command will not be executed and the specified
     command error code will be returned as a command error.
+- `errorMsg`: Optional string, which is unset by default. If set, the error returned by the fail point uses this
+    message instead of the server's default message. New in server 8.3.0
+    ([SERVER-118030](https://jira.mongodb.org/browse/SERVER-118030)).
 - `errorLabels`: Optional array of strings. If set, this list overrides the server's normal behavior for adding error
     labels. An empty array may be used to suppress the server from adding error labels to the response. New in server
     4.3.1 ([SERVER-43941](https://jira.mongodb.org/browse/SERVER-43941)).
@@ -3469,6 +3473,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-10-13: Document the `errorMsg` option of the `failCommand` fail point.
 
 - 2026-08-26: **Schema version 1.29.**
 
