@@ -343,15 +343,16 @@ list in order. The first populated variable determines the value. Drivers MUST N
 | 6     | `GEMINI_CLI`             | `gemini_cli`             |
 | 7     | `AUGMENT_AGENT`          | `auggie_cli`             |
 | 8     | `OPENCODE`               | `opencode_client`        |
-| 9     | `TRAE_AI_SHELL_ID`       | `trae_ai`                |
-| 10    | `GOOSE_TERMINAL`         | `goose`                  |
-| 11    | `GOOSE_AGENT`            | `goose`                  |
-| 12    | `AI_AGENT`               | See below.               |
+| 9     | `OPENCODE_CLIENT`        | `opencode_client`        |
+| 10    | `TRAE_AI_SHELL_ID`       | `trae_ai`                |
+| 11    | `GOOSE_TERMINAL`         | `goose`                  |
+| 12    | `GOOSE_AGENT`            | `goose`                  |
+| 13    | `AI_AGENT`               | See below.               |
 
-For entries 1 through 11, `client.env.agent` is the fixed string in the table, whatever the value of the populated
+For entries 1 through 12, `client.env.agent` is the fixed string in the table, whatever the value of the populated
 variable. These variables identify a known agent, so the name does not depend on the value.
 
-Entry 12, `AI_AGENT`, is a generic variable that any agent may set. It is evaluated last, so a known agent is always
+Entry 13, `AI_AGENT`, is a generic variable that any agent may set. It is evaluated last, so a known agent is always
 reported under its fixed name. Normalize its value, then:
 
 - If the normalized value is `1` or `true`, `client.env.agent` MUST be the fixed string `ai_agent`. These values
@@ -370,7 +371,7 @@ long value from costing both `client.env.agent` and other fields under [Limitati
 > substitute U+FFFD, which is lossy and longer than the bytes it replaces. Use an API that truncates on a character
 > boundary, or walk back from byte 64 to the start of the character that contains it.
 
-Agents may include version information in this value, so it is not a fixed set of strings. Entries 1 through 11 report a
+Agents may include version information in this value, so it is not a fixed set of strings. Entries 1 through 12 report a
 name from the table, but an agent reports its own `AI_AGENT` value, which is therefore not generically queryable.
 
 A variable is populated if it is present and non-empty after normalization. A whitespace-only value is therefore not
@@ -384,8 +385,8 @@ Determination of `client.env.agent` MUST NOT cause a user-visible error.
 > under the same name. New agents will appear over time. Drivers MUST NOT add entries on their own; a change to this
 > specification extends the list.
 >
-> Detection of opencode does not match mongosh, which checks `OPENCODE_CLIENT`. opencode does not set that variable; it
-> sets `OPENCODE`. This specification checks `OPENCODE`.
+> mongosh checks `OPENCODE_CLIENT`, which opencode itself does not set; opencode sets `OPENCODE`. This specification
+> checks both, so detection works either way.
 >
 > Normalization of `AI_AGENT` does not match mongosh, which keeps whitespace, reports a whitespace-only value, and does
 > not truncate. [MONGOSH-3696](https://jira.mongodb.org/browse/MONGOSH-3696) proposes that mongosh adopt the behavior
@@ -652,6 +653,7 @@ support the `hello` command, the `helloOk: true` argument is ignored and the leg
 
 ## Changelog
 
+- 2026-10-14: Add `OPENCODE_CLIENT` to the `env.agent` detection table.
 - 2026-09-22: Add `env.agent` to `client` document for agentic client identification.
 - 2026-09-11: Require `driver.name` and `driver.version` entries to correspond by index, and clarify that duplicate
     detection compares whole `DriverInfoOptions`.
