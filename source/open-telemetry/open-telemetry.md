@@ -490,12 +490,12 @@ The OpenTelemetry specification covers all driver operations including but not l
 Introduction of OpenTelemetry in new driver versions should not significantly affect existing applications that do not
 enable OpenTelemetry. However, since the disabled instrumentation may introduce some performance degradation (see
 [Performance Implications section](#performance-implications)), customers should be informed of this feature and how to
-disable it completely.
+minimize performance impact.
 
 If a driver is used in an application that has OpenTelemetry enabled, customers will see traces from the driver in their
 OpenTelemetry backends. This may be unexpected and MAY cause negative effects in some cases (e.g., the OpenTelemetry
 backend MAY not have enough capacity to process new traces). Customers should be informed of this feature and how to
-disable it completely.
+disable tracing.
 
 ## Security Implication
 
