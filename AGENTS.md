@@ -9,6 +9,9 @@ associated products. It includes:
 - Unified test format files (YAML + auto-generated JSON) consumed by all MongoDB drivers
 - Documentation published via MkDocs and ReadTheDocs
 
+Before writing or reviewing any specification change, read [CONTRIBUTING.md](./CONTRIBUTING.md). It defines the
+standards for all changes in this repository.
+
 ## Common Commands
 
 ### Documentation
