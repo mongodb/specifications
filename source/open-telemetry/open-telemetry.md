@@ -561,10 +561,10 @@ code, which drivers control, and `api-only` → `sdk-ratio` → `sdk-always` add
 Additionally, when a driver first releases OpenTelemetry support, it SHOULD compare its default configuration (normally
 `off`) once against the commit before OpenTelemetry support was added, and record the overhead it measures.
 
-Drivers SHOULD use their standardized performance testing infrastructure (see
+Drivers MUST use their standardized performance testing infrastructure (see
 [Performance Benchmarking](../benchmarking/benchmarking.md)) rather than a purpose-built OpenTelemetry benchmark.
 
-Drivers SHOULD measure the `Small doc insertOne` and `Find one by ID` tasks, through both the synchronous and the
+Drivers MUST measure the `Small doc insertOne` and `Find one by ID` tasks, through both the synchronous and the
 asynchronous API where a driver has both.
 
 The overheads measured are small differences between two noisy numbers. Drivers SHOULD run the whole set of
