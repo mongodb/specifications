@@ -62,7 +62,7 @@ resolution SHOULD be added as a new guideline here.
     - Unified tests MUST be in a `tests/unified` subdirectory.
 - Authors MUST use `runOnRequirements` (for unified tests) or instructions on skipping (for other tests) to ensure tests
     are only executed when supported.
-- Unified not run by any driver MUST be deleted.
+- Unified tests not run by any driver MUST be deleted.
 - Prose tests not run by any driver MUST have their contents replaced with `**Removed**`.
     - Authors MUST NOT remove the test's number.
 - Unified tests MUST use the lowest possible schema version that satisfies their requirements.
