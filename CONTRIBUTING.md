@@ -36,10 +36,6 @@ resolution SHOULD be added as a new guideline here.
 
 - Authors SHOULD add pseudocode following a numbered list of MUST steps that defines an algorithm or a description of a
     schema.
-- Comments MUST follow the standards above for prose style.
-- Authors MUST use Python syntax for algorithms and Typescript syntax for BSON, wire documents, and API interfaces.
-- Pseudocode MUST be purely explanatory, not normative. It cannot substitute for a prose description of a required
-    behavior.
 
 ## Tests
 
