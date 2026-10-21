@@ -9,7 +9,9 @@ resolution SHOULD be added as a new guideline here.
 
 ## Repository structure
 
-- All specifications MUST go in the `source/` directory under their own subdirectory (e.g `source/auth/`).
+- A specification is defined as any Markdown document at the top level of a subdirectory inside `source/` (e.g.,
+    `source/auth/auth.md`).
+- All specifications MUST go in the `source/` directory under their own subdirectory (e.g., `source/auth/`).
 
 ## Style and formatting
 
@@ -18,10 +20,10 @@ resolution SHOULD be added as a new guideline here.
     specification's `META` section are exempt.
 - Authors MUST avoid metaphors, similes, analogies, and other figurative language.
 - Authors MUST use numbered lists for enumerating steps in a process.
-- Authors MUST use bulleted lists for enumerating related but unordered lists of items.
+- Authors MUST use bulleted lists for enumerating related but unordered items.
 - All specifications MUST use [GitHub Flavored Markdown](https://github.github.com/gfm/) and follow the
-    [MongoDB Documentation Style Guidelines](https://www.mongodb.com/docs/meta/style-guide/) with a 120-line character
-    limit.
+    [MongoDB Documentation Style Guidelines](https://www.mongodb.com/docs/meta/style-guide/).
+- All specifications MUST use a 120-character line limit.
 - Authors MUST abide by the automated linters described in [README.md](./README.md).
 
 ## RFC 2119 keywords
@@ -47,13 +49,14 @@ resolution SHOULD be added as a new guideline here.
     - Authors SHOULD expand unified test capabilities over prose tests where expansion would permit the testing of new
         behaviors.
 - Authors MUST number prose tests starting with `1.`.
-- Authors MUST add new tests to the end of list of prose tests.
+- Authors MUST add new tests to the end of the list of prose tests.
 - Authors MUST NOT modify existing tests except to fix correctness issues. Create new tests instead of modifying
     existing ones.
 - Authors MUST specify all environmental and topological requirements for each test.
 - Authors MUST NOT assume a specific driver architecture when creating tests unless that architecture is explicitly
     required by the specification.
-- Tests MUST be in a separate `tests/` directory within specification directory, not in the specification itself.
+- Tests MUST be in a separate `tests/` directory within the specification directory, not in the specification itself
+    (e.g., `source/auth/tests`).
     - Prose tests MUST be in a `tests/README.md` file.
     - Unified tests MUST be in a `tests/unified` subdirectory.
 - Authors MUST use `runOnRequirements` (for unified tests) or instructions on skipping (for other tests) to ensure tests
@@ -88,68 +91,73 @@ resolution SHOULD be added as a new guideline here.
 - When retiring an EOL server version, authors MUST remove all version-gated tests, prose, and pseudocode specific to
     the EOL version. Use the `retiring-server-versions` skill as a starting point.
 
-## Document Structure
+## Document structure
 
 - Specifications MUST use the following sections, in this order, when present. Abstract, META, Specification, and
     Changelog are required.
 
 ```
-## Abstract 
+## Abstract
 
-A brief description of the specification's intent and why it requires its own specification.
+This section briefly describes the specification's intent and why it requires its own specification.
 
-## META 
+## META
 
 The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
 "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
-## Terms 
+## Terms
 
-Definitions of all technical terms used in the specification.
+This section defines all technical terms used in the specification.
 
-## Specification 
+## Specification
 
-The bulk of the document. Contains all actual requirements and the use of keywords defined in the META section.
+This section is the bulk of the document. It contains all requirements and uses the keywords defined in the META
+section.
 
 ## Implementation Notes
 
-Guidance for driver authors specific to actual implementation. This can include allowances for language differences, examples of non-obvious complexity in code, and the like.
+This section gives driver authors guidance specific to implementation. It can include allowances for language
+differences and examples of non-obvious complexity in code.
 
 ## Design Rationale
 
-Motivations for the design choices made in the specification. Answer the "why" of choices, not the "how".
-If there are notable rejected designs, include brief explanations for their rejection in a "Rejected Alternatives" subsection.
+This section describes the motivations for the design choices made in the specification. It answers the "why" of
+choices, not the "how". If there are notable rejected designs, include brief explanations for their rejection in a
+"Rejected Alternatives" subsection.
 
-## Backwards Compatibility 
+## Backwards Compatibility
 
-Implications of the specification for older driver and server versions that do not support its changes.
+This section describes the implications of the specification for older driver and server versions that do not support
+its changes.
 
-## Reference Implementation 
+## Reference Implementation
 
-The drivers responsible for producing the initial reference implementation of the specification.
+This section lists the drivers responsible for producing the initial reference implementation of the specification.
 
-## Future Work 
+## Future Work
 
-Future additions to the specification that did not qualify for the initial version.
+This section lists future additions to the specification that did not qualify for the initial version.
 
-## Questions and Answers 
+## Questions and Answers
 
-Answers to questions that have or will frequently come up for driver authors working to implement or understand the specification.
+This section answers questions that driver authors frequently ask when implementing or understanding the
+specification.
 
-## Test Plan 
+## Test Plan
 
-A link to the separate test document associated with the specification.
+This section links to the separate test document associated with the specification.
 
 ## Changelog
 
-A dated, bulleted list of changes made to the specification.
+This section contains a dated, bulleted list of changes made to the specification.
 ```
 
 ## LLM usage
 
 - Authors MUST take responsibility for all changes made under their name, regardless of how they were created.
 
-## PR Requirements
+## PR requirements
 
 - PR titles MUST include a DRIVERS ticket (e.g., `DRIVERS-1234`).
 - PRs that modify driver or test behavior MUST also fulfill these requirements:

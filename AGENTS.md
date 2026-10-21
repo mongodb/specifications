@@ -37,8 +37,13 @@ files.
 
 ```bash
 npm install -g js-yaml   # Required once
-make -C source           # Convert most YAML test files to JSON
+make -C source           # Convert all YAML test files in source/ to JSON
 ```
+
+Some YAML test files are generated from `.template` files (these files start with a "Tests in this file are generated
+from" comment). `make` does not regenerate template output. Edit the `.template` file instead of the generated `.yml`
+file, then run the matching `generate-*.py` script before running `make -C source`. All generator scripts are documented
+within the "Regenerate JSON test files" step in `.github/workflows/unified-tests.yml`.
 
 ### Schema Latest Update (after adding a new unified test format schema version)
 

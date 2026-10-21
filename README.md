@@ -54,7 +54,7 @@ using `yaml2json` anymore, but instead the [js-yaml](https://www.npmjs.com/packa
 converter, so that JSON is formatted consistently.
 
 Run `npm install -g js-yaml`, then run `make` in the `source` directory at the top level of this repository to convert
-most YAML test files to JSON.
+all YAML test files in `source` to JSON.
 
 Some specs include Python scripts that generate test files. These often live alongside their respective specs:
 
