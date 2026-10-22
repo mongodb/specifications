@@ -9,7 +9,8 @@ Please complete the following before merging:
 <!--  REASON END -->
 
 - [ ] Update changelog.
-- [ ] Test changes in at least one language driver.
+- [ ] 1st implementation completed and tests pass. <!-- Link to 1st implementation PR -->
+- [ ] 2nd implementation completed and tests pass. <!-- Link to 2nd implementation PR -->
 - [ ] Test these changes against all server versions and topologies (including standalone, replica set, and sharded
     clusters).
 
