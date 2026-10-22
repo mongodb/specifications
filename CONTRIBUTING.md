@@ -35,7 +35,7 @@ resolution SHOULD be added as a new guideline here.
 ## Pseudocode
 
 - Authors SHOULD add pseudocode following a numbered list of MUST steps that defines an algorithm or a description of a
-    schema. Pseudocode is not normative and MUST NOT substitute for a prose description of required behavior. 
+    schema. Pseudocode is not normative and MUST NOT substitute for a prose description of required behavior.
 
 ## Tests
 
