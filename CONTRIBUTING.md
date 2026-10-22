@@ -9,8 +9,6 @@ resolution SHOULD be added as a new guideline here.
 
 ## Repository structure
 
-- A specification is defined as any Markdown document at the top level of a subdirectory inside `source/` (e.g.,
-    `source/auth/auth.md`).
 - All specifications MUST go in the `source/` directory under their own subdirectory (e.g., `source/auth/`).
 
 ## Style and formatting
