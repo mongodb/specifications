@@ -700,3 +700,228 @@ client.getDatabase("db").getCollection("foo\0bar").insertOne({})
 client.bulkWrite([InsertOne { "namespace": "foo\0bar.coll", "document": {} }])
 client.bulkWrite([InsertOne { "namespace": "db.foo\0bar", "document": {} }])
 ```
+
+### 18. `MongoClient.bulkWrite` reports a top-level error that occurs after results are observed
+
+Test that `MongoClient.bulkWrite` embeds a top-level error in the returned exception, and retains the results observed
+before it, when the error occurs after an earlier batch has already succeeded.
+
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+
+If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
+every `bulkWrite` batch.
+
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
+response. Then, configure the following fail point with `client`:
+
+```javascript
+{
+  "configureFailPoint": "failCommand",
+  "mode": { "skip": 1 },
+  "data": {
+    "failCommands": ["bulkWrite"],
+    "errorCode": 8
+  }
+}
+```
+
+Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
+
+Construct the following write model (referred to as `model`):
+
+```javascript
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
+`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteException` (referred to
+as `bulkWriteError`).
+
+Assert that `bulkWriteError.error` is populated with an error (referred to as `topLevelError`). Assert that
+`topLevelError.errorCode` is equal to 8.
+
+Assert that `bulkWriteError.partialResult` is populated. Assert that `bulkWriteError.partialResult.insertedCount` is
+equal to `maxWriteBatchSize`.
+
+Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
+
+Disable the fail point configured above with `client`:
+
+```javascript
+{
+  "configureFailPoint": "failCommand",
+  "mode": "off"
+}
+```
+
+### 19. `MongoClient.bulkWrite` reports a client-side error that occurs after results are observed
+
+Test that `MongoClient.bulkWrite` embeds a client-side error in the returned exception, and retains the results observed
+before it, when the error occurs after an earlier batch has already succeeded.
+
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test may be skipped by
+drivers that are not able to construct arbitrarily large documents.
+
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
+using `client` and record the `maxWriteBatchSize` and `maxMessageSizeBytes` values contained in the response.
+
+Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
+
+Construct the following write model (referred to as `model`):
+
+```javascript
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Construct the following write model (referred to as `largeDocumentModel`), whose document is larger than
+`maxMessageSizeBytes`:
+
+```javascript
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "a": "b".repeat(maxMessageSizeBytes) }
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize` times, followed by
+`largeDocumentModel`. Execute `bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a
+`BulkWriteException` (referred to as `bulkWriteError`).
+
+Assert that `bulkWriteError.error` is populated. This error is a client-side error, so it may not have an error code.
+
+Assert that `bulkWriteError.partialResult` is populated. Assert that `bulkWriteError.partialResult.insertedCount` is
+equal to `maxWriteBatchSize`.
+
+### 20. `MongoClient.bulkWrite` reports a top-level error that occurs after individual write errors are observed
+
+Test that `MongoClient.bulkWrite` embeds a top-level error in the returned exception when the error occurs after
+individual write errors have already been observed.
+
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+
+If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
+every `bulkWrite` batch.
+
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
+response. Then, configure the following fail point with `client`:
+
+```javascript
+{
+  "configureFailPoint": "failCommand",
+  "mode": { "skip": 1 },
+  "data": {
+    "failCommands": ["bulkWrite"],
+    "errorCode": 8
+  }
+}
+```
+
+Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
+
+Construct the following write model (referred to as `model`), whose `_id` duplicates the `_id` of every other operation:
+
+```javascript
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "_id": 1 }
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
+`bulkWrite` on `client` with `models` and `ordered: false`, so that the duplicate key write errors do not halt execution
+before the second batch is sent. Assert that the bulk write fails and returns a `BulkWriteException` (referred to as
+`bulkWriteError`).
+
+Assert that `bulkWriteError.error` is populated with an error (referred to as `topLevelError`). Assert that
+`topLevelError.errorCode` is equal to 8.
+
+Assert that `bulkWriteError.writeErrors` is non-empty.
+
+Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
+
+Disable the fail point configured above with `client`:
+
+```javascript
+{
+  "configureFailPoint": "failCommand",
+  "mode": "off"
+}
+```
+
+### 21. `MongoClient.bulkWrite` does not report a write concern error as a top-level error
+
+Test that `MongoClient.bulkWrite` does not populate the `error` field of the returned exception when the only errors
+observed are write concern errors, since a write concern error is not a top-level error.
+
+This test performs the same bulk write as test 5 but additionally asserts that the `error` field is not populated and
+that `writeErrors` is empty.
+
+This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+
+If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
+every `bulkWrite` batch.
+
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
+[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
+CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
+response. Then, configure the following fail point with `client`:
+
+```javascript
+{
+  "configureFailPoint": "failCommand",
+  "mode": { "times": 2 },
+  "data": {
+    "failCommands": ["bulkWrite"],
+    "writeConcernError": {
+      "code": 91,
+      "errmsg": "Replication is being shut down"
+    }
+  }
+}
+```
+
+Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
+
+Construct the following write model (referred to as `model`):
+
+```javascript
+InsertOne: {
+  "namespace": "db.coll",
+  "document": { "a": "b" }
+}
+```
+
+Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize + 1` times. Execute
+`bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a `BulkWriteException` (referred to
+as `bulkWriteError`).
+
+Assert that `bulkWriteError.writeConcernErrors` has a length of 2.
+
+Assert that `bulkWriteError.writeErrors` is empty.
+
+Assert that `bulkWriteError.error` is not populated. A write concern error is not a top-level error, so there is no
+top-level error to report.
+
+Assert that `bulkWriteError.partialResult` is populated. Assert that `bulkWriteError.partialResult.insertedCount` is
+equal to `maxWriteBatchSize + 1`.
+
+Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
+
+Disable the fail point configured above with `client`:
+
+```javascript
+{
+  "configureFailPoint": "failCommand",
+  "mode": "off"
+}
+```
