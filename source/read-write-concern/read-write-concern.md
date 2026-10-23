@@ -522,7 +522,7 @@ instance, we send it.
 
 ## Changelog
 
-- 2026-10-20: Require drivers to report any `writeConcernError` returned from the server.
+- 2026-10-23: Require drivers to report `writeConcernError`s.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
