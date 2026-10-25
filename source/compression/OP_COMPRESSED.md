@@ -117,6 +117,21 @@ clients SHOULD NOT issue a warning.
 
 Note that this value only applies to the client side compression level, not the response.
 
+#### zstdCompressionLevel
+
+Integer value from `1` - `22`. This configuration option only applies to the zstd compressor. When zstd is not one of
+the compressors enumerated by the `compressors` configuration option then providing this option has no meaning, but
+clients SHOULD NOT issue a warning. When this option is not provided, clients MUST use the default level of their zstd
+library, which is `3` for the reference implementation.
+
+| Level | Description      |
+| ----- | ---------------- |
+| 1     | Best Speed       |
+| 3     | Default          |
+| 22    | Best Compression |
+
+Note that this value only applies to the client side compression level, not the response.
+
 ### OP_COMPRESSED
 
 The new opcode, called `OP_COMPRESSED`, has the following structure:
@@ -396,6 +411,7 @@ needing to (not) compress very few operations.
 
 ## Changelog
 
+- 2026-10-25: Add the `zstdCompressionLevel` option.
 - 2026-06-17: Remove pre-4.2 version references.
 - 2024-02-16: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter and reformat changelog.

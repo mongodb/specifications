@@ -45,4 +45,38 @@ tests:
         hosts: ~
         auth: ~
         options: ~
-
+    -
+        description: "Valid zstdCompressionLevel is parsed correctly"
+        uri: "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=22"
+        valid: true
+        warning: false
+        hosts: ~
+        auth: ~
+        options:
+            compressors:
+              - "zstd"
+            zstdCompressionLevel: 22
+    -
+        description: "Non-numeric zstdCompressionLevel causes a warning"
+        uri: "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=invalid"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "Too low zstdCompressionLevel causes a warning"
+        uri: "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=0"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~
+    -
+        description: "Too high zstdCompressionLevel causes a warning"
+        uri: "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=23"
+        valid: true
+        warning: true
+        hosts: ~
+        auth: ~
+        options: ~

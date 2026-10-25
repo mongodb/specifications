@@ -54,6 +54,47 @@
       "hosts": null,
       "auth": null,
       "options": null
+    },
+    {
+      "description": "Valid zstdCompressionLevel is parsed correctly",
+      "uri": "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=22",
+      "valid": true,
+      "warning": false,
+      "hosts": null,
+      "auth": null,
+      "options": {
+        "compressors": [
+          "zstd"
+        ],
+        "zstdCompressionLevel": 22
+      }
+    },
+    {
+      "description": "Non-numeric zstdCompressionLevel causes a warning",
+      "uri": "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=invalid",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": null
+    },
+    {
+      "description": "Too low zstdCompressionLevel causes a warning",
+      "uri": "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=0",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": null
+    },
+    {
+      "description": "Too high zstdCompressionLevel causes a warning",
+      "uri": "mongodb://example.com/?compressors=zstd&zstdCompressionLevel=23",
+      "valid": true,
+      "warning": true,
+      "hosts": null,
+      "auth": null,
+      "options": null
     }
   ]
 }
