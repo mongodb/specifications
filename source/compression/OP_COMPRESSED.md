@@ -121,7 +121,7 @@ Note that this value only applies to the client side compression level, not the 
 
 Integer value from `1` - `22`. This configuration option only applies to the zstd compressor. When zstd is not one of
 the compressors enumerated by the `compressors` configuration option then providing this option has no meaning, but
-clients SHOULD NOT issue a warning. When this option is not provided, clients MUST use the default level of their zstd
+clients MUST NOT issue a warning. When this option is not provided, clients MUST use the default level of their zstd
 library, which is `3` for the reference implementation.
 
 | Level | Description      |
