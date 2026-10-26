@@ -516,7 +516,7 @@ means the component that subscribes to and records the runtime's spans.
 
 Not every span is recorded: samplers decide whether a span is recorded, and the tracing API reports this decision only
 on a span that has already been created (`isRecording` in the OpenTelemetry API, or the tracing API's equivalent). Only
-the attributes provided at span creation are visible to the sampler.
+the attributes provided at span creation are visible to the sampler. Note that when a host application samples at the collector rather than in process (tail-based sampling), it configures the in-process sampler to record every span; the guidance below then yields no saving, and the driver-side cost is that of the `sdk-always` configuration plus the cost of exporting every span.
 
 Therefore, drivers SHOULD:
 
