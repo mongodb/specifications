@@ -514,32 +514,43 @@ means the component that subscribes to and records the runtime's spans.
 
 ### Implementation Guidelines
 
-Not every span is recorded: samplers decide whether a span is recorded, and the tracing API reports this decision only
-on a span that has already been created (`isRecording` in the OpenTelemetry API, or the tracing API's equivalent). Only
-the attributes provided at span creation are visible to the sampler. Note that when a host application samples at the collector rather than in process (tail-based sampling), it configures the in-process sampler to record every span; the guidance below then yields no saving, and the driver-side cost is that of the `sdk-always` configuration plus the cost of exporting every span.
+Not every span is recorded, for two reasons. First, when no SDK is installed and the current context holds no valid
+span, the tracing API returns a span whose context is not valid: its trace id and span id are all zeroes. Such a span is
+never recorded, and it cannot be a parent or be propagated. Drivers check this with
+[IsValid](https://opentelemetry.io/docs/specs/otel/trace/api/#isvalid) in the OpenTelemetry API, or the tracing API's
+equivalent.
 
-Therefore, drivers SHOULD:
+Second, a span with a valid context may still not be recorded: the sampler decided to drop it, or no SDK is installed
+and the context came from an upstream service. Drivers check this with
+[IsRecording](https://opentelemetry.io/docs/specs/otel/trace/api/#isrecording) in the OpenTelemetry API, or the tracing
+API's equivalent.
 
-- Create a span with a minimum set of attributes that are cheap to create. The recommended set for command spans is
+Both checks need a span that has already been created, so a driver chooses the attributes to provide at creation before
+it knows whether the span will be recorded. Those attributes are built even for spans that are dropped, but only they
+are visible to the sampler. Keeping the creation set small and deferring the rest is an acceptable trade-off: only
+custom samplers keying on deferred attributes are affected.
+
+Drivers SHOULD:
+
+1. Create a span with a minimum set of attributes that are cheap to create. The recommended set for command spans is
     `db.system.name`, `db.namespace`, `db.collection.name`, `db.command.name`, `server.address`, `server.port`,
     `network.transport`, `db.mongodb.server_connection_id`, and `db.mongodb.driver_connection_id`. The recommended set
-    for operation spans is `db.system.name`, `db.namespace`, `db.collection.name`, `db.operation.name`, and
-    `db.operation.summary`.
-- After creating the span, check whether the span is being recorded. If not, no more attributes are added to the span.
-    If yes, add the rest of the attributes to the span: `db.query.summary`, `db.query.text`, `db.mongodb.lsid`,
-    `db.mongodb.cursor_id`, and `db.mongodb.txn_number` for command spans, `db.mongodb.cursor_id` for operation spans.
+    for operation spans is `db.system.name`, `db.namespace`, `db.collection.name`, and `db.operation.name`.
+2. After creating the span, check whether its context is valid. If not, skip all span work: making the span current,
+    adding attributes, recording the outcome, and ending the span.
+3. Otherwise, check whether the span is being recorded:
+    - If it is, add the rest of the attributes and record the outcome (status, error attributes, and exceptions).
+    - If it is not, add no more attributes and do not record the outcome. The span is still made current, so that the
+        spans created within it are nested under it and its context is
+        [propagated](#propagating-trace-context-to-the-server).
 
-Deferring attributes is an acceptable trade-off: only custom samplers keying on deferred attributes are affected.
+Note that when a host application samples at the collector rather than in process (tail-based sampling), it configures
+the in-process sampler to record every span; the guidance above then yields no saving, and the driver-side cost is that
+of the `sdk-always` configuration plus the cost of exporting every span.
 
 Drivers SHOULD compute values that do not change during the life of an object once, and reuse them: connection
 attributes for the life of a connection, operation names per operation type, the formatted session id per server
 session. Such caches MUST be safe for concurrent use.
-
-Drivers MAY skip all span work — making the span current, adding attributes, recording the outcome, ending the span —
-when the created span's context is not valid, i.e. its trace id or span id is all zeroes (see
-[IsValid](https://opentelemetry.io/docs/specs/otel/trace/api/#isvalid)): such a span cannot be propagated or correlated,
-so any work on it is wasted. This permission does not apply to a valid but unsampled span, which remains subject to the
-nesting and [propagation](#propagating-trace-context-to-the-server) rules.
 
 ### Benchmarking
 
