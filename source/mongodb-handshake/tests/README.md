@@ -4,7 +4,7 @@
 
 ### Test 1: Test that environment metadata is properly captured
 
-Drivers that capture values for `client.env` should test that a connection and hello command succeeds in the presence of
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
 the following sets of environment variables:
 
 1. Valid AWS
@@ -82,6 +82,79 @@ the following sets of environment variables:
 2. Create and connect a `Connection` object that connects to the server that returns the mocked response.
 
 3. Assert that no error is raised.
+
+### Test 3: Test that agent metadata is properly captured
+
+Drivers that capture values for `client.env` should test that a connection and hello command succeed in the presence of
+the following sets of environment variables, and that `client.env.agent` is populated (or omitted) as described.
+
+1. Known agent. `client.env.agent` MUST equal `claude_code`.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `CLAUDECODE`         | `1`   |
+
+2. Known agent, fixed name. `client.env.agent` MUST equal `cursor`, whatever the value of the variable.
+
+    | Environment Variable | Value           |
+    | -------------------- | --------------- |
+    | `CURSOR_AGENT`       | `some-value-42` |
+
+3. Precedence - first known agent wins. `client.env.agent` MUST equal `cursor`, not `gemini_cli`.
+
+    | Environment Variable | Value |
+    | -------------------- | ----- |
+    | `CURSOR_AGENT`       | `1`   |
+    | `GEMINI_CLI`         | `1`   |
+
+4. Precedence - a known agent wins over the generic variable. `client.env.agent` MUST equal `claude_code`, not
+    `custom-agent`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AI_AGENT`           | `custom-agent` |
+    | `CLAUDECODE`         | `1`            |
+
+5. Generic agent with a descriptive value. `client.env.agent` MUST equal `custom-agent`.
+
+    | Environment Variable | Value          |
+    | -------------------- | -------------- |
+    | `AI_AGENT`           | `custom-agent` |
+
+6. Generic agent with a boolean value. `client.env.agent` MUST equal `ai_agent`.
+
+    | Environment Variable | Value  |
+    | -------------------- | ------ |
+    | `AI_AGENT`           | `true` |
+
+7. Generic agent, boolean value with whitespace. `AI_AGENT` is set to `true` with one leading and one trailing space.
+    The value is normalized before it is compared, so `client.env.agent` MUST equal `ai_agent`.
+
+8. Generic agent, normalization. `AI_AGENT` is set to `Claude-Code_2-1-238_Agent` with one leading and one trailing
+    space. `client.env.agent` MUST equal `claude-code_2-1-238_agent`.
+
+9. Generic agent, truncation. `AI_AGENT` is set to 100 `a` characters. `client.env.agent` MUST equal the first 64 of
+    them.
+
+10. Generic agent, truncation on a character boundary. `AI_AGENT` is set to 63 `a` characters followed by `é` (U+00E9),
+    two bytes in UTF-8. The 64-byte limit falls inside `é`, so `client.env.agent` MUST equal the 63 `a` characters. It
+    MUST NOT contain any part of `é` or a replacement character (U+FFFD).
+
+11. Empty value is unset. `AI_AGENT` is set to an empty string. `client.env.agent` MUST be omitted. If no other
+    `client.env` fields are populated, `client.env` MUST be omitted entirely.
+
+12. Whitespace-only value is unset. `AI_AGENT` is set to `"   "` (three spaces). `client.env.agent` MUST be omitted.
+
+13. No agent variables. No variable in the `client.env.agent` table is set. `client.env.agent` MUST be omitted.
+
+14. Agent alongside FaaS. This test MUST verify that the AWS Lambda metadata and `client.env.agent` (equal to
+    `claude_code`) are both present in `client.env`.
+
+    | Environment Variable | Value              |
+    | -------------------- | ------------------ |
+    | `AWS_EXECUTION_ENV`  | `AWS_Lambda_java8` |
+    | `AWS_REGION`         | `us-east-2`        |
+    | `CLAUDECODE`         | `1`                |
 
 ## Client Metadata Update Prose Tests
 
