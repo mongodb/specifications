@@ -17,6 +17,7 @@ createEntities:
         kmsProviders:
           local: { key: { $$placeholder: 1 } }
 
+# rewrapManyDataKey only sends an update command if the filter matches at least one data key.
 initialData:
   - databaseName: keyvault
     collectionName: datakeys
