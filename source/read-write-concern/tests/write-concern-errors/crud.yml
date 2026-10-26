@@ -9,11 +9,11 @@ createEntities:
   - database:
       id: &database0 database0
       client: *client0
-      databaseName: &database_name write-concern-errors-tests
+      databaseName: write-concern-errors-tests
   - collection:
       id: &collection0 collection0
       database: *database0
-      collectionName: &collection_name coll
+      collectionName: coll
 
 tests:
   - description: insertOne reports a writeConcernError
