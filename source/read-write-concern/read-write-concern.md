@@ -400,8 +400,8 @@ rs0:PRIMARY> db.runCommand({insert: "foo", documents: [{x:1}], writeConcern: { w
 ```
 
 Drivers MUST parse server replies for a "writeConcernError" field and report the error in all driver methods that send a
-server command that may include a `WriteConcern`, excluding generic command methods. Drivers SHOULD NOT parse server
-replies for a "writeConcernError" in generic command methods.
+server command that may include a `WriteConcern`, excluding `abortTransaction` and generic command methods. Drivers
+SHOULD NOT parse server replies for a "writeConcernError" in generic command methods.
 
 Drivers SHOULD report writeConcernErrors however they report other server errors: by raising an exception, returning
 "false", or another idiom that is consistent with other server errors. Drivers SHOULD report writeConcernErrors with a
@@ -521,7 +521,7 @@ instance, we send it.
 
 ## Changelog
 
-- 2026-10-23: Require drivers to report `writeConcernError`s.
+- 2026-10-27: Require drivers to report `writeConcernError`s.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
