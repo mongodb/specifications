@@ -436,6 +436,20 @@ monitoring, authentication, and security-sensitive commands) naturally send no s
 
 No tracing data is returned in server responses as part of this feature.
 
+##### Expected Server Behavior
+
+This subsection is non-normative: it describes how servers behave, which this specification does not govern.
+
+The server MAY ignore the propagated trace context entirely, for example when tracing is not enabled on the server, in
+which case no server spans are created for commands the driver sends. Where tracing is enabled on the server, the server
+continues only traces whose `traceparent` marks the trace as sampled, and MAY drop such traces subject to its own rate
+limiting, so a sampled driver trace does not guarantee that server spans are produced. The server does not expose the
+propagated trace context in its diagnostics: the trace id does not appear in server logs, the profiler, `currentOp`, or
+slow-query logs, because the trace context arrives outside the command body.
+
+These behaviors do not affect the requirements above: drivers MUST still propagate the trace context on every eligible
+command regardless of the sampling decision or of whether the server acts on it.
+
 ## Motivation for Change
 
 A common complaint from our support team is that they don't know how to easily get debugging information from drivers.
@@ -551,6 +565,10 @@ Carrying the traceparent inside a BSON document allows future propagation fields
 redesigning the payload format.
 
 ## Changelog
+
+- 2026-10-26: Added a non-normative description of expected server behavior for propagated trace context: the server may
+    ignore it, may continue only sampled traces and may drop them under its own rate limiting, and does not expose it in
+    server diagnostics such as logs, the profiler, `currentOp`, or slow-query logs.
 
 - 2026-08-19: Specified the `error.type` attribute on command spans, which drivers MUST add when a command fails and
     which matches `db.response.status_code` when the command failed with a server error and is otherwise the name of the
