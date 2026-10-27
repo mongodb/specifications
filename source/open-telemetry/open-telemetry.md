@@ -640,7 +640,7 @@ redesigning the payload format.
 
 ## Changelog
 
-- 2026-10-01: Added the Performance Implications section (DRIVERS-3620).
+- 2026-10-27: Added the Performance Implications section (DRIVERS-3620).
 
 - 2026-08-19: Specified the `error.type` attribute on command spans, which drivers MUST add when a command fails and
     which matches `db.response.status_code` when the command failed with a server error and is otherwise the name of the
