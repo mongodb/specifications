@@ -50,8 +50,8 @@ MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
 
 MongoDB 8.2 added unstable support for QE string queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
 
-MongoDB 9.0 dropped `queryType=prefixPreview|suffixPreview` and added `queryType=prefix|suffix`
-([SPM-4539](https://jira.mongodb.org/browse/SPM-4539))
+MongoDB 9.0 dropped `queryType=prefixPreview|suffixPreview|substringPreview` and added
+`queryType=prefix|suffix|substring` ([SPM-4539](https://jira.mongodb.org/browse/SPM-4539))
 
 ## META
 
@@ -1373,9 +1373,7 @@ insert or query. Drivers MUST document the following behavior:
 
 > To insert or query with an "Indexed", "Range", or "String" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
-> must be false. The "prefixPreview", "suffixPreview", and "substringPreview" query types are in preview and should be
-> used for experimental workloads only. This feature is unstable and its security is not guaranteed until released as
-> Generally Available (GA). The GA version of this feature may not be backwards compatible with the preview version.
+> must be false.
 
 #### contentionFactor
 
@@ -1388,11 +1386,11 @@ One of the strings:
 
 - "equality"
 - "range"
-- "prefix" / "prefixPreview"
+- "prefix"
     - Used for the `$encStrStartsWith` operator.
-- "suffix" / "suffixPreview"
+- "suffix"
     - Used for the `$encStrEndsWith` operator.
-- "substring" / "substringPreview"
+- "substring"
     - Used for the `$encStrContains` operator.
 
 queryType only applies when algorithm is "Indexed", "Range", or "String". libmongocrypt returns an error if queryType is
@@ -2540,6 +2538,8 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-09-15: Remove `prefixPreview`, `suffixPreview`, and `substringPreview`
 
 - 2026-06-25: Add `kmsConnectCallback` to `AutoEncryptionOpts` and `ClientEncryptionOpts` to support HTTP proxy use
     cases.

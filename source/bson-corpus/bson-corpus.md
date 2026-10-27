@@ -249,6 +249,124 @@ Depending on how drivers implement BSON encoding, they MAY expect an error when 
 Document or Regex class) or when encoding a language representation to BSON (e.g. converting a dictionary, which might
 allow null bytes in its keys, to raw BSON bytes).
 
+### 2. Test duplicate keys
+
+The following tests exercise behavior for encoding and decoding BSON with duplicate keys. The expectations depend on the
+implementation. Duplicate keys are not prohibited by the [specification](https://bsonspec.org/spec.html), but are
+inconsistently handled by the MongoDB server ([SERVER-6439](https://jira.mongodb.org/browse/SERVER-6439)). The expected
+behavior must be consistent with its corresponding API documentation.
+
+#### 2.1 Test encoding
+
+Test appending duplicate BSON keys using supported BSON builder API. In pseudo-code:
+
+```python
+builder = bson.builder()
+builder.append("foo", 1)
+builder.append("foo", 2)
+got = builder.encode()
+```
+
+Expect one of the following implementation-defined results:
+
+- Duplicate key error raised.
+- Last-one wins: `got` is `{ "foo": 2 }`.
+- First-one wins: `got` is `{ "foo": 1 }`.
+- Both values preserved in-order: `got` is `{ "foo": 1, "foo": 2 }`.
+
+#### 2.2 Test decoding
+
+Test decoding BSON data for a document containing duplicate keys:
+
+```python
+# Bytes represent BSON for { 'foo': 1, 'foo': 2 }
+data = bytes.fromhex("1700000010666f6f000100000010666f6f000200000000")
+```
+
+Behavior may differ between decoding APIs. Drivers MUST test each of the following that their BSON library provides:
+
+- Iterating elements without converting to a map (e.g. a BSON document iterator or reader). In pseudo-code:
+
+    ```python
+    elements = list(bson.iter_elements(data))
+    ```
+
+    Expect one of the following implementation-defined results:
+
+    - Duplicate key error raised.
+    - Both elements returned in-order: `elements` is `[("foo", 1), ("foo", 2)]`.
+
+- Looking up a key in a document. In pseudo-code:
+
+    ```python
+    got = bson.document(data)["foo"]
+    ```
+
+    Expect one of the following implementation-defined results:
+
+    - Duplicate key error raised.
+    - Last-one wins: `got` is `2`.
+    - First-one wins: `got` is `1`.
+
+- Converting to a native language map or dictionary. In pseudo-code:
+
+    ```python
+    got = bson.decode(data)
+    ```
+
+    Expect one of the following implementation-defined results:
+
+    - Duplicate key error raised.
+    - Last-one wins: `got` is `{ "foo": 2 }`.
+    - First-one wins: `got` is `{ "foo": 1 }`.
+    - Both values preserved in-order (only when the map type supports duplicate keys): `got` is `{ "foo": 1, "foo": 2 }`.
+
+- Converting to Extended JSON. In pseudo-code:
+
+    ```python
+    got = bson.to_extended_json(data)
+    ```
+
+    Expect one of the following implementation-defined results:
+
+    - Duplicate key error raised.
+    - Last-one wins: `got` is `'{ "foo": 2 }'`.
+    - First-one wins: `got` is `'{ "foo": 1 }'`.
+    - Both values preserved in-order: `got` is `'{ "foo": 1, "foo": 2 }'`.
+
+#### 2.3 Test round-trip
+
+Test decoding BSON data containing duplicate keys to a language representation and encoding it back to BSON. In
+pseudo-code:
+
+```python
+# Bytes represent BSON for { 'foo': 1, 'foo': 2 }
+data = bytes.fromhex("1700000010666f6f000100000010666f6f000200000000")
+got = bson.encode(bson.decode(data))
+```
+
+Expect one of the following implementation-defined results:
+
+- Duplicate key error raised.
+- Last-one wins: `got` is BSON for `{ "foo": 2 }`.
+- First-one wins: `got` is BSON for `{ "foo": 1 }`.
+- Both values preserved in-order: `got` is equal to `data`.
+
+#### 2.4 Test parsing Extended JSON
+
+Test parsing an Extended JSON document containing duplicate keys to BSON. In pseudo-code:
+
+```python
+got = bson.from_extended_json('{ "foo": 1, "foo": 2 }')
+```
+
+Expect one of the following implementation-defined results:
+
+- Duplicate key error raised.
+- Last-one wins: `got` is BSON for `{ "foo": 2 }`.
+- First-one wins: `got` is BSON for `{ "foo": 1 }`.
+- Both values preserved in-order: `got` is BSON for `{ "foo": 1, "foo": 2 }`.
+
 ## Implementation Notes
 
 ### A tool for visualizing BSON
@@ -337,6 +455,8 @@ alone and can be confirmed to be internally consistent via the assertions. This 
 development.
 
 ## Changelog
+
+- 2026-09-30: Add prose tests for duplicate keys.
 
 - 2024-01-22: Migrated from reStructuredText to Markdown.
 
