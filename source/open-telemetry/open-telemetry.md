@@ -655,6 +655,7 @@ redesigning the payload format.
 ## Changelog
 
 - 2026-10-27: Added the Performance Implications section (DRIVERS-3620).
+
 - 2026-10-26: Added a non-normative description of expected server behavior for propagated trace context: the server may
     ignore it, may continue only sampled traces and may drop them under its own rate limiting, and does not expose it in
     server diagnostics such as logs, the profiler, `currentOp`, or slow-query logs.
