@@ -57,22 +57,43 @@ initial seedlist discovery. Periodic scan MUST follow these rules:
     string, and is not affected by
     [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvallowedhostssuffix):
     that option changes which parent domain returned host names are verified against, not which records are queried.
-- A driver MUST verify that the host names returned through SRV records have the same parent `{domainname}`. When
-    [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvallowedhostssuffix)
-    is configured, its value is the parent domain used for this verification instead of the `{domainname}` derived from
-    the connection string. When this verification fails, a driver:
+
+- A driver MUST verify every host name returned through SRV records. Drivers MUST normalize the returned host names as
+    described in [Querying DNS](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns) before
+    verifying them. Drivers MUST use the normalized host names, rather than the host names exactly as returned by DNS,
+    to populate the topology. How that verification is performed depends on which options are configured:
+
+    - When neither
+        [`srvAllowedHostsSuffix`](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvallowedhostssuffix)
+        nor [`srvHostValidator`](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvhostvalidator)
+        is configured, the returned host name MUST have the same parent `{domainname}` as the one derived from the
+        connection string.
+    - When
+        [`srvAllowedHostsSuffix`](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvallowedhostssuffix)
+        is configured, its value is the parent domain used for this verification instead of the `{domainname}` derived
+        from the connection string.
+    - When [`srvHostValidator`](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#srvhostvalidator) is
+        configured, the given validator MUST be used to verify the returned host names, and any error raised by the
+        validator MUST be treated as a `false` response.
+
+    Regardless of how verification is accomplished, when this verification fails, a driver:
+
     - MUST NOT add such a non-compliant host name to the topology
     - MUST NOT raise an error
-    - SHOULD log the non-compliance, including the host name
+    - SHOULD log the non-compliance, including the host name and any errors raised during validation
     - MUST NOT initiate a connection to any such host
+
 - If the DNS request returns no verified hosts in SRV records, no SRV records at all, or a DNS error happens, the
     driver:
+
     - MUST NOT change the topology
     - MUST NOT raise an error
     - SHOULD log this situation, including the reason why the DNS records could not be found, if possible
     - MUST temporarily set *rescanSRVIntervalMS* to *heartbeatFrequencyMS* until at least one verified SRV record is
         obtained.
+
 - For all verified host names, as returned through the DNS SRV query, the driver:
+
     - MUST remove all hosts that are part of the topology, but are no longer in the returned set of valid hosts
     - MUST NOT remove all hosts, and then re-add the ones that were returned. Hosts that have not changed, MUST be left
         alone and unchanged.
@@ -82,6 +103,7 @@ initial seedlist discovery. Periodic scan MUST follow these rules:
         zero and less than the number of valid hosts, valid new hosts MUST be randomly selected and added to the topology
         as Unknown until the topology has `srvMaxHosts` hosts. Drivers MUST use the same randomization algorithm as they
         do for [initial selection](../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#querying-dns).
+
 - Priorities and weights in SRV records MUST continue to be ignored, and MUST NOT dictate which mongos server is used
     for new connections.
 
@@ -169,6 +191,8 @@ This specification has no security implications beyond the ones associated with 
 No future work is expected.
 
 ## Changelog
+
+- 2026-09-16: Add `srvHostValidator` as a MongoClient option.
 
 - 2026-09-03: Account for the `srvAllowedHostsSuffix` MongoClient option when verifying returned host names.
 

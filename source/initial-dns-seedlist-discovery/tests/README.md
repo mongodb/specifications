@@ -48,6 +48,98 @@ For this test, run each of the following cases:
 - the SRV `mongodb+srv://mongo.local` resolving to `test_1.my_hostmongo.local`
 - the SRV `mongodb+srv://blogs.mongodb.com` resolving to `cluster.testmongodb.com`
 
+### 5. srvHostValidator accepts a host the default verification would reject
+
+When `srvHostValidator` is configured, it replaces the default verification entirely, so a returned address that the
+default verification check would reject must be accepted if the validator returns `true`.
+
+Configure a validator that returns `true` for every host name, then run each of the following cases:
+
+- the SRV `mongodb+srv://blogs.mongodb.com` resolving to `blogs.evil.com`, which does not share the SRV's domain name,
+    produces a seedlist containing `blogs.evil.com`
+- the SRV `mongodb+srv://mongo.local` resolving to `mongo.local`, which does not add a domain level to an SRV hostname
+    with fewer than three `.` separated parts, produces a seedlist containing `mongo.local`
+
+### 6. Reject a host the default verification would accept
+
+Configure a validator that returns `false` for every host name and assert that the SRV `mongodb+srv://blogs.mongodb.com`
+resolving to `cluster.mongodb.com` throws an error, even though the returned address shares the SRV's domain name.
+
+### 7. The validator receives the normalized host name
+
+The returned address is normalized before verification, so the validator must be passed the normalized form rather than
+the address exactly as returned by DNS.
+
+Configure a validator that records the host names it is passed and returns `true`, then run the SRV
+`mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` and assert that the validator was passed
+`cluster.mongodb.com`.
+
+### 8. Wrap an error raised by the validator
+
+When the validator raises an error during initial seedlist resolution, the driver must catch it and re-raise it wrapped
+in a driver error rather than letting it propagate unchanged.
+
+Configure a validator that raises an error and assert that the SRV `mongodb+srv://blogs.mongodb.com` resolving to
+`cluster.mongodb.com` throws an error which retains the error raised by the validator.
+
+### 9. Throw when both `srvAllowedHostsSuffix` and `srvHostValidator` are configured
+
+The two options are mutually exclusive.
+
+Assert that configuring a MongoClient with both `srvAllowedHostsSuffix=.mongodb.com` and any `srvHostValidator` throws
+an error.
+
+### 10. Accept a mixed case returned address with `srvAllowedHostsSuffix`
+
+Returned addresses must be normalized before verification.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=.mongodb.com` and assert that the SRV
+`mongodb+srv://blogs.mongodb.com` resolving to `CLUSTER.MONGODB.COM.` produces a seedlist containing
+`cluster.mongodb.com`.
+
+### 11. Throw when `srvHostValidator` is not callable
+
+Drivers whose language cannot express a non-callable value for `srvHostValidator` -- because the type is checked when
+the program is compiled -- MUST skip this test.
+
+Assert that configuring a MongoClient with a `srvHostValidator` that is not callable, such as the string
+`"notacallable"`, throws a error.
+
+### 12. Accept a reserved single label as `srvAllowedHostsSuffix`
+
+A single label is a public suffix under the Public Suffix List's `*` rule, but the names reserved for private or special
+use listed in [srvAllowedHostsSuffix](../initial-dns-seedlist-discovery.md#srvallowedhostssuffix) must be accepted
+despite that.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=localhost` and assert that the SRV `mongodb+srv://cluster.localhost`
+resolving to `db.cluster.localhost` produces a seedlist containing `db.cluster.localhost`.
+
+### 13. Throw when `srvHostValidator` is used with a non-SRV URI
+
+`srvHostValidator` only has an effect on SRV resolution, so it MUST NOT be accepted alongside a non-SRV URI.
+
+Assert that configuring a MongoClient with any `srvHostValidator` and the non-SRV URI `mongodb://localhost:27017` throws
+an error.
+
+### 14. Throw when `srvHostValidator` returns a non-boolean value
+
+Drivers whose language cannot express a non-boolean return value for `srvHostValidator` -- because the type is checked
+when the program is compiled -- MUST skip this test. During initial seedlist resolution, a validator that returns a
+value that is not a bool results in an error.
+
+Configure a validator that returns the string `"true"` and assert that the SRV `mongodb+srv://blogs.mongodb.com`
+resolving to `cluster.mongodb.com` throws an error.
+
+### 15. Accept an underscore in `srvAllowedHostsSuffix`
+
+Drivers MUST NOT apply hostname syntax validation to `srvAllowedHostsSuffix` beyond the steps listed in
+[srvAllowedHostsSuffix](../initial-dns-seedlist-discovery.md#srvallowedhostssuffix), so a value containing an underscore
+must be accepted.
+
+Configure a MongoClient with `srvAllowedHostsSuffix=.my_domain.net` and assert that the SRV
+`mongodb+srv://blogs.my_domain.net` resolving to `cluster.my_domain.net` produces a seedlist containing
+`cluster.my_domain.net`.
+
 ## Test Setup
 
 The tests in the `replica-set` directory MUST be executed against a three-node replica set on localhost ports 27017,
@@ -98,6 +190,8 @@ _mongodb._tcp.test21.test.build.10gen.cc.   86400  IN SRV  27017  localhost.test
 _customname._tcp.test22.test.build.10gen.cc 86400  IN SRV  27017  localhost.test.build.10gen.cc.
 _mongodb._tcp.test23.test.build.10gen.cc.   86400  IN SRV  8000   localhost.test.build.10gen.cc.
 _mongodb._tcp.test24.test.build.10gen.cc.   86400  IN SRV  8000   localhost.test.build.10gen.cc.
+_mongodb._tcp.build.10gen.cc.               86400  IN SRV  27017  build.10gen.cc.
+_mongodb._tcp.test.build.10gen.cc.          86400  IN SRV  27017  test.build.10gen.cc.
 
 Record                                    TTL    Class   Text
 test5.test.build.10gen.cc.                86400  IN TXT  "replicaSet=repl0&authSource=thisDB"
@@ -119,6 +213,9 @@ Notes:
 - The missing `test.` sub-domain in the SRV record target for `test12` is deliberate.
 - `test22` is used to test a custom service name (`customname`).
 - `test23` and `test24` point to port 8000 (HAProxy) and are used for load-balanced tests.
+- The `build.10gen.cc` and `test.build.10gen.cc` SRV records resolve to hostnames identical to the SRV hostname and are
+    used to verify that no error is thrown when the resolver and resolved hostnames are identical and the SRV hostname
+    has three or more `.` separated parts.
 
 In our tests we have used `localhost.test.build.10gen.cc` as the domain, and then configured
 `localhost.test.build.10gen.cc` to resolve to 127.0.0.1.

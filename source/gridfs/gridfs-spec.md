@@ -379,6 +379,22 @@ fails.
 
 Drivers MUST create the indexes in foreground mode.
 
+### `TFileId` Queries
+
+Any database command constructed by a driver that embeds a user-provided `TFileId` in its query MUST use the `$eq`
+operator to perform an equality comparison. This applies to queries matching against both the `_id` field of a files
+collection document and the `files_id` field of a chunk document. For example, when deleting a file with the ID "file1",
+the query provided to the delete command used to delete its files collection document MUST be the following:
+
+```javascript
+{
+  "_id": { "$eq": "file1" }
+}
+```
+
+This requirement prevents a `TFileId` input from matching multiple files (e.g. a regular expression or a document with a
+query operator).
+
 ### File Upload
 
 ```javascript
@@ -550,9 +566,10 @@ failure to the application.
 Drivers SHOULD provide a mechanism to abort an upload. When using open_upload_stream, the returned Stream SHOULD have an
 Abort method. When using upload_from_stream, the upload will be aborted if the source stream raises an error.
 
-When an upload is aborted any chunks already uploaded MUST be deleted. Note that this differs from the case where an
-attempt to insert a chunk fails, in which case drivers immediately report the failure without attempting to delete any
-chunks already uploaded.
+When an upload is aborted, any chunks already uploaded MUST be deleted. Drivers MUST follow the rules described in
+[`TFileId` Queries](#tfileid-queries) to construct the delete command used to delete the chunks. Note that this differs
+from the case where an attempt to insert a chunk fails, in which case drivers immediately report the failure without
+attempting to delete any chunks already uploaded.
 
 Abort MUST raise an error if it is unable to successfully abort the upload (for example, if an error occurs while
 deleting any chunks already uploaded). However, if the upload is being aborted because the source stream provided to
@@ -597,11 +614,13 @@ Note: By default a file id is of type ObjectId. If an application uses custom fi
 
 **Implementation details:**
 
-Drivers must first retrieve the files collection document for this file. If there is no files collection document, the
-file either never existed, is in the process of being deleted, or has been corrupted, and the driver MUST raise an
-error.
+Drivers must first retrieve the files collection document for this file. Drivers MUST follow the rules described in
+[`TFileId` Queries](#tfileid-queries) to perform the find command on the files collection. If there is no files
+collection document, the file either never existed, is in the process of being deleted, or has been corrupted, and the
+driver MUST raise an error.
 
-Then, implementers retrieve all chunks with files_id equal to id, sorted in ascending order on "n".
+Then, implementers retrieve all chunks with files_id equal to id, sorted in ascending order on "n". Drivers MUST follow
+the rules described in [`TFileId` Queries](#tfileid-queries) to perform the find command on the chunks collection.
 
 However, when downloading a zero length stored file the driver MUST NOT issue a query against the chunks collection,
 since that query is not necessary. For a zero length file, drivers return either an empty stream or send nothing to the
@@ -635,6 +654,9 @@ accepts that type, but MUST mark that method as deprecated.
 
 **Implementation details:**
 
+Drivers MUST follow the rules described in [`TFileId` Queries](#tfileid-queries) to construct the delete commands used
+to delete the file's files collection document and chunks.
+
 There is an inherent race condition between the chunks and files collections. Without some transaction-like behavior
 between these two collections, it is always possible for one client to delete a stored file while another client is
 attempting a read of the stored file. For example, imagine client A retrieves a stored file's files collection document,
@@ -643,8 +665,11 @@ chunks for the given stored file. To minimize the window of vulnerability of rea
 of being deleted, drivers MUST first delete the files collection document for a stored file, then delete its associated
 chunks.
 
-If there is no such file listed in the files collection, drivers MUST raise an error. Drivers MAY attempt to delete any
-orphaned chunks with files_id equal to id before raising the error.
+If there is no such file listed in the files collection, drivers MUST raise an error. Drivers MUST NOT perform a `find`
+to determine whether the file exists and MUST instead inspect the `deletedCount` returned when deleting the files
+collection document. Drivers MAY attempt to delete any orphaned chunks with files_id equal to id before raising the
+error. If a driver attempts to delete orphaned chunks, it MUST follow the rules described in
+[`TFileId` Queries](#tfileid-queries) to construct the delete command used to delete the chunks.
 
 If a networking or server error occurs, drivers MUST raise an error.
 
@@ -842,8 +867,8 @@ Sets the filename field in the stored file's files collection document to the ne
 
 **Implementation details:**
 
-Drivers construct and execute an update_one command on the files collection using `{ _id: @id }` as the filter and
-`{ $set : { filename : "new_filename" } }` as the update parameter.
+Drivers construct and execute an update_one command on the files collection using `{ _id: { $eq: @id } }` as the filter
+and `{ $set : { filename : "new_filename" } }` as the update parameter.
 
 If `renameByName` is not implemented to rename multiple revisions of the same filename, users must retrieve the full
 list of files collection documents for a given filename and execute "rename" on each corresponding `_id`.
@@ -1089,6 +1114,7 @@ system?") it is a potential area of growth for the future.
 
 ## Changelog
 
+- 2026-09-10: Require `$eq` when a query includes a user-provided file ID.
 - 2026-06-17: Remove pre-4.2 version references.
 - 2024-10-30: Add `delete_by_name` and `rename_by_name`
 - 2024-10-28: Removed deprecated fields from tests: `md5`, `contentType`, `aliases`

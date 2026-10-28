@@ -200,3 +200,53 @@ Wait until `2*rescanSRVIntervalMS` and assert that the final topology descriptio
 
 - localhost.test.build.10gen.cc:27019
 - localhost.test.build.10gen.cc:27020
+
+### SRV polling with the srvHostValidator MongoClient option
+
+The following tests MUST setup a MongoClient using the `srvHostValidator` option and the `test1.test.build.10gen.cc` SRV
+record. The test MUST mock the described DNS changes and then make the specified assertions.
+
+#### 14. The validator is consulted when SRV records are rescanned
+
+Configure the MongoClient with a validator that records the host names it is passed and returns `true`, then mock the
+addition of the following DNS record:
+
+```dns
+_mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+```
+
+Wait until `2*rescanSRVIntervalMS` and assert that the validator was passed `localhost.test.build.10gen.cc` during the
+rescan, and that the final topology description contains the following hosts:
+
+- localhost.test.build.10gen.cc:27017
+- localhost.test.build.10gen.cc:27018
+- localhost.test.build.10gen.cc:27019
+
+#### 15. A validator that rejects or raises does not raise an error or stop polling
+
+Run this test twice: once with a validator that returns `false` for every host name, and once with a validator that
+raises an error for every host name.
+
+The validator's behavior MUST be controlled by state external to the validator (e.g. a flag the validator reads) so that
+it can be changed later in the test without reconfiguring the MongoClient.
+
+In both cases the driver MUST treat the returned host name as non-compliant, and MUST NOT raise an error to the
+application or stop rescanning.
+
+Mock the addition of the following DNS record:
+
+```dns
+_mongodb._tcp.test1.test.build.10gen.cc.  86400  IN SRV  27019  localhost.test.build.10gen.cc.
+```
+
+Wait until `2*rescanSRVIntervalMS` and assert that no error was raised and that the topology description still contains
+only the original hosts:
+
+- localhost.test.build.10gen.cc:27017
+- localhost.test.build.10gen.cc:27018
+
+Then change that external state so the validator accepts every host name. Because the earlier rescans obtained no
+verified hosts, the driver has temporarily set *rescanSRVIntervalMS* to *heartbeatFrequencyMS*, so the next rescan
+occurs within `heartbeatFrequencyMS`. Wait until `2*heartbeatFrequencyMS` and assert that rescanning was not stopped by
+the earlier failures: the final topology description MUST contain `localhost.test.build.10gen.cc:27019` in addition to
+the two original hosts.
