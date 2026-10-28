@@ -336,12 +336,15 @@ For the purposes of this section, a "sensitive value" is any of the following:
 
 Until a driver has successfully parsed a connection string, any diagnostic warning or error it emits MUST NOT include
 any part of the connection string, whether in the form given or after decoding, re-encoding, or any other
-transformation. A message MAY describe:
+transformation, except for the diagnostic values permitted by
+[Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value). A message MAY describe:
 
 - The component of the connection string that is at fault, identified by name (for example "port", "host identifier", or
     "auth database").
 - The position of that component among repeated components (for example "the second host identifier").
 - What the parser expected instead.
+- The diagnostic values permitted by
+    [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
 
 A driver MUST NOT attempt to satisfy this requirement by masking, redacting, or otherwise transforming the connection
 string that it was given.
@@ -351,7 +354,16 @@ string that it was given.
 A message reporting an unsupported, unrecognized, deprecated or repeated key, or an invalid value, MUST NOT include any
 text from the connection string. It MUST NOT include the argument of a key, and it MUST NOT include a key that the
 driver cannot match to an option name that it knows. This holds whether or not parsing succeeds: either a key or an
-argument may contain text the user intended as part of a credential.
+argument may contain text the user intended as part of a credential. The following diagnostic values are exceptions:
+
+- An authentication mechanism named by the argument of the `authMechanism` option, and recognized by the driver, MAY be
+    identified by its canonical name from the driver's fixed set of known mechanisms. The name MUST be selected from
+    that set, not copied from the connection string, including its casing. An argument that names no mechanism the
+    driver knows MUST NOT be included.
+- An argument that has been successfully parsed as an integer for a known, non-sensitive URI option MAY be included,
+    formatted from the parsed integer rather than copied from the connection string. This applies even when the integer
+    fails a range or cross-option validation check. Failed integer conversions, integers for unrecognized options, and
+    arguments of sensitive options MUST NOT be included.
 
 The message MAY identify a key by the canonical name defined for that option in a specification, written as the driver
 knows it rather than copied from the connection string. The message MAY also report the position of the offending key or
@@ -586,6 +598,18 @@ the password. It does bound the combined length of the keys and arguments that p
 which may be the argument of a sensitive option. That is accepted: without a position the message has nothing actionable
 left in it, and a reader who holds the connection string is the one the message is for.
 
+Q: Why may a diagnostic identify a known authentication mechanism or a parsed integer
+
+A canonical mechanism name is selected from a fixed vocabulary, so it cannot reproduce arbitrary credential text or the
+user's spelling. A parsed integer for a known, non-sensitive option is similarly constrained, and reporting it makes
+range and cross-option errors actionable. Neither exception permits quoting the original argument.
+
+The integer exception differs from the others in kind, since it reports a value rather than only a name that the driver
+already knew. For that value to be part of a credential, the credential would have to contain a known option name, an
+equals sign, and a valid integer, which is a narrower coincidence than the ones already accepted above. A credential
+interpreted as a host or a port is not covered by the integer exception, which applies only to known, non-sensitive URI
+options.
+
 Q: Is percent-encoding the password sufficient to protect it
 
 No. A driver that decodes a component before including it in a message discloses the credential in plaintext regardless
@@ -594,6 +618,9 @@ encoding rules for [Userinfo](#userinfo-optional) exist so that a connection str
 confidentiality measure.
 
 ## Changelog
+
+- 2026-10-02: Permit driver-owned canonical authentication mechanism names and formatted, successfully parsed integers
+    for known, non-sensitive URI options in diagnostics, including before parsing completes.
 
 - 2026-09-21: Require that credentials and sensitive URI parameter arguments are not disclosed in parse errors, warning
     logs, or string representations, and that a string representation replaces them with a fixed marker. Require that a

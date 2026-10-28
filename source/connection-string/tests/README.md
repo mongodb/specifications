@@ -114,3 +114,14 @@ These tests cover requirements that cannot be expressed as a list of URIs. They 
 
 2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
     assert that it returns both sentinels, and confirm by inspection that its name makes the disclosure evident.
+
+3. **Canonical authentication mechanism diagnostic.** If the driver identifies a recognized mechanism in a diagnostic,
+    use a mixed-case spelling of that mechanism in a URI that fails credential validation. Assert that the diagnostic
+    uses the driver's canonical mechanism name rather than the supplied spelling. An unrecognized mechanism argument
+    MUST NOT appear in its diagnostic.
+
+4. **Parsed integer diagnostic.** If the driver reports an integer argument of a known, non-sensitive URI option in a
+    diagnostic, use a URI whose integer parses but fails a range or cross-option validation check. Include leading
+    zeros or percent-encoded digits in the argument. Assert that the diagnostic formats the parsed integer rather than
+    copying the supplied spelling. An argument that fails integer conversion, or belongs to an unrecognized or
+    sensitive option, MUST NOT be included.
