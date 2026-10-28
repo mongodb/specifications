@@ -105,12 +105,16 @@ assembled from any single driver's own ideas has repeatedly been shown to miss s
 These tests cover requirements that cannot be expressed as a list of URIs. They use the sentinel credentials
 `SENTINELuser5678` and `SENTINELpassword1234`.
 
-1. **Redacted string representation.** Construct a connection string object, and a client if the driver's API requires
-    one, from `mongodb://SENTINELuser5678:SENTINELpassword1234@localhost:27017/db`. This URI is valid, so no error is
-    raised. Assert that neither sentinel appears in any idiomatic representation of the object: the language's string
-    conversion, its debug or inspection representation, and its serialized form if the object is serializable. Assert
-    that the driver's redaction marker appears in place of both the username and the password, and that it is the same
-    marker in both positions.
+1. **Redacted string representation.** Construct a client from
+    `mongodb://SENTINELuser5678:SENTINELpassword1234@localhost:27017/db`. This URI is valid, so no error is raised. If
+    the driver also exposes a connection string object, or another configuration object constructed from the URI, apply
+    this test to each of those as well. Assert that neither sentinel appears in any idiomatic representation of each
+    object: the language's string conversion, its debug or inspection representation, and its serialized form if the
+    object is serializable. Where such a representation includes the userinfo, assert that the driver's redaction
+    marker appears in place of both the username and the password, and that it is the same marker in both positions; a
+    representation that omits the userinfo entirely satisfies that assertion trivially, as does a driver that exposes
+    no such representation at all. For what a representation must be when parsing did not complete, see
+    [String representations](../connection-string-spec.md#string-representations).
 
 2. **Explicitly named unredacted API.** If the driver provides an API that returns the unredacted connection string,
     assert that it returns both sentinels, and confirm by inspection that its name makes the disclosure evident.
