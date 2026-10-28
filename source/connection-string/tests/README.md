@@ -57,8 +57,13 @@ only database names, in the Auth Database portion of the URI.
 ## Credential disclosure tests
 
 `credential-disclosure.yml` is a separate corpus for the requirements in
-[Disclosure of Sensitive Values](../connection-string-spec.md#disclosure-of-sensitive-values). Its cases have only two
-keys:
+[Disclosure of Sensitive Values](../connection-string-spec.md#disclosure-of-sensitive-values).
+
+These cases, and the prose tests below, parse connection strings and inspect what the driver reports. They perform no
+operation against a server, so they require no server to be running. Their behavior is identical for all deployments and
+a driver MUST run them regardless of the topology it is configured for.
+
+Its cases have only two keys:
 
 - `description`: A string describing the test.
 - `uri`: A string containing the URI to be parsed.
@@ -77,17 +82,17 @@ decode a component before including it in a message. No other normalization is r
 
 For each case:
 
-- If the driver rejects the URI, neither form of the sentinel may appear in the resulting error message.
-- Whether or not the driver accepts the URI, neither form of the sentinel may appear in any message the driver logs
-    while parsing it.
+- If the driver rejects the URI, the sentinel MUST NOT appear, in either form, in the resulting error message.
+- Whether or not the driver accepts the URI, the sentinel MUST NOT appear, in either form, in any message the driver
+    logs while parsing it.
 - If the driver accepts the URI, nothing further is asserted about the components it parsed.
 
 The last clause is deliberate. Several of these URIs are malformed in ways this specification does not fully pin down,
 so drivers legitimately differ on which of them parse. Where a driver accepts one, the sentinel may have been relocated
 into a parsed component such as the database name or an option argument; that is a separate defect from the message
-hygiene these tests cover. Asserting that the sentinel appears nowhere in the parsed
-result would fail drivers for a defect these tests are not about. The requirement on logged messages is not weakened by
-acceptance, because a driver that accepts a URI can still disclose a credential while warning about it.
+hygiene these tests cover. Asserting that the sentinel appears nowhere in the parsed result would fail drivers for a
+defect these tests are not about. The requirement on logged messages is not weakened by acceptance, because a driver
+that accepts a URI can still disclose a credential while warning about it.
 
 Drivers SHOULD run each case twice: once catching the error and inspecting only its message, and once letting the error
 escape to the language runtime's default handler. Drivers have been observed to disclose on one path and not the other.
@@ -129,3 +134,10 @@ These tests cover requirements that cannot be expressed as a list of URIs. They 
     zeros or percent-encoded digits in the argument. Assert that the diagnostic formats the parsed integer rather than
     copying the supplied spelling. An argument that fails integer conversion, or belongs to an unrecognized or
     sensitive option, MUST NOT be included.
+
+5. **Representation of a connection string that did not parse.** Attempt to construct a client, and any connection
+    string or configuration object the driver exposes, from
+    `mongodb://SENTINELuser5678:SENTINELpassword1234@localhost:99999/db`, whose port is out of range. If the driver
+    exposes an object that exists after parsing has failed, assert that every idiomatic representation of that object
+    is a fixed string containing neither sentinel, and that obtaining each representation does not raise an error. A
+    driver whose types cannot exist in an unparsed state satisfies this test trivially.
