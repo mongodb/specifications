@@ -2002,6 +2002,11 @@ The following arguments are supported:
     lead to unpredictable behavior if different servers were selected for configuring the fail point and executing
     subsequent operations.
 
+    When configuring a fail point, tests MUST NOT use a client entity that specifies timeout options such as `timeoutMS`
+    or `socketTimeoutMS` in `uriOptions`. Since the test runner disables the fail point using the same client after the
+    test, short timeouts can cause the cleanup to fail intermittently. Tests that need a client with timeout options
+    MUST configure the fail point using a separate client entity without them.
+
 When executing this operation, the test runner MUST keep a record of the fail point so that it can be disabled after the
 test. The test runner MUST also ensure that the `configureFailPoint` command is excluded from the list of observed
 command monitoring events for this client (if applicable).
@@ -3469,6 +3474,8 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-10-29: Require that fail points not be configured through clients with timeout options.
 
 - 2026-08-26: **Schema version 1.29.**
 
