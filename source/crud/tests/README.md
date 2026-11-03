@@ -764,11 +764,10 @@ Disable the fail point configured above with `client`:
 Test that `MongoClient.bulkWrite` embeds a client-side error in the returned exception, and retains the results observed
 before it, when the error occurs after an earlier batch has already succeeded.
 
-This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
-arbitrarily large documents.
+This test must only be run on 8.0+ servers.
 
 Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
-using `client` and record the `maxWriteBatchSize` and `maxMessageSizeBytes` values contained in the response.
+using `client` and record the `maxWriteBatchSize` value contained in the response.
 
 Construct a `MongoCollection` (referred to as `coll`) for the collection "db.coll". Drop `coll`.
 
@@ -781,18 +780,20 @@ InsertOne: {
 }
 ```
 
-Construct the following write model (referred to as `largeDocumentModel`), whose document is larger than
-`maxMessageSizeBytes`:
+Construct the following write model (referred to as `invalidReplaceModel`), whose replacement document's first key
+starts with `$`, which drivers MUST reject client-side. See
+[Update vs. replace document validation](../bulk-write.md#update-vs-replace-document-validation).
 
 ```javascript
-InsertOne: {
+ReplaceOne: {
   "namespace": "db.coll",
-  "document": { "a": "b".repeat(maxMessageSizeBytes) }
+  "filter": {},
+  "replacement": { "$a": "b" }
 }
 ```
 
 Construct a list of write models (referred to as `models`) with `model` repeated `maxWriteBatchSize` times, followed by
-`largeDocumentModel`. Execute `bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a
+`invalidReplaceModel`. Execute `bulkWrite` on `client` with `models`. Assert that the bulk write fails and returns a
 `BulkWriteException` (referred to as `bulkWriteError`).
 
 Assert that `bulkWriteError.error` is populated. This error is a client-side error, so it may not have an error code.
