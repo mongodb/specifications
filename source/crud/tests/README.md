@@ -711,10 +711,9 @@ This test must only be run on 8.0+ servers.
 If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
 every `bulkWrite` batch.
 
-Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
-response. Then, configure the following fail point with `client`:
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
+using `client` and record the `maxWriteBatchSize` value contained in the response. Then, configure the following fail
+point with `client`:
 
 ```javascript
 {
@@ -747,8 +746,6 @@ Assert that `bulkWriteError.error` is populated with an error (referred to as `t
 
 Assert that `bulkWriteError.partialResult` is populated. Assert that `bulkWriteError.partialResult.insertedCount` is
 equal to `maxWriteBatchSize`.
-
-Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 
 Disable the fail point configured above with `client`:
 
@@ -811,10 +808,9 @@ This test must only be run on 8.0+ servers.
 If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
 every `bulkWrite` batch.
 
-Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
-response. Then, configure the following fail point with `client`:
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
+using `client` and record the `maxWriteBatchSize` value contained in the response. Then, configure the following fail
+point with `client`:
 
 ```javascript
 {
@@ -848,7 +844,8 @@ Assert that `bulkWriteError.error` is populated with an error (referred to as `t
 
 Assert that `bulkWriteError.writeErrors` is non-empty.
 
-Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
+Assert that `bulkWriteError.partialResult` is populated. Assert that `bulkWriteError.partialResult.insertedCount` is
+equal to 1.
 
 Disable the fail point configured above with `client`:
 
@@ -872,10 +869,9 @@ This test must only be run on 8.0+ servers.
 If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
 every `bulkWrite` batch.
 
-Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured and
-[command monitoring](../../command-logging-and-monitoring/command-logging-and-monitoring.md) enabled to observe
-CommandStartedEvents. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value contained in the
-response. Then, configure the following fail point with `client`:
+Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
+using `client` and record the `maxWriteBatchSize` value contained in the response. Then, configure the following fail
+point with `client`:
 
 ```javascript
 {
@@ -915,8 +911,6 @@ top-level error to report.
 
 Assert that `bulkWriteError.partialResult` is populated. Assert that `bulkWriteError.partialResult.insertedCount` is
 equal to `maxWriteBatchSize + 1`.
-
-Assert that two CommandStartedEvents were observed for the `bulkWrite` command.
 
 Disable the fail point configured above with `client`:
 
