@@ -15,7 +15,7 @@ data: [
       }
     }
   }
-]
+  ]
 encrypted_fields: {{ yamlfile("encryptedFields.json") }}
 key_vault_data: []
 tests:

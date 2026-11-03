@@ -23,6 +23,7 @@
 | 7.2            | 23           | <p>Database Validation on `mongos` Aggregation Queries</p><p>`serverStatus` Metrics</p><p>Default Chunks Per Shard</p>                                                                                                                                                      |
 | 7.3            | 24           | <p>Compaction Improvements</p><p>New `serverStatus` metrics</p>                                                                                                                                                                                                             |
 | 8.0            | 25           | <p>Range Encryption GA</p><p>OIDC authentication mechanism</p><p>New `bulkWrite` command</p><p>`snapshot` read concern on capped collections</p>                                                                                                                            |
+| 9.0            | 29           | <p>`OP_MSG` telemetry section (`Payload Type 3`, OpenTelemetry trace context propagation)</p>                                                                                                                                                                               |
 
 In server versions 5.0 and earlier, the wire version was defined as a numeric literal in
 [src/mongo/db/wire_version.h](https://github.com/mongodb/mongo/blob/master/src/mongo/db/wire_version.h). Since server

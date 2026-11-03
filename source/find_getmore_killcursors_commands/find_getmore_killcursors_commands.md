@@ -1,7 +1,6 @@
 # Find, getMore and killCursors commands
 
 - Status: Accepted
-- Minimum Server Version: 3.2
 
 ## Abstract
 
@@ -28,8 +27,7 @@ A BSON document containing the fields making up a MongoDB server command.
 
 #### Wire Protocol
 
-The binary protocol used to talk with MongoDB over a socket. It's made up by the OP_QUERY, OP_GET_MORE, OP_KILL_CURSORS,
-OP_INSERT, OP_UPDATE and OP_DELETE.
+The binary protocol used to talk with MongoDB over a socket.
 
 ## Guidance
 
@@ -40,20 +38,17 @@ for the driver.
 
 ### Implementation
 
-If the **hello** command returns **maxWireVersion >= 4**, drivers:
+Drivers:
 
-- MUST implement queries with the `find` command instead of `OP_QUERY`.
-- MUST implement cursor operations with the `getMore` and `killCursors` commands instead of `OP_GET_MORE` and
-    `OP_KILL_CURSORS`, respectively.
-- MUST NOT use OP_QUERY except to execute commands.
+- MUST implement queries with the `find` command.
+- MUST implement cursor operations with the `getMore` and `killCursors` commands.
 
 ## Commands
 
 ### find
 
 The [find](https://www.mongodb.com/docs/manual/reference/command/find/) command replaces the query functionality of the
-OP_QUERY wire protocol message but cannot execute queries against special collections. Unlike the legacy OP_QUERY wire
-protocol message, the **find** command cannot be used to execute other commands.
+OP_QUERY wire protocol message but cannot execute queries against special collections.
 
 For a successful command, the document returned from the server has the following format:
 
@@ -70,42 +65,23 @@ For a successful command, the document returned from the server has the followin
 }
 ```
 
-#### Special Collection names
-
-The find command **does not support querying on system collections**, so if drivers are using any system collections
-instead of the inprog, killop, unlock, etc. commands they SHOULD default to using the old-style OP_QUERY.
-
-Any driver that provides helpers for any of the special collections below SHOULD use the replacement commands if
-**hello.maxWireVersion >=4** or higher.
-
-| Special collection name        | Replacement Command |
-| ------------------------------ | ------------------- |
-| `$cmd.sys.inprog`              | currentOp           |
-| `$cmd.sys.unlock`              | fsyncUnlock         |
-| `<database>.system.indexes`    | listIndexes         |
-| `<database>.system.namespaces` | listCollections     |
-
-Special Collection Names
-
 #### Exhaust
 
 This section only applies to drivers that support exhaust cursors.
 
 The exhaust protocol differs based on the server version:
 
-| Server version  | Server behavior                                                                                                           |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 4.0 and earlier | Only supports exhaust over legacy **OP_QUERY**. The **find** command does not support the exhaust flag from **OP_QUERY**. |
-| 4.2 to 5.0      | Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**.                                                            |
-| 5.1 and later   | Supports exhaust over **OP_MSG**.                                                                                         |
+| Server version | Server behavior                                                |
+| -------------- | -------------------------------------------------------------- |
+| 4.2 to 5.0     | Supports exhaust both over legacy **OP_QUERY** and **OP_MSG**. |
+| 5.1 and later  | Supports exhaust over **OP_MSG**.                              |
 
 Therefore drivers that implement exhaust cursors:
 
-| Server version  | Driver behavior                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 4.0 and earlier | Drivers MUST use legacy **OP_QUERY**.                                                                                              |
-| 4.2 to 5.0      | Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.                                                                     |
-| 5.1 and later   | Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested. |
+| Server version | Driver behavior                                                                                                                    |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 4.2 to 5.0     | Drivers SHOULD use **OP_MSG** but MAY use legacy **OP_QUERY**.                                                                     |
+| 5.1 and later  | Drivers MUST only use **OP_MSG**. Alternatively, drivers MAY fallback to a non-exhaust cursor when an exhaust cursor is requested. |
 
 #### Interactions with OP_QUERY
 
@@ -202,16 +178,15 @@ Further, after these transformation:
 
 #### BatchSize of 1
 
-In 3.2 a batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the
-first batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.
+A batchSize of 1 means return a single document for the find command and it will not destroy the cursor after the first
+batch of documents are returned. Given a query returning 4 documents the number of commands issues will be.
 
 1. **find** command with batchSize=1
 2. **getMore** command with batchSize=1
 3. **getMore** command with batchSize=1
 4. **getMore** command with batchSize=1
 
-The driver **SHOULD NOT attempt to emulate the behavior seen in 3.0 or earlier** as the new find command enables the
-user expected behavior of allowing the first result to contain a single document when specifying batchSize=1.
+The `find` command allows the first result to contain a single document when specifying batchSize=1.
 
 #### Tailable cursors
 
@@ -264,8 +239,7 @@ to the value of the option **maxAwaitTimeMS**. If no **maxAwaitTimeMS** is speci
 ### getMore
 
 The [getMore](https://www.mongodb.com/docs/manual/reference/command/getMore/) command replaces the **OP_GET_MORE** wire
-protocol message. The query flags passed to OP_QUERY for a getMore command MUST be secondaryOk=true when sent to a
-secondary. The OP_QUERY namespace MUST be the same as for the **find** and **killCursors** commands.
+protocol message. The OP_MSG namespace MUST be the same as for the **find** and **killCursors** commands.
 
 ```typescript
 interface GetMoreCommand {
@@ -318,8 +292,8 @@ The driver's local cursor MUST update its `id` and `ns`, as well as store the `n
 ### killCursors
 
 The [killCursors](https://www.mongodb.com/docs/manual/reference/command/killCursors/) command replaces the
-**OP_KILL_CURSORS** wire protocol message. The OP_QUERY namespace MUST be the same as for the **find** and **getMore**
-commands. The **killCursors** command is optional to implement in **MongoDB 3.2**.
+**OP_KILL_CURSORS** wire protocol message. The OP_MSG namespace MUST be the same as for the **find** and **getMore**
+commands.
 
 The command response will be as follows:
 
@@ -429,11 +403,6 @@ Like other commands, the find and getMore commands will not use the OP_REPLY res
 
 ## FAQ
 
-### Changes in error handling for 3.2 tailable cursor
-
-Tailable cursors pointing to documents in a capped collection that get overwritten will return a zero document result in
-MongoDB 3.0 or earlier but will return an error in MongoDB 3.2
-
 ### Explain command
 
 There is no equivalent of the `$explain` modifier in the find command. The driver SHOULD use the **explain** command.
@@ -455,6 +424,8 @@ More in depth information about passing read preferences to Mongos can be found 
 [Server Selection Specification](../server-selection/server-selection.md#passing-read-preference-to-mongos).
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references.
 
 - 2024-07-30: Migrated from reStructuredText to Markdown.
 

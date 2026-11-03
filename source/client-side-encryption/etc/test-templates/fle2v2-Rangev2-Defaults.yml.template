@@ -26,7 +26,7 @@ encrypted_fields: &encrypted_fields {
       }
     }
   ]
-}
+  }
 key_vault_data: [ {{ yamlfile("keys/key1-document.json") }} ]
 tests:
   - description: "FLE2 Range applies defaults for trimFactor and sparsity"
@@ -108,7 +108,7 @@ tests:
                           "subType": "06"
                       }
                   }
-              }
+                }
             encryptionInformation: *encryptionInformation
           command_name: find
     outcome:

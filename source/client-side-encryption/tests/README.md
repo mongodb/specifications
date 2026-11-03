@@ -473,8 +473,8 @@ test.
 
         ```javascript
         {
-          "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-          "keyName": "key-name-csfle"
+          "keyVaultEndpoint": "drivers-3392-key-vault.vault.azure.net",
+          "keyName": "drivers-3392-keyname"
         }
         ```
 
@@ -925,8 +925,8 @@ The method of passing TLS options for KMIP TLS connections is driver dependent.
 
     ```javascript
     {
-       "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-       "keyName": "key-name-csfle"
+       "keyVaultEndpoint": "drivers-3392-key-vault.vault.azure.net",
+       "keyName": "drivers-3392-keyname"
     }
     ```
 
@@ -1940,6 +1940,13 @@ Read the `"_id"` field of `key1Document` as `key1ID`.
 Drop and create the collection `db.explicit_encryption` using `encryptedFields` as an option. See
 [FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
 
+Load the file
+[encryptedFields-c10.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-c10.json)
+as `encryptedFields_c10`.
+
+Drop and create the collection `db.explicit_encryption_c10` using `encryptedFields_c10` as an option. See
+[FLE 2 CreateCollection() and Collection.Drop()](../client-side-encryption.md#create-collection-helper).
+
 Drop and create the collection `keyvault.datakeys`.
 
 Insert `key1Document` in `keyvault.datakeys` with majority write concern.
@@ -2014,28 +2021,10 @@ class EncryptOpts {
 
 Store the result in `insertPayload`.
 
-Use `encryptedClient` to insert the document `{ "encryptedIndexed": <insertPayload> }` into `db.explicit_encryption`.
+Use `encryptedClient` to insert the document `{ "encryptedIndexed": <insertPayload> }` into
+`db.explicit_encryption_c10`.
 
 Repeat the above steps 10 times to insert 10 total documents. The `insertPayload` must be regenerated each iteration.
-
-Use `clientEncryption` to encrypt the value "encrypted indexed value" with these `EncryptOpts`:
-
-```typescript
-class EncryptOpts {
-   keyId : <key1ID>,
-   algorithm: "Indexed",
-   queryType: "equality",
-   contentionFactor: 0,
-}
-```
-
-Store the result in `findPayload`.
-
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
-`{ "encryptedIndexed": <findPayload> }`.
-
-Assert less than 10 documents are returned. 0 documents may be returned. Assert each returned document contains the
-field `{ "encryptedIndexed": "encrypted indexed value" }`.
 
 Use `clientEncryption` to encrypt the value "encrypted indexed value" with these `EncryptOpts`:
 
@@ -2048,10 +2037,10 @@ class EncryptOpts {
 }
 ```
 
-Store the result in `findPayload2`.
+Store the result in `findPayload`.
 
-Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption` collection with the filter
-`{ "encryptedIndexed": <findPayload2> }`.
+Use `encryptedClient` to run a "find" operation on the `db.explicit_encryption_c10` collection with the filter
+`{ "encryptedIndexed": <findPayload> }`.
 
 Assert 10 documents are returned. Assert each returned document contains the field
 `{ "encryptedIndexed": "encrypted indexed value" }`.
@@ -2329,8 +2318,8 @@ For "azure":
 
 ```javascript
 {
-   "keyVaultEndpoint": "key-vault-csfle.vault.azure.net",
-   "keyName": "key-name-csfle"
+   "keyVaultEndpoint": "drivers-3392-key-vault.vault.azure.net",
+   "keyName": "drivers-3392-keyname"
 }
 ```
 
@@ -3871,10 +3860,10 @@ expect(dk).to.be.a(Binary);
 expect(calledCount).to.be.greaterThan(0);
 ```
 
-### 27. Text Explicit Encryption
+### 27. String Explicit Encryption
 
-The Text Explicit Encryption tests utilize Queryable Encryption (QE) range protocol V2 and require MongoDB server 8.2.0+
-and libmongocrypt 1.15.1+. The tests must not run against a standalone.
+The String Explicit Encryption tests utilize Queryable Encryption (QE) and require MongoDB server 8.2.0+ and
+libmongocrypt 1.18.1+. The tests must not run against a standalone.
 
 Before running each of the following test cases, perform the following Test Setup.
 
@@ -3884,9 +3873,17 @@ Using [QE CreateCollection() and Collection.Drop()](../client-side-encryption.md
 create the following collections with majority write concern:
 
 - `db.prefix-suffix` using the `encryptedFields` option set to the contents of
-    [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json)
+    [encryptedFields-prefix-suffix.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix.json).
+    This step requires server 9.0.0+.
+- `db.prefix-suffix-ci-di` using the `encryptedFields` option set to the contents of
+    [encryptedFields-prefix-suffix-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-prefix-suffix-ci-di.json).
+    This step requires server 9.0.0+.
 - `db.substring` using the `encryptedFields` option set to the contents of
     [encryptedFields-substring.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring.json)
+    This step requires server 9.0.0+.
+- `db.substring-ci-di` using the `encryptedFields` option set to the contents of
+    [encryptedFields-substring-ci-di.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/encryptedFields-substring-ci-di.json)
+    This step requires server 9.0.0+.
 
 Load the file
 [key1-document.json](https://github.com/mongodb/specifications/tree/master/source/client-side-encryption/etc/data/keys/key1-document.json)
@@ -3910,7 +3907,7 @@ class ClientEncryptionOpts {
 }
 ```
 
-Create a MongoClient named `encryptedClient` with these `AutoEncryptionOpts`:
+Create a MongoClient named `explicitEncryptedClient` with these `AutoEncryptionOpts`:
 
 ```typescript
 class AutoEncryptionOpts {
@@ -3920,14 +3917,24 @@ class AutoEncryptionOpts {
 }
 ```
 
+Create a MongoClient with auto-encryption enabled (without `bypassQueryAnalysis`) named `autoEncryptedClient` using
+these `AutoEncryptionOpts`:
+
+```typescript
+class AutoEncryptionOpts {
+   keyVaultNamespace: "keyvault.datakeys",
+   kmsProviders: { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } },
+}
+```
+
 Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -3942,7 +3949,8 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.prefix-suffix` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.prefix-suffix` (if created) with majority write
+concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -3953,21 +3961,22 @@ Use `clientEncryption` to encrypt the string `"foobarbaz"` with the following `E
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
+   algorithm: "String",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
 }
 ```
 
-Use `encryptedClient` to insert the following document into `db.substring` with majority write concern:
+Use `explicitEncryptedClient` to insert the following document into `db.substring` (if created) with majority write
+concern:
 
 ```javascript
 { "_id": 0, "encryptedText": <encrypted 'foobarbaz'> }
@@ -3975,15 +3984,17 @@ Use `encryptedClient` to insert the following document into `db.substring` with 
 
 #### Case 1: can find a document by prefix
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   algorithm: "String",
+   queryType: "prefix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -3994,7 +4005,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'foo'>} } }
@@ -4008,15 +4019,17 @@ Assert the following document is returned:
 
 #### Case 2: can find a document by suffix
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "suffixPreview",
+   algorithm: "String",
+   queryType: "suffix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       suffix: SuffixOpts {
@@ -4027,7 +4040,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
@@ -4041,15 +4054,17 @@ Assert the following document is returned:
 
 #### Case 3: assert no document found by prefix
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "prefixPreview",
+   algorithm: "String",
+   queryType: "prefix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -4060,7 +4075,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'baz'>} } }
@@ -4070,15 +4085,17 @@ Assert that no documents are returned.
 
 #### Case 4: assert no document found by suffix
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "suffixPreview",
+   algorithm: "String",
+   queryType: "suffix",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       suffix: SuffixOpts {
@@ -4089,7 +4106,7 @@ class EncryptOpts {
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'foo'>} } }
@@ -4099,27 +4116,29 @@ Assert that no documents are returned.
 
 #### Case 5: can find a document by substring
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.20.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "substringPreview",
+   algorithm: "String",
+   queryType: "substring",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
@@ -4133,27 +4152,29 @@ Assert the following document is returned:
 
 #### Case 6: assert no document found by substring
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.20.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"qux"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "substringPreview",
+   algorithm: "String",
+   queryType: "substring",
    contentionFactor: 0,
-   textOpts: TextOpts {
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       substring: SubstringOpts {
        strMaxLength: 10,
-       strMaxQueryLength: 10,
+       strMaxQueryLength: 6,
        strMinQueryLength: 2,
       }
    },
 }
 ```
 
-Use `encryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring` collection with the following filter:
 
 ```javascript
 { $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'qux'>} } }
@@ -4163,14 +4184,16 @@ Assert that no documents are returned.
 
 #### Case 7: assert `contentionFactor` is required
 
+This test case requires MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
 Use `clientEncryption.encrypt()` to encrypt the string `"foo"` with the following `EncryptOpts`:
 
 ```typescript
 class EncryptOpts {
    keyId : <key1ID>,
-   algorithm: "TextPreview",
-   queryType: "prefixPreview",
-   textOpts: TextOpts {
+   algorithm: "String",
+   queryType: "prefix",
+   stringOpts: StringOpts {
       caseSensitive: true,
       diacriticSensitive: true,
       prefix: PrefixOpts {
@@ -4181,5 +4204,444 @@ class EncryptOpts {
 }
 ```
 
-Expect an error from libmongocrypt with a message containing the string: "contention factor is required for textPreview
+Expect an error from libmongocrypt with a message containing the string: "contention factor is required for string
 algorithm".
+
+#### Case 8: can find an auto-encrypted case-insensitively indexed document by prefix and suffix
+
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test case requires
+MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
+Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern.
+
+```javascript
+{ "encryptedText": "BingQiLin" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"bing"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "String",
+   queryType: "prefix",
+   contentionFactor: 0,
+   stringOpts: StringOpts {
+      caseSensitive: false,
+      diacriticSensitive: false,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
+
+```javascript
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'bing'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "BingQiLin" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"lin"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "String",
+   queryType: "suffix",
+   contentionFactor: 0,
+   stringOpts: StringOpts {
+      caseSensitive: false,
+      diacriticSensitive: false,
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
+
+```javascript
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'lin'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "BingQiLin" }
+```
+
+#### Case 9: can find an auto-encrypted diacritic-insensitively indexed document by prefix and suffix
+
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test case requires
+MongoDB server 9.0.0+ and libmongocrypt 1.19.0+.
+
+Use `autoEncryptedClient` to insert the following document into `db.prefix-suffix-ci-di` with majority write concern:
+
+```javascript
+{ "encryptedText": "cafébarbäz" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "String",
+   queryType: "prefix",
+   contentionFactor: 0,
+   stringOpts: StringOpts {
+      caseSensitive: false,
+      diacriticSensitive: false,
+      prefix: PrefixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
+
+```javascript
+{ $expr: { $encStrStartsWith: {input: '$encryptedText', prefix: <encrypted 'cafe'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "cafébarbäz" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"baz"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "String",
+   queryType: "suffix",
+   contentionFactor: 0,
+   stringOpts: StringOpts {
+      caseSensitive: false,
+      diacriticSensitive: false,
+      suffix: SuffixOpts {
+        strMaxQueryLength: 10,
+        strMinQueryLength: 2,
+     }
+   },
+}
+```
+
+Use `explicitEncryptedClient` to run a "find" operation on the `db.prefix-suffix-ci-di` collection with the following
+filter:
+
+```javascript
+{ $expr: { $encStrEndsWith: {input: '$encryptedText', suffix: <encrypted 'baz'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "cafébarbäz" }
+```
+
+#### Case 10: can find an auto-encrypted case-insensitively indexed document by substring
+
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test case requires
+MongoDB server 9.0.0+ and libmongocrypt 1.20.0+.
+
+Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
+
+```javascript
+{ "encryptedText": "FooBarBaz" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"bar"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "String",
+   queryType: "substring",
+   contentionFactor: 0,
+   stringOpts: StringOpts {
+      caseSensitive: false,
+      diacriticSensitive: false,
+      substring: SubstringOpts {
+        strMaxLength: 10,
+        strMaxQueryLength: 6,
+        strMinQueryLength: 2,
+      }
+   },
+}
+```
+
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following
+filter:
+
+```javascript
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'bar'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "FooBarBaz" }
+```
+
+#### Case 11: can find an auto-encrypted diacritic-insensitively indexed document by substring
+
+This is a regression test for [DRIVERS-3470](https://jira.mongodb.org/browse/DRIVERS-3470). This test case requires
+MongoDB server 9.0.0+ and libmongocrypt 1.20.0+.
+
+Use `autoEncryptedClient` to insert the following document into `db.substring-ci-di` with majority write concern:
+
+```javascript
+{ "encryptedText": "foocafébaz" }
+```
+
+Use `clientEncryption.encrypt()` to encrypt the string `"cafe"` with the following `EncryptOpts`:
+
+```typescript
+class EncryptOpts {
+   keyId : <key1ID>,
+   algorithm: "String",
+   queryType: "substring",
+   contentionFactor: 0,
+   stringOpts: StringOpts {
+      caseSensitive: false,
+      diacriticSensitive: false,
+      substring: SubstringOpts {
+        strMaxLength: 10,
+        strMaxQueryLength: 6,
+        strMinQueryLength: 2,
+      }
+   },
+}
+```
+
+Use `explicitEncryptedClient` to run a "find" operation on the `db.substring-ci-di` collection with the following
+filter:
+
+```javascript
+{ $expr: { $encStrContains: {input: '$encryptedText', substring: <encrypted 'cafe'>} } }
+```
+
+Assert the following document is returned:
+
+```javascript
+{ "encryptedText": "foocafébaz" }
+```
+
+### 28. KMS Connect Callback
+
+The following tests verify that `kmsConnectCallback` is invoked when a driver makes KMS requests and that the socket it
+returns is used for the KMS connection. All cases require real AWS KMS credentials; skip any case if they are not
+available.
+
+Drivers that do not implement `kmsConnectCallback` MUST use an alternative means of connecting to the HTTP proxy.
+
+#### Setup
+
+Start the following server processes before running test cases in this section.
+
+1. The KMS HTTP proxy in plain HTTP mode on port 9004:
+
+    ```shell
+    python -u kms_http_proxy.py --port 9004
+    ```
+
+2. The KMS HTTP proxy in HTTPS mode on port 9005:
+
+    ```shell
+    python -u kms_http_proxy.py --ca_file ../x509gen/ca.pem --cert_file ../x509gen/server.pem --port 9005
+    ```
+
+A `kmsConnectCallback` for a **plain HTTP proxy** on port 9004 works as follows:
+
+1. Accept `(<host>, <port>)` from the driver.
+2. Open a plain TCP connection to `127.0.0.1:9004`.
+3. Send `CONNECT <host>:<port> HTTP/1.1\r\nHost: <host>:<port>\r\n\r\n`.
+4. Read the response and verify it begins with `HTTP/1.1 200`.
+5. Return a socket-like object.
+
+A `kmsConnectCallback` for an **HTTPS proxy** on port 9005 works the same way, except step 2 opens a TLS connection to
+`127.0.0.1:9005` using
+[drivers-evergreen-tools/.evergreen/x509gen/ca.pem](https://github.com/mongodb-labs/drivers-evergreen-tools/blob/master/.evergreen/x509gen/ca.pem)
+to verify the proxy's certificate.
+
+The proxy exposes two control endpoints: `POST /reset` zeroes the counters, and `GET /metrics` returns a plaintext body
+of the form `connect_count <N>` (one `key value` pair per line), where `<N>` is the number of TCP connections the proxy
+has accepted since the last reset.
+
+In every case, after the callback returns its socket, the driver wraps it with TLS negotiated end-to-end with the KMS
+host reached through the tunnel. SNI and certificate/hostname verification MUST target the KMS host, not the address
+(e.g. the proxy) that the callback actually connected to.
+
+#### Case 1: plain HTTP proxy
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
+
+Call `client_encryption.createDataKey()` with `"aws"` as the provider and the following `masterKey`:
+
+```javascript
+{
+  "region": "us-east-1",
+  "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+}
+```
+
+Expect this to succeed.
+
+Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`.
+
+#### Case 2: HTTPS proxy
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: the HTTPS proxy callback described in Setup.
+
+Reset the proxy metrics: `POST https://127.0.0.1:9005/reset` (use `ca.pem` to verify the proxy's TLS certificate).
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed.
+
+Fetch `GET https://127.0.0.1:9005/metrics` (using `ca.pem`). Assert `connect_count` is at least `1`.
+
+This case involves two independent TLS layers: the callback's own client↔proxy TLS connection (verified against
+`ca.pem`, the proxy's CA), and the driver's client↔KMS TLS connection carried end-to-end through the CONNECT tunnel
+(verified against the real KMS host's certificate). Successfully creating the data key confirms the driver verified the
+KMS host's identity rather than the proxy's.
+
+#### Case 3: full auto encryption pipeline via proxy
+
+This case exercises the complete auto encryption and decryption pipeline with `kmsConnectCallback` routing KMS traffic
+through a proxy.
+
+Perform the following setup.
+
+1. Create a `MongoClient` without encryption enabled (referred to as `client`).
+
+2. Using `client`, drop the collections `keyvault.datakeys` and `db.coll`.
+
+3. Create a `ClientEncryption` object (referred to as `client_encryption`) with:
+
+    - `keyVaultNamespace` set to `keyvault.datakeys`, `keyVaultClient` set to `client`.
+    - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+    - `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+4. Call `client_encryption.createDataKey()` with `"aws"` as the provider and the following `masterKey`:
+
+    ```javascript
+    {
+      "region": "us-east-1",
+      "key": "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"
+    }
+    ```
+
+    Expect this to succeed. Store the returned UUID as `dataKeyId`.
+
+5. Build a JSON schema for `db.coll` using `dataKeyId`:
+
+    ```javascript
+    {
+      "bsonType": "object",
+      "properties": {
+        "encrypted_string": {
+          "encrypt": {
+            "keyId": [<dataKeyId>],
+            "bsonType": "string",
+            "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+          }
+        }
+      }
+    }
+    ```
+
+6. Reset the proxy metrics: `POST http://127.0.0.1:9004/reset`.
+
+7. Create a `MongoClient` configured with auto encryption (referred to as `client_encrypted`) with these
+    `AutoEncryptionOpts`:
+
+    - `keyVaultNamespace`: `keyvault.datakeys`.
+    - `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+    - `schemaMap`: `{ "db.coll": <schema from step 5> }`.
+    - `kmsConnectCallback`: the plain HTTP proxy callback described in Setup.
+
+8. Use `client_encrypted` to insert `{ "_id": 1, "encrypted_string": "hello" }` into `db.coll`. Expect this to succeed.
+
+9. Use `client_encrypted` to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect the returned document to
+    contain `{ "encrypted_string": "hello" }`.
+
+10. Use `client` (unencrypted) to run a `findOne` on `db.coll` with filter `{ "_id": 1 }`. Expect `encrypted_string` to
+    be a Binary value (i.e. still encrypted).
+
+11. Fetch `GET http://127.0.0.1:9004/metrics`. Assert `connect_count` is at least `1`, confirming that KMS requests were
+    routed through the proxy. Expect only one KMS request since the resulting decrypted key is cached.
+
+#### Case 4: Error
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a proxy callback that returns an error.
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to fail.
+
+#### Case 5: callback receives timeout
+
+This case MUST only be run by drivers that have implemented
+[CSOT](../../client-side-operations-timeout/client-side-operations-timeout.md).
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a `MongoClient` configured with `timeoutMS: 1000` as the
+    `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a callback that records the timeout value it receives and then proceeds normally (performs the
+    HTTP CONNECT through the plain HTTP proxy on port 9004 as described in Setup).
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed.
+
+Assert that the callback was called with a non-zero timeout.
+
+#### Case 6: Retry
+
+Skip this test if the driver does not implement DRIVERS-1541.
+
+Create a `ClientEncryption` object with:
+
+- `keyVaultNamespace` set to `keyvault.datakeys` and a default `MongoClient` as the `keyVaultClient`.
+- `kmsProviders`: `{ "aws": { <AWS credentials> } }`.
+- `kmsConnectCallback`: a callback that fails with a network error on its first invocation, then behaves as the plain
+    HTTP proxy callback described in Setup on subsequent invocations.
+
+Call `client_encryption.createDataKey()` with the same provider and `masterKey` as Case 1.
+
+Expect this to succeed, confirming that the driver retried the `kmsConnectCallback` after its first invocation failed.

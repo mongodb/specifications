@@ -14,7 +14,8 @@ be manually implemented by each driver.
 
 #### Test 1: Operation Retry Uses Exponential Backoff
 
-Drivers should test that retries do not occur immediately when a SystemOverloadedError is encountered.
+Drivers should test that retries do not occur immediately when a SystemOverloadedError is encountered. This test MUST be
+executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient`
 2. Let `collection` be a collection
@@ -49,29 +50,21 @@ Drivers should test that retries do not occur immediately when a SystemOverloade
 
     5. Execute step 3 again.
 
-    6. Compare the two time between the two runs.
+    6. Compare the time between the two runs.
 
         ```python
-        assertTrue(with_backoff_time - no_backoff_time >= 2.1)
+        assertTrue(absolute_value(with_backoff_time - (no_backoff_time + 0.6 seconds)) < 0.6 seconds)
         ```
 
-        The sum of 5 backoffs is 3.1 seconds. There is a 1-second window to account for potential variance between the two
-        runs.
+        The sum of 2 backoffs is 0.6 seconds. There is a 0.6-second window to account for potential variance between the
+        two runs.
 
-#### Test 2: Token Bucket Capacity is Enforced
-
-Drivers should test that retry token buckets are created at their maximum capacity and that that capacity is enforced.
-
-1. Let `client` be a `MongoClient` with `adaptiveRetries=True`.
-2. Assert that the client's retry token bucket is at full capacity and that the capacity is
-    `DEFAULT_RETRY_TOKEN_CAPACITY`.
-3. Using `client`, execute a successful `ping` command.
-4. Assert that the successful command did not increase the number of tokens in the bucket above
-    `DEFAULT_RETRY_TOKEN_CAPACITY`.
+#### Test 2: REMOVED
 
 #### Test 3: Overload Errors are Retried a Maximum of MAX_RETRIES times
 
-Drivers should test that without adaptive retries enabled, overload errors are retried a maximum of five times.
+Drivers should test that overload errors are retried a maximum of MAX_RETRIES times. This test MUST be executed against
+a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
 
 1. Let `client` be a `MongoClient` with command event monitoring enabled.
 
@@ -95,24 +88,24 @@ Drivers should test that without adaptive retries enabled, overload errors are r
 
 5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
-6. Assert that the total number of started commands is MAX_RETRIES + 1 (6).
+6. Assert that the total number of started commands is MAX_RETRIES + 1 (3).
 
-#### Test 4: Adaptive Retries are Limited by Token Bucket Tokens
+#### Test 4: Overload Errors are Retried a Maximum of maxAdaptiveRetries times when configured
 
-Drivers should test that when enabled, adaptive retries are limited by the number of tokens in the bucket.
+Drivers should test that overload errors are retried a maximum of `maxAdaptiveRetries` times, when configured. This test
+MUST be executed against a MongoDB 4.4+ server that has enabled the `configureFailPoint` command with the `errorLabels`
+option.
 
-1. Let `client` be a `MongoClient` with `adaptiveRetries=True` and command event monitoring enabled.
+1. Let `client` be a `MongoClient` with `maxAdaptiveRetries=1` and command event monitoring enabled.
 
-2. Set `client`'s retry token bucket to have 2 tokens.
+2. Let `coll` be a collection.
 
-3. Let `coll` be a collection.
-
-4. Configure the following failpoint:
+3. Configure the following failpoint:
 
     ```javascript
         {
             configureFailPoint: 'failCommand',
-            mode: {times: 3},
+            mode: 'alwaysOn',
             data: {
                 failCommands: ['find'],
                 errorCode: 462,  // IngressRequestRateLimitExceeded
@@ -121,8 +114,75 @@ Drivers should test that when enabled, adaptive retries are limited by the numbe
         }
     ```
 
-5. Perform a find operation with `coll` that fails.
+4. Perform a find operation with `coll` that fails.
 
-6. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
+5. Assert that the raised error contains both the `RetryableError` and `SystemOverloadedError` error labels.
 
-7. Assert that the total number of started commands is 3: one for the initial attempt and two for the retries.
+6. Assert that the total number of started commands is `maxAdaptiveRetries` + 1 (2).
+
+#### Test 5: Overload Errors with baseBackoffMS override base backoff
+
+Drivers SHOULD test that overload errors with `baseBackoffMS` override the default backoff duration. This test MUST be
+executed against a MongoDB 9.0+ server that has enabled the `configureFailPoint` command with the `errorLabels` option.
+
+1. Let `client` be a `MongoClient`.
+
+2. Let `coll` be a collection.
+
+3. Configure the random number generator used for exponential backoff jitter to always return a number as close as
+    possible to `1`.
+
+4. Configure the following failPoint:
+
+    ```javascript
+        {
+            configureFailPoint: 'failCommand',
+            mode: 'alwaysOn',
+            data: {
+                failCommands: ['insert'],
+                errorCode: 462, // IngressRequestRateLimitExceeded
+                errorLabels: ['SystemOverloadedError', 'RetryableError']
+            }
+        }
+    ```
+
+5. Insert the document `{ a: 1 }`. Expect that the command errors. Measure the duration of the command execution.
+
+    ```javascript
+       const start = performance.now();
+       expect(
+        await coll.insertOne({ a: 1 }).catch(e => e)
+       ).to.be.an.instanceof(MongoServerError);
+       const end = performance.now();
+    ```
+
+6. Run the following command to set up `baseBackoffMS` on overload errors.
+
+    ```python
+    client.admin.command("setParameter", 1, externalClientBaseBackoffMS=50)
+    ```
+
+7. Execute step 5 again.
+
+8. Assert that the server attached `baseBackoffMS` to the error and that the driver parsed it.
+
+9. Run the following command to disable `baseBackoffMS` on overload errors.
+
+    ```python
+    client.admin.command("setParameter", 1, externalClientBaseBackoffMS=0)
+    ```
+
+10. Assert absolute bounds on each run's duration.
+
+    ```python
+    TOLERANCE = 0.005  # 5ms
+    assertGreaterEqual(exponential_backoff_time, 0.6 - TOLERANCE)
+    assertGreaterEqual(with_base_backoff_ms_time, 0.3 - TOLERANCE)
+    assertLess(with_base_backoff_ms_time, 0.6)
+    ```
+
+    A run cannot be meaningfully faster than the sum of its backoffs. With jitter pinned to 1, the default backoffs are
+    `0.2 + 0.4 = 0.6s` and the `baseBackoffMS=50` backoffs are `0.1 + 0.2 = 0.3s`. The lower bounds include a small
+    tolerance because on some platforms sleep timers run on a millisecond-granularity clock, so a sleep can complete
+    marginally earlier than the requested duration when measured with a higher-resolution clock. Drivers MAY adjust
+    the tolerance to fit the timing behavior of their platform.

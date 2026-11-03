@@ -1,5 +1,6 @@
 # MongoDB Specifications
 
+- [Atlas Secure Frontend Processor (SFP) Testing](atlas-sfp-testing/atlas-sfp-testing.md)
 - [Atlas Serverless Tests](serverless-testing/README.md)
 - [Authentication](auth/auth.md)
 - [BSON Binary Encrypted](bson-binary-encrypted/binary-encrypted.md)
@@ -41,6 +42,7 @@
 - [OpenTelemetry](open-telemetry/open-telemetry.md)
 - [Performance Benchmarking](benchmarking/benchmarking.md)
 - [Polling SRV Records for mongos Discovery](polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md)
+- [Public Suffix List](public-suffix-list/public-suffix-list.md)
 - [Read and Write Concern](read-write-concern/read-write-concern.md)
 - [Retryable Reads](retryable-reads/retryable-reads.md)
 - [Retryable Writes](retryable-writes/retryable-writes.md)

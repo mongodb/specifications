@@ -10,7 +10,7 @@ data: []
 key_vault_data: []
 encrypted_fields: {
   "fields": []
-}
+  }
 tests:
   - description: "insert with no encryption succeeds"
     clientOptions:
@@ -23,7 +23,7 @@ tests:
           document: &doc0 {
             _id: 1,
             foo: "bar"
-          }
+            }
     expectations:
       - command_started_event:
           command:

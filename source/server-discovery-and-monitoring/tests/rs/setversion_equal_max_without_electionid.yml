@@ -75,4 +75,4 @@ phases: [
             maxSetVersion: 1, # Max is still 1, there wasn't an actual larger setVersion seen
         }
     }
-]
+    ]

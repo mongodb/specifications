@@ -1,7 +1,6 @@
 # FaaS Automated Testing
 
 - Status:
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 

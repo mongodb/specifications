@@ -4,13 +4,14 @@
   "runOnRequirements": [
     {
       "minServerVersion": "8.2.0",
+      "maxServerVersion": "8.99.99",
       "topologies": [
         "replicaset",
         "sharded",
         "load-balanced"
       ],
       "csfle": {
-        "minLibmongocryptVersion": "1.15.0"
+        "minLibmongocryptVersion": "1.19.1"
       }
     }
   ],

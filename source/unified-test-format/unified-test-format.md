@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.27.0
+- Current Schema Version: 1.29.0
 
 ______________________________________________________________________
 
@@ -326,9 +326,8 @@ The structure of this object is as follows:
     matching a "sharded" topology, test runners MUST accept any type of sharded cluster (i.e. "sharded" implies
     "sharded-replicaset", but not vice versa).
 
-    The "sharded-replicaset" topology type is deprecated. MongoDB 3.6+ requires that all shard servers be replica sets.
-    Therefore, tests SHOULD use "sharded" instead of "sharded-replicaset" when targeting 3.6+ server versions in order
-    to avoid unnecessary overhead.
+    The "sharded-replicaset" topology type is deprecated. All shard servers are required to be replica sets. Therefore,
+    tests SHOULD use "sharded" instead of "sharded-replicaset" to avoid unnecessary overhead.
 
     Note: load balancers were introduced in MongoDB 5.0. Therefore, any sharded cluster behind a load balancer implicitly
     uses replica sets for its shards.
@@ -794,6 +793,10 @@ The structure of this object is as follows:
 
         - If `true`, additional unexpected spans are allowed.
         - If `false` or omitted, the test runner MUST fail if any unexpected spans are detected.
+
+        This applies at every level of the span tree, not only to the top-level `spans` array. A span nested under an
+        expected span, but absent from that span's `nested` array, is an unexpected span. A test can therefore assert that
+        a command span is *not* nested under a given operation span by omitting it from that operation's `nested` array.
 
     - `spans`: Required array of span objects. Each span describes an expected tracing event.
 
@@ -2932,6 +2935,19 @@ test runner MUST assert that the actual value is less than or equal to the speci
 the rules specified in [Flexible Numeric Comparisons](#flexible-numeric-comparisons) for this operator. For example, an
 expected value of `1` would match an actual value of `1.0` and `0.0` but would not match `1.1`.
 
+##### $$gte
+
+Syntax:
+
+```yaml
+{ $$gte: 1 }
+```
+
+This operator can be used anywhere a matched value is expected (including [expectResult](#operation_expectResult)). The
+test runner MUST assert that the actual value is greater than or equal to the specified value. Test runners MUST also
+apply the rules specified in [Flexible Numeric Comparisons](#flexible-numeric-comparisons) for this operator. For
+example, an expected value of `1` would match an actual value of `1.0` and `1.1` but would not match `0.0`.
+
 ##### $$matchAsDocument
 
 Syntax:
@@ -3171,10 +3187,10 @@ This section describes some procedures that may be referenced from earlier secti
 
 ##### Terminating Open Transactions
 
-Open transactions can cause tests to block indiscriminately. When connected to MongoDB 3.6 or later, test runners SHOULD
-terminate all open transactions at the start of a test suite and after each failed test by killing all sessions in the
-cluster. Using the internal MongoClient(s), execute the `killAllSessions` command on either the primary or, if connected
-to a sharded cluster, each mongos server.
+Open transactions can cause tests to block indiscriminately. Test runners SHOULD terminate all open transactions at the
+start of a test suite and after each failed test by killing all sessions in the cluster. Using the internal
+MongoClient(s), execute the `killAllSessions` command on either the primary or, if connected to a sharded cluster, each
+mongos server.
 
 For example:
 
@@ -3188,7 +3204,6 @@ The test runner MAY ignore the following command failures:
 
 - Interrupted(11601) to work around [SERVER-38335](https://jira.mongodb.org/browse/SERVER-38335).
 - Unauthorized(13) to work around [SERVER-54216](https://jira.mongodb.org/browse/SERVER-54216).
-- CommandNotFound(59) if the command is executed on a pre-3.6 server
 
 Note that Atlas, by design, does not allow database users to kill sessions belonging to other users. This makes it
 impossible to guarantee that an existing transaction will not block test execution. To work around this, test runners
@@ -3307,11 +3322,6 @@ The `failCommand` fail point allows the client to force the server to return an 
 `data.failCommands` field. Additionally, this fail point is documented in server wiki:
 [The failCommand Fail Point](https://github.com/mongodb/mongo/wiki/The-%22failCommand%22-fail-point).
 
-The `failCommand` fail point was introduced in mongod 4.0.0
-([SERVER-34551](https://jira.mongodb.org/browse/SERVER-34551)) and mongos 4.1.5
-([SERVER-35518](https://jira.mongodb.org/browse/SERVER-35518)); however, the fail point was not usable for testing on
-mongos until version 4.1.7 ([SERVER-34943](https://jira.mongodb.org/browse/SERVER-34943)).
-
 The `failCommand` fail point may be configured like so:
 
 ```javascript
@@ -3381,7 +3391,7 @@ Each shard in the cluster is represented by a document in this collection. If th
 the `host` field will contain a single host. If the shard is backed by a replica set, the `host` field contain the name
 of the replica followed by a forward slash and a comma-delimited list of hosts.
 
-Note: MongoDB 3.6+ requires that all shard servers be replica sets.
+Note: All shard servers are replica sets.
 
 ## Design Rationale
 
@@ -3459,6 +3469,18 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-08-26: **Schema version 1.29.**
+
+    Introduced the `$$gte` operator, the lower-bound counterpart to `$$lte`. Also clarified that `ignoreExtraSpans`
+    applies at every level of the span tree, so that a test can assert a span is not nested under a given parent by
+    omitting it from that parent's `nested` array. Both changes require runner support, so they share this version.
+
+- 2026-06-17: Remove pre-4.2 version references.
+
+- 2026-03-17: **Schema version 1.28.**
+
+    Add `accessToken` to `kmsProviders` (Azure and GCP). Replace unnecessary `anyOf` with `oneOf` for `csfle`.
 
 - 2026-01-08: Remove Future Work entry for log message assertions (implemented in schema version 1.13).
 

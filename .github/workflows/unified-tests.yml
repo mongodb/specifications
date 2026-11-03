@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: 3.x
       - name: Set up npm
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -44,9 +44,9 @@ jobs:
         with:
           python-version: 3.14
       - name: Set up npm
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v6
         with:
-          node-version: 12
+          node-version: lts/*
       - name: Install dependencies
         run: |
           npm install -g js-yaml

@@ -1,7 +1,6 @@
 # Retryable Writes
 
 - Status: Accepted
-- Minimum Server Version: 3.6
 
 ______________________________________________________________________
 
@@ -83,35 +82,18 @@ individual write operation.
 
 #### Supported Server Versions
 
-Like sessions, retryable writes require a MongoDB 3.6 replica set or shard cluster operating with feature compatibility
-version 3.6 (i.e. the `{setFeatureCompatibilityVersion: 3.6}` administrative command has been run on the cluster).
-Drivers MUST verify server eligibility by ensuring that `maxWireVersion` is at least six, the
-`logicalSessionTimeoutMinutes` field is present in the server's `hello` or legacy hello response, and the server type is
+Retryable writes require a server that supports sessions (i.e. the `logicalSessionTimeoutMinutes` field is present in
+the server's `hello` or legacy hello response). Drivers MUST verify server eligibility by ensuring that the
+`logicalSessionTimeoutMinutes` field is present in the server's `hello` or legacy hello response and the server type is
 not standalone.
-
-Retryable writes are only supported by storage engines that support document-level locking. Notably, that excludes the
-MMAPv1 storage engine which is available in both MongoDB 3.6 and 4.0. Since `retryWrites` defaults to `true`, Drivers
-MUST raise an actionable error message when the server returns code 20 with errmsg starting with "Transaction numbers".
-The replacement error message MUST be:
-
-```text
-This MongoDB deployment does not support retryable writes. Please add
-retryWrites=false to your connection string.
-```
 
 If the server selected for the first attempt of a retryable write operation does not support retryable writes, drivers
 MUST execute the write as if retryable writes were not enabled. Drivers MUST NOT include a transaction ID in the write
 command and MUST not retry the command under any circumstances.
 
-In a sharded cluster, it is possible that mongos may appear to support retryable writes but one or more shards in the
-cluster do not (e.g. replica set shard is configured with feature compatibility version 3.4, a standalone is added as a
-new shard). In these rare cases, a write command that fans out to a shard that does not support retryable writes may
-partially fail and an error may be reported in the write result from mongos (e.g. `writeErrors` array in the bulk write
-result). This does not constitute a retryable write error. Drivers MUST relay such errors to the user.
-
 #### Supported Write Operations
 
-MongoDB 3.6 will support retryability for some, but not all, write operations.
+MongoDB supports retryability for some, but not all, write operations.
 
 Supported single-statement write operations include `insertOne()`, `updateOne()`, `replaceOne()`, `deleteOne()`,
 `findOneAndDelete()`, `findOneAndReplace()`, and `findOneAndUpdate()`.
@@ -137,8 +119,7 @@ Write commands specifying an unacknowledged write concern (e.g. `{w: 0})`) do no
 MUST NOT add a transaction ID to any write command with an unacknowledged write concern executed within a MongoClient
 where retryable writes have been enabled. Drivers MUST NOT retry these commands.
 
-Write commands where a single statement might affect multiple documents will not be initially supported by MongoDB 3.6,
-although this may change in the future. This includes an
+Write commands where a single statement might affect multiple documents are not supported. This includes an
 [update](https://www.mongodb.com/docs/manual/reference/command/update/) command where any statement in the updates
 sequence specifies a `multi` option of `true` or a
 [delete](https://www.mongodb.com/docs/manual/reference/command/delete/) command where any statement in the `deletes`
@@ -151,27 +132,25 @@ eligibility for each write command sent as part of the `bulkWrite()` (after orde
 Write commands other than [insert](https://www.mongodb.com/docs/manual/reference/command/insert/),
 [update](https://www.mongodb.com/docs/manual/reference/command/update/),
 [delete](https://www.mongodb.com/docs/manual/reference/command/delete/), or
-[findAndModify](https://www.mongodb.com/docs/manual/reference/command/findAndModify/) will not be initially supported by
-MongoDB 3.6, although this may change in the future. This includes, but is not limited to, an
-[aggregate](https://www.mongodb.com/docs/manual/reference/command/aggregate/) command using a write stage (e.g. `$out`,
-`$merge`). Drivers MUST NOT add a transaction ID to these commands and MUST NOT retry these commands if they fail to
-return a response.
+[findAndModify](https://www.mongodb.com/docs/manual/reference/command/findAndModify/) are not supported. This includes,
+but is not limited to, an [aggregate](https://www.mongodb.com/docs/manual/reference/command/aggregate/) command using a
+write stage (e.g. `$out`, `$merge`). Drivers MUST NOT add a transaction ID to these commands and MUST NOT retry these
+commands if they fail to return a response.
 
 #### Retryable Writes Within Transactions
 
-In MongoDB 4.0 the only supported retryable write commands within a transaction are `commitTransaction` and
-`abortTransaction`. Therefore drivers MUST NOT retry write commands within transactions even when `retryWrites` has been
-set to true on the `MongoClient`. In addition, drivers MUST NOT add the `RetryableWriteError` label to any error that
-occurs during a write command within a transaction (excepting `commitTransation` and `abortTransaction`), even when
-`retryWrites` has been set to true on the `MongoClient`.
+The only supported retryable write commands within a transaction are `commitTransaction` and `abortTransaction`.
+Therefore drivers MUST NOT retry write commands within transactions even when `retryWrites` has been set to true on the
+`MongoClient`. In addition, drivers MUST NOT add the `RetryableWriteError` label to any error that occurs during a write
+command within a transaction (excepting `commitTransaction` and `abortTransaction`), even when `retryWrites` has been
+set to true on the `MongoClient`.
 
 ### Implementing Retryable Writes
 
 #### Determining Retryable Write Errors
 
-When connected to a MongoDB instance that supports retryable writes (versions 3.6+), the driver MUST treat all errors
-with the RetryableWriteError label as retryable. This error label can be found in the top-level "errorLabels" field of
-the error.
+The driver MUST treat all errors with the RetryableWriteError label as retryable. This error label can be found in the
+top-level "errorLabels" field of the error.
 
 ##### RetryableWriteError Labels
 
@@ -367,10 +346,6 @@ The above rules are implemented in the following pseudo-code:
  * Checks if a server supports retryable writes.
  */
 function isRetryableWritesSupported(server) {
-  if (server.getMaxWireVersion() < RETRYABLE_WIRE_VERSION) {
-    return false;
-  }
-
   if ( ! server.hasLogicalSessionTimeoutMinutes()) {
     return false;
   }
@@ -691,18 +666,6 @@ Since the initial release of retryable writes in MongoDB 3.6 testing showed that
 was sufficiently small that there was no risk in changing the default. Additionally, the fact that some operations
 continue to be unsupported for retryable writes (updateMany and deleteMany) does not seem to pose a problem in practice.
 
-### Why do drivers have to parse errmsg to determine storage engine support?
-
-There is no reliable way to determine the storage engine in use for shards in a sharded cluster, and replica sets (and
-shards) can have mixed deployments using different storage engines on different members. This is especially true when a
-replica set or sharded cluster is being upgraded from one storage engine to another. This could be common when upgrading
-to MongoDB 4.2, where MMAPv1 is no longer supported.
-
-The server returns error code 20 (IllegalOperation) when the storage engine doesn't support document-level locking and
-txnNumbers. Error code 20 is used for a large number of different error cases in the server so we need some other way to
-differentiate this error case from any other. The error code and errmsg are the same in MongoDB 3.6 and 4.0, and the
-same from a replica set or sharded cluster (mongos just forwards the error from the shard's replica set).
-
 ### Why does the driver only add the RetryableWriteError label to errors that occur on a MongoClient with retryWrites set to true?
 
 The driver does this to maintain consistency with the MongoDB server. Servers that support the RetryableWriteError label
@@ -711,6 +674,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2026-06-17: Remove pre-4.2 version references;
 
 - 2026-02-19: Clarified that server deprioritization on replica sets only occurs for `SystemOverloadedError` errors.
 

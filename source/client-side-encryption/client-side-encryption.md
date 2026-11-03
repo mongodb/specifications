@@ -48,7 +48,10 @@ QEv1 and QEv2 are incompatible.
 MongoDB 8.0 dropped `queryType=rangePreview` and added `queryType=range`
 ([SPM-3583](https://jira.mongodb.org/browse/SPM-3583)).
 
-MongoDB 8.2 added unstable support for QE text queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
+MongoDB 8.2 added unstable support for QE string queries ([SPM-2880](https://jira.mongodb.org/browse/SPM-2880))
+
+MongoDB 9.0 dropped `queryType=prefixPreview|suffixPreview|substringPreview` and added
+`queryType=prefix|suffix|substring` ([SPM-4539](https://jira.mongodb.org/browse/SPM-4539))
 
 ## META
 
@@ -383,6 +386,7 @@ class AutoEncryptionOpts {
    bypassQueryAnalysis: Optional<Boolean>; // Default false.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
    credentialProviders: Optional<CredentialProviders>;
+   kmsConnectCallback: Optional<Callback>; // Optional to implement.
 }
 ```
 
@@ -515,6 +519,29 @@ const client = new MongoClient(process.env.MONGODB_URI, {
   }
 }
 ```
+
+#### kmsConnectCallback
+
+The `kmsConnectCallback` property may be specified on [ClientEncryptionOpts](#ClientEncryptionOpts) or
+[AutoEncryptionOpts](#AutoEncryptionOpts).
+
+When provided, the callback is invoked when establishing a connection to a KMS host, receiving the hostname and port as
+arguments. It MUST return a socket-like object connected to the target host. The driver then wraps the returned socket
+with TLS (using the KMS provider's configured [TLS options](#kms-provider-tls-options)). TLS is negotiated end-to-end
+with the KMS host; SNI and certificate/hostname verification MUST target the KMS host, not the address the callback
+actually connected to (e.g. an HTTP proxy). Drivers supporting CSOT MUST pass remaining `timeoutMS`. A network error
+reported by the callback MUST be treated as transient. Drivers that retry KMS requests on transient network errors MUST
+re-invoke the callback, and drivers without KMS retry propagate the failure. Drivers MAY treat all callback errors as
+transient if network errors cannot reliably be distinguished.
+
+This is intended to enable use cases such as routing KMS requests through an HTTP proxy via HTTP CONNECT. The callback
+type is intentionally left unspecified so that drivers may use the type that best fits their language (e.g., a function,
+a callable object).
+
+Drivers supporting CSOT must pass a time limit if set.
+
+Drivers are required to support an HTTP proxy but MAY omit `kmsConnectCallback` if they provide an alternative mechanism
+for proxy support.
 
 #### kmsProviders
 
@@ -1098,6 +1125,7 @@ interface ClientEncryptionOpts {
    credentialProviders: CredentialProviders;
    tlsOptions?: KMSProvidersTLSOptions; // Maps KMS provider to TLS options.
    keyExpirationMS: Optional<Uint64>; // Default 60000. 0 means "never expire".
+   kmsConnectCallback?: Callback; // Optional to implement.
 };
 
 interface KMSProvidersTLSOptions {
@@ -1258,7 +1286,7 @@ class EncryptOpts {
    contentionFactor: Optional<Int64>,
    queryType: Optional<String>
    rangeOpts: Optional<RangeOpts>
-   textOpts: Optional<TextOpts>
+   stringOpts: Optional<StringOpts>
 }
 
 // RangeOpts specifies index options for a Queryable Encryption field supporting "range" queries.
@@ -1277,18 +1305,18 @@ class RangeOpts {
    precision: Optional<Int32>
 }
 
-// TextOpts specifies options for a Queryable Encryption field supporting text queries.
-// NOTE: TextOpts is currently unstable API and subject to backwards breaking changes.
-class TextOpts {
+// StringOpts specifies options for a Queryable Encryption field supporting string queries.
+class StringOpts {
    // substring contains further options to support substring queries.
+   // NOTE: substring is currently unstable API and subject to backwards breaking changes.
    substring: Optional<SubstringOpts>,
    // prefix contains further options to support prefix queries.
    prefix: Optional<PrefixOpts>,
    // suffix contains further options to support suffix queries.
    suffix: Optional<SuffixOpts>,
-   // caseSensitive determines whether text indexes for this field are case sensitive.
+   // caseSensitive determines whether string indexes for this field are case sensitive.
    caseSensitive: bool,
-   // diacriticSensitive determines whether text indexes for this field are diacritic sensitive.
+   // diacriticSensitive determines whether string indexes for this field are diacritic sensitive.
    diacriticSensitive: bool
 }
 
@@ -1302,7 +1330,6 @@ class SubstringOpts {
    strMaxQueryLength: Int32,
 }
 
-// NOTE: PrefixOpts is currently unstable API and subject to backwards breaking changes.
 class PrefixOpts {
    // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
    strMinQueryLength: Int32,
@@ -1310,7 +1337,6 @@ class PrefixOpts {
    strMaxQueryLength: Int32,
 }
 
-// NOTE: SuffixOpts is currently unstable API and subject to backwards breaking changes.
 class SuffixOpts {
    // strMinQueryLength is the minimum allowed query length. Querying with a shorter string will error.
    strMinQueryLength: Int32,
@@ -1340,20 +1366,18 @@ One of the strings:
 - "Indexed"
 - "Unindexed"
 - "Range"
-- "TextPreview"
+- "String"
 
-The result of explicit encryption with the "Indexed", "Range", or "TextPreview" algorithm must be processed by the
-server to insert or query. Drivers MUST document the following behavior:
+The result of explicit encryption with the "Indexed", "Range", or "String" algorithm must be processed by the server to
+insert or query. Drivers MUST document the following behavior:
 
-> To insert or query with an "Indexed", "Range", or "TextPreview" encrypted payload, use a `MongoClient` configured with
+> To insert or query with an "Indexed", "Range", or "String" encrypted payload, use a `MongoClient` configured with
 > `AutoEncryptionOpts`. `AutoEncryptionOpts.bypassQueryAnalysis` may be true. `AutoEncryptionOpts.bypassAutoEncryption`
-> must be false. The "TextPreview" algorithm is in preview and should be used for experimental workloads only. These
-> features are unstable and their security is not guaranteed until released as Generally Available (GA). The GA version
-> of these features may not be backwards compatible with the preview version.
+> must be false.
 
 #### contentionFactor
 
-contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "TextPreview".
+contentionFactor may be used to tune performance. Only applies when algorithm is "Indexed", "Range", or "String".
 libmongocrypt returns an error if contentionFactor is set for a non-applicable algorithm.
 
 #### queryType
@@ -1362,21 +1386,24 @@ One of the strings:
 
 - "equality"
 - "range"
-- "prefixPreview"
-- "suffixPreview"
-- "substringPreview"
+- "prefix"
+    - Used for the `$encStrStartsWith` operator.
+- "suffix"
+    - Used for the `$encStrEndsWith` operator.
+- "substring"
+    - Used for the `$encStrContains` operator.
 
-queryType only applies when algorithm is "Indexed", "Range", or "TextPreview". libmongocrypt returns an error if
-queryType is set for a non-applicable algorithm.
+queryType only applies when algorithm is "Indexed", "Range", or "String". libmongocrypt returns an error if queryType is
+set for a non-applicable algorithm.
 
 #### rangeOpts
 
 rangeOpts only applies when algorithm is "Range". libmongocrypt returns an error if rangeOpts is set for a
 non-applicable algorithm.
 
-#### textOpts
+#### stringOpts
 
-textOpts only applies when algorithm is "TextPreview". libmongocrypt returns an error if textOpts is set for a
+stringOpts only applies when algorithm is "String". libmongocrypt returns an error if stringOpts is set for a
 non-applicable algorithm.
 
 ## User facing API: When Auto Encryption Fails
@@ -1770,13 +1797,6 @@ encrypted data (e.g. ping). See the appendix section:
 [libmongocrypt: Auto Encryption Allow-List](#libmongocrypt-auto-encryption-allow-list).
 
 An encrypted MongoClient MUST attempt to auto decrypt the results of all commands.
-
-Drivers MUST raise an error when attempting to auto encrypt a command if the maxWireVersion is less than 8. The error
-message MUST contain "Auto-encryption requires a minimum MongoDB version of 4.2".
-
-Note, all client side features (including all of `ClientEncryption`) are only supported against 4.2 or higher servers.
-However, errors are only raised for automatic encryption/decryption against older servers. See
-[Why is a 4.2 server required?](#why-is-a-42-server-required)
 
 ## Interaction with Command Monitoring
 
@@ -2467,7 +2487,7 @@ ensuring that the key encryption key never leaves the server.
 
 ## Future work
 
-### Make libmonogocrypt cache window configurable
+### Make libmongocrypt cache window configurable
 
 There's a principle at MongoDB, "no knobs", that we should honor wherever possible. Configurability is bad, mandating
 one well-chosen value is good. But if our default caching behavior is discovered unsuitable for some use cases we may
@@ -2518,6 +2538,27 @@ on. To support concurrent access of the key vault collection, the key management
 explicit session parameter as described in the [Drivers Sessions Specification](../sessions/driver-sessions.md).
 
 ## Changelog
+
+- 2026-09-15: Remove `prefixPreview`, `suffixPreview`, and `substringPreview`
+
+- 2026-06-25: Add `kmsConnectCallback` to `AutoEncryptionOpts` and `ClientEncryptionOpts` to support HTTP proxy use
+    cases.
+
+- 2026-06-22: Add stable support for substring queries
+
+- 2026-06-17: Remove pre-4.2 version references.
+
+- 2026-06-17: Restore `prefixPreview` and `suffixPreview` as experimental.
+
+- 2026-06-16: Update tests in response to server-side validation of payloads
+    ([SERVER-91887](https://jira.mongodb.org/browse/SERVER-91887))
+
+- 2026-05-29: Add stable support for prefix and suffix queries
+
+    - Replace `prefixPreview` with `prefix`.
+    - Replace `suffixPreview` with `suffix`.
+    - Replace `TextPreview` with `String`.
+    - Replace `TextOpts` with `StringOpts`.
 
 - 2025-09-30: Update `$lookup` prose test to reflect changes in
     [MONGOCRYPT-793](https://jira.mongodb.org/browse/MONGOCRYPT-793).

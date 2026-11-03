@@ -37,7 +37,8 @@ mongodb+srv://{hostname}/{options}
 `{options}` refers to the optional elements from the [Connection String](../connection-string/connection-string-spec.md)
 specification following the `Host Information`. This includes the `Auth database` and `Connection Options`.
 
-For the purposes of this document, `{hostname}` will be divided using the following terminology. If an SRV `{hostname}`
+For the purposes of this document, `{hostname}` will be divided using the following terminology. If
+`srvAllowedHostsSuffix` has been configured, then that will act as the `{domainname}`. Otherwise, if an SRV `{hostname}`
 has:
 
 1. Three or more `.` separated parts, then the left-most part is the `{subdomain}` and the remaining portion is the
@@ -65,6 +66,73 @@ Only `{domainname}` is used during SRV record verification and `{subdomain}` is 
 
 ### MongoClient Configuration
 
+#### srvAllowedHostsSuffix
+
+This option is used to validate hosts. If present, its value MUST be treated as the `{domainname}` for
+[DNS validation](#querying-dns) and
+[SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md). For example,
+`srvAllowedHostsSuffix=.mydomain.net`. Drivers MUST apply only the following normalization and validation to the value,
+in this order:
+
+1. Any leading or trailing `.` MUST be stripped. For example, `srvAllowedHostsSuffix=.mydomain.net.` is treated as
+    `mydomain.net`. If the resulting stripped value is empty, an error MUST be raised.
+2. The value MUST be converted to its A-label (Punycode) form, so that it is comparable against the A-label hostnames
+    returned by DNS.
+3. The value MUST be normalized to lowercase using ASCII case folding.
+4. Drivers MUST raise an error if the resulting value does not contain at least two `.` separated labels and is not a
+    single label that appears in the list of valid names below:
+    ```
+    # RFC 6761 special use names (https://www.rfc-editor.org/info/rfc6761/)
+    test
+    localhost
+    invalid
+    example
+    # RFC 6762 multicast dns (https://www.rfc-editor.org/info/rfc6762/)
+    local
+    # Reserved by ICANN for private use (https://www.icann.org/en/board-activities-and-meetings/materials/approved-resolutions-special-meeting-of-the-icann-board-29-07-2024-en#section2.a)
+    internal
+    # Not officially reserved by ICANN but commonly used privately (https://www.icann.org/resources/board-material/resolutions-2018-02-04-en#2.c)
+    corp
+    home
+    mail
+    ```
+    For example, `srvAllowedHostsSuffix=net` MUST raise an error, but `srvAllowedHostsSuffix=test` MUST NOT raise an
+    error.
+5. Drivers SHOULD raise an error if the resulting value is a public suffix, per the algorithm in
+    [Public Suffix List](../public-suffix-list/public-suffix-list.md), unless the value is in the aforementioned list
+    of valid names.
+6. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
+
+If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
+[Connection String Format](#connection-string-format)). This option MUST only be configurable at the level of a
+`MongoClient`.
+
+Notably, `srvAllowedHostsSuffix` relaxes existing security measures and must be used with caution. Thus, drivers MUST
+document that this parameter is a dangerous option. For example, something like "WARNING: Modifying the default SRV
+domain name validation can create vulnerabilities." should be clearly visible in the documentation.
+
+#### srvHostValidator
+
+This option is an alternative to `srvAllowedHostsSuffix` that allows users to provide an optional synchronous callback
+for SRV host validation. If both `srvAllowedHostsSuffix` and `srvHostValidator` are present, an error MUST be raised.
+Drivers MAY raise this error at any point between MongoClient construction and DNS resolution. The signature of
+`srvHostValidator` MUST take in a string representing the SRV resolved hostname after applying the normalization
+described in [Querying DNS](#querying-dns), and return a bool representing whether the given SRV hostname is valid or
+not. In languages that do not enforce types at compile time, drivers MUST raise an error if the provided
+`srvHostValidator` is not a callable of the expected type. Drivers MAY raise this error at any point between MongoClient
+construction and DNS resolution. During initial seedlist discovery, if `srvHostValidator` returns a value that is not a
+bool, drivers MUST treat it as though the validator raised an error. If `srvHostValidator` raises an error during
+initial seedlist resolution, the driver MUST catch that error and wrap it prior to re-raising the error to the user.
+During [SRV polling](../polling-srv-records-for-mongos-discovery/polling-srv-records-for-mongos-discovery.md), a driver
+MUST NOT raise an error; an error raised by the validator is instead treated as though the validator had returned
+`false` and any value that is not the boolean `true` MUST be treated as `false`. Since this is a synchronous callback,
+drivers should advise users to not write a validator that blocks. This option MUST only be configurable at the level of
+a `MongoClient`.
+
+Notably, `srvHostValidator` relaxes existing security measures and must be used with caution. Thus, drivers MUST
+document that this parameter is a dangerous option. For example, something like "WARNING: Modifying the default SRV
+domain name validation can create vulnerabilities." should be clearly visible in the documentation.
+
 #### srvMaxHosts
 
 This option is used to limit the number of mongos connections that may be created for sharded topologies. This option
@@ -84,9 +152,12 @@ requires a string value and defaults to "mongodb". This option MUST only be conf
 
 #### URI Validation
 
-The driver MUST report an error if either the `srvServiceName` or `srvMaxHosts` URI options are specified with a non-SRV
-URI (i.e. scheme other than `mongodb+srv`). The driver MUST allow specifying the `srvServiceName` and `srvMaxHosts` URI
-options with an SRV URI (i.e. `mongodb+srv` scheme).
+The driver MUST report an error if any of `srvServiceName`, `srvMaxHosts`, or `srvAllowedHostsSuffix` URI options are
+specified with a non-SRV URI (i.e. scheme other than `mongodb+srv`). The driver MUST allow specifying the
+`srvServiceName`, `srvMaxHosts`, and `srvAllowedHostsSuffix` URI options with an SRV URI (i.e. `mongodb+srv` scheme).
+While not a URI option, `srvHostValidator` also MUST only be allowed with the use of an SRV URI. As with the error
+raised when both `srvAllowedHostsSuffix` and `srvHostValidator` are present, drivers MAY raise this error at any point
+between MongoClient construction and DNS resolution.
 
 If `srvMaxHosts` is a positive integer, the driver MUST throw an error in the following cases:
 
@@ -124,10 +195,39 @@ If the DNS result returns no SRV records, or no records at all, or a DNS error h
 indicating that the URI could not be used to find hostnames. The error SHALL include the reason why they could not be
 found.
 
-A driver MUST verify that the host names returned through SRV records share the original SRV's `{domainname}`. In
-addition, SRV records with fewer than three `.` separated parts, the returned hostname MUST have at least one more
-domain level than the SRV record hostname. Drivers MUST raise an error and MUST NOT initiate a connection to any
-returned hostname which does not fulfill these requirements.
+Before validating returned hostnames, drivers MUST normalize them as follows, in this order:
+
+1. Any trailing `.` MUST be stripped. For example, `host.mydomain.net.` becomes `host.mydomain.net`.
+2. The hostname MUST be converted to its A-label (Punycode) form.
+3. The hostname MUST be normalized to lowercase using ASCII case folding.
+
+Drivers MUST use the normalized hostnames, rather than the hostnames exactly as returned by DNS, to populate the
+seedlist.
+
+The `{domainname}` that returned hostnames are validated against MUST have the same three normalizations applied, so
+that neither trailing dots, case, nor Unicode/Punycode encoding can affect the comparison. When `{domainname}` comes
+from `srvAllowedHostsSuffix`, steps 1-3 of [srvAllowedHostsSuffix](#srvallowedhostssuffix) already apply them. The
+leading `.` that step 6 prepends makes the value a label-aligned suffix and is not part of this normalization.
+
+Drivers MAY differ in which IDNA processing standard they use for the A-label conversion as long as the same conversion
+is applied to both sides of the comparison: the returned hostnames and the `{domainname}` they are validated against.
+
+A driver MUST verify every host name returned through SRV records. How that verification is performed depends on which
+options are configured:
+
+- When neither [`srvAllowedHostsSuffix`](#srvallowedhostssuffix) nor [`srvHostValidator`](#srvhostvalidator) is
+    configured, the returned host name MUST share the original SRV's `{domainname}`. In addition, when the SRV record
+    hostname has fewer than three `.` separated parts, the returned hostname MUST have at least one more domain level
+    than the SRV record hostname.
+- When [`srvAllowedHostsSuffix`](#srvallowedhostssuffix) is configured, the returned host name MUST end in `.` followed
+    by the `srvAllowedHostsSuffix` value after normalization.
+- When [`srvHostValidator`](#srvhostvalidator) is configured, the driver MUST pass each returned host name to the
+    validator and MUST treat the value it returns as the complete verdict: a returned host name is valid if and only if
+    the validator returns `true`. Drivers MUST NOT additionally apply the `{domainname}` check or the domain level
+    requirement described above, whether before or after calling the validator.
+
+Drivers MUST raise an error and MUST NOT initiate a connection to any returned hostname which does not fulfill these
+requirements.
 
 The driver MUST NOT attempt to connect to any hosts until the DNS query has returned its results.
 
@@ -247,6 +347,52 @@ Several of our users have asked for this through tickets:
 The design specifically calls for a pre-processing stage of the processing of connection URLs to minimize the impact on
 existing functionality.
 
+### Rationale for `srvAllowedHostsSuffix`
+
+By default, the parent domain that returned host names are checked against is inferred from the seed by treating its
+leftmost label as the `{subdomain}`. A seed of `mongodb.mydomain.net` results in `mongodb1.us-east-1.mydomain.net` being
+rejected, even when both are owned by the same user. `srvAllowedHostsSuffix` allows users to work around this limitation
+by letting the user state the parent domain directly instead, admitting such nested names and hosts in a different
+domain altogether.
+
+Note that nothing requires the `{hostname}` itself to end with the configured suffix. For example,
+`mongodb+srv://cluster.example.org/?srvAllowedHostsSuffix=.hosts.example.net` is valid, even though
+`cluster.example.org` does not end with `.hosts.example.net`. This is intentional: the option exists so the user can
+state the allowed parent domain explicitly, rather than having it inferred from the connection string. Requiring the two
+to match would restore that coupling, and would rule out arrangements such as a vanity alias in one organization's
+domain resolving to hosts in a provider's domain.
+
+Because it replaces that default requirement, this option relaxes a DNS spoofing safeguard. An attacker able to forge
+SRV responses is otherwise confined to host names under the seed's `{domainname}`; with the option set, they are
+confined to host names under the configured suffix instead. The broader that suffix, the more hosts a forged response
+can direct a driver to.
+
+Requiring that the value not be a public suffix bounds how broad it can get. It rules out values such as `.com` or
+`.co.uk`, which would place no meaningful limit on a forged response. It does not, however, make a given configuration
+safe: `.example.com` is not a public suffix, but it still admits every host in a large organization's domain.
+
+Users should be encouraged to configure the narrowest suffix that covers their deployment, and drivers should say so
+wherever the option is documented. For a seed hostname of `cluster.test.internal.example.com`, prefer the second of
+these:
+
+```text
+mongodb+srv://cluster.test.internal.example.com/?srvAllowedHostsSuffix=.example.com
+mongodb+srv://cluster.test.internal.example.com/?srvAllowedHostsSuffix=.internal.example.com
+```
+
+### Rationale for `srvHostValidator`
+
+`srvAllowedHostsSuffix` only validates SRV host against a single suffix. This can be limiting as users may want to allow
+multiple unrelated suffixes or apply custom logic beyond simple suffix matching. Users may have more specific validation
+needs that currently can not be expressed. By allowing users to provide a callback, via `srvHostValidator`, the driver
+gives users more control over SRV host validation logic.
+
+### Rationale for allowlist relating to `srvAllowedHostsSuffix`
+
+In [srvAllowedHostsSuffix](#srvallowedhostssuffix), the 4th step of validation for the parameter includes an allowlist.
+Without the allowlist, these suffixes would be rejected by the PSL algorithm -- specifically the `*` rule. The suffixes
+on this list are all either specially reserved or commonly recognized for private usage.
+
 ## Justifications
 
 ### Why Are Multiple Key-Value Pairs Allowed in One TXT Record?
@@ -282,6 +428,21 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2026-10-01: Specify that `srvAllowedHostsSuffix` has no hostname syntax validation beyond the listed steps, and that a
+    `srvHostValidator` of the wrong type, or one returning a non-bool value, results in an error during initial seedlist
+    discovery and is treated as `false` during SRV polling.
+
+- 2026-09-16: Add `srvHostValidator` as a MongoClient option, and allow `srvAllowedHostsSuffix` to be a single label
+    when that label is one of a fixed list of names reserved for private or special use.
+
+- 2026-09-03: Specify that host names returned through SRV records, and the `{domainname}` they are validated against,
+    are both normalized -- trailing dot stripped, converted to A-label form, ASCII lowercased -- before validation.
+
+- 2026-08-24: Add `srvAllowedHostsSuffix` MongoClient option.
+
+- 2025-04-22: Add test for SRV hostname validation when resolver and resolved hostnames are identical with three domain
+    levels.
 
 - 2024-09-24: Removed requirement for URI to have three '.' separated parts; these SRVs have stricter parent domain
     matching requirements for security. Create terminology section. Remove usage of term `{TLD}`. The `{hostname}` now
