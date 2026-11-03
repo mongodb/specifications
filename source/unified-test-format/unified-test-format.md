@@ -2002,8 +2002,8 @@ The following arguments are supported:
     lead to unpredictable behavior if different servers were selected for configuring the fail point and executing
     subsequent operations.
 
-    When configuring a fail point, tests MUST NOT use a client entity that specifies timeout options such as `timeoutMS`
-    or `socketTimeoutMS` in `uriOptions`. Since the test runner disables the fail point using the same client after the
+    When configuring a fail point, test authors MUST NOT use a client entity that specifies timeout options such as
+    `socketTimeoutMS` in `uriOptions`. Since the test runner disables the fail point using the same client after the
     test, short timeouts can cause the cleanup to fail intermittently. Tests that need a client with timeout options
     MUST configure the fail point using a separate client entity without them.
 
