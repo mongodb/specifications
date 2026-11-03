@@ -706,7 +706,7 @@ client.bulkWrite([InsertOne { "namespace": "db.foo\0bar", "document": {} }])
 Test that `MongoClient.bulkWrite` embeds a top-level error in the returned exception, and retains the results observed
 before it, when the error occurs after an earlier batch has already succeeded.
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+This test must only be run on 8.0+ servers.
 
 If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
 every `bulkWrite` batch.
@@ -764,8 +764,8 @@ Disable the fail point configured above with `client`:
 Test that `MongoClient.bulkWrite` embeds a client-side error in the returned exception, and retains the results observed
 before it, when the error occurs after an earlier batch has already succeeded.
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless. This test may be skipped by
-drivers that are not able to construct arbitrarily large documents.
+This test must only be run on 8.0+ servers. This test may be skipped by drivers that are not able to construct
+arbitrarily large documents.
 
 Construct a `MongoClient` (referred to as `client`) with `retryWrites: false` configured. Perform a `hello` command
 using `client` and record the `maxWriteBatchSize` and `maxMessageSizeBytes` values contained in the response.
@@ -805,7 +805,7 @@ equal to `maxWriteBatchSize`.
 Test that `MongoClient.bulkWrite` embeds a top-level error in the returned exception when the error occurs after
 individual write errors have already been observed.
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+This test must only be run on 8.0+ servers.
 
 If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
 every `bulkWrite` batch.
@@ -866,7 +866,7 @@ observed are write concern errors, since a write concern error is not a top-leve
 This test performs the same bulk write as test 5 but additionally asserts that the `error` field is not populated and
 that `writeErrors` is empty.
 
-This test must only be run on 8.0+ servers. This test must be skipped on Atlas Serverless.
+This test must only be run on 8.0+ servers.
 
 If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
 every `bulkWrite` batch.
