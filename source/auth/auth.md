@@ -1196,10 +1196,10 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
         feature and MUST default to
         `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1", "*.mongo.com"]`.
         When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a
-        hostname that does not match any of the allowed hosts, the driver MUST raise a client-side error without
-        invoking any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname
-        check MUST be performed after SRV record resolution, if applicable. This property is only required for drivers
-        that support the [Human Authentication Flow](#human-authentication-flow).
+        hostname that does not match any of the allowed hosts, the driver MUST raise a client-side error without invoking
+        any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname check MUST
+        be performed after SRV record resolution, if applicable. This property is only required for drivers that support
+        the [Human Authentication Flow](#human-authentication-flow).
 
     - AWS_CREDENTIAL_PROVIDER
 
