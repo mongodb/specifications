@@ -16,7 +16,8 @@
         "id": "client0",
         "useMultipleMongoses": false,
         "uriOptions": {
-          "retryWrites": false
+          "retryWrites": false,
+          "readConcern": "majority"
         },
         "observeEvents": [
           "commandStartedEvent"
@@ -115,7 +116,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -191,7 +192,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -272,7 +273,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -355,7 +356,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -434,7 +435,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -508,7 +509,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -584,7 +585,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -664,7 +665,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -739,7 +740,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -817,7 +818,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -913,7 +914,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -1028,7 +1029,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -1111,7 +1112,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -1180,7 +1181,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -1249,7 +1250,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
@@ -1318,7 +1319,7 @@
                 "command": {
                   "find": "test",
                   "readConcern": {
-                    "$$exists": false
+                    "level": "majority"
                   },
                   "lsid": {
                     "$$sessionLsid": "session0"
