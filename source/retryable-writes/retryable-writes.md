@@ -393,7 +393,7 @@ function executeRetryableWrite(command, session) {
        * numbers" MUST be re-raised with an actionable error message.
        */
       if (!currentError.hasErrorLabel("RetryableWriteError")) {
-        if ( currentError.code == 20 && previousError.errmsg.startsWith("Transaction numbers") ) {
+        if ( currentError.code == 20 && currentError.errmsg.startsWith("Transaction numbers") ) {
           currentError.errmsg = "This MongoDB deployment does not support retryable...";
         }
         throw currentError;
@@ -674,6 +674,8 @@ which only happens when the retryWrites option is true on the client. For the dr
 retryWrites is not true would be inconsistent with the server and potentially confusing to developers.
 
 ## Changelog
+
+- 2026-10-13: Fix the `IllegalOperation` error message check in the pseudocode to use the current error.
 
 - 2026-06-17: Remove pre-4.2 version references;
 
