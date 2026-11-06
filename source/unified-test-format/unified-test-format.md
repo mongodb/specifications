@@ -347,10 +347,9 @@ The structure of this object is as follows:
     Note: serverless testing is no longer required, and drivers that no longer support serverless testing MAY omit
     implementation of this requirement and instantly skip all tests that use `serverless: require`.
 
-- `dsc`: Optional string. Whether or not the test should be run against a deployment that uses disaggregated storage
-    (DSC). Valid values are "require", "forbid", and "allow". If "require", the test MUST only be run against
-    deployments that use disaggregated storage. If "forbid", the test MUST NOT be run against deployments that use
-    disaggregated storage. If omitted or "allow", this option has no effect.
+- `dsc`: Optional string. Whether or not the test should be run against a disaggregated storage cluster (DSC). Valid
+    values are "require", "forbid", and "allow". If "require", the test MUST only be run against DSC. If "forbid", the
+    test MUST NOT be run against DSC. If omitted or "allow", this option has no effect.
 
     The test runner MUST be informed whether or not disaggregated storage is being used in order to determine if this
     requirement is met (e.g. through an environment variable or configuration option).
