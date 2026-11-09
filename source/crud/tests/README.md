@@ -700,3 +700,109 @@ client.getDatabase("db").getCollection("foo\0bar").insertOne({})
 client.bulkWrite([InsertOne { "namespace": "foo\0bar.coll", "document": {} }])
 client.bulkWrite([InsertOne { "namespace": "db.foo\0bar", "document": {} }])
 ```
+
+### 22. Top-level error halts batches
+
+Test that `MongoClient.bulkWrite` stops sending batches after a batch returns a top-level error.
+
+This test must only be run on 8.0+ servers.
+
+These steps must be tested against both ordered and unordered writes:
+
+1. Construct a MongoClient (referred to as `client`) with command monitoring enabled to observe `CommandStartedEvent`s.
+
+2. Configure the following fail point with `client`:
+
+    ```javascript
+    {
+        "configureFailPoint": "failCommand",
+        "mode": { "times": 1 },
+        "data": {
+            "failCommands": ["bulkWrite"],
+            "errorCode": 2
+        }
+    }
+    ```
+
+3. Perform a `hello` command using `client` and record the `maxWriteBatchSize` value from the response. Create a list of
+    `maxWriteBatchSize+1` `InsertOne` write models (referred to as `models`), so that the writes must be split across
+    two `bulkWrite` commands:
+
+    ```javascript
+    InsertOne: {
+        "namespace": "db.coll",
+        "document": { "a": "b" }
+    }
+    ```
+
+4. Execute `bulkWrite` on `client` with `models` and the given `ordered` value. Assert that the bulk write fails.
+
+5. Assert the error is a top-level command error (referred to as `topLevelError`). No results were observed before the
+    error, so the top-level error may be returned without a `BulkWriteException`.
+
+6. Assert that `topLevelError.errorCode` is equal to `2`.
+
+7. Assert that exactly one `CommandStartedEvent` was observed for the `bulkWrite` command.
+
+8. Disable the fail point.
+
+### 23. Top-level error halts getMores
+
+Test that `MongoClient.bulkWrite` stops sending getMores after a getMore returns a top-level error.
+
+This test must only be run on 8.0+ servers.
+
+These steps must be tested against both ordered and unordered writes:
+
+1. Construct a MongoClient (referred to as `client`) with command monitoring enabled to observe `CommandStartedEvent`s.
+
+2. Configure the following fail point with `client`:
+
+    ```javascript
+    {
+        "configureFailPoint": "failCommand",
+        "mode": { "times": 1 },
+        "data": {
+            "failCommands": ["getMore"],
+            "errorCode": 2
+        }
+    }
+    ```
+
+3. Perform a `hello` command using `client` and record the `maxBsonObjectSize` value from the response. Create the
+    following `UpdateOne` write models (referred to as `models`), so that the results require two `getMore` commands:
+
+    ```javascript
+    UpdateOne {
+        "namespace": "db.coll",
+        "filter": { "_id": "a".repeat(maxBsonObjectSize / 2) },
+        "update": { "$set": { "x": 1 } },
+        "upsert": true
+    },
+    UpdateOne {
+        "namespace": "db.coll",
+        "filter": { "_id": "b".repeat(maxBsonObjectSize / 2) },
+        "update": { "$set": { "x": 1 } },
+        "upsert": true
+    },
+    UpdateOne {
+        "namespace": "db.coll",
+        "filter": { "_id": "c".repeat(maxBsonObjectSize / 2) },
+        "update": { "$set": { "x": 1 } },
+        "upsert": true
+    }
+    ```
+
+4. Execute `bulkWrite` on `client` with `models`, the given `ordered` value, and `verboseResults` set to true. Assert
+    that the bulk write fails.
+
+5. Assert that the error is a `BulkWriteException` whose `error` field is populated with a top-level error (referred to
+    as `topLevelError`). Results were observed before the error, so the top-level error must be embedded in a
+    `BulkWriteException`.
+
+6. Assert that `topLevelError.errorCode` is equal to `2`.
+
+7. Assert that exactly one `CommandStartedEvent` was observed for the `getMore` command, and that a
+    `CommandStartedEvent` was observed for the `killCursors` command.
+
+8. Disable the fail point.
