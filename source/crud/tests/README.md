@@ -920,6 +920,7 @@ Disable the fail point configured above with `client`:
   "mode": "off"
 }
 ```
+
 ### 22. Top-level error halts batches
 
 Test that `MongoClient.bulkWrite` stops sending batches after a batch returns a top-level error.
