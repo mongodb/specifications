@@ -1196,10 +1196,10 @@ in the MONGODB-OIDC specification, including sections or blocks that specificall
         feature and MUST default to
         `["*.mongodb.net", "*.mongodb-qa.net", "*.mongodb-dev.net", "*.mongodbgov.net", "localhost", "127.0.0.1", "::1", "*.mongo.com"]`.
         When MONGODB-OIDC authentication using a [OIDC Human Callback](#oidc-human-callback) is attempted against a
-        hostname that does not match any of list of allowed hosts, the driver MUST raise a client-side error without
-        invoking any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname
-        check MUST be performed after SRV record resolution, if applicable. This property is only required for drivers
-        that support the [Human Authentication Flow](#human-authentication-flow).
+        hostname that does not match any of the allowed hosts, the driver MUST raise a client-side error without invoking
+        any user-provided callbacks. This value MUST NOT be allowed in the URI connection string. The hostname check MUST
+        be performed after SRV record resolution, if applicable. This property is only required for drivers that support
+        the [Human Authentication Flow](#human-authentication-flow).
 
     - AWS_CREDENTIAL_PROVIDER
 
@@ -1695,7 +1695,7 @@ def auth(connection):
   access_token, is_cache = get_access_token()
 
   # If there is a cached access token, try to authenticate with it. If
-  # authentication fails with an Authentication error (18), 
+  # authentication fails with an Authentication error (18),
   # invalidate the access token, fetch a new access token, and try
   # to authenticate again.
   # If the server fails for any other reason, do not clear the cache.
@@ -1943,7 +1943,7 @@ RESP = {conversationId : 1, payload: BinData(0,"cj1meWtvK2QybGJiRmdPTlJ2OXFreGRh
 CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "Yz1iaXdzLHI9ZnlrbytkMmxiYkZnT05Sdjlxa3hkYXdMSG8rVmdrN3F2VU9LVXd1V0xJV2c0bC85U3JhR01IRUUscD1NQzJUOEJ2Ym1XUmNrRHc4b1dsNUlWZ2h3Q1k9")}
 RESP = {conversationId: 1, payload: BinData(0,"dj1VTVdlSTI1SkQxeU5ZWlJNcFo0Vkh2aFo5ZTA9"), done: false, ok: 1}
 # Extra round trip
-CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "")}  
+CMD = {saslContinue: 1, conversationId: 1, payload: BinData(0, "")}
 RESP = {conversationId: 1, payload: BinData(0,""), done: true, ok: 1}
 ```
 

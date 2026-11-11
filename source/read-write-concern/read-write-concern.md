@@ -399,15 +399,13 @@ rs0:PRIMARY> db.runCommand({insert: "foo", documents: [{x:1}], writeConcern: { w
 }
 ```
 
-Drivers SHOULD parse server replies for a "writeConcernError" field and report the error only in the command-specific
-helper methods for commands that write, from the list above. For example, helper methods for "findAndModify" or
-"aggregate" SHOULD parse the server reply for "writeConcernError".
+Drivers MUST parse server replies for a "writeConcernError" field and report the error in all driver methods that send a
+server command that may include a `WriteConcern`, excluding `abortTransaction` and generic command methods. Drivers
+SHOULD NOT parse server replies for a "writeConcernError" in generic command methods.
 
 Drivers SHOULD report writeConcernErrors however they report other server errors: by raising an exception, returning
 "false", or another idiom that is consistent with other server errors. Drivers SHOULD report writeConcernErrors with a
 `WriteConcernError` defined in the [CRUD specification](../crud/crud.md#error-handling).
-
-Drivers SHOULD NOT parse server replies for "writeConcernError" in generic command methods.
 
 (Reporting of writeConcernErrors is more complex for bulk operations, see the Bulk API Spec.)
 
@@ -504,6 +502,8 @@ Below are English descriptions of other items that should be tested:
 
 1. Commands supporting a write concern MUST NOT send the default write concern to the server.
 2. Commands supporting a write concern MUST send any non-default write concern to the server in the command.
+3. Commands supporting a write concern MUST report a `writeConcernError` returned in the server reply from
+    command-specific helper methods.
 
 ## Reference Implementation
 
@@ -520,6 +520,8 @@ don't send one and if a user does specify a `ReadConcern`, we do send one. If th
 instance, we send it.
 
 ## Changelog
+
+- 2026-10-27: Require drivers to report `writeConcernError`s.
 
 - 2026-06-17: Remove pre-4.2 version references.
 
