@@ -233,10 +233,9 @@ def execute_command_retryable(command, ...):
 
 #### Handshake changes
 
-Drivers conforming to this spec MUST add `"backpressure": True` to the
-[connection handshake](../mongodb-handshake/handshake.rst). This flag allows the server to identify clients which do and
-do not support backpressure. Currently, this flag is unused but in the future the server may offer different rate
-limiting behavior for clients that do not support backpressure.
+Drivers conforming to this spec MUST add `backpressure: "2"` to the
+[connection handshake](../mongodb-handshake/handshake.md#connection-handshake). This flag allows the server to identify
+clients which do and do not support backpressure, as well as which version of backpressure they support.
 
 #### Implementation notes
 
@@ -439,6 +438,9 @@ another dimension to read preference selection that users need to reason about. 
 to understand and configure.
 
 ## Changelog
+
+- 2026-11-12: Make the backpressure support flag in connection handshakes consistent with the actual requirement
+    specified in the connection handshake specification.
 
 - 2026-07-08: Update exponential backoff formula to use the attempt number as the exponent instead of one less than the
     attempt number.
