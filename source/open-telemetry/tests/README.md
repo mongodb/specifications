@@ -243,7 +243,9 @@ Unless stated otherwise, these tests run on all topologies: standalone, replica 
     checked out", and "Connection checked in" messages emitted for the operation carry the trace id and the span id of
     the operation span.
 4. Create a second `MongoClient` with tracing enabled, the `serverSelection` log component at `debug`, a host that does
-    not exist, and a short `serverSelectionTimeoutMS` (for example 500 ms).
+    not exist, and a short `serverSelectionTimeoutMS` (for example 500 ms). Single-threaded drivers MUST also set
+    `serverSelectionTryOnce` to `false`, otherwise the "Waiting for suitable server to become available" message is
+    never logged.
 5. Perform an `insertOne` operation and let it fail with a server selection error. Record its operation span.
 6. Assert that the "Waiting for suitable server to become available" and "Server selection failed" messages carry the
     trace id and the span id of that operation span.
@@ -261,10 +263,15 @@ This test requires a replica set or a sharded cluster.
 
 *Test 13: Background log messages are not attributed to an operation*
 
+This test applies only to multi-threaded or asynchronous drivers, and does not run on load balanced topologies. Load
+balanced clients start no monitoring connection, so no heartbeat message is ever emitted. Single-threaded drivers scan
+servers inline on the operation's own thread, so their heartbeat messages are legitimately emitted on the path of an
+operation and may carry its span.
+
 1. Create a `MongoClient` with tracing enabled and the `topology` and `connection` log components at `debug`.
 2. Perform an `insertOne` operation on a test collection and record its trace id.
-3. Wait until at least one server heartbeat has completed after the operation (for example by waiting for a
-    `ServerHeartbeatSucceededEvent`, or for longer than `heartbeatFrequencyMS`).
+3. Wait until at least one server heartbeat has completed after the operation, by waiting for a
+    `ServerHeartbeatSucceededEvent` or the "Server heartbeat succeeded" log message. Do not merely sleep.
 4. Assert that every `topology` and `connection` component message emitted after the operation completed (such as
     "Server heartbeat started" and "Server heartbeat succeeded") carries neither the trace id of the operation nor the
     span id of any span the operation emitted.

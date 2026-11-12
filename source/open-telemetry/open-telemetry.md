@@ -45,19 +45,21 @@ Spans encapsulate:
 
 **Logging through a framework**
 
-A driver logs through a framework when it emits log messages via a logging interface or framework that the host
-application configures (see [Minimizing Required Code Changes](../logging/logging.md#minimizing-required-code-changes)
-in the Logging specification), and the code that receives each message runs in the execution context of the driver call,
-so that a log-correlation integration installed by the host application can read the current span. Examples: SLF4J,
+A driver logs through a framework when every log destination it supports is a logging interface or framework that the
+host application configures (see
+[Minimizing Required Code Changes](../logging/logging.md#minimizing-required-code-changes) in the Logging
+specification), and the code that receives each message runs in the execution context of the driver call, so that a
+log-correlation integration installed by the host application can read the current span. Examples: SLF4J,
 Microsoft.Extensions.Logging, the Python `logging` module, the Rust `tracing` crate, or a Ruby `Logger` instance
 supplied by the application.
 
 **Driver-managed log output**
 
-A driver has driver-managed log output when it produces the final log output itself (for example to stdout, stderr, or a
-file), or hands log messages to a receiver that cannot obtain the current trace context, such as a callback interface
-with no context parameter in a language without ambient context. Examples: libmongoc's structured log handler, the Go
-driver's `LogSink`, or the Node.js driver's `MONGODB_LOG_PATH` output.
+A driver has driver-managed log output when, for at least one log destination it supports, it produces the final log
+output itself (for example to stdout, stderr, or a file), or hands log messages to a receiver that cannot obtain the
+current trace context, such as a callback interface with no context parameter in a language without ambient context.
+Examples: libmongoc's structured log handler, the Go driver's `LogSink`, or the Node.js driver's `MONGODB_LOG_PATH`
+output. The two classifications are exclusive and apply to the driver as a whole, not to individual destinations.
 
 ### Implementation Requirements
 
@@ -519,8 +521,9 @@ on how it emits log messages:
 - A driver with driver-managed log output SHOULD add these fields to every covered log message, taking the values from
     the covering span. The fields MUST be added only when tracing is enabled and the covering span's context is valid
     (see [Implementation Guidelines](#implementation-guidelines)); otherwise all three MUST be omitted, consistent with
-    [Omitting Null Values from Log Messages](../logging/logging.md#omitting-null-values-from-log-messages). A driver
-    that supports both kinds of destination adds the fields to the message data once, for all destinations.
+    [Omitting Null Values from Log Messages](../logging/logging.md#omitting-null-values-from-log-messages). The fields
+    are added to the message data once, before it reaches any destination; a driver in this class does not add or remove
+    them per destination.
 
 The only valid exception to this SHOULD is a driver whose tracing API offers no way to read the trace id and span id of
 the current span without depending on the OpenTelemetry SDK, which drivers MUST NOT do.
@@ -764,7 +767,9 @@ reaches the receiver, not who owns the output: the Go driver's `LogSink` is impl
 methods receive no `context.Context`, so the application cannot correlate. The field names come from OpenTelemetry's
 specification for trace context in non-OTLP log formats so that log backends recognise them without configuration; this
 also makes a duplicate harmless where a user forwards a driver-managed record into a framework whose integration adds
-the same fields.
+the same fields. Injecting per destination instead was rejected: a driver cannot know what the application does with a
+record it hands to a user-supplied callback, and the only cost of adding the fields once is that duplicate with the same
+name and value.
 
 ### Prose tests for log correlation
 
