@@ -98,9 +98,10 @@ in this order:
     ```
     For example, `srvAllowedHostsSuffix=net` MUST raise an error, but `srvAllowedHostsSuffix=test` MUST NOT raise an
     error.
-5. Drivers SHOULD raise an error if the resulting value is a public suffix, per the algorithm in
-    [Public Suffix List](../public-suffix-list/public-suffix-list.md), unless the value is in the aforementioned list
-    of valid names.
+5. Drivers MAY check whether the resulting value is a public suffix, per the algorithm in
+    [Public Suffix List](../public-suffix-list/public-suffix-list.md). Drivers that perform this check MUST raise an
+    error if the value is a public suffix, unless the value is in the aforementioned list of valid names. See
+    [rationale](#rationale-for-optional-public-suffix-list-check).
 6. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
 
 If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
@@ -380,6 +381,20 @@ mongodb+srv://cluster.test.internal.example.com/?srvAllowedHostsSuffix=.example.
 mongodb+srv://cluster.test.internal.example.com/?srvAllowedHostsSuffix=.internal.example.com
 ```
 
+### Rationale for optional Public Suffix List check
+
+The Public Suffix List (PSL) check is optional. Implementing the check requires bundling a copy of the PSL and tracking
+its frequent updates.
+
+The check has limited value. The `srvHostValidator` option added in
+[DRIVERS-3632](https://jira.mongodb.org/browse/DRIVERS-3632) bypasses the check entirely.
+
+The rules are inconsistent for this use case. For example, `*.compute.amazonaws.com` is a public suffix but its parent
+`compute.amazonaws.com` is not, so the check rejects `.co.uk` yet accepts `.compute.amazonaws.com`.
+
+Java and C# implemented the PSL check and later removed it ([JAVA-6235](https://jira.mongodb.org/browse/JAVA-6235),
+[CSHARP-6214](https://jira.mongodb.org/browse/CSHARP-6214)).
+
 ### Rationale for `srvHostValidator`
 
 `srvAllowedHostsSuffix` only validates SRV host against a single suffix. This can be limiting as users may want to allow
@@ -428,6 +443,8 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2026-11-13: Document rationale for PSL validation and change SHOULD to MAY.
 
 - 2026-10-01: Specify that `srvAllowedHostsSuffix` has no hostname syntax validation beyond the listed steps, and that a
     `srvHostValidator` of the wrong type, or one returning a non-bool value, results in an error during initial seedlist

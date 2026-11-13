@@ -9,6 +9,10 @@ Each test below states the case being covered, then the public suffix the list y
 test descriptions, let `is_public_suffix(domain)` be a function that returns a bool representing whether the domain is
 itself a public suffix.
 
+The Public Suffix List (PSL) check is
+[optional](../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#rationale-for-optional-public-suffix-list-check).
+Drivers that omit the check may skip these prose tests.
+
 These tests exercise the public suffix lookup directly rather than through a connection string.
 
 ### 1. A multi-label ordinary rule
