@@ -48,10 +48,10 @@ Spans encapsulate:
 A driver logs through a framework when every log destination it supports is a logging interface or framework that the
 host application configures (see
 [Minimizing Required Code Changes](../logging/logging.md#minimizing-required-code-changes) in the Logging
-specification), and the code that receives each message runs in the execution context of the driver call, so that a
-log-correlation integration installed by the host application can read the current span. Examples: SLF4J,
-Microsoft.Extensions.Logging, the Python `logging` module, the Rust `tracing` crate, or a Ruby `Logger` instance
-supplied by the application.
+specification), and the code that receives each message can obtain the current trace context from its execution context,
+so that a log-correlation integration installed by the host application can read the current span without help from the
+driver. Examples: SLF4J, Microsoft.Extensions.Logging, the Python `logging` module, the Rust `tracing` crate, or a Ruby
+`Logger` instance supplied by the application.
 
 **Driver-managed log output**
 
@@ -59,7 +59,10 @@ A driver has driver-managed log output when, for at least one log destination it
 output itself (for example to stdout, stderr, or a file), or hands log messages to a receiver that cannot obtain the
 current trace context, such as a callback interface with no context parameter in a language without ambient context.
 Examples: libmongoc's structured log handler, the Go driver's `LogSink`, or the Node.js driver's `MONGODB_LOG_PATH`
-output. The two classifications are exclusive and apply to the driver as a whole, not to individual destinations.
+output. A receiver that cannot obtain the current trace context never qualifies as logging through a framework, even
+when the application supplies it and it runs synchronously. The two classifications are exclusive and apply to the
+driver as a whole: a driver that meets this definition for any destination has driver-managed log output, whatever its
+other destinations are.
 
 ### Implementation Requirements
 
@@ -503,9 +506,14 @@ paths the driver MUST make the covering span current on whichever thread, task, 
 example by re-entering the command span's scope in a completion callback before emitting "Command succeeded" or "Command
 failed".
 
-Making a span current MUST NOT change when the span starts or ends. The requirements of
-[Instrumenting Driver Operations](#instrumenting-driver-operations) and
-[Instrumenting Server Commands](#instrumenting-server-commands) are unaffected.
+The covering span may already have ended when a covered message is emitted, for example "Connection checked in" when a
+connection is returned after its operation completed, or from a timeout handler. The requirement still applies: the span
+context is immutable, and the OpenTelemetry API permits making an ended span current, so drivers MUST re-enter the
+covering span's scope for such messages rather than emit them outside any scope.
+
+This section does not change when spans start or end. Drivers MUST NOT start a span earlier, or end it later, than the
+requirements of [Instrumenting Driver Operations](#instrumenting-driver-operations) and
+[Instrumenting Server Commands](#instrumenting-server-commands) call for in order to satisfy this section.
 
 When tracing is disabled, these requirements do not apply: the driver creates no spans, and a span made current by the
 host application, if any, remains current.

@@ -208,7 +208,7 @@ replica set or sharded cluster).
 The following tests verify the requirements of
 [Correlating Log Messages with Traces](../open-telemetry.md#correlating-log-messages-with-traces). They require the
 driver to support command, server selection, and connection logging as defined in the Logging specification, and to emit
-the spans this specification defines.
+the spans this specification defines. Test 13 additionally requires topology logging.
 
 How a test observes the span a log message belongs to depends on the driver's classification (see
 [Terms](../open-telemetry.md#terms)):
@@ -272,17 +272,21 @@ operation and may carry its span.
 2. Perform an `insertOne` operation on a test collection and record its trace id.
 3. Wait until at least one server heartbeat has completed after the operation, by waiting for a
     `ServerHeartbeatSucceededEvent` or the "Server heartbeat succeeded" log message. Do not merely sleep.
-4. Assert that every `topology` and `connection` component message emitted after the operation completed (such as
-    "Server heartbeat started" and "Server heartbeat succeeded") carries neither the trace id of the operation nor the
-    span id of any span the operation emitted.
+4. Assert that every `topology` component message emitted after the operation completed (such as "Server heartbeat
+    started" and "Server heartbeat succeeded"), and every `connection` component message other than the four covered
+    checkout messages ("Connection checkout started", "Connection checkout failed", "Connection checked out",
+    "Connection checked in"), carries neither the trace id of the operation nor the span id of any span the operation
+    emitted. "Connection checked in" is excluded because it may legitimately be emitted after the operation completes
+    while still carrying the operation span.
 
 *Test 14: Trace context fields for driver-managed log output*
 
 This test applies only to drivers with driver-managed log output. Drivers that log through a framework skip it.
 
-1. Repeat the steps of Test 10 and Test 11. For every message asserted there, additionally assert that the `trace_id`
-    field is 32 lowercase hexadecimal characters, the `span_id` field is 16 lowercase hexadecimal characters, and the
-    `trace_flags` field is 2 lowercase hexadecimal characters.
+1. Configure the tracing SDK with an always-on sampler, then repeat the steps of Test 10 and Test 11. For every message
+    asserted there, additionally assert that the `trace_id` field equals the covering span's trace id as 32 lowercase
+    hexadecimal characters, the `span_id` field equals the covering span's span id as 16 lowercase hexadecimal
+    characters, and the `trace_flags` field is `01`.
 2. Create a `MongoClient` with tracing disabled and the `command`, `serverSelection`, and `connection` log components at
     `debug`.
 3. Perform an `insertOne` operation on a test collection.
