@@ -98,9 +98,10 @@ in this order:
     ```
     For example, `srvAllowedHostsSuffix=net` MUST raise an error, but `srvAllowedHostsSuffix=test` MUST NOT raise an
     error.
-5. Drivers MAY raise an error if the resulting value is a public suffix, per the algorithm in
-    [Public Suffix List](../public-suffix-list/public-suffix-list.md), unless the value is in the aforementioned list
-    of valid names. See [rationale](#rationale-for-srvallowedhostssuffix).
+5. Drivers MAY check whether the resulting value is a public suffix, per the algorithm in
+    [Public Suffix List](../public-suffix-list/public-suffix-list.md). Drivers that perform this check MUST raise an
+    error if the value is a public suffix, unless the value is in the aforementioned list of valid names. See
+    [rationale](#rationale-for-optional-public-suffix-list-check).
 6. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
 
 If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
@@ -371,9 +372,6 @@ Requiring that the value not be a public suffix bounds how broad it can get. It 
 `.co.uk`, which would place no meaningful limit on a forged response. It does not, however, make a given configuration
 safe: `.example.com` is not a public suffix, but it still admits every host in a large organization's domain.
 
-The public suffix check is optional. Some drivers chose not to implement the PSL check due to maintenance concerns,
-unclear user value, and surprising rules.
-
 Users should be encouraged to configure the narrowest suffix that covers their deployment, and drivers should say so
 wherever the option is documented. For a seed hostname of `cluster.test.internal.example.com`, prefer the second of
 these:
@@ -382,6 +380,20 @@ these:
 mongodb+srv://cluster.test.internal.example.com/?srvAllowedHostsSuffix=.example.com
 mongodb+srv://cluster.test.internal.example.com/?srvAllowedHostsSuffix=.internal.example.com
 ```
+
+### Rationale for optional Public Suffix List check
+
+The Public Suffix List (PSL) check is optional. Implementing the check requires bundling a copy of the PSL and tracking
+its frequent updates.
+
+The check has limited value. The `srvHostValidator` option added in
+[DRIVERS-3632](https://jira.mongodb.org/browse/DRIVERS-3632) bypasses the check entirely.
+
+The rules are inconsistent for this use case. For example, `*.compute.amazonaws.com` is a public suffix but its parent
+`compute.amazonaws.com` is not, so the check rejects `.co.uk` yet accepts `.compute.amazonaws.com`.
+
+Java and C# implemented the PSL check and later removed it ([JAVA-6235](https://jira.mongodb.org/browse/JAVA-6235),
+[CSHARP-6214](https://jira.mongodb.org/browse/CSHARP-6214)).
 
 ### Rationale for `srvHostValidator`
 
