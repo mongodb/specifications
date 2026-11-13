@@ -51,3 +51,5 @@ rejected, and one that is not (`10gen.cc`) is accepted.
 
 They live with the seedlist discovery tests because `srvAllowedHostsSuffix` is a connection string option, so a driver
 should implement the parsing of the PSL and the uri option together.
+
+Drivers that omit the PSL check may skip test cases of PSL rejection.

@@ -98,9 +98,9 @@ in this order:
     ```
     For example, `srvAllowedHostsSuffix=net` MUST raise an error, but `srvAllowedHostsSuffix=test` MUST NOT raise an
     error.
-5. Drivers SHOULD raise an error if the resulting value is a public suffix, per the algorithm in
+5. Drivers MAY raise an error if the resulting value is a public suffix, per the algorithm in
     [Public Suffix List](../public-suffix-list/public-suffix-list.md), unless the value is in the aforementioned list
-    of valid names.
+    of valid names. See [rationale](#rationale-for-srvallowedhostssuffix).
 6. A `.` MUST be prepended. For example, `srvAllowedHostsSuffix=mydomain.net` is treated as `.mydomain.net`.
 
 If this option is not present, the `{domainname}` MUST be inferred from the `{hostname}` (as described in
@@ -371,6 +371,9 @@ Requiring that the value not be a public suffix bounds how broad it can get. It 
 `.co.uk`, which would place no meaningful limit on a forged response. It does not, however, make a given configuration
 safe: `.example.com` is not a public suffix, but it still admits every host in a large organization's domain.
 
+The public suffix check is optional. Some drivers chose not to implement the PSL check due to maintenance concerns,
+unclear user value, and surprising rules.
+
 Users should be encouraged to configure the narrowest suffix that covers their deployment, and drivers should say so
 wherever the option is documented. For a seed hostname of `cluster.test.internal.example.com`, prefer the second of
 these:
@@ -428,6 +431,8 @@ There are no backwards compatibility concerns.
 In the future we could consider using the priority and weight fields of the SRV records.
 
 ## ChangeLog
+
+- 2026-11-13: Document rationale for PSL validation and change SHOULD to MAY.
 
 - 2026-10-01: Specify that `srvAllowedHostsSuffix` has no hostname syntax validation beyond the listed steps, and that a
     `srvHostValidator` of the wrong type, or one returning a non-bool value, results in an error during initial seedlist
