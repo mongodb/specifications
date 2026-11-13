@@ -52,4 +52,17 @@ rejected, and one that is not (`10gen.cc`) is accepted.
 They live with the seedlist discovery tests because `srvAllowedHostsSuffix` is a connection string option, so a driver
 should implement the parsing of the PSL and the uri option together.
 
-Drivers that omit the PSL check may skip test cases of PSL rejection.
+## Tests for drivers that perform the PSL check
+
+The tests in this file and the `srvAllowedHostsSuffix-psl-*` connection string tests are required only for drivers that
+perform the public suffix check. See the
+[rationale](../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#rationale-for-optional-public-suffix-list-check).
+
+Drivers that omit the check may skip:
+
+- All six prose tests above, which exercise `is_public_suffix` directly.
+- `srvAllowedHostsSuffix-psl-public-suffix`.
+- `srvAllowedHostsSuffix-psl-public-suffix-capitalized`.
+
+Drivers must still pass `srvAllowedHostsSuffix-psl-not-public-suffix`, which asserts that a non-public suffix is
+accepted.
