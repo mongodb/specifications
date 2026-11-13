@@ -250,6 +250,33 @@ logs.
 Drivers MAY add timestamps to their log messages if one will not be added automatically by the logging framework(s) they
 use.
 
+#### Trace Context in Log Messages
+
+Drivers that implement the [OpenTelemetry](../open-telemetry/open-telemetry.md) specification may include in a log
+message the trace context of the span that covers it (the "covering span"). Which span that is, and whether and when a
+driver adds the fields, is defined in
+[Correlating Log Messages with Traces](../open-telemetry/open-telemetry.md#correlating-log-messages-with-traces); this
+specification defines only the fields.
+
+| Key           | Suggested Type | Value                                                                                           |
+| ------------- | -------------- | ----------------------------------------------------------------------------------------------- |
+| `trace_id`    | String         | The trace id, as 32 lowercase hexadecimal characters.                                           |
+| `span_id`     | String         | The id of the span the message belongs to, as 16 lowercase hexadecimal characters.              |
+| `trace_flags` | String         | The W3C trace flags, as 2 lowercase hexadecimal characters (`01` when sampled, `00` otherwise). |
+
+The names and encodings are those defined by OpenTelemetry for
+[trace context in non-OTLP log formats](https://opentelemetry.io/docs/specs/otel/compatibility/logging_trace_context/),
+so that log backends recognise them without configuration. For that reason they use snake_case even though other fields
+defined by driver specifications use camelCase; drivers doing structured logging MUST use these exact names, per
+[Standard Naming in Structured Log Messages](#standard-naming-in-structured-log-messages). The fields are subject to
+[Omitting Null Values from Log Messages](#omitting-null-values-from-log-messages): when they do not apply, they MUST be
+omitted entirely.
+
+In the unstructured form of a message, drivers that add these fields SHOULD append the following segment, omitted
+entirely when the fields do not apply:
+
+> Trace ID: {{trace_id}}, span ID: {{span_id}}, trace flags: {{trace_flags}}
+
 #### Supporting Both Programmatic and Environment Variable Configuration
 
 If a driver supports configuration via both environment variables and programmatically via API, programmatic
@@ -402,6 +429,9 @@ this issue, we could try to address it at the specification level by e.g. requir
 on individual clients or for particular namespaces.
 
 ## Changelog
+
+- 2026-11-12: Defined the `trace_id`, `span_id`, and `trace_flags` fields for log messages. When they apply is defined
+    in the OpenTelemetry specification (DRIVERS-3739).
 
 - 2024-03-06: Migrated from reStructuredText to Markdown.
 
