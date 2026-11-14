@@ -86,6 +86,14 @@
             "allow"
           ]
         },
+        "dsc": {
+          "type": "string",
+          "enum": [
+            "require",
+            "forbid",
+            "allow"
+          ]
+        },
         "serverParameters": {
           "type": "object",
           "minProperties": 1
