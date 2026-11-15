@@ -261,19 +261,17 @@ specification defines only the fields.
 | Key           | Suggested Type | Value                                                                                           |
 | ------------- | -------------- | ----------------------------------------------------------------------------------------------- |
 | `trace_id`    | String         | The trace id, as 32 lowercase hexadecimal characters.                                           |
-| `span_id`     | String         | The id of the span the message belongs to, as 16 lowercase hexadecimal characters.              |
+| `span_id`     | String         | The covering span's id, as 16 lowercase hexadecimal characters.                                 |
 | `trace_flags` | String         | The W3C trace flags, as 2 lowercase hexadecimal characters (`01` when sampled, `00` otherwise). |
 
-The names and encodings are those defined by OpenTelemetry for
-[trace context in non-OTLP log formats](https://opentelemetry.io/docs/specs/otel/compatibility/logging_trace_context/),
-so that log backends recognise them without configuration. For that reason they use snake_case even though other fields
-defined by driver specifications use camelCase; drivers doing structured logging MUST use these exact names, per
-[Standard Naming in Structured Log Messages](#standard-naming-in-structured-log-messages). The fields are subject to
-[Omitting Null Values from Log Messages](#omitting-null-values-from-log-messages): when they do not apply, they MUST be
-omitted entirely.
+Names and encodings follow OpenTelemetry's
+[trace context in non-OTLP log formats](https://opentelemetry.io/docs/specs/otel/compatibility/logging_trace_context/)
+so log backends recognise them. They are snake_case for that reason, unlike other spec fields, and structured logging
+MUST use them exactly (see [Standard Naming in Structured Log Messages](#standard-naming-in-structured-log-messages)).
+When they do not apply they MUST be omitted, per
+[Omitting Null Values from Log Messages](#omitting-null-values-from-log-messages).
 
-In the unstructured form of a message, drivers that add these fields SHOULD append the following segment, omitted
-entirely when the fields do not apply:
+Unstructured messages SHOULD append the following segment, omitted when the fields do not apply:
 
 > Trace ID: {{trace_id}}, span ID: {{span_id}}, trace flags: {{trace_flags}}
 
