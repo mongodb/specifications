@@ -246,7 +246,8 @@ the mongos that executes the `find`.
 
 *Test 11: Operation-path log messages carry the operation span*
 
-Does not run on load balanced topologies. Steps 7 to 10 require authentication.
+Does not run on load balanced topologies. Steps 7 to 10 require SCRAM authentication, because only SCRAM sends
+`saslContinue` as a standalone command.
 
 1. Create a `MongoClient` with tracing enabled and the `serverSelection` and `connection` log components at `debug`.
 2. Perform an `insertOne` on a test collection and record its operation span.
