@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Minimum Server Version: N/A
-- Current Schema Version: 1.29.0
+- Current Schema Version: 1.30.0
 
 ______________________________________________________________________
 
@@ -346,6 +346,13 @@ The structure of this object is as follows:
 
     Note: serverless testing is no longer required, and drivers that no longer support serverless testing MAY omit
     implementation of this requirement and instantly skip all tests that use `serverless: require`.
+
+- `dsc`: Optional string. Whether or not the test should be run against a disaggregated storage cluster (DSC). Valid
+    values are "require", "forbid", and "allow". If "require", the test MUST only be run against DSC. If "forbid", the
+    test MUST NOT be run against DSC. If omitted or "allow", this option has no effect.
+
+    The test runner MUST be informed whether or not disaggregated storage is being used in order to determine if this
+    requirement is met (e.g. through an environment variable or configuration option).
 
 - `serverParameters`: Optional object of server parameters to check against. To check server parameters, drivers send a
     `{ getParameter: 1, <parameter>: 1 }` command to the server using an internal MongoClient. Drivers MAY also choose
@@ -3474,6 +3481,10 @@ operations and arguments. This is a concession until such time that better proce
 other specs *and* collating spec changes developed in parallel or during the same release cycle.
 
 ## Changelog
+
+- 2026-11-03: **Schema version 1.30.**
+
+    Introduce `dsc` [runOnRequirement](#runonrequirement).
 
 - 2026-10-29: Require that fail points not be configured through clients with timeout options.
 
