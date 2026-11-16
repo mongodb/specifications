@@ -246,7 +246,7 @@ the mongos that executes the `find`.
 
 *Test 11: Operation-path log messages carry the operation span*
 
-Does not run on load balanced topologies. Steps 7 to 10 require server 4.4 or later.
+Does not run on load balanced topologies. Steps 7 to 10 require authentication.
 
 1. Create a `MongoClient` with tracing enabled and the `serverSelection` and `connection` log components at `debug`.
 2. Perform an `insertOne` on a test collection and record its operation span.
@@ -258,13 +258,14 @@ Does not run on load balanced topologies. Steps 7 to 10 require server 4.4 or la
 5. Perform an `insertOne`; it fails with a server selection error. Record its operation span.
 6. Assert that "Waiting for suitable server to become available" and "Server selection failed" carry that operation
     span's trace id and span id.
-7. Configure a `failCommand` fail point on `hello` (and the legacy hello command) with `closeConnection: true`,
-    `mode: alwaysOn`, and `appName` set to a value unique to this test.
-8. Create a third `MongoClient` with tracing enabled, the `connection` log component at `debug`, and that `appName`.
-    Its first checkout must establish a connection, whose handshake the fail point closes.
-9. Perform an `insertOne`; it fails. Record its operation span.
+7. Configure a `failCommand` fail point on `saslContinue` with `closeConnection: true`, `mode: { times: 1 }`, and
+    `appName` set to a value unique to this test. Authentication happens only on application connections, so
+    monitoring is unaffected.
+8. Create a third `MongoClient` with tracing enabled, the `connection` log component at `debug`, that `appName`,
+    `retryReads: false`, and a high `heartbeatFrequencyMS` (for example 10000).
+9. Perform a `find` on a test collection; it fails. Record its operation span.
 10. Assert that "Connection checkout started" and "Connection checkout failed" carry that operation span's trace id and
-    span id. Disable the fail point.
+    span id.
 
 *Test 12: Log messages inside a transaction*
 
