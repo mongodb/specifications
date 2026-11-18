@@ -3,6 +3,19 @@
 This directory contains platform-independent tests that drivers can use to prove their conformance to the Initial DNS
 Seedlist Discovery spec.
 
+## Public Suffix List (PSL) tests
+
+The `srvAllowedHostsSuffix-psl-*` connection string tests exercise the optional
+[Public Suffix List (PSL) check](../../initial-dns-seedlist-discovery/initial-dns-seedlist-discovery.md#rationale-for-optional-public-suffix-list-check).
+
+Drivers that omit the check may skip:
+
+- `srvAllowedHostsSuffix-psl-public-suffix`.
+- `srvAllowedHostsSuffix-psl-public-suffix-capitalized`.
+
+Drivers must still pass `srvAllowedHostsSuffix-psl-not-public-suffix`, which asserts that a non-public suffix is
+accepted.
+
 ## Prose Tests
 
 For the following prose tests, it is assumed drivers are be able to stub DNS results to easily test invalid DNS

@@ -510,7 +510,7 @@ class BulkWriteException {
     /**
      * A top-level error that occurred when attempting to communicate with the server or execute
      * the bulk write. This value may not be populated if the exception was thrown due to errors
-     * occurring on individual writes.
+     * occurring on individual writes or write concern errors.
      */
     error: Optional<Error>;
 
@@ -843,6 +843,9 @@ Write concern errors are recorded in the `writeConcernErrors` field on `BulkWrit
 is encountered, it should not terminate execution of the bulk write for either ordered or unordered bulk writes.
 However, drivers MUST throw an exception at the end of execution if any write concern errors were observed.
 
+A write concern error is not a top-level error. Drivers MUST NOT populate the `error` field of the `BulkWriteException`
+when no top-level error was encountered.
+
 ### Individual Write Errors
 
 Individual write errors retrieved from the cursor are recorded in the `writeErrors` field on `BulkWriteException`. If an
@@ -950,6 +953,8 @@ The requirement has since been removed. Checking size limits complicates some dr
 error in this specific situation does not seem helpful enough to require size checks.
 
 ## **Changelog**
+
+- 2026-10-08: Add prose tests for top-level errors mid bulk write and specify a write concern error is not top-level.
 
 - 2026-01-05: Specify that `killCursors`'s response cannot be ignored.
 

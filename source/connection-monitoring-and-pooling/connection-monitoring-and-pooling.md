@@ -140,28 +140,6 @@ language. All connection pools created by a MongoClient MUST use the same Connec
 When parsing a mongodb connection string, a user MUST be able to specify these options using the default names specified
 above.
 
-#### Deprecated Options
-
-The following ConnectionPoolOptions are considered deprecated. They MUST NOT be implemented if they do not already exist
-in a driver, and they SHOULD be deprecated and removed from drivers that implement them as early as possible:
-
-```typescript
-interface ConnectionPoolOptions {
-  /**
-   *  The maximum number of threads that can simultaneously wait
-   *  for a Connection to become available.
-   */
-  waitQueueSize?: number;
-
-  /**
-   *  An alternative way of setting waitQueueSize, it specifies
-   *  the maximum number of threads that can wait per connection.
-   *  waitQueueSize === waitQueueMultiple * maxPoolSize
-   */
-  waitQueueMultiple?: number
-}
-```
-
 ### Connection Pool Members
 
 #### Connection
@@ -1048,15 +1026,13 @@ In addition to the common fields defined above, this message MUST contain the fo
 | maxPoolSize        | Int            | The maxPoolSize value for this pool. Optional; only required to include if the user specified a value.                                            |
 | maxConnecting      | Int            | The maxConnecting value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.      |
 | waitQueueTimeoutMS | Int            | The waitQueueTimeoutMS value for this pool. Optional; only required to include if the driver supports this option and the user specified a value. |
-| waitQueueSize      | Int            | The waitQueueSize value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.      |
-| waitQueueMultiple  | Int            | The waitQueueMultiple value for this pool. Optional; only required to include if the driver supports this option and the user specified a value.  |
 
 The unstructured form SHOULD be as follows, using the values defined in the structured format above to fill in
 placeholders as appropriate:
 
 > Connection pool created for {{serverHost}}:{{serverPort}} using options maxIdleTimeMS={{maxIdleTimeMS}},
 > minPoolSize={{minPoolSize}}, maxPoolSize={{maxPoolSize}}, maxConnecting={{maxConnecting}},
-> waitQueueTimeoutMS={{waitQueueTimeoutMS}}, waitQueueSize={{waitQueueSize}}, waitQueueMultiple={{waitQueueMultiple}}
+> waitQueueTimeoutMS={{waitQueueTimeoutMS}}
 
 #### Pool Ready Message
 
@@ -1265,26 +1241,6 @@ totalConnectionCount and potentially availableConnectionCount. After this point,
 longer a part of the pool. Further hypothetical events would not indicate a change to the state of the pool, so they are
 not specified here.
 
-### Why are waitQueueSize and waitQueueMultiple deprecated?
-
-These options were originally only implemented in three drivers (Java, C#, and Python), and provided little value. While
-these fields would allow for faster diagnosis of issues in the connection pool, they would not actually prevent an error
-from occurring.
-
-Additionally, these options have the effect of prioritizing newer requests over older requests, which is not necessarily
-the behavior that users want. For example, consider a situation when a WaitQueue is full, and a request for
-[Connection](#connection) gets rejected. Then a spot opens in the WaitQueue, and a newer request gets accepted. One may
-say that the newer request was prioritized over the older one, which violates the fairness recommendation that the
-WaitQueue normally adheres to.
-
-Because of these issues, it does not make sense to
-[go against driver mantras and provide an additional knob](../driver-mantras.md#). We may eventually pursue an
-alternative configuration to address wait queue size in [Advanced Pooling Behaviors](#advanced-pooling-behaviors).
-
-Users that wish to have this functionality can achieve similar results by utilizing other methods to limit concurrency.
-Examples include implementing either a thread pool or an operation queue with a capped size in the user application.
-Drivers that need to deprecate `waitQueueSize` and/or `waitQueueMultiple` SHOULD refer users to these examples.
-
 ### Why is waitQueueTimeoutMS optional for some drivers?
 
 We are anticipating eventually introducing a single client-side timeout mechanism, making us hesitant to introduce
@@ -1350,12 +1306,6 @@ some equivalent configuration, but this configuration will also require target f
 5.0. The advantage of using Background Thread to manage perished connections is that it will work regardless of
 environment setup.
 
-## Backwards Compatibility
-
-As mentioned in [Deprecated Options](#deprecated-options), some drivers currently implement the options `waitQueueSize`
-and/or `waitQueueMultiple`. These options will need to be deprecated and phased out of the drivers that have implemented
-them.
-
 ## Reference Implementations
 
 - JAVA (JAVA-3079)
@@ -1385,6 +1335,8 @@ Exhaust Cursors may require changes to how we close [Connections](#connection) i
 to close and remove from its pool a [Connection](#connection) which has unread exhaust messages.
 
 ## Changelog
+
+- 2026-10-08: Removed deprecated waitQueueSize and waitQueueMultiple connection pool options.
 
 - 2026-01-12: Clarify handling TLS I/O errors for backpressure error labels.
 
