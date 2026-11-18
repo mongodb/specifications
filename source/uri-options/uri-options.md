@@ -138,6 +138,9 @@ The following options are sensitive:
 Where a driver implements a sensitive option under an additional or deprecated name, as permitted by
 [List of specified options](#list-of-specified-options), the argument of that name is sensitive as well.
 
+`authMechanismProperties` does not currently define sensitive sub-options. If a driver implements sensitive sub-options
+(e.g. the now-removed `AWS_SESSION_TOKEN`) those must be considered sensitive.
+
 A specification that defines a new connection parameter MUST state whether the argument is potentially sensitive, and
 this specification MUST be updated to list it here if it is.
 
