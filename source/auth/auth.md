@@ -483,7 +483,7 @@ MongoDB supports either of these forms.
 
 - username
 
-    MUST be specified and non-zero length.
+    MUST be specified and non-zero length. MUST NOT contain any NUL characters (`U+0000`).
 
 - source
 
@@ -491,7 +491,7 @@ MongoDB supports either of these forms.
 
 - password
 
-    MUST be specified.
+    MUST be specified. MUST NOT contain any NUL characters (`U+0000`).
 
 - mechanism
 
@@ -500,6 +500,9 @@ MongoDB supports either of these forms.
 - mechanism_properties
 
     MUST NOT be specified.
+
+If the username or password contains a NUL character, drivers MUST raise an error with a message containing the string
+"cannot contain NUL characters". Drivers MUST raise this error before sending any authentication command to the server.
 
 ### SCRAM-SHA-1
 
@@ -2033,6 +2036,8 @@ practice to avoid this. (See
 [IAM Roles for Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html))
 
 ## Changelog
+
+- 2026-10-30: Forbid NUL characters in PLAIN authentication username/password.
 
 - 2026-06-17: Remove additional pre-4.2 version references.
 
