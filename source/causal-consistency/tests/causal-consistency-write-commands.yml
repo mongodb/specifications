@@ -11,6 +11,7 @@ createEntities:
       useMultipleMongoses: false
       uriOptions:
         retryWrites: false
+        readConcern: majority
       observeEvents: [commandStartedEvent]
   - database:
       id: &database0 database0
@@ -63,7 +64,8 @@ tests:
               commandName: find
               command:
                 find: *collectionName
-                readConcern: { $$exists: false }
+                readConcern:
+                  level: majority
                 lsid: { $$sessionLsid: *session0 }
           - commandStartedEvent:
               commandName: insert
