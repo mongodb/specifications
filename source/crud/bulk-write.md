@@ -831,6 +831,10 @@ When a top-level error is encountered and individual results and/or errors have 
 embed the top-level error within a `BulkWriteException` as the `error` field to retain this information. Otherwise,
 drivers MAY throw an exception containing only the top-level error.
 
+When a top-level error occurs during `getMore` iteration of the results cursor, any individual results already retrieved
+from the cursor prior to the error MUST be preserved and included in the `partialResult` field of the
+`BulkWriteException`. Drivers MUST NOT discard these partial cursor results.
+
 Encountering a top-level error MUST halt execution of a bulk write for both ordered and unordered bulk writes. This
 means that drivers MUST NOT attempt to retrieve more responses from the cursor or execute any further `bulkWrite`
 batches and MUST immediately throw an exception. If the results cursor has not been exhausted on the server when a
