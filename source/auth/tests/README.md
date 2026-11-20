@@ -45,3 +45,45 @@ Testing whether a URI is valid or not should simply be a matter of checking whet
 construction) raises an error or exception.
 
 If a credential is configured, its properties must be compared to the `credential` field.
+
+## Prose Tests
+
+### 1. Driver rejects a PLAIN authentication credential with NUL character
+
+These tests MUST be run by drivers that allow credentials to be configured outside of a connection string (e.g. in a
+`MongoCredential` or `ClientOptions`). They MAY be skipped by any driver whose language does not permit constructing a
+string with a NUL character (`U+0000`).
+
+For each test case, drivers MUST assert that a **driver-side** error is raised for the specified authentication fields.
+Depending on where the driver validates credentials, the error MAY be raised during any of the following steps:
+
+1. When the specified authentication fields are constructed in code (e.g. in a `MongoCredential` or `ClientOptions`).
+2. When a `MongoClient` is constructed with the options from step 1.
+3. When the client from step 2 is used to attempt a `ping` operation, provided that no authentication message is sent to
+    the server.
+
+Drivers MUST assert that the error message contains the string "cannot contain NUL characters".
+
+#### Case 1: NUL character in username
+
+Authentication fields:
+
+```javascript
+{
+  username: "user\0name",
+  password: "password",
+  mechanism: "PLAIN"
+}
+```
+
+#### Case 2: NUL character in password
+
+Authentication fields:
+
+```javascript
+{
+  username: "username",
+  password: "pass\0word",
+  mechanism: "PLAIN"
+}
+```
