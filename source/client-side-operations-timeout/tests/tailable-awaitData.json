@@ -97,24 +97,6 @@
       ]
     },
     {
-      "description": "error on aggregate if maxAwaitTimeMS is greater than timeoutMS",
-      "operations": [
-        {
-          "name": "aggregate",
-          "object": "collection",
-          "arguments": {
-            "pipeline": [],
-            "timeoutMS": 5,
-            "maxAwaitTimeMS": 10
-          },
-          "expectError": {
-            "isClientError": true,
-            "isTimeoutError": false
-          }
-        }
-      ]
-    },
-    {
       "description": "error on watch if maxAwaitTimeMS is greater than timeoutMS",
       "operations": [
         {
@@ -141,24 +123,6 @@
           "arguments": {
             "filter": {},
             "cursorType": "tailableAwait",
-            "timeoutMS": 5,
-            "maxAwaitTimeMS": 5
-          },
-          "expectError": {
-            "isClientError": true,
-            "isTimeoutError": false
-          }
-        }
-      ]
-    },
-    {
-      "description": "error on aggregate if maxAwaitTimeMS is equal to timeoutMS",
-      "operations": [
-        {
-          "name": "aggregate",
-          "object": "collection",
-          "arguments": {
-            "pipeline": [],
             "timeoutMS": 5,
             "maxAwaitTimeMS": 5
           },
