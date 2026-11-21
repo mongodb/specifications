@@ -75,8 +75,29 @@ driver, use command monitoring instead.
 
 ## PoolClearedError Prose Test
 
-Test that `PoolClearedError` has `TransientTransactionError` label. Since there is no simple way to trigger
-`PoolClearedError`, this test should be implemented in a way that suites each driver the best.
+### PoolClearedError has TransientTransactionError label when raised while not committing a transaction.
+
+- Create a MongoClient running against a sharded cluster with a single mongos or a replica set with a single mongod
+    - transactions require a 4.0+ server when non-sharded and 4.2+ when sharded
+- Start a new session on the client.
+- Start a transaction on the session.
+- Obtain a connection pool for the mongos or mongod.
+- Set pool to the paused state.
+- Attempt to check out a connection from the pool.
+- Ensure that a `PoolClearedError` is raised.
+- Ensure that the `PoolClearedError` has the `TransientTransactionError` label.
+
+### PoolClearedError does not have TransientTransactionError label when raised while committing a transaction.
+
+- Create a MongoClient running against a sharded cluster with a single mongos or a replica set with a single mongod
+    - transactions require a 4.0+ server when non-sharded and 4.2+ when sharded
+- Start a new session on the client.
+- Start a transaction on the session.
+- Obtain a connection pool for the mongos or mongod.
+- Set pool to the paused state.
+- Attempt to commit the transaction.
+- Ensure that a `PoolClearedError` is raised.
+- Ensure that the `PoolClearedError` does not have the `TransientTransactionError` label.
 
 ## Options Inside Transaction Prose Tests.
 
