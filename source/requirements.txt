@@ -1,4 +1,4 @@
 mkdocs
 mkdocs-github-admonitions-plugin
 mkdocs-htmlproofer-plugin
-pymdown-extensions==10.11.2
+pymdown-extensions==10.16.1
