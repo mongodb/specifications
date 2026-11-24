@@ -218,7 +218,7 @@ Before each test:
 2. Capture the driver's log messages.
 3. A driver that [logs through a framework](../open-telemetry.md#logging-through-a-framework) installs the ecosystem's
     log-correlation integration (a Logback MDC bridge, Python `LoggingInstrumentor`, .NET `ActivityTrackingOptions`,
-    Rust `tracing-opentelemetry`) and reads the trace id and span id it attaches to each captured message. A driver
+    Rust `tracing-opentelemetry`, Ruby `opentelemetry-instrumentation-logger`) and reads the trace id and span id it attaches to each captured message. A driver
     with [driver-managed log output](../open-telemetry.md#driver-managed-log-output) reads the message's `trace_id` and
     `span_id` fields.
 
