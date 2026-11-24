@@ -542,7 +542,7 @@ itself using [Terms](#terms).
 | C#                  | Microsoft.Extensions.Logging via `LoggingSettings`                                       | Logging through a framework |
 | Python              | `logging` module                                                                         | Logging through a framework |
 | Rust                | `tracing` events                                                                         | Logging through a framework |
-| Ruby                | `Logger` instance supplied by the application                                            | Logging through a framework |
+| Ruby                | `logger` module                                                                          | Logging through a framework |
 | Node.js             | `MongoLogger` writing to stderr, stdout, or a `write(log)` object                        | Driver-managed log output   |
 | Go                  | `LogSink` interface without a context parameter; default sink writes to stderr or a file | Driver-managed log output   |
 | C, C++              | `mongoc_structured_log` handler; default handler writes to stderr                        | Driver-managed log output   |
