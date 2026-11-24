@@ -52,7 +52,7 @@ by the host application (see
 [Minimizing Required Code Changes](../logging/logging.md#minimizing-required-code-changes)), and the code receiving each
 message can read the current trace context. A log-correlation integration installed by the application can then attach
 the current span without help from the driver. Examples: `SLF4J`, `Microsoft.Extensions.Logging`, Python `logging`, Rust
-`tracing`, a Ruby `Logger` supplied by the application.
+`tracing`, a Ruby `logger`.
 
 <span id="driver-managed-log-output"></span>
 
