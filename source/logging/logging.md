@@ -252,7 +252,7 @@ use.
 
 #### Trace Context in Log Messages
 
-Drivers that implement the [OpenTelemetry](../open-telemetry/open-telemetry.md) specification may include in a log
+Drivers that implement the [OpenTelemetry](../open-telemetry/open-telemetry.md) specification MAY include in a log
 message the trace context of the span that covers it (the "covering span"). Which span that is, and whether and when a
 driver adds the fields, is defined in
 [Correlating Log Messages with Traces](../open-telemetry/open-telemetry.md#correlating-log-messages-with-traces); this
