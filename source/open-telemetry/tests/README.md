@@ -216,11 +216,12 @@ Before each test:
 
 1. Enable tracing with a span collector the test can read.
 2. Capture the driver's log messages.
-3. A driver that [logs through a framework](../open-telemetry.md#logging-through-a-framework) installs the ecosystem's
-    log-correlation integration (a Logback MDC bridge, Python `LoggingInstrumentor`, .NET `ActivityTrackingOptions`,
-    Rust `tracing-opentelemetry`, Ruby `opentelemetry-instrumentation-logger`) and reads the trace id and span id it attaches to each captured message. A driver
-    with [driver-managed log output](../open-telemetry.md#driver-managed-log-output) reads the message's `trace_id` and
-    `span_id` fields.
+3. A driver that [logs through a framework](../open-telemetry.md#logging-through-a-framework) installs a log handler,
+    formatter, or log-correlation integration that records the current span when each message is emitted (for example a
+    Logback MDC bridge, Python `LoggingInstrumentor`, .NET `ActivityTrackingOptions`, Rust `tracing-opentelemetry`,
+    Ruby `opentelemetry-instrumentation-logger`), and reads the trace id and span id it recorded for each captured
+    message. A driver with [driver-managed log output](../open-telemetry.md#driver-managed-log-output) reads the
+    message's `trace_id` and `span_id` fields.
 
 A driver that cannot do step 3, because its ecosystem has no such integration or because its tracing API cannot expose
 the span ids, marks these tests as not applicable and records why. Messages belonging to one operation are matched to

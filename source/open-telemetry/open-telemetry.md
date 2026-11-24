@@ -753,13 +753,14 @@ redesigning the payload format.
 ### Log correlation relies on the current span rather than on log message fields
 
 Every OpenTelemetry log integration (Java MDC bridges, Python `LoggingInstrumentor`, .NET `ActivityTrackingOptions`,
-Rust `tracing-opentelemetry`, Node.js logger instrumentations) reads the current span when a record is created. A driver
-that [logs through such a framework](#logging-through-a-framework) gets correlation for free if it emits each message
-while the right span is current. Writing the trace id and span id into messages instead would duplicate what the
-integration adds. It would also not help on its own: if a message is emitted while a different span is current, the
-integration and the driver stamp two different span ids on the same line. When this section was written, two
-implementations with native tracing emitted "Command started" under the operation span and "Command succeeded" under the
-command span, so the scope requirement addresses an observed problem, not a hypothetical one.
+Rust `tracing-opentelemetry`, Node.js logger instrumentations, Ruby `opentelemetry-instrumentation-logger`) reads the
+current span when a record is created. A driver that [logs through such a framework](#logging-through-a-framework) gets
+correlation for free if it emits each message while the right span is current. Writing the trace id and span id into
+messages instead would duplicate what the integration adds. It would also not help on its own: if a message is emitted
+while a different span is current, the integration and the driver stamp two different span ids on the same line. When
+this section was written, two implementations with native tracing emitted "Command started" under the operation span and
+"Command succeeded" under the command span, so the scope requirement addresses an observed problem, not a hypothetical
+one.
 
 ### Trace context fields only for driver-managed log output
 
