@@ -123,6 +123,27 @@ to URI options apply here.
 | wTimeoutMS                           | non-negative 64-bit integer; 0 means no timeout                                                                                                                                           | no timeout                                                                                                                                                                                                                   | no                                                                                                                                                                                                        | NOTE: This option is deprecated in favor of [timeoutMS](../client-side-operations-timeout/client-side-operations-timeout.md#timeoutms)<br><br>Default write concern "wtimeout" field for the client                                                                                              |
 | zlibCompressionLevel                 | integer between -1 and 9 (inclusive)                                                                                                                                                      | -1 (default compression level of the driver)                                                                                                                                                                                 | no                                                                                                                                                                                                        | Specifies the level of compression when using zlib to compress wire protocol messages; -1 signifies the default level, 0 signifies no compression, 1 signifies the fastest speed, and 9 signifies the best compression                                                                           |
 
+### Sensitive options
+
+The value of a sensitive option MUST NOT appear in any diagnostic, log message, or string representation of a connection
+string. See
+[Disclosure of Sensitive Values](../connection-string/connection-string-spec.md#disclosure-of-sensitive-values).
+
+The following options are sensitive:
+
+- `proxyUsername`
+- `proxyPassword`
+- `tlsCertificateKeyFilePassword`
+
+Where a driver implements a sensitive option under an additional or deprecated name, as permitted by
+[List of specified options](#list-of-specified-options), the argument of that name is sensitive as well.
+
+`authMechanismProperties` does not currently define sensitive sub-options. If a driver implements sensitive sub-options
+(e.g. the now-removed `AWS_SESSION_TOKEN`) those must be considered sensitive.
+
+A specification that defines a new connection parameter MUST state whether the argument is potentially sensitive, and
+this specification MUST be updated to list it here if it is.
+
 ## Test Plan
 
 Tests are implemented and described in the [tests](tests/README.md) directory.
@@ -189,6 +210,9 @@ changes.
     Discovery spec.
 
 - 2026-09-03: Add `srvAllowedHostsSuffix` option.
+
+- 2026-09-02: Add the list of sensitive parameters and require new parameters in other specification documents to
+    declare whether their arguments are sensitive.
 
 - 2026-06-17: Remove pre-4.2 version references.
 

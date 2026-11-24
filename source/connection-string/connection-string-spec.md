@@ -79,6 +79,9 @@ encoding rules of RFC 3986 and SHOULD throw an exception if disallowed character
 backwards-compatibility reasons, drivers MAY allow reserved characters other than "@" and ":" to be present in user
 information without percent-encoding.
 
+These encoding requirements exist so that a connection string parses unambiguously. They are not a confidentiality
+measure: see [Disclosure of Sensitive Values](#disclosure-of-sensitive-values).
+
 ### Host Information
 
 Unlike a standard URI, the connection string allows for identifying multiple hosts. The host information section of the
@@ -107,7 +110,7 @@ The host information cannot contain an unescaped slash ("/"), if it does then an
 users that paths must be URL encoded. For example:
 
 ```text
-Unsupported host '/tmp/mongodb-27017.sock', UNIX socket domain paths must be URL encoded.
+Unsupported host: UNIX socket domain paths must be URL encoded.
 ```
 
 Support for UNIX domain sockets and IP Literals is OPTIONAL.
@@ -169,14 +172,19 @@ Keys are strings and the character case must be normalized by lower casing the u
 other characters are left as-is.
 
 When defining and documenting keys, specifications should follow the camelCase naming convention with the first letter
-in lowercase, snake_case MUST not be used. Keys that aren't supported by a driver MUST be ignored.
+in lowercase, snake_case MUST not be used.
+
+A key is *supported* if the driver implements the option that it names. A key is *known* if the driver can match it to
+an option name defined in a specification, whether or not the driver implements that option; every supported key is
+therefore also known. A key is *unknown* if the driver can make no such match, which includes a misspelled option name
+and any other text that reached the key position.
 
 Keys that aren't supported by a driver MUST be ignored. A WARN level logging message MUST be issued for unsupported
-keys. For example:
+keys. See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for additional
+rules about diagnostics regarding unsupported keys.
 
-```text
-Unsupported option 'connectMS'.
-```
+It is *not* required that a driver *know* all keys from the specifications in order to conform. A driver that only knows
+the keys that it supports is still conforming.
 
 Keys should be descriptive and follow existing conventions:
 
@@ -207,8 +215,11 @@ The values in connection options MUST be URL decoded by the parser. The values c
     WARNING level (as appropriate for your language). For example:
 
     ```text
-    Deprecated boolean value for "journal" : "1", please update to "journal=true"
+    Deprecated boolean value for "journal", please update to "journal=true"
     ```
+
+    See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for what such a
+    message may contain.
 
 - Lists: Repeated keys represent a list in the Connection String consisting of the corresponding values in the same
     order as they appear in the Connection String. For example:
@@ -241,8 +252,11 @@ The values in connection options MUST be URL decoded by the parser. The values c
 Any invalid Values for a given key MUST be ignored and MUST log a WARN level message. For example:
 
 ```text
-Unsupported value for "fsync" : "ifPossible"
+Unsupported value for "fsync"
 ```
+
+See [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value) for what such a
+message may contain.
 
 ### Repeated Keys
 
@@ -295,6 +309,92 @@ If a driver allows URI options to be specified outside of the connection string 
 MongoClient constructor) it MUST document the precedence rules between all such mechanisms. For instance, a driver MAY
 allow a value for option `foo` in a dictionary parameter to override the value of `foo` in the connection string (or
 vice versa) so long as that behavior is documented.
+
+### Disclosure of Sensitive Values
+
+Connection strings routinely carry secrets in plaintext. A connection string that a driver rejects (most often because
+of a simple spelling error or syntax mistake rather than an attacker) is nonetheless commonly written to an application
+log, where any credential it contains becomes durable. This section defines what a driver MUST NOT disclose when
+reporting on a connection string.
+
+#### Sensitive values
+
+For the purposes of this section, a "sensitive value" is any of the following:
+
+- The username and password components of the [Userinfo](#userinfo-optional) segment, whether or not the connection
+    string parses successfully.
+- The argument of a URI parameter whose defining specification declares its value to be sensitive. See
+    [Sensitive options](../uri-options/uri-options.md#sensitive-options).
+- The argument associated with an *unknown* key (see [Keys](#keys)). A driver cannot determine whether such a value is
+    sensitive, so it MUST be treated as sensitive.
+
+#### Reporting a parse failure
+
+Until a driver has successfully parsed a connection string, any diagnostic warning or error it emits MUST NOT include
+any part of the connection string, whether in the form given or after decoding, re-encoding, or any other
+transformation, except for the diagnostic values permitted by
+[Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value). A message MAY describe:
+
+- The component of the connection string that is at fault, identified by name (for example "port", "host identifier", or
+    "auth database").
+- The position of that component among repeated components (for example "the second host identifier").
+- What the parser expected instead.
+- The diagnostic values permitted by
+    [Reporting an unsupported key or invalid value](#reporting-an-unsupported-key-or-invalid-value).
+
+A driver MUST NOT attempt to satisfy this requirement by masking, redacting, or otherwise transforming the connection
+string that it was given.
+
+#### Reporting an unsupported key or invalid value
+
+A message reporting an unsupported, unknown, deprecated or repeated key, or an invalid value, MUST NOT include any text
+from the connection string. It MUST NOT include the argument of a key, and it MUST NOT include an *unknown* key (see
+[Keys](#keys)). This holds whether or not parsing succeeds: either a key or an argument may contain text the user
+intended as part of a credential. The following diagnostic values are exceptions:
+
+- An authentication mechanism named by the argument of the `authMechanism` option, and recognized by the driver, MAY be
+    identified by its canonical name from the driver's fixed set of known mechanisms. The name MUST be selected from
+    that set, not copied from the connection string, including its casing. An argument that names no mechanism the
+    driver knows MUST NOT be included.
+- An argument that has been successfully parsed as an integer for a known, non-sensitive URI option MAY be included,
+    formatted from the parsed integer rather than copied from the connection string. This applies even when the integer
+    fails a range or cross-option validation check. Failed integer conversions, integers for *unknown* keys, and
+    arguments of sensitive options MUST NOT be included.
+
+The message MAY name a *known* key using its canonical spelling for the purpose of actionable diagnostics. For example:
+
+```text
+Unsupported option 'srvMaxHosts'.
+```
+
+The message MAY indicate the position of an *unknown* key. That position MUST be relative to the start of the
+[Connection Options](#connection-options-optional), and not to the connection string as a whole:
+
+```text
+Unsupported option at offset 16 in the query segment.
+```
+
+See also [Reporting a parse failure](#reporting-a-parse-failure).
+
+#### String representations
+
+Any idiomatic string conversion, debug representation, or serialization of a connection string, or of client
+configuration derived from one, MUST replace the username and password components of the [Userinfo](#userinfo-optional)
+segment, and the arguments of sensitive parameters, with a fixed marker that is the same regardless of the value it
+replaces (e.g. `<redacted>`, `<hidden>`).
+
+Such a representation MUST be constructed from the parsed components of the connection string rather than by
+transforming the connection string itself.
+
+Where parsing did not complete, such a representation MUST be a fixed string that contains no text derived from the
+connection string, and MUST NOT be the same as the marker that replaces a sensitive value, so that a reader can
+distinguish a connection string that never parsed from one whose sensitive values were replaced (for example,
+`<unparsed connection string>`). It MUST NOT raise an error: these APIs are commonly invoked by loggers and debuggers,
+including while an error is already being handled. A driver whose connection string type cannot exist in an unparsed
+state satisfies this requirement trivially.
+
+A driver MAY expose a separately named API that returns the unredacted representation, provided that its name makes the
+disclosure evident.
 
 ### Test Plan
 
@@ -464,7 +564,73 @@ Space characters SHOULD be encoded as `%20` rather than `+`, this will be portab
 Implementations MAY support decoding `+` into a space, as many languages treat strings as `x-www-form-urlencoded` data
 by default.
 
+Q: Why may a parse failure message not quote any part of the connection string
+
+A failed parse means the driver's understanding of the user's intended component boundaries is not trustworthy, so no
+span of the input is known *not* to be the password. Two shapes demonstrate this:
+
+- If the at-sign ("@") is absent entirely, `user:password` is reinterpreted as a host list, which a driver might print
+    freely because a hostname is not thought of as secret.
+- If the password contains a single unencoded at-sign, the tail of the password is parsed as the hostname.
+
+Masking *cannot* close this because the masking logic and the parsing logic disagree about where the userinfo ends. That
+disagreement may even be harmful by providing a false sense of security, because it produces messages that print the
+credential alongside a redaction marker, giving the impression that a successful redaction took place when it did not.
+
+Q: Why may a driver not name an unknown key
+
+Because such a key can itself contain text the user intended as part of a credential, and that does not require a parse
+failure. Given `mongodb://host/?proxyPasswordpwd=123`, where the user's password was `pwd=123` and they omitted the "="
+after `proxyPassword`, the connection string parses successfully and the credential is split across an unknown key and
+its argument. No error is raised, so withholding the message only until parsing succeeds does not protect it, and a
+driver cannot distinguish such a key from an ordinary misspelling.
+
+A key that the driver can match to an option name it knows is different: the name it reports comes from its own list
+rather than from the connection string, and reporting it is considerably more useful than reporting a position alone.
+This is the case the warning exists to serve, since an option one driver does not support is often supported by another.
+
+A password could in principle contain the spelling of a known option, as in
+`mongodb://host/?proxyUsername=foo&proxyPassword=pwd123&proxyUsername=bar` where the password was
+`pwd123&proxyUsername=bar` and was not percent-encoded, leading a driver to report a repeated key that is also text from
+the password. That case is pathological, and it discloses only that the password contains the name of a known option, so
+it does not justify withholding a useful diagnostic.
+
+Q: Does reporting a position disclose anything
+
+A little, and deliberately so. A position is measured from the start of the query segment rather than from the start of
+the connection string, so it reveals nothing about the length of the userinfo, and therefore nothing about the length of
+the password. It does bound the combined length of the keys and arguments that precede it in the query segment, one of
+which may be the argument of a sensitive option. That is accepted: without a position the message has nothing actionable
+left in it, and a reader who holds the connection string is the one the message is for.
+
+Q: Why may a diagnostic identify a known authentication mechanism or a parsed integer
+
+A canonical mechanism name is selected from a fixed vocabulary, so it cannot reproduce arbitrary credential text or the
+user's spelling. A parsed integer for a known, non-sensitive option is similarly constrained, and reporting it makes
+range and cross-option errors actionable. Neither exception permits quoting the original argument.
+
+The integer exception differs from the others in kind, since it reports a value rather than only a name that the driver
+already knew. For that value to be part of a credential, the credential would have to contain a known option name, an
+equals sign, and a valid integer, which is a narrower coincidence than the ones already accepted above. A credential
+interpreted as a host or a port is not covered by the integer exception, which applies only to known, non-sensitive URI
+options.
+
+Q: Is percent-encoding the password sufficient to protect it
+
+No. A driver that decodes a component before including it in a message discloses the credential in plaintext regardless
+of how it was encoded, and where the raw string is echoed instead, the encoded form remains trivially recoverable. The
+encoding rules for [Userinfo](#userinfo-optional) exist so that a connection string parses unambiguously. They are not a
+confidentiality measure.
+
 ## Changelog
+
+- 2026-10-28: Require that credentials, including the userinfo username, and sensitive URI parameter arguments are not
+    disclosed in parse errors, warning logs, or string representations, and that a string representation replaces them
+    with a fixed marker. Require that a diagnostic message never includes text from the connection string, other than
+    the canonical name of an option that the driver recognizes, a canonical authentication mechanism name, or an
+    argument successfully parsed as an integer for a known, non-sensitive option. Require that a string representation
+    of a connection string that did not parse is a fixed string and does not raise. Update the example messages so that
+    none of them prints an option argument.
 
 - 2024-05-29: Clarify handling of key-value pairs and add specification test.
 

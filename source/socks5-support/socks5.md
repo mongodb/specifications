@@ -60,6 +60,9 @@ option of - Code:`proxyPassword=password` MUST be added to the connection string
 a zero-length string. Drivers MUST error if this option was specified and `proxyHost` was not specified or
 `proxyUsername` was not specified.
 
+The values of `proxyUsername` and `proxyPassword` are sensitive: see
+[Sensitive options](../uri-options/uri-options.md#sensitive-options).
+
 ### Connection Pooling
 
 #### Connection Establishment
@@ -129,5 +132,6 @@ with enabling other authentication methods.
 
 ## Changelog
 
+- 2026-09-02: Note that the SOCKS5 credential options are sensitive.
 - 2024-09-04: Migrated from reStructuredText to Markdown.
 - 2022-10-05: Remove spec front matter

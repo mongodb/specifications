@@ -179,6 +179,10 @@ parse error and MUST NOT do DNS resolution or contact hosts.
 It is an error to specify more than one host name in a connection string with the `mongodb+srv` protocol, and the driver
 MUST raise a parse error and MUST NOT do DNS resolution or contact hosts.
 
+Parse errors raised for a `mongodb+srv` connection string are subject to
+[Reporting a parse failure](../connection-string/connection-string-spec.md#reporting-a-parse-failure) and MUST NOT
+disclose any part of the connection string.
+
 If `mongodb+srv` is used, a driver MUST implicitly also enable TLS. Clients can turn this off by passing `tls=false` in
 either the Connection String, or options passed in as parameters in code to the MongoClient constructor (or equivalent
 API for each driver), but not through a TXT record (discussed in a later section).
@@ -455,6 +459,8 @@ In the future we could consider using the priority and weight fields of the SRV 
 
 - 2026-09-03: Specify that host names returned through SRV records, and the `{domainname}` they are validated against,
     are both normalized -- trailing dot stripped, converted to A-label form, ASCII lowercased -- before validation.
+
+- 2026-09-02: Note that SRV parse errors must not disclose the connection string.
 
 - 2026-08-24: Add `srvAllowedHostsSuffix` MongoClient option.
 
