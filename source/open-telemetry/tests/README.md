@@ -223,6 +223,8 @@ Before each test:
     message. A driver with [driver-managed log output](../open-telemetry.md#driver-managed-log-output) reads the
     message's `trace_id` and `span_id` fields.
 
+`trace_flags` is produced by the driver only for driver-managed log output and is asserted in Test 14.
+
 A driver that cannot do step 3, because its ecosystem has no such integration or because its tracing API cannot expose
 the span ids, marks these tests as not applicable and records why. Messages belonging to one operation are matched to
 attempts in emission order. Unless stated otherwise, these tests run on all topologies.
