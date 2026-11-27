@@ -1,0 +1,112 @@
+description: operation write concern error
+schemaVersion: '1.27'
+createEntities:
+  - client:
+      id: &client0 client0
+      useMultipleMongoses: false
+      observeEvents:
+        - commandStartedEvent
+        - commandSucceededEvent
+        - commandFailedEvent
+      observeTracingMessages:
+        enableCommandPayload: false
+  - client:
+      id: &failPointClient failPointClient
+      useMultipleMongoses: false
+  - database:
+      id: &database0 database0
+      client: *client0
+      databaseName: &database0Name operation-write-concern-error
+  - collection:
+      id: &collection0 collection0
+      database: *database0
+      collectionName: &collection0Name test
+initialData:
+  - collectionName: test
+    databaseName: operation-write-concern-error
+    documents: []
+tests:
+  - description: "retryable write concern error: failed attempt's command span records the exception, operation span succeeds clean"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              errorLabels: [ RetryableWriteError ]
+              writeConcernError:
+                code: 10107
+                codeName: NotWritablePrimary
+                errmsg: 'not master'
+
+      - name: insertOne
+        object: *collection0
+        arguments:
+          document:
+            _id: 1
+
+    expectEvents:
+      - client: *client0
+        events:
+          - commandStartedEvent:
+              commandName: insert
+          - commandSucceededEvent:
+              commandName: insert
+          - commandStartedEvent:
+              commandName: insert
+          - commandSucceededEvent:
+              commandName: insert
+
+    expectTracingMessages:
+      - client: *client0
+        ignoreExtraSpans: true
+        spans:
+          - name: insert operation-write-concern-error.test
+            attributes:
+              db.system.name: mongodb
+              db.namespace: *database0Name
+              db.collection.name: *collection0Name
+              db.operation.name: insert
+              db.operation.summary: insert operation-write-concern-error.test
+              error.type: { $$exists: false }
+              exception.type: { $$exists: false }
+              exception.message: { $$exists: false }
+            nested:
+              - name: insert
+                attributes:
+                  db.system.name: mongodb
+                  db.command.name: insert
+                  db.namespace: *database0Name
+                  db.collection.name: *collection0Name
+                  server.address: { $$type: string }
+                  server.port: { $$type: [ long, string ] }
+                  network.transport: tcp
+                  db.mongodb.server_connection_id: { $$type: [ int, long ] }
+                  db.mongodb.driver_connection_id: { $$type: [ int, long ] }
+                  db.query.summary: insert operation-write-concern-error.test
+                  db.mongodb.cursor_id: { $$exists: false }
+                  exception.type: { $$type: string }
+                  exception.message: { $$type: string }
+                  exception.stacktrace: { $$type: string }
+              - name: insert
+                attributes:
+                  db.system.name: mongodb
+                  db.command.name: insert
+                  db.namespace: *database0Name
+                  db.collection.name: *collection0Name
+                  server.address: { $$type: string }
+                  server.port: { $$type: [ long, string ] }
+                  network.transport: tcp
+                  db.mongodb.server_connection_id: { $$type: [ int, long ] }
+                  db.mongodb.driver_connection_id: { $$type: [ int, long ] }
+                  db.query.summary: insert operation-write-concern-error.test
+                  db.mongodb.cursor_id: { $$exists: false }
+                  db.response.status_code: { $$exists: false }
+                  error.type: { $$exists: false }
+                  exception.type: { $$exists: false }
+                  exception.message: { $$exists: false }
+                  exception.stacktrace: { $$exists: false }
