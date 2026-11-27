@@ -336,3 +336,26 @@ This test fails if it times out waiting for the deletion to succeed.
 
 3. Assert that the command throws an exception containing the string "Attribute mappings missing" due to the `mappings`
     field missing.
+
+#### Case 9: Drivers use server default for unspecified name (`"default"`) and type (`"search"`)
+
+1. Create a collection with the "create" command using a randomly generated name (referred to as `coll0`).
+
+2. Create a new search index on `coll0` with the following definition:
+
+    ```typescript
+    {
+      definition: {
+        mappings: { dynamic: true }
+      }
+    }
+    ```
+
+3. Assert that the command returns the name of the index: `"default"`.
+
+4. Run `coll0.listSearchIndexes()` repeatedly every 5 seconds until the following condition is satisfied and store the
+    value in a variable `index`:
+
+    - An index with the `name` of `default` is present and the index has a field `queryable` with a value of `true`.
+
+5. Assert that `index` has a property `type` whose value is `search`.
