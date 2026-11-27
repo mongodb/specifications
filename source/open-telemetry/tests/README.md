@@ -202,3 +202,131 @@ replica set or sharded cluster).
 > The server may create spans for commands the driver did not trace (head-based sampling applies server-side too).
 > Assertions are therefore always made on the join between driver `traceId`s and server spans, never on the raw contents
 > of the trace directory.
+
+#### Log Message Correlation
+
+These tests verify [Correlating Log Messages with Traces](../open-telemetry.md#correlating-log-messages-with-traces).
+They require command, server selection, and connection logging; Test 13 also requires topology logging. Drivers that
+provide both a synchronous and an asynchronous API run these tests through both. They also require the ability to
+capture log message data in a structured form, as described in the
+[Unified Test Format specification](../../unified-test-format/unified-test-format.md#expectedLogMessage), and to collect
+spans as described in [Automated Tests](#automated-tests) above.
+
+Before each test:
+
+1. Enable tracing with a span collector the test can read.
+2. Capture the driver's log messages.
+3. A driver that [logs through a framework](../open-telemetry.md#logging-through-a-framework) installs a log handler,
+    formatter, or log-correlation integration that records the current span when each message is emitted (for example a
+    Logback MDC bridge, Python `LoggingInstrumentor`, .NET `ActivityTrackingOptions`, Rust `tracing-opentelemetry`,
+    Ruby `opentelemetry-instrumentation-logger`), and reads the trace id and span id it recorded for each captured
+    message. A driver with [driver-managed log output](../open-telemetry.md#driver-managed-log-output) reads the
+    message's `trace_id` and `span_id` fields.
+
+`trace_flags` is produced by the driver only for driver-managed log output and is asserted in Test 14.
+
+A driver that cannot do step 3, because its ecosystem has no such integration or because its tracing API cannot expose
+the span ids, marks these tests as not applicable and records why. Messages belonging to one operation are matched to
+attempts in emission order. Unless stated otherwise, these tests run on all topologies.
+
+*Test 10: Command log messages carry their own command span*
+
+If testing with a sharded cluster, only connect to one mongos. This is intended to ensure that the fail point applies to
+the mongos that executes the `find`.
+
+1. Create a `MongoClient` with tracing enabled, `retryReads` enabled, and the `command` log component at `debug`.
+2. Configure a `failCommand` fail point on `find` with `errorCode: 91` and `times: 1`.
+3. Call `find` on a test collection; it fails once and succeeds on retry.
+4. Record the two `find` command spans under the operation span, in order. Match the four command messages to the two
+    attempts in emission order: "Command started" and "Command failed" belong to the first attempt, then "Command
+    started" and "Command succeeded" belong to the second.
+5. Assert that the first attempt's "Command started" and "Command failed" messages carry the trace id and span id of the
+    first command span.
+6. Assert that the second attempt's "Command started" and "Command succeeded" messages carry the trace id and span id of
+    the second command span.
+7. Assert that none of the four messages carries the operation span's id.
+8. Disable the fail point.
+
+*Test 11: Operation-path log messages carry the operation span*
+
+Does not run on load balanced topologies. Steps 7 to 10 require SCRAM authentication, because only SCRAM sends
+`saslContinue` as a standalone command.
+
+1. Create a `MongoClient` with tracing enabled and the `serverSelection` and `connection` log components at `debug`.
+2. Perform an `insertOne` on a test collection and record its operation span.
+3. Assert that "Server selection started", "Server selection succeeded", "Connection checkout started", "Connection
+    checked out", and "Connection checked in" carry the operation span's trace id and span id.
+4. Create a second `MongoClient` with tracing enabled, the `serverSelection` log component at `debug`, a host that does
+    not exist, and a short `serverSelectionTimeoutMS` (for example 500 ms). Single-threaded drivers MUST also set
+    `serverSelectionTryOnce` to `false`, otherwise the waiting message is never logged.
+5. Perform an `insertOne`; it fails with a server selection error. Record its operation span.
+6. Assert that "Waiting for suitable server to become available" and "Server selection failed" carry that operation
+    span's trace id and span id.
+7. Configure a `failCommand` fail point on `saslContinue` with `closeConnection: true`, `mode: { times: 1 }`, and
+    `appName` set to a value unique to this test. Authentication happens only on application connections, so
+    monitoring is unaffected.
+8. Create a third `MongoClient` with tracing enabled, the `connection` log component at `debug`, that `appName`,
+    `retryReads: false`, and a high `heartbeatFrequencyMS` (for example 10000).
+9. Perform a `find` on a test collection; it fails. Record its operation span.
+10. Assert that "Connection checkout started" and "Connection checkout failed" carry that operation span's trace id and
+    span id.
+
+*Test 12: Log messages inside a transaction*
+
+Requires a replica set or sharded cluster.
+
+1. Create a `MongoClient` with tracing enabled and the `command`, `serverSelection`, and `connection` log components at
+    `debug`.
+2. Start a session and call `withTransaction`; in the callback, perform an `insertOne` on a test collection.
+3. Record the `transaction` span, the `insert` operation span under it, and the `insert` command span under that.
+4. Assert that the `insert` command's "Command started" and "Command succeeded" messages carry the command span's id and
+    the `transaction` span's trace id.
+5. Assert that the "Server selection started", "Server selection succeeded", "Connection checkout started", "Connection
+    checked out", and "Connection checked in" messages emitted for the `insert` carry the `insert` operation span's id
+    and the `transaction` span's trace id, and that none of them carries the `transaction` span's id.
+
+*Test 13: Background log messages are not attributed to an operation*
+
+Requires a multi-threaded or asynchronous driver and a topology other than load balanced. Load balanced clients start no
+monitoring connection, so they emit no heartbeat messages. Single-threaded drivers scan inline on the operation's
+thread, so their heartbeat messages may legitimately carry the operation span. Connection lifecycle messages are not
+asserted on: the specification allows them to be emitted inside a scope that is open during checkout or check-in.
+
+1. Create a `MongoClient` with tracing enabled and the `topology` log component at `debug`.
+2. Perform an `insertOne` on a test collection and record its trace id.
+3. Wait until a `ServerHeartbeatSucceededEvent` or a "Server heartbeat succeeded" message is observed after the
+    operation completed. A fixed delay is not sufficient: if no heartbeat message is captured, step 4 has nothing to
+    check and passes without testing anything.
+4. Assert that every `topology` message emitted after the operation completed carries neither the operation's trace id
+    nor the span id of any span it emitted.
+
+*Test 14: Trace context fields for driver-managed log output*
+
+Applies only to drivers with [driver-managed log output](../open-telemetry.md#driver-managed-log-output). Each step that
+creates a `MongoClient` enables the `command`, `serverSelection`, and `connection` log components at `debug`. The
+tracing SDK uses its default sampler throughout.
+
+1. Create a `MongoClient` with tracing enabled, perform an `insertOne` on a test collection, and record its operation
+    span and `insert` command span.
+2. Assert that "Command started" and "Command succeeded" carry `trace_id` equal to the command span's trace id (32
+    lowercase hex characters), `span_id` equal to the command span's id (16 lowercase hex characters), and
+    `trace_flags` equal to `01`.
+3. Assert that "Server selection started", "Server selection succeeded", "Connection checkout started", "Connection
+    checked out", and "Connection checked in" carry the operation span's `trace_id` and `span_id`, and `trace_flags`
+    equal to `01`.
+4. Make a non-recording span whose context has trace flags `00` current, and perform an `insertOne` inside it. Assert
+    that the messages of steps 2 and 3 carry their covering span's `trace_id` and `span_id`, and `trace_flags` equal to
+    `00`.
+5. Create a `MongoClient` with tracing disabled, perform an `insertOne`, and assert that no message for the operation
+    contains `trace_id`, `span_id`, or `trace_flags`.
+
+*Test 15: Current span in application-supplied log destinations*
+
+Applies only to drivers with [driver-managed log output](../open-telemetry.md#driver-managed-log-output) whose log
+destination can be an application-supplied callback running in the application's execution context, for example an
+object with a `write(log)` method.
+
+1. Create a `MongoClient` with tracing enabled, the `command` log component at `debug`, and such a callback as the log
+    destination. Perform an `insertOne` on a test collection and record its `insert` command span.
+2. Inside the callback, assert that the current span is the `insert` command span when "Command started" and "Command
+    succeeded" are written.
