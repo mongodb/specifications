@@ -11,6 +11,13 @@ createEntities:
       observeTracingMessages:
         enableCommandPayload: false
   - client:
+      id: &client1 client1
+      useMultipleMongoses: false
+      uriOptions:
+        retryWrites: false
+      observeTracingMessages:
+        enableCommandPayload: false
+  - client:
       id: &failPointClient failPointClient
       useMultipleMongoses: false
   - database:
@@ -21,6 +28,14 @@ createEntities:
       id: &collection0 collection0
       database: *database0
       collectionName: &collection0Name test
+  - database:
+      id: &database1 database1
+      client: *client1
+      databaseName: *database0Name
+  - collection:
+      id: &collection1 collection1
+      database: *database1
+      collectionName: test
 initialData:
   - collectionName: test
     databaseName: operation-write-concern-error
@@ -110,3 +125,56 @@ tests:
                   exception.type: { $$exists: false }
                   exception.message: { $$exists: false }
                   exception.stacktrace: { $$exists: false }
+
+  - description: "non-retryable write concern error: exception reaches the application, command span records the exception, command events show a single succeeded"
+    operations:
+      - name: failPoint
+        object: testRunner
+        arguments:
+          client: *failPointClient
+          failPoint:
+            configureFailPoint: failCommand
+            mode: { times: 1 }
+            data:
+              failCommands: [ insert ]
+              writeConcernError:
+                code: 10107
+                codeName: NotWritablePrimary
+                errmsg: 'not master'
+
+      - name: insertOne
+        object: *collection1
+        arguments:
+          document:
+            _id: 2
+        expectError:
+          isError: true
+
+    expectTracingMessages:
+      - client: *client1
+        ignoreExtraSpans: true
+        spans:
+          - name: insert operation-write-concern-error.test
+            attributes:
+              db.system.name: mongodb
+              db.namespace: *database0Name
+              db.collection.name: *collection0Name
+              db.operation.name: insert
+              db.operation.summary: insert operation-write-concern-error.test
+            nested:
+              - name: insert
+                attributes:
+                  db.system.name: mongodb
+                  db.command.name: insert
+                  db.namespace: *database0Name
+                  db.collection.name: *collection0Name
+                  server.address: { $$type: string }
+                  server.port: { $$type: [ long, string ] }
+                  network.transport: tcp
+                  db.mongodb.server_connection_id: { $$type: [ int, long ] }
+                  db.mongodb.driver_connection_id: { $$type: [ int, long ] }
+                  db.query.summary: insert operation-write-concern-error.test
+                  db.mongodb.cursor_id: { $$exists: false }
+                  exception.type: { $$type: string }
+                  exception.message: { $$type: string }
+                  exception.stacktrace: { $$type: string }
